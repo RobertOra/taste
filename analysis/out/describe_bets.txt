@@ -1,0 +1,67 @@
+
+## User-artist pairs
+    pairs  users  artists  share_only_unmatched
+379656600 297408   581460                 0.166
+
+## Onboarding: new artists per user-week, by weeks since the user's first listen
+weeks_since_start  first_listens  users
+   0 (first week)       12098871 297408
+              1-3       22423078 276982
+             4-12       30893684 277383
+            13-25       29988140 276269
+            26-51       47600145 284293
+              52+      236652682 296402
+
+## Commitment after first listen (first listens >= 26 weeks into a user's history)
+ share_single_play  share_one_week_only  share_4plus_weeks  share_10plus_plays  share_50plus_plays    plays_q50_90_99
+              0.32                 0.41              0.341               0.281               0.091 [3.0, 44.0, 374.0]
+
+## Committed new artists per user per year (>=26w in, >=52w before end; committed = active in >=4 weeks)
+ users                             new_artists_per_year_q10_50_90                                committed_per_year_q10_50_90 committed_total_q10_50_90
+254815 [63.84376470588235, 188.00938144329896, 539.1933333333334] [24.467177033492824, 67.52705882352942, 174.83532527242872]      [56.0, 203.0, 618.0]
+
+## Artists by total listeners (explore half, 297k users)
+ artists    ge5   ge20  ge100  ge1000  ge10000
+  581460 462824 344745 195295   49350     6851
+
+## Concentration: share of all plays going to the top artists
+ top_0_1pct  top_1pct  top_10pct
+      0.394     0.761      0.964
+
+## Breakouts: artists by penetration in year Y and growth to Y+2
+ year  artists_present  small_lt_0_1pct  small_then_10x  small_then_ge_1pct  big_ge_1pct  big_then_halved
+ 2005           208577           174808            1986                 246         5362               49
+ 2006           292183           254300            2651                 267         6139               59
+ 2007           354663           312876            2834                 294         6926               99
+ 2008           404775           358065            2752                 288         8139              318
+ 2009           445434           395951            2646                 289         8396              326
+ 2010           473907           423805            2431                 289         8120              188
+ 2011           492860           442132             892                  96         7966             3724
+
+## Early bets on breakouts: first listens in year Y to artists small in Y (<0.1%) that reach >=1% by Y+2
+ year  early_bets  users_with_one  committed_early_bets
+ 2005         527             437                   333
+ 2006        2556            2008                  1583
+ 2007        6269            4827                  3852
+ 2008        8682            6957                  5084
+ 2009       13926           10198                  7773
+ 2010       18277           13462                  8374
+ 2011        7306            6543                  3275
+
+## Users by number of committed early bets on breakouts (all years)
+ committed_early_bets  users
+                    0 276720
+                    1  15658
+                    2   2814
+                    3    958
+                    4    431
+                    5    190
+                    6    128
+                    7     77
+                    8     55
+                    9     37
+                   10     21
+                   11     17
+                   12     13
+                   13      8
+                   14      4

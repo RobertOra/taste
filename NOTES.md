@@ -64,3 +64,19 @@ Incidents, both fixed:
 2. Exploration on the `explore` half only: build the artist "market" from user_artist_week
    (+ _partial), define bets, compare taste models.
 3. ListenBrainz ingest (outside check, 2015-2026).
+
+## Step 1 findings (explore half; full output in analysis/out/)
+- Sample is a ~2012-13 snapshot of active Last.fm users with backfilled history: active users
+  grow 19.6k (2005) -> 295k (2012); 97% of histories end 2012-13; data ends ~mid-2013.
+  => measure popularity as penetration (share of active users), ideally within a fixed panel
+  (composition of the user base changes a lot); 2-year forward windows only for bets <= mid-2011.
+- Median history 4.3 y (76% >= 3 y, 38% >= 5 y): early-vs-late persistence test is feasible.
+- 22.8% of listens unmatched (6.3% no id at all); per-user unmatched share median 20%, p90 39%.
+  16.6% of user-artist pairs exist only in unmatched listens.
+- Onboarding: new-artist rate is ~40/wk in a user's first week, ~8/wk at 3-6 months, ~4/wk later
+  -> exclude roughly the first 26-52 weeks of each history from bets.
+- After first listen: 32% of new artists get a single play, 41% one week only; 34% active >= 4 weeks.
+  Median user: ~190 new artists/yr, ~68 committed (>= 4 weeks); ~200 committed bets in total.
+- 581k artists; top 1% get 76% of plays.
+- Strict breakouts (<0.1% -> >=1% penetration in 2 y): ~250-290 artists/yr. 93% of users have
+  zero committed early bets on one -> hit-counting is far too sparse; use continuous returns on all bets.
