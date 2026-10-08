@@ -91,6 +91,7 @@ def main():
     con.execute("CREATE TABLE own (user BIGINT, recording BIGINT, t SMALLINT, kept BOOLEAN, post BOOLEAN)")
     con.execute(f"CREATE TABLE home AS SELECT * FROM read_parquet('{X}/community/{half}_home.parquet')")
     con.execute("CREATE TABLE gkeys AS SELECT DISTINCT h.g, sb.recording, sb.m FROM sb JOIN home h ON h.user = sb.user AND h.year = sb.m // 12")
+    con.execute("CREATE TABLE gneed AS SELECT DISTINCT (m // 12)::SMALLINT AS year, g, recording FROM gkeys")
     con.execute("CREATE TABLE adg (year SMALLINT, g SMALLINT, recording BIGINT, t SMALLINT, k BIGINT)")
     for c in "0123456789abcdef":
         con.execute(f"""CREATE OR REPLACE TABLE ad AS
@@ -105,6 +106,7 @@ def main():
                        FROM ad GROUP BY recording, t""")
         con.execute(f"""INSERT INTO adg SELECT hm.year, hm.g, ad.recording, ad.t, count(*) FROM ad
                         JOIN home hm ON hm.user = ad.user
+                        SEMI JOIN gneed n ON n.year = hm.year AND n.g = hm.g AND n.recording = ad.recording
                         WHERE ad.t BETWEEN hm.year * 12 AND hm.year * 12 + 11 + {max(HS)} GROUP BY ALL""")
         for h in HS:
             # Adopters whose first play falls in [m-5, m] (l0) or [m+H-5, m+H] (l1) of a bet month m, and who are
@@ -121,7 +123,13 @@ def main():
                             WHERE x.m + {h} <= {LAST} GROUP BY ALL)
                 SELECT {h}, recording, m, coalesce(a0.l0, 0), coalesce(a1.l1, 0), 0, 0
                 FROM a0 FULL JOIN a1 USING (recording, m)""")
-        print(f"archive {c} done", flush=True)
+        # Merge the running tables so they stay compact (counts add up across archives).
+        con.execute("CREATE OR REPLACE TABLE acc AS SELECT h, recording, m, sum(l0) AS l0, sum(l1) AS l1, sum(tr) AS tr, sum(kp) AS kp FROM acc GROUP BY ALL")
+        con.execute("CREATE OR REPLACE TABLE adt AS SELECT recording, t, sum(tr) AS tr, sum(kp) AS kp FROM adt GROUP BY ALL")
+        con.execute("CREATE OR REPLACE TABLE adg AS SELECT year, g, recording, t, sum(k) AS k FROM adg GROUP BY ALL")
+        con.execute("CREATE OR REPLACE TABLE accf AS SELECT recording, min(song_first_m) AS song_first_m FROM accf GROUP BY ALL")
+        sizes = con.execute("SELECT (SELECT count(*) FROM acc), (SELECT count(*) FROM adt), (SELECT count(*) FROM adg)").fetchone()
+        print(f"archive {c} done; running tables acc={sizes[0]:,} adt={sizes[1]:,} adg={sizes[2]:,}", flush=True)
     con.execute("CREATE TABLE tot0 AS SELECT h, recording, m, sum(l0) AS l0, sum(l1) AS l1 FROM acc GROUP BY ALL")
     # Track record before the bet: running totals per song, looked up at the bet month.
     con.execute("""CREATE TABLE cumt AS SELECT recording, t, sum(tr) OVER w AS ctr, sum(kp) OVER w AS ckp
