@@ -3,6 +3,10 @@
 Same bets, popularity bins, controls and tests as analysis/prescience.py; only the per-bet outcome differs:
   A     prescience: fixed-panel listener growth over H months (leave-one-out)
   C_lb  durability: ln(1 + ListenBrainz listeners in 2026) of the artist (artists absent on LB = 0)
+  B     community-leading: ln((k + 0.5) / n) where k = other members of your taste community (home scene in the
+        previous 12 months) who commit to the artist in the H months after you, n = community members active
+        throughout (pipeline/derive_community.py); always adjusted for the artist's prior popularity within the
+        community (decile of c_pen, additive)
   D     discernment: conversion of *other* users' trials of the artist in the H months after the bet
         (share of post-onboarding first listens reaching commitment within 26 weeks), beta-smoothed
         (C + 2 * p0) / (N + 2) with p0 = overall conversion rate
@@ -42,7 +46,7 @@ RULES = {"w2": "w2", "w4": "w4", "w8": "w8", "p10": "w_p10", "all": "first_week"
 
 def parse():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--model", choices=["A", "C_lb", "D"], default="A")
+    ap.add_argument("--model", choices=["A", "B", "C_lb", "D"], default="A")
     ap.add_argument("--onboarding", type=int, default=26, help="weeks")
     ap.add_argument("--rule", choices=RULES, default="w4")
     ap.add_argument("--window", type=int, default=26, help="weeks allowed to reach commitment")
@@ -60,6 +64,7 @@ def parse():
                          "plus separate leave-one-out month x scene / month x age / month x momentum adjustments (backfitted)")
     ap.add_argument("--metric", choices=["log", "rank", "rawcap", "hit"], default="log")
     ap.add_argument("--weight", type=float, default=0.0, help="alpha in plays_26w^alpha")
+    ap.add_argument("--user-sample", type=int, default=1, help="keep users with hash(user) %% N = 0 (for huge variants)")
     ap.add_argument("--min-bets", type=int, default=20)
     ap.add_argument("--perms", type=int, default=20)
     ap.add_argument("--name", default=None)
@@ -86,21 +91,30 @@ def main():
     commit = "TRUE" if a.rule == "all" else f"b.{RULES[a.rule]} IS NOT NULL AND b.{RULES[a.rule]} - b.first_week < {a.window}"
 
     con.execute(f"""CREATE TABLE b AS
-        SELECT b.user, b.artist, {MONTH.format(w='b.' + datecol)}::SMALLINT AS m, b.plays_26w
-        FROM read_parquet('{X}/bets/explore/*.parquet') b
+        SELECT b.user, b.artist, {MONTH.format(w='b.' + datecol)}::SMALLINT AS m, b.plays_26w,
+               regexp_extract(b.filename, 'mlhdplus-(.)[.]parquet', 1) AS arch
+        FROM read_parquet('{X}/bets/explore/*.parquet', filename=true) b
         JOIN read_parquet('{X}/user_features/explore.parquet') f USING (user)
-        WHERE b.first_week >= f.start_week + {a.onboarding} AND {commit}
+        WHERE b.first_week >= f.start_week + {a.onboarding} AND {commit} AND hash(b.user) % {a.user_sample} = 0
           AND {MONTH.format(w='b.' + datecol)} BETWEEN {2005 * 12} AND {LAST - H}""")
     con.execute(f"""CREATE TABLE act AS SELECT DISTINCT user, month FROM read_parquet('{X}/user_artist_month/explore/*.parquet')""")
-    con.execute(f"""CREATE TABLE r AS
-        SELECT b.*, coalesce(mk.l0, 0) - (a1.user IS NOT NULL)::INT AS l0,
-               coalesce(mk.l1, 0) - (u1.user IS NOT NULL)::INT AS l1, p.n_panel
-        FROM b
-        LEFT JOIN read_parquet('{X}/market/explore/listeners_h{H}.parquet') mk ON mk.artist = b.artist AND mk.month = b.m
-        JOIN read_parquet('{X}/market/explore/panel.parquet') p ON p.month = b.m AND p.h = {H}
-        LEFT JOIN act a1 ON a1.user = b.user AND a1.month = b.m + {H}
-        LEFT JOIN read_parquet('{X}/user_artist_month/explore/*.parquet') u1
-               ON u1.user = b.user AND u1.artist = b.artist AND u1.month = b.m + {H}""")
+    # Joins against the 1.8B-row monthly table are done per archive (users never span archives) to bound memory.
+    parts = []
+    for c in "0123456789abcdef":
+        con.execute(f"""CREATE TABLE r_{c} AS
+            SELECT b.*, coalesce(mk.l0, 0) - (a1.user IS NOT NULL)::INT AS l0,
+                   coalesce(mk.l1, 0) - (u1.user IS NOT NULL)::INT AS l1, p.n_panel
+            FROM (SELECT * FROM b WHERE arch = '{c}') b
+            LEFT JOIN read_parquet('{X}/market/explore/listeners_h{H}.parquet') mk ON mk.artist = b.artist AND mk.month = b.m
+            JOIN read_parquet('{X}/market/explore/panel.parquet') p ON p.month = b.m AND p.h = {H}
+            LEFT JOIN act a1 ON a1.user = b.user AND a1.month = b.m + {H}
+            LEFT JOIN read_parquet('{X}/user_artist_month/explore/mlhdplus-{c}.parquet') u1
+                   ON u1.user = b.user AND u1.artist = b.artist AND u1.month = b.m + {H}""")
+        parts.append(f"SELECT * FROM r_{c}")
+    con.execute(f"CREATE TABLE r AS {' UNION ALL '.join(parts)}")
+    for c in "0123456789abcdef":
+        con.execute(f"DROP TABLE r_{c}")
+    con.execute("DROP TABLE b")
     bad = con.execute("SELECT count(*) FROM r WHERE l0 < 0 OR l1 < 0").fetchone()[0]
     assert bad == 0, f"{bad} bets with negative leave-one-out counts"
 
@@ -124,11 +138,13 @@ def main():
     # Momentum: fixed-panel growth over the 6 months before the bet (panel = active at m-6 and m), leave-one-out.
     if a.momentum:
         # The bettor's own listening at m-6 and m, in one pass over the monthly table.
-        con.execute(f"""CREATE TABLE selfl AS
-            SELECT r.user, r.artist, r.m AS bm, bool_or(u.month = r.m - 6) AS l6, bool_or(u.month = r.m) AS lm
-            FROM r JOIN read_parquet('{X}/user_artist_month/explore/*.parquet') u
-              ON u.user = r.user AND u.artist = r.artist AND u.month BETWEEN r.m - 6 AND r.m
-            GROUP BY ALL""")
+        con.execute("CREATE TABLE selfl (user BIGINT, artist BIGINT, bm SMALLINT, l6 BOOLEAN, lm BOOLEAN)")
+        for c in "0123456789abcdef":
+            con.execute(f"""INSERT INTO selfl
+                SELECT r.user, r.artist, r.m, bool_or(u.month = r.m - 6), bool_or(u.month = r.m)
+                FROM (SELECT * FROM r WHERE arch = '{c}') r JOIN read_parquet('{X}/user_artist_month/explore/mlhdplus-{c}.parquet') u
+                  ON u.user = r.user AND u.artist = r.artist AND u.month BETWEEN r.m - 6 AND r.m
+                GROUP BY ALL""")
         con.execute(f"""CREATE TABLE mom AS
             SELECT r.user, r.artist, r.m AS bm,
                    ln(greatest(coalesce(mk.l1, 0) - (coalesce(s.lm, false) AND a0.user IS NOT NULL)::INT, 0) + 1)
@@ -146,6 +162,11 @@ def main():
     outcome_join = ""
     if a.model == "A":
         ret = f"ln(l1 + {a.smooth}) - ln(l0 + {a.smooth})"
+    elif a.model == "B":
+        ret = "ln((cmt.k_later + 0.5) / greatest(cmt.cn_panel, 1))"
+        outcome_join = (f"JOIN (SELECT user AS cu, artist AS ca, m AS cm, k_later, n_panel AS cn_panel, c_pen "
+                        f"FROM read_parquet('{X}/community/explore_h{H}.parquet')) cmt "
+                        f"ON cmt.cu = r.user AND cmt.ca = r.artist AND cmt.cm = r.m")
     elif a.model == "C_lb":
         ret = "ln(1 + coalesce(lb.lb_users, 0))"
         outcome_join = f"LEFT JOIN read_parquet('{X}/lb_artist_popularity.parquet') lb ON lb.artist = r.artist"
@@ -171,27 +192,33 @@ def main():
         SELECT r.*, {ret} AS ret, l0 / n_panel AS pen0, {scene_sql} AS scene,
                CASE WHEN l0 = 0 THEN 0 ELSE 1 + ntile({a.bins}) OVER (PARTITION BY m, l0 = 0 ORDER BY l0) END AS bin,
                pow(greatest(plays_26w, 1), {a.weight}) AS wt, {age_sql} AS age, {mom_sql} AS mq,
-               {"coalesce(mb.country, 'XX')" if a.country else "'-'"} AS ctry
+               {"coalesce(mb.country, 'XX')" if a.country else "'-'"} AS ctry,
+               {"ntile(10) OVER (PARTITION BY r.m ORDER BY cmt.c_pen)" if a.model == "B" else "0"} AS cpb
         FROM r {scene_join} LEFT JOIN first_seen fs ON fs.artist = r.artist {mom_join} {outcome_join}
         {f"LEFT JOIN read_parquet('{X}/mb_artists.parquet') mb ON mb.artist = r.artist" if a.country else ""}""")
-    cell = "m, bin, scene, age, mq, ctry" if a.adjust == "cells" else "m, bin"
+    for t in ("r", "first_seen", "mom", "selfl", "dd", "trials", "cum"):
+        con.execute(f"DROP TABLE IF EXISTS {t}")
+    cell = "m, bin, scene, age, mq, ctry, cpb" if a.adjust == "cells" else "m, bin"
     extra_fx = [] if a.adjust == "cells" else [g for g, on in (("scene", a.scene != "none"), ("age", a.age),
                                                                    ("mq", a.momentum > 0), ("ctry", a.country)) if on]
+    if a.adjust != "cells" and a.model == "B":
+        extra_fx.append("cpb")
     if a.metric == "log":
         val = "ret"
     elif a.metric == "rawcap":
         assert a.model == "A", "rawcap only makes sense for growth returns"
         val = "least(exp(ret), 20)"
     elif a.metric == "rank":
-        val = "percent_rank() OVER (PARTITION BY m, bin, scene, age, mq, ctry ORDER BY ret)"
+        val = "percent_rank() OVER (PARTITION BY m, bin, scene, age, mq, ctry, cpb ORDER BY ret)"
     else:
-        val = "(percent_rank() OVER (PARTITION BY m, bin, scene, age, mq, ctry ORDER BY ret) >= 0.9)::INT"
+        val = "(percent_rank() OVER (PARTITION BY m, bin, scene, age, mq, ctry, cpb ORDER BY ret) >= 0.9)::INT"
     con.execute(f"""CREATE TABLE e AS
-        WITH v AS (SELECT *, {val} AS v FROM r2)
-        SELECT user, artist, m, bin, scene, age, mq, ctry, pen0, wt, v,
+        WITH v AS (SELECT user, artist, m, bin, scene, age, mq, ctry, cpb, pen0, wt, {val} AS v FROM r2)
+        SELECT user, artist, m, bin, scene, age, mq, ctry, cpb, pen0, wt, v,
                v - (sum(v) OVER c - v) / nullif(count(*) OVER c - 1, 0) AS e
         FROM v WINDOW c AS (PARTITION BY {cell})""")
     con.execute("DELETE FROM e WHERE e IS NULL")
+    con.execute("DROP TABLE r2")
     # Additive adjustment: remove leave-one-out month x factor means of the excess, cycling until stable.
     for _ in range(4 if extra_fx else 0):
         for g in extra_fx:

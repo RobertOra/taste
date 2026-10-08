@@ -1,0 +1,82 @@
+{
+ "variant": "sw_horizon_6",
+ "args": {
+  "onboarding": 26,
+  "rule": "w4",
+  "window": 26,
+  "date": "commit",
+  "horizon": 6,
+  "smooth": 1.0,
+  "bins": 20,
+  "scene": "yearly200",
+  "age": true,
+  "momentum": 5,
+  "country": true,
+  "adjust": "additive",
+  "metric": "log",
+  "weight": 0.0,
+  "min_bets": 20,
+  "perms": 10,
+  "name": "sw_horizon_6"
+ },
+ "bets": 42162723,
+ "users_with_bets": 291302,
+ "users_scored": 262911,
+ "median_bets_per_scored_user": 115.0,
+ "cells": {
+  "bets_per_cell_bet_weighted": 35283.85959723237,
+  "share_bets_in_single_artist_cells": null,
+  "artists_per_cell_bet_weighted": 4347.583236808496
+ },
+ "luck": {
+  "observed_var": 0.0017919220793445902,
+  "null_var_mean": 0.0010157238416250007,
+  "null_var_max": 0.001018537088628961,
+  "skill_share_of_variance": 0.4331651731215289
+ },
+ "empirical_bayes": {
+  "tau2": 0.0009031358777975393,
+  "noise_var_mean": 0.0008887862015470509,
+  "reliability_mean": 0.6088223407594621
+ },
+ "persistence": {
+  "halves": {
+   "pearson": 0.19207394342014117,
+   "spearman": 0.16396636855543364,
+   "users": 255164
+  },
+  "halves_with_gap": {
+   "pearson": 0.14835791137624277,
+   "spearman": 0.12403225365678908,
+   "users": 191649
+  },
+  "periods_2006_08_vs_2010_11": {
+   "pearson": 0.15939132821315158,
+   "spearman": 0.13829990036871842,
+   "users": 111800
+  },
+  "random_split": {
+   "pearson": 0.34734480625666925,
+   "spearman": 0.2854894934242279,
+   "users": 257321
+  }
+ },
+ "impostors": {
+  "r2_all": 0.009217870968639241,
+  "corr_with_score": {
+   "listens": -0.02699240098306769,
+   "history_years": 0.004853781493088547,
+   "join_year": -0.005657180128499117,
+   "listens_per_active_month": -0.041971079972216066,
+   "unmatched_share": 0.032880371072241725,
+   "no_id_share": 0.003514099682454908,
+   "new_artists_per_year": -0.03278758126494681,
+   "committed_per_year": -0.02684599902091176,
+   "mainstream_share": -0.004866839809154773,
+   "obscurity_logpen": -0.02266934749374604,
+   "scene_entropy": -0.026793743880155905,
+   "n": -0.008693660373755352
+  },
+  "residual_persistence_halves": 0.18764961811395398
+ }
+}

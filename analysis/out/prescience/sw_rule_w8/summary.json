@@ -1,0 +1,82 @@
+{
+ "variant": "sw_rule_w8",
+ "args": {
+  "onboarding": 26,
+  "rule": "w8",
+  "window": 26,
+  "date": "commit",
+  "horizon": 12,
+  "smooth": 1.0,
+  "bins": 20,
+  "scene": "yearly200",
+  "age": true,
+  "momentum": 5,
+  "country": true,
+  "adjust": "additive",
+  "metric": "log",
+  "weight": 0.0,
+  "min_bets": 20,
+  "perms": 10,
+  "name": "sw_rule_w8"
+ },
+ "bets": 12393085,
+ "users_with_bets": 259795,
+ "users_scored": 161387,
+ "median_bets_per_scored_user": 51.0,
+ "cells": {
+  "bets_per_cell_bet_weighted": 11579.769455385805,
+  "share_bets_in_single_artist_cells": null,
+  "artists_per_cell_bet_weighted": 2163.5751509006836
+ },
+ "luck": {
+  "observed_var": 0.004378706888309193,
+  "null_var_mean": 0.0026293918119682843,
+  "null_var_max": 0.002686443289633346,
+  "skill_share_of_variance": 0.3995049499685499
+ },
+ "empirical_bayes": {
+  "tau2": 0.001921456011595657,
+  "noise_var_mean": 0.002457250876713536,
+  "reliability_mean": 0.544728811209029
+ },
+ "persistence": {
+  "halves": {
+   "pearson": 0.20613398234154,
+   "spearman": 0.1655142467494039,
+   "users": 150970
+  },
+  "halves_with_gap": {
+   "pearson": 0.14724637151600745,
+   "spearman": 0.12143602274063488,
+   "users": 51753
+  },
+  "periods_2006_08_vs_2010_11": {
+   "pearson": 0.15075769283428614,
+   "spearman": 0.1230349656613358,
+   "users": 39220
+  },
+  "random_split": {
+   "pearson": 0.2928193617309427,
+   "spearman": 0.2400580310064669,
+   "users": 149254
+  }
+ },
+ "impostors": {
+  "r2_all": 0.015436913053246792,
+  "corr_with_score": {
+   "listens": -0.02253745696781136,
+   "history_years": 0.0317504387431282,
+   "join_year": -0.03186777793521552,
+   "listens_per_active_month": -0.05187057257305663,
+   "unmatched_share": 0.051501803565585855,
+   "no_id_share": 0.02374283960531379,
+   "new_artists_per_year": -0.014847702507814472,
+   "committed_per_year": -0.04701241003911769,
+   "mainstream_share": -0.02915749820701935,
+   "obscurity_logpen": -0.05280993946217489,
+   "scene_entropy": -0.05395213043797978,
+   "n": -0.04976121907143854
+  },
+  "residual_persistence_halves": 0.19835169437137976
+ }
+}
