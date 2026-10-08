@@ -56,7 +56,7 @@ def main():
     signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))  # run cleanup when stopped
     con = duckdb.connect()
     con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; "
-                "SET max_temp_directory_size='25GB'")
+                "SET max_temp_directory_size='40GB'")
     feats = f"read_parquet('{X}/user_features/{half}.parquet')"
 
     # 1. Bets from the raw sample: weekly listening per (user, song), commitment week, early plays.

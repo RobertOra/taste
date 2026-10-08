@@ -1,4 +1,4 @@
-"""Inputs for model B (leading your taste community), explore half.
+"""Inputs for model B (leading your taste community), one half at a time (scenes always from the explore half).
 
 Community: for bets in year Y, a user's home scene = the yearly scene (scenes_yearly, 200 scenes, built from
 pre-Y listening) they are most over-represented in during the 12 months before Y (among scenes with >= 5% of
@@ -12,8 +12,8 @@ For every committed adoption (user u, artist a, commitment month m) with m in ye
     c_mom    = community momentum: ln(1 + members listening in m) - ln(1 + members listening in m-6), among members
                active in both months, excluding u (is the artist already rising among people like you?)
 
-    data/derived/community/explore_h<H>.parquet   user, artist, m, g (community), k_later, n_panel, c_pen, c_mom
-    data/derived/community/explore_home.parquet   user, year, g   (each user's community per year; reused for songs)
+    data/derived/community/<half>_h<H>.parquet   user, artist, m, g (community), k_later, n_panel, c_pen, c_mom
+    data/derived/community/<half>_home.parquet   user, year, g   (each user's community per year; reused for songs)
 Commitment = 4 distinct weeks within 26 weeks of first listen, after the adopter's 26-week onboarding
 (the primary bet definition); used for both bettors and later adopters.
 
@@ -41,8 +41,10 @@ MONTH = "(year(make_timestamp({w}::BIGINT * 604800000000 + 302400000000)) * 12 "
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--horizon", type=int, default=12)
-    H = ap.parse_args().horizon
-    out = X / "community" / f"explore_h{H}.parquet"
+    ap.add_argument("--half", choices=["explore", "sealed"], default="explore")
+    args = ap.parse_args()
+    H, half = args.horizon, args.half
+    out = X / "community" / f"{half}_h{H}.parquet"
     out.parent.mkdir(parents=True, exist_ok=True)
     tmp = ROOT / "data" / "_tmp" / f"community-{os.getpid()}"
     tmp.mkdir(parents=True, exist_ok=True)
@@ -59,10 +61,10 @@ def main():
 
     ex(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; "
                 "SET max_temp_directory_size='18GB'")
-    uam = f"read_parquet('{X}/user_artist_month/explore/*.parquet')"
+    uam = f"read_parquet('{X}/user_artist_month/{half}/*.parquet')"
     ex(f"""CREATE TABLE adopt AS
         SELECT b.user, b.artist, {MONTH.format(w='b.w4')}::SMALLINT AS m
-        FROM read_parquet('{X}/bets/explore/*.parquet') b JOIN read_parquet('{X}/user_features/explore.parquet') f USING (user)
+        FROM read_parquet('{X}/bets/{half}/*.parquet') b JOIN read_parquet('{X}/user_features/{half}.parquet') f USING (user)
         WHERE b.first_week >= f.start_week + 26 AND b.w4 IS NOT NULL AND b.w4 - b.first_week < 26""")
     ex(f"CREATE TABLE act AS SELECT DISTINCT user, month FROM {uam}")
     parts = []
@@ -112,7 +114,7 @@ def main():
                        count(*) FILTER (WHERE fh.user IS NOT NULL),   -- listening in month, active H months later
                        count(*) FILTER (WHERE f6.user IS NOT NULL),   -- listening in month, active 6 months later
                        count(*) FILTER (WHERE fm6.user IS NOT NULL)   -- listening in month, active 6 months earlier
-                FROM read_parquet('{X}/user_artist_month/explore/mlhdplus-{c}.parquet') u
+                FROM read_parquet('{X}/user_artist_month/{half}/mlhdplus-{c}.parquet') u
                 SEMI JOIN karts USING (artist)
                 JOIN home h ON h.user = u.user
                 SEMI JOIN need nd ON nd.g = h.g AND nd.artist = u.artist AND nd.month = u.month
@@ -135,7 +137,7 @@ def main():
         ex("CREATE OR REPLACE TABLE self6 (user BIGINT, artist BIGINT, m SMALLINT)")
         for c in "0123456789abcdef":
             ex(f"""INSERT INTO self6 SELECT DISTINCT yb.user, yb.artist, yb.m
-                FROM read_parquet('{X}/user_artist_month/explore/mlhdplus-{c}.parquet') u
+                FROM read_parquet('{X}/user_artist_month/{half}/mlhdplus-{c}.parquet') u
                 JOIN yb ON yb.user = u.user AND yb.artist = u.artist AND u.month = yb.m - 6""")
         ex(f"""CREATE OR REPLACE TABLE part_{y} AS
             SELECT yb.user, yb.artist, yb.m, yb.g,
@@ -157,7 +159,7 @@ def main():
         print(f"{y}: {n[0]:,} bets, mean later community adopters {n[1]:.3f}, mean community panel {n[2]:.0f}", flush=True)
         parts.append(f"SELECT * FROM part_{y}")
     ex(f"COPY ({' UNION ALL '.join(parts)}) TO '{out}' (FORMAT parquet, COMPRESSION zstd)")
-    ex(f"COPY home_all TO '{out.parent / 'explore_home.parquet'}' (FORMAT parquet)")
+    ex(f"COPY home_all TO '{out.parent / f'{half}_home.parquet'}' (FORMAT parquet)")
 
 
 if __name__ == "__main__":

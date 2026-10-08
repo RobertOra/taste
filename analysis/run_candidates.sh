@@ -2,6 +2,8 @@
 # Build and score every candidate in EVALUATION.md (explore half). One heavy job at a time.
 # Each candidate writes analysis/out/cand/<name>/{agg.parquet,meta.json}; the evaluator adds scorecard.json.
 # Re-running skips candidates that already have a scorecard.
+# Usage: run_candidates.sh [main|sweeps|justx|all]   (default all)
+STAGE=${1:-all}
 cd "${0:A:h}/.."
 CTRL=(--scene yearly200 --age --momentum 5 --country --release --adjust additive)
 LOG=analysis/out/cand/run.log
@@ -22,6 +24,7 @@ cand() {  # name, model, unit, extra args...
 }
 
 # Main candidates (all controls) -------------------------------------------------------------------------
+if [[ $STAGE == main || $STAGE == all ]]; then
 MAIN=( "A artist" "A song" "A scene" "B artist" "B song" "B scene"
        "C_lb artist" "C_lb song" "C_lb scene" "D artist" "D song" "D scene" )
 for mu in $MAIN; do
@@ -30,7 +33,9 @@ for mu in $MAIN; do
   cand ${m}_${u}_main $m $u "${CTRL[@]}"
 done
 
+fi
 # Settings sweeps (one at a time around the main settings) ----------------------------------------------
+if [[ $STAGE == sweeps || $STAGE == all ]]; then
 for mu in $MAIN; do
   m=${mu% *}; u=${mu#* }
   for h in 6 24; do cand ${m}_${u}_h$h $m $u "${CTRL[@]}" --horizon $h; done
@@ -44,7 +49,9 @@ for mu in $MAIN; do
   fi
 done
 
+fi
 # "Is it just X?" variants: remove one control at a time, plus the dating and radio checks ------------------
+if [[ $STAGE == justx || $STAGE == all ]]; then
 for mu in $MAIN; do
   m=${mu% *}; u=${mu#* }
   cand ${m}_${u}_nocontrols $m $u --adjust additive
@@ -62,4 +69,5 @@ for mu in $MAIN; do
     cand ${m}_${u}_scene1000 $m $u --scene yearly1000 --age --momentum 5 --country --release --adjust additive
   fi
 done
-echo "ALL CANDIDATES DONE $(date +%H:%M)" >> $LOG
+fi
+echo "STAGE $STAGE DONE $(date +%H:%M)" >> $LOG
