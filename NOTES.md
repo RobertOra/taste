@@ -1,0 +1,66 @@
+# Is good taste real?
+
+## Question
+Do some people reliably have "better taste" in music than others, beyond luck,
+how much they listen, or how mainstream they are? If so, what predicts it?
+"There's no such thing as taste" is an acceptable answer.
+
+## Approach (agreed 2026-10-07)
+- Main framing: listens as investments. A "bet" = a user's first committed listen
+  to an artist/track; its "price" = the artist's listener count at that time
+  (excluding the user); the "return" = later growth, measured relative to similar
+  artists at the same popularity in the same period (excess return).
+- Is it skill or luck? (1) Is the spread of user scores wider than a shuffled baseline that
+  keeps each user's number of bets and entry popularity? (2) Does someone's early score
+  predict their later score? (3) Does it replicate on the sealed half?
+- Other definitions to compare (do they agree = one "taste factor"?):
+  durability (still listened to in 2026, via ListenBrainz popularity API),
+  leading indicator (predicts peers' later listening), critical consensus.
+- Robustness: multiverse / specification-curve analysis over all reasonable
+  parameter choices; explicit controls for activity, exploration rate,
+  mainstreamness, genre, tenure, survivorship, leave-one-out popularity.
+- Anti-p-hacking: users are split by salted hash into `explore` / `sealed`.
+  Explore freely on `explore`; freeze definitions in a committed file before
+  ever analysing `sealed`; report every model tried.
+- Later: ListenBrainz (2015-2026) as an outside check on a different group and era,
+  and the basis for any website (Spotify users listen to modern music).
+
+## Data: MLHD+ (Last.fm scrobbles, ~2005-2013, ~583k users)
+Streamed by `pipeline/mlhd_ingest.py` straight from MetaBrainz; raw archives
+never stored. See the module docstring for table schemas. Summary:
+- all users: user x artist x week plays; user x recording first week/span/plays;
+  artist-level listens that MLHD+ couldn't match to a recording (`*_partial`)
+- 1/8 of users: full raw history (exact timestamps, releases)
+- id = last 15 hex digits of the MBID as int64; `*_map` tables map back.
+
+Storage: short-term cap 100 GB, long-term <= 50 GB. Plan after ingest: re-encode
+ids densely (~20-30% saving), derive what we need from raw, trim raw sample.
+
+## Operating the ingest
+    ops/ingest.sh status   # progress, throughput, ETA, disk, errors
+    ops/ingest.sh stop     # pause (progress kept)
+    ops/ingest.sh start    # start/resume (launchd; restarts on crash/reboot)
+Output: `data/mlhd/`, log: `data/mlhd/_logs/ingest.log`.
+
+## Ingest log (2026-10-07/08)
+Ran 23:23 -> 06:41 (~7.3 h, 277 GiB streamed). Output 59 GB in `data/mlhd/`.
+- 594,415 users; 21.08B recording-matched listens + 6.22B unmatched ("partial") listens,
+  of which ~28% carry no id at all (counted per user in `users_partial.n_nothing`).
+- 613k artists, 955k releases (raw sample only), 6.69M recordings; no id collisions.
+- Rows: user_artist_week 4.78B, user_recording 3.69B, user_artist_week_partial 1.45B.
+- Raw sample: 74,660 users (12.56%). Explore share: 50.03%.
+- `pipeline/validate_mlhd.py`: all 25 integrity checks pass (exact per-user accounting
+  between tables, sorted/unique keys, raw sample == summaries, totals == ingest state).
+
+Incidents, both fixed:
+1. Concurrent DuckDB compactions shared a temp dir and clobbered each other's spill files
+   (one crashed; others could have been silently mixed). Fixed with per-process temp dirs;
+   all 9 archives finished before the fix were deleted and re-ingested.
+2. Size check raced with another worker's tmp-file rename -> harmless crash, resumed from checkpoint.
+
+## Next
+1. Shrink storage toward <= 50 GB (dense ids; ~20-30%) — not yet done, needs a decision
+   on deleting the current files afterwards.
+2. Exploration on the `explore` half only: build the artist "market" from user_artist_week
+   (+ _partial), define bets, compare taste models.
+3. ListenBrainz ingest (outside check, 2015-2026).

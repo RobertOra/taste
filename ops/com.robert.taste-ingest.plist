@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key><string>com.robert.taste-ingest</string>
+    <key>ProgramArguments</key>
+    <array><string>/Users/robert/Projects/taste/ops/run_ingest.sh</string></array>
+    <key>RunAtLoad</key><true/>
+    <!-- Restart after crashes or reboots; a clean exit (all archives done) stops it. -->
+    <key>KeepAlive</key><dict><key>SuccessfulExit</key><false/></dict>
+    <key>ThrottleInterval</key><integer>60</integer>
+    <key>StandardOutPath</key><string>/Users/robert/Projects/taste/data/mlhd/_logs/launchd.out</string>
+    <key>StandardErrorPath</key><string>/Users/robert/Projects/taste/data/mlhd/_logs/launchd.err</string>
+</dict>
+</plist>
