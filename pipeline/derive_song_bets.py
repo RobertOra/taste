@@ -85,6 +85,8 @@ def main():
     con.execute("CREATE TABLE keys AS SELECT DISTINCT recording, m FROM sb")
     con.execute(f"CREATE TABLE act AS SELECT DISTINCT user, month FROM read_parquet('{X}/user_artist_month/{half}/*.parquet')")
     con.execute(f"CREATE TABLE panel AS SELECT * FROM read_parquet('{X}/market/{half}/panel.parquet')")
+    ckpt = ROOT / "data" / "_ckpt" / f"songs_{half}"
+    resume = (ckpt / "DONE").exists()
     con.execute("""CREATE TABLE acc (h SMALLINT, recording BIGINT, m SMALLINT, l0 BIGINT, l1 BIGINT, tr BIGINT, kp BIGINT)""")
     con.execute("CREATE TABLE adt (recording BIGINT, t SMALLINT, tr BIGINT, kp BIGINT)")
     con.execute("CREATE TABLE accf (recording BIGINT, song_first_m SMALLINT)")
@@ -93,7 +95,7 @@ def main():
     con.execute("CREATE TABLE gkeys AS SELECT DISTINCT h.g, sb.recording, sb.m FROM sb JOIN home h ON h.user = sb.user AND h.year = sb.m // 12")
     con.execute("CREATE TABLE gneed AS SELECT DISTINCT (m // 12)::SMALLINT AS year, g, recording FROM gkeys")
     con.execute("CREATE TABLE adg (year SMALLINT, g SMALLINT, recording BIGINT, t SMALLINT, k BIGINT)")
-    for c in "0123456789abcdef":
+    for c in ("" if resume else "0123456789abcdef"):
         con.execute(f"""CREATE OR REPLACE TABLE ad AS
             SELECT ur.user, ur.recording, {MONTH.format(w='ur.first_week')}::SMALLINT AS t,
                    (ur.plays >= 4 AND ur.span_weeks >= 3) AS kept,
@@ -130,6 +132,16 @@ def main():
         con.execute("CREATE OR REPLACE TABLE accf AS SELECT recording, min(song_first_m) AS song_first_m FROM accf GROUP BY ALL")
         sizes = con.execute("SELECT (SELECT count(*) FROM acc), (SELECT count(*) FROM adt), (SELECT count(*) FROM adg)").fetchone()
         print(f"archive {c} done; running tables acc={sizes[0]:,} adt={sizes[1]:,} adg={sizes[2]:,}", flush=True)
+    tables = ["acc", "adt", "adg", "accf", "own"]
+    if resume:
+        for t in tables:
+            con.execute(f"CREATE OR REPLACE TABLE {t} AS SELECT * FROM read_parquet('{ckpt}/{t}.parquet')")
+        print("resumed per-archive results from checkpoint", flush=True)
+    else:
+        ckpt.mkdir(parents=True, exist_ok=True)
+        for t in tables:
+            con.execute(f"COPY {t} TO '{ckpt}/{t}.parquet' (FORMAT parquet)")
+        (ckpt / "DONE").touch()
     con.execute("CREATE TABLE tot0 AS SELECT h, recording, m, sum(l0) AS l0, sum(l1) AS l1 FROM acc GROUP BY ALL")
     # Track record before the bet: running totals per song, looked up at the bet month.
     con.execute("""CREATE TABLE cumt AS SELECT recording, t, sum(tr) OVER w AS ctr, sum(kp) OVER w AS ckp
@@ -149,16 +161,15 @@ def main():
             FROM lt LEFT JOIN tot0 t0 ON t0.h = {h} AND t0.recording = lt.recording AND t0.m = lt.m""")
     con.execute("CREATE TABLE firstm AS SELECT recording, min(song_first_m) AS song_first_m FROM accf GROUP BY recording")
     # Later adoptions by community members (community as of the bet year): running totals per (year, community, song).
-    con.execute("""CREATE TABLE cumg AS SELECT year, g, recording, t, sum(k) OVER w AS ck
-                   FROM (SELECT year, g, recording, t, sum(k) AS k FROM adg GROUP BY ALL)
-                   WINDOW w AS (PARTITION BY year, g, recording ORDER BY t ROWS UNBOUNDED PRECEDING)""")
+    # Later adoptions by community members (community as of the bet year), summed directly over each bet's
+    # window: each (year, community, song) has only a few dozen months, so this stays small.
     con.execute("CREATE TABLE totg (h SMALLINT, g SMALLINT, recording BIGINT, m SMALLINT, k BIGINT)")
     for h in HS:
         con.execute(f"""INSERT INTO totg
-            WITH q AS (SELECT g, recording, m, (m // 12)::SMALLINT AS y, (m + {h})::SMALLINT AS mh FROM gkeys WHERE m + {h} <= {LAST})
-            SELECT {h}, q.g, q.recording, q.m, coalesce(c1.ck, 0) - coalesce(c0.ck, 0)
-            FROM q ASOF LEFT JOIN cumg c0 ON c0.year = q.y AND c0.g = q.g AND c0.recording = q.recording AND q.m >= c0.t
-                   ASOF LEFT JOIN cumg c1 ON c1.year = q.y AND c1.g = q.g AND c1.recording = q.recording AND q.mh >= c1.t""")
+            WITH q AS (SELECT g, recording, m, (m // 12)::SMALLINT AS y FROM gkeys WHERE m + {h} <= {LAST})
+            SELECT {h}, q.g, q.recording, q.m, sum(a.k)
+            FROM q JOIN adg a ON a.year = q.y AND a.g = q.g AND a.recording = q.recording AND a.t > q.m AND a.t <= q.m + {h}
+            GROUP BY ALL""")
     # Community panel: members active in both m and m+H.
     con.execute("CREATE TABLE cpan (h SMALLINT, g SMALLINT, m SMALLINT, n BIGINT)")
     for h in HS:
