@@ -22,7 +22,8 @@ cand() {  # name, model, unit, extra args...
 }
 
 # Main candidates (all controls) -------------------------------------------------------------------------
-MAIN=( "A artist" "A song" "A scene" "B artist" "C_lb artist" "C_lb song" "D artist" "D song" )
+MAIN=( "A artist" "A song" "A scene" "B artist" "B song" "B scene"
+       "C_lb artist" "C_lb song" "C_lb scene" "D artist" "D song" "D scene" )
 for mu in $MAIN; do
   m=${mu% *}; u=${mu#* }
 
@@ -47,11 +48,15 @@ done
 for mu in $MAIN; do
   m=${mu% *}; u=${mu#* }
   cand ${m}_${u}_nocontrols $m $u --adjust additive
-  cand ${m}_${u}_no_scene $m $u --age --momentum 5 --country --release --adjust additive
-  cand ${m}_${u}_no_age $m $u --scene yearly200 --momentum 5 --country --release --adjust additive
-  cand ${m}_${u}_no_momentum $m $u --scene yearly200 --age --country --release --adjust additive
-  cand ${m}_${u}_no_country $m $u --scene yearly200 --age --momentum 5 --release --adjust additive
-  cand ${m}_${u}_no_release $m $u --scene yearly200 --age --momentum 5 --country --adjust additive
+  if [[ $u != scene ]]; then  # scene bets: scene/age/country/release controls don't apply
+    cand ${m}_${u}_no_scene $m $u --age --momentum 5 --country --release --adjust additive
+    cand ${m}_${u}_no_age $m $u --scene yearly200 --momentum 5 --country --release --adjust additive
+    cand ${m}_${u}_no_country $m $u --scene yearly200 --age --momentum 5 --release --adjust additive
+    cand ${m}_${u}_no_release $m $u --scene yearly200 --age --momentum 5 --country --adjust additive
+  fi
+  if [[ $u != song ]]; then  # songs have no momentum measure
+    cand ${m}_${u}_no_momentum $m $u --scene yearly200 --age --country --release --adjust additive
+  fi
   if [[ $u == artist ]]; then
     cand ${m}_${u}_first_listen $m $u "${CTRL[@]}" --date first
     cand ${m}_${u}_scene1000 $m $u --scene yearly1000 --age --momentum 5 --country --release --adjust additive

@@ -128,13 +128,15 @@ def main():
     elif a.unit == "song":
         con.execute(f"""CREATE TABLE r AS
             SELECT user, recording AS item, artist, m, plays_26w, song_first_m, l0_h{H} AS l0, l1_h{H} AS l1,
-                   n_panel_h{H} AS n_panel, tr_later_h{H} AS tr_later, kept_later_h{H} AS kept_later, tr_prior, kept_prior
+                   n_panel_h{H} AS n_panel, tr_later_h{H} AS tr_later, kept_later_h{H} AS kept_later, tr_prior, kept_prior,
+                   g, k_comm_h{H} AS k_comm, n_comm_h{H} AS n_comm
             FROM read_parquet('{X}/song_bets/explore.parquet')
             WHERE l0_h{H} IS NOT NULL AND hash(user) % {a.user_sample} = 0""")
     else:
         con.execute(f"""CREATE TABLE r AS
             SELECT user, scene::BIGINT * 10000 + year AS item, artist, m, plays_26w, l0_h{H} AS l0, l1_h{H} AS l1,
-                   n_panel_h{H} AS n_panel, mom_g
+                   n_panel_h{H} AS n_panel, mom_g, tr_later_h{H} AS tr_later, kept_later_h{H} AS kept_later,
+                   tr_prior, kept_prior, lb_scene, g, k_comm_h{H} AS k_comm, n_comm_h{H} AS n_comm
             FROM read_parquet('{X}/scene_bets/explore.parquet')
             WHERE l0_h{H} IS NOT NULL AND hash(user) % {a.user_sample} = 0""")
     bad = con.execute("SELECT count(*) FROM r WHERE l0 < 0 OR l1 < 0").fetchone()[0]
@@ -208,10 +210,17 @@ def main():
     else:
         rel_sql, rel_join = "0", ""
     outcome_join = ""
-    assert a.unit != "scene" or a.model == "A", "scene unit: only prescience is built so far"
-    assert a.unit != "song" or a.model != "B", "song unit: community-leading not built yet"
-    xb_sql = "0"
-    if a.model == "D" and a.unit == "song":
+    xb_sql, cg_sql = "0", None
+    if a.model == "B" and a.unit in ("song", "scene"):
+        # Community-leading for songs/scenes: share of your community adopting/entering after you, adjusted
+        # (additively) for the community's overall rate that month.
+        con.execute("DELETE FROM r WHERE g IS NULL OR k_comm IS NULL OR n_comm IS NULL OR n_comm <= 0")
+        ret = "ln((r.k_comm + 0.5) / r.n_comm)"
+        cg_sql = "r.g"
+    elif a.model == "C_lb" and a.unit == "scene":
+        ret = "ln(1 + coalesce(r.lb_scene, 0))"
+    elif a.model == "D" and a.unit in ("song", "scene"):
+        con.execute("DELETE FROM r WHERE tr_later IS NULL")
         p0 = con.execute("SELECT sum(kept_later) / sum(tr_later) FROM r").fetchone()[0]
         ret = f"(r.kept_later + 2 * {p0}) / (r.tr_later + 2)"
         xb_sql = f"ntile(5) OVER (PARTITION BY r.m ORDER BY (r.kept_prior + 2 * {p0}) / (r.tr_prior + 2))"
@@ -252,10 +261,10 @@ def main():
                CASE WHEN l0 = 0 THEN 0 ELSE 1 + ntile({a.bins}) OVER (PARTITION BY m, l0 = 0 ORDER BY l0) END AS bin,
                pow(greatest(plays_26w, 1), {a.weight}) AS wt, {age_sql} AS age, {mom_sql} AS mq,
                {"coalesce(mb.country, 'XX')" if a.country and a.unit != "scene" else "'-'"} AS ctry, {rel_sql} AS relc,
-               {"ntile(10) OVER (PARTITION BY r.m ORDER BY cmt.c_pen)" if a.model == "B" else "0"} AS cpb,
-               {"cmt.cg" if a.model == "B" else "0"} AS cg,
-               {("ntile(5) OVER (PARTITION BY r.m ORDER BY cmt.c_mom)" if a.model == "B" else
-                 xb_sql if a.unit == "song" else
+               {"ntile(10) OVER (PARTITION BY r.m ORDER BY cmt.c_pen)" if a.model == "B" and a.unit == "artist" else "0"} AS cpb,
+               {cg_sql if cg_sql else "cmt.cg" if a.model == "B" else "0"} AS cg,
+               {(xb_sql if a.unit in ("song", "scene") else
+                 "ntile(5) OVER (PARTITION BY r.m ORDER BY cmt.c_mom)" if a.model == "B" else
                  "ntile(5) OVER (PARTITION BY r.m ORDER BY dd.conv_prior)" if a.model == "D" else "0")} AS xb
         FROM r {scene_join} LEFT JOIN first_seen fs ON fs.artist = r.artist {mom_join} {outcome_join} {rel_join}
         {f"LEFT JOIN read_parquet('{X}/mb_artists.parquet') mb ON mb.artist = r.artist" if a.country and a.unit != "scene" else ""}""")
@@ -264,7 +273,9 @@ def main():
     cell = "m, bin, scene, age, mq, ctry, cpb, cg, xb, relc" if a.adjust == "cells" else "m, bin"
     extra_fx = [] if a.adjust == "cells" else [g for g, on in (("scene", a.scene != "none"), ("age", a.age),
                                                                    ("mq", a.momentum > 0), ("ctry", a.country), ("relc", a.release)) if on]
-    if a.adjust != "cells" and a.model == "B":
+    if a.adjust != "cells" and a.model == "B" and a.unit != "artist":
+        extra_fx += ["cg"]
+    elif a.adjust != "cells" and a.model == "B":
         extra_fx += ["cpb", "cg", "xb"]  # prior popularity in the community; the community's own adoption rate
                                          # that month; momentum within the community
     if a.adjust != "cells" and a.model == "D":

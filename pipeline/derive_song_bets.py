@@ -19,6 +19,9 @@ Song age: months since anyone in the half first played it (censored at 2005-01).
         user, recording, artist, m, plays_26w, song_first_m,
         l0_h{H}, l1_h{H}, n_panel_h{H}, tr_later_h{H}, kept_later_h{H}   (H = 6, 12, 24)
         tr_prior, kept_prior
+        g, k_comm_h{H}, n_comm_h{H}   the bettor's taste community that year (community/<half>_home.parquet) and how
+                                      many other members first played the song in (m, m+H], out of members active
+                                      in both m and m+H (for community-leading at the song level)
 Usage: derive_song_bets.py <half>
 """
 
@@ -81,6 +84,9 @@ def main():
     con.execute("CREATE TABLE accp (recording BIGINT, m SMALLINT, tr_prior BIGINT, kept_prior BIGINT)")
     con.execute("CREATE TABLE accf (recording BIGINT, song_first_m SMALLINT)")
     con.execute("CREATE TABLE own (user BIGINT, recording BIGINT, t SMALLINT, kept BOOLEAN, post BOOLEAN)")
+    con.execute(f"CREATE TABLE home AS SELECT * FROM read_parquet('{X}/community/{half}_home.parquet')")
+    con.execute("CREATE TABLE gkeys AS SELECT DISTINCT h.g, sb.recording, sb.m FROM sb JOIN home h ON h.user = sb.user AND h.year = sb.m // 12")
+    con.execute("CREATE TABLE accg (h SMALLINT, g SMALLINT, recording BIGINT, m SMALLINT, k BIGINT)")
     for c in "0123456789abcdef":
         con.execute(f"""CREATE OR REPLACE TABLE ad AS
             SELECT ur.user, ur.recording, {MONTH.format(w='ur.first_week')}::SMALLINT AS t,
@@ -110,30 +116,47 @@ def main():
                      u AS (SELECT recording, m FROM a0 UNION SELECT recording, m FROM a1 UNION SELECT recording, m FROM tl)
                 SELECT {h}, u.recording, u.m, coalesce(a0.l0, 0), coalesce(a1.l1, 0), coalesce(tl.tr, 0), coalesce(tl.kp, 0)
                 FROM u LEFT JOIN a0 USING (recording, m) LEFT JOIN a1 USING (recording, m) LEFT JOIN tl USING (recording, m)""")
+        for h in HS:  # later adoptions by community members (community as of the bet year)
+            con.execute(f"""INSERT INTO accg SELECT {h}, k.g, k.recording, k.m, count(*)
+                FROM gkeys k JOIN ad ON ad.recording = k.recording AND ad.t > k.m AND ad.t <= k.m + {h}
+                JOIN home hm ON hm.user = ad.user AND hm.year = k.m // 12 AND hm.g = k.g
+                WHERE k.m + {h} <= {LAST} GROUP BY ALL""")
         print(f"archive {c} done", flush=True)
     con.execute("CREATE TABLE tot AS SELECT h, recording, m, sum(l0) AS l0, sum(l1) AS l1, sum(tr) AS tr, sum(kp) AS kp FROM acc GROUP BY ALL")
     con.execute("CREATE TABLE totp AS SELECT recording, m, sum(tr_prior) AS tr_prior, sum(kept_prior) AS kept_prior FROM accp GROUP BY ALL")
     con.execute("CREATE TABLE firstm AS SELECT recording, min(song_first_m) AS song_first_m FROM accf GROUP BY recording")
+    con.execute("CREATE TABLE totg AS SELECT h, g, recording, m, sum(k) AS k FROM accg GROUP BY ALL")
+    # Community panel: members active in both m and m+H.
+    con.execute("CREATE TABLE cpan (h SMALLINT, g SMALLINT, m SMALLINT, n BIGINT)")
+    for h in HS:
+        con.execute(f"""INSERT INTO cpan SELECT {h}, hm.g, a.month, count(*) FROM act a
+            JOIN act b ON b.user = a.user AND b.month = a.month + {h}
+            JOIN home hm ON hm.user = a.user AND hm.year = a.month // 12 GROUP BY ALL""")
 
     # 3. One row per bet; the bettor is removed from every count they are part of.
     sel, joins = [], []
     for h in HS:
         joins.append(f"""LEFT JOIN tot t{h} ON t{h}.h = {h} AND t{h}.recording = sb.recording AND t{h}.m = sb.m
         LEFT JOIN panel p{h} ON p{h}.month = sb.m AND p{h}.h = {h}
-        LEFT JOIN act y{h} ON y{h}.user = sb.user AND y{h}.month = sb.m + {h}""")
+        LEFT JOIN act y{h} ON y{h}.user = sb.user AND y{h}.month = sb.m + {h}
+        LEFT JOIN totg tg{h} ON tg{h}.h = {h} AND tg{h}.g = hm.g AND tg{h}.recording = sb.recording AND tg{h}.m = sb.m
+        LEFT JOIN cpan cp{h} ON cp{h}.h = {h} AND cp{h}.g = hm.g AND cp{h}.m = sb.m""")
         ok = f"sb.m + {h} <= {LAST}"
         sel.append(f"""CASE WHEN {ok} THEN coalesce(t{h}.l0, 0) - (own.t >= sb.m - 5 AND y{h}.user IS NOT NULL)::INT END AS l0_h{h},
                CASE WHEN {ok} THEN coalesce(t{h}.l1, 0) END AS l1_h{h},
                CASE WHEN {ok} THEN p{h}.n_panel - (y{h}.user IS NOT NULL)::INT END AS n_panel_h{h},
                CASE WHEN {ok} THEN coalesce(t{h}.tr, 0) END AS tr_later_h{h},
-               CASE WHEN {ok} THEN coalesce(t{h}.kp, 0) END AS kept_later_h{h}""")
+               CASE WHEN {ok} THEN coalesce(t{h}.kp, 0) END AS kept_later_h{h},
+               CASE WHEN {ok} AND hm.g IS NOT NULL THEN coalesce(tg{h}.k, 0) END AS k_comm_h{h},
+               CASE WHEN {ok} AND hm.g IS NOT NULL THEN cp{h}.n - (y{h}.user IS NOT NULL)::INT END AS n_comm_h{h}""")
     con.execute(f"""COPY (
-        SELECT sb.user, sb.recording, sb.artist, sb.m, sb.plays_26w, fm.song_first_m,
+        SELECT sb.user, sb.recording, sb.artist, sb.m, sb.plays_26w, fm.song_first_m, hm.g,
                {', '.join(sel)},
                coalesce(tp.tr_prior, 0) - coalesce(own.post, false)::INT AS tr_prior,
                coalesce(tp.kept_prior, 0) - coalesce(own.post AND own.kept, false)::INT AS kept_prior
         FROM sb
         LEFT JOIN own ON own.user = sb.user AND own.recording = sb.recording
+        LEFT JOIN home hm ON hm.user = sb.user AND hm.year = sb.m // 12
         {' '.join(joins)}
         LEFT JOIN firstm fm ON fm.recording = sb.recording
         LEFT JOIN totp tp ON tp.recording = sb.recording AND tp.m = sb.m
