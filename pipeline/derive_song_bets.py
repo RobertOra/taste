@@ -177,35 +177,36 @@ def main():
             JOIN act b ON b.user = a.user AND b.month = a.month + {h}
             JOIN home hm ON hm.user = a.user AND hm.year = a.month // 12 GROUP BY ALL""")
 
-    # 3. One row per bet; the bettor is removed from every count they are part of.
-    sel, joins = [], []
-    for h in HS:
-        joins.append(f"""LEFT JOIN tot t{h} ON t{h}.h = {h} AND t{h}.recording = sb.recording AND t{h}.m = sb.m
-        LEFT JOIN panel p{h} ON p{h}.month = sb.m AND p{h}.h = {h}
-        LEFT JOIN act y{h} ON y{h}.user = sb.user AND y{h}.month = sb.m + {h}
-        LEFT JOIN totg tg{h} ON tg{h}.h = {h} AND tg{h}.g = hm.g AND tg{h}.recording = sb.recording AND tg{h}.m = sb.m
-        LEFT JOIN cpan cp{h} ON cp{h}.h = {h} AND cp{h}.g = hm.g AND cp{h}.m = sb.m""")
-        ok = f"sb.m + {h} <= {LAST}"
-        sel.append(f"""CASE WHEN {ok} THEN coalesce(t{h}.l0, 0) - (own.t >= sb.m - 5 AND y{h}.user IS NOT NULL)::INT END AS l0_h{h},
-               CASE WHEN {ok} THEN coalesce(t{h}.l1, 0) END AS l1_h{h},
-               CASE WHEN {ok} THEN p{h}.n_panel - (y{h}.user IS NOT NULL)::INT END AS n_panel_h{h},
-               CASE WHEN {ok} THEN coalesce(t{h}.tr, 0) END AS tr_later_h{h},
-               CASE WHEN {ok} THEN coalesce(t{h}.kp, 0) END AS kept_later_h{h},
-               CASE WHEN {ok} AND hm.g IS NOT NULL THEN coalesce(tg{h}.k, 0) END AS k_comm_h{h},
-               CASE WHEN {ok} AND hm.g IS NOT NULL THEN cp{h}.n - (y{h}.user IS NOT NULL)::INT END AS n_comm_h{h}""")
-    con.execute(f"""COPY (
-        SELECT sb.user, sb.recording, sb.artist, sb.m, sb.plays_26w, fm.song_first_m, hm.g,
-               {', '.join(sel)},
+    # 3. One row per bet, built one horizon at a time (joining everything at once exceeds the memory cap);
+    #    the bettor is removed from every count they are part of.
+    con.execute("""CREATE TABLE res AS
+        SELECT sb.user, sb.recording, sb.artist, sb.m, sb.plays_26w, fm.song_first_m, hm.g, own.t AS own_t,
                coalesce(tp.tr_prior, 0) - coalesce(own.post, false)::INT AS tr_prior,
                coalesce(tp.kept_prior, 0) - coalesce(own.post AND own.kept, false)::INT AS kept_prior
         FROM sb
         LEFT JOIN own ON own.user = sb.user AND own.recording = sb.recording
         LEFT JOIN home hm ON hm.user = sb.user AND hm.year = sb.m // 12
-        {' '.join(joins)}
         LEFT JOIN firstm fm ON fm.recording = sb.recording
-        LEFT JOIN totp tp ON tp.recording = sb.recording AND tp.m = sb.m
-        ORDER BY sb.user, sb.m
-    ) TO '{out}' (FORMAT parquet, COMPRESSION zstd)""")
+        LEFT JOIN totp tp ON tp.recording = sb.recording AND tp.m = sb.m""")
+    for h in HS:
+        ok = f"r.m + {h} <= {LAST}"
+        con.execute(f"""CREATE OR REPLACE TABLE res AS
+            SELECT r.*,
+                   CASE WHEN {ok} THEN coalesce(t.l0, 0) - (r.own_t >= r.m - 5 AND y.user IS NOT NULL)::INT END AS l0_h{h},
+                   CASE WHEN {ok} THEN coalesce(t.l1, 0) END AS l1_h{h},
+                   CASE WHEN {ok} THEN p.n_panel - (y.user IS NOT NULL)::INT END AS n_panel_h{h},
+                   CASE WHEN {ok} THEN coalesce(t.tr, 0) END AS tr_later_h{h},
+                   CASE WHEN {ok} THEN coalesce(t.kp, 0) END AS kept_later_h{h},
+                   CASE WHEN {ok} AND r.g IS NOT NULL THEN coalesce(tg.k, 0) END AS k_comm_h{h},
+                   CASE WHEN {ok} AND r.g IS NOT NULL THEN cp.n - (y.user IS NOT NULL)::INT END AS n_comm_h{h}
+            FROM res r
+            LEFT JOIN (SELECT * FROM tot WHERE h = {h}) t ON t.recording = r.recording AND t.m = r.m
+            LEFT JOIN (SELECT * FROM panel WHERE h = {h}) p ON p.month = r.m
+            LEFT JOIN act y ON y.user = r.user AND y.month = r.m + {h}
+            LEFT JOIN (SELECT * FROM totg WHERE h = {h}) tg ON tg.g = r.g AND tg.recording = r.recording AND tg.m = r.m
+            LEFT JOIN (SELECT * FROM cpan WHERE h = {h}) cp ON cp.g = r.g AND cp.m = r.m""")
+        print(f"horizon {h} columns added", flush=True)
+    con.execute(f"COPY (SELECT * EXCLUDE (own_t) FROM res ORDER BY user, m) TO '{out}' (FORMAT parquet, COMPRESSION zstd)")
     bad = con.execute(f"SELECT count(*) FROM read_parquet('{out}') WHERE l0_h12 < 0 OR tr_prior < 0 OR kept_prior < 0").fetchone()[0]
     print(f"rows with negative leave-one-out counts: {bad}", flush=True)
     print(f"wrote {out}", flush=True)
