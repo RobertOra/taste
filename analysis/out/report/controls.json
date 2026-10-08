@@ -1,0 +1,86 @@
+[
+{
+"controls": "None",
+"users": 240203,
+"bets_m": 36.5,
+"not_luck": 0.615,
+"halves": 0.354,
+"gap": 0.237,
+"periods": 0.255,
+"periods_users": 83861,
+"random_split": 0.511,
+"impostor_r2": 0.02
+},
+{
+"controls": "Artist age",
+"users": 240203,
+"bets_m": 36.5,
+"not_luck": 0.598,
+"halves": 0.337,
+"gap": 0.221,
+"periods": 0.236,
+"periods_users": 83861,
+"random_split": 0.489,
+"impostor_r2": 0.021
+},
+{
+"controls": "Momentum",
+"users": 240203,
+"bets_m": 36.5,
+"not_luck": 0.601,
+"halves": 0.329,
+"gap": 0.217,
+"periods": 0.236,
+"periods_users": 83861,
+"random_split": 0.482,
+"impostor_r2": 0.018
+},
+{
+"controls": "Scene",
+"users": 240203,
+"bets_m": 36.5,
+"not_luck": 0.472,
+"halves": 0.243,
+"gap": 0.159,
+"periods": 0.166,
+"periods_users": 83861,
+"random_split": 0.376,
+"impostor_r2": 0.01
+},
+{
+"controls": "Scene + age + momentum",
+"users": 240203,
+"bets_m": 36.5,
+"not_luck": 0.458,
+"halves": 0.233,
+"gap": 0.152,
+"periods": 0.159,
+"periods_users": 83861,
+"random_split": 0.363,
+"impostor_r2": 0.01
+},
+{
+"controls": "All, incl. country",
+"users": 240203,
+"bets_m": 36.5,
+"not_luck": 0.448,
+"halves": 0.229,
+"gap": 0.149,
+"periods": 0.157,
+"periods_users": 83860,
+"random_split": 0.357,
+"impostor_r2": 0.012
+},
+{
+"controls": "All crossed (artifact)",
+"users": 240170,
+"bets_m": 36.4,
+"not_luck": 0.318,
+"halves": 0.126,
+"gap": 0.073,
+"periods": 0.076,
+"periods_users": 83816,
+"random_split": 0.198,
+"impostor_r2": 0.01
+}
+]

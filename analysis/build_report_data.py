@@ -45,7 +45,7 @@ SWEEPS = {
     "Onboarding cutoff (weeks)": [("sw_onboarding_0", "0", True), ("sw_onboarding_13", "13", False),
                                   ("add_all_country", "26", False), ("sw_onboarding_39", "39", False),
                                   ("sw_onboarding_52", "52", False)],
-    "Counts as committed": [("sw_rule_all", "Any first listen", True), ("sw_rule_w2", "2 weeks", True),
+    "Counts as committed": [("sw_rule_all", "Any first listen (1/4 of users)", True), ("sw_rule_w2", "2 weeks", True),
                             ("add_all_country", "4 weeks", False), ("sw_rule_w8", "8 weeks", False),
                             ("sw_rule_p10", "10 plays", False)],
     "Weeks allowed to commit": [("sw_window_13", "13", False), ("add_all_country", "26", False),
@@ -73,10 +73,11 @@ for param, items in SWEEPS.items():
             continue
         sweeps.append(row(load(path), parameter=param, setting=label, order=i,
                           is_main=name == "add_all_country", half_users=sampled))
-if (OUT / "model_A/primary_sample2/summary.json").exists():
-    s = row(load("model_A/primary_sample2"), parameter="Reference", setting="Main, half of users", order=0,
-            is_main=False, half_users=True)
-    sweeps.append(s)
+for i, (path, label) in enumerate([("model_A/primary_sample2", "Main settings, same half of users"),
+                                   ("model_A/primary_sample4", "Main settings, same quarter of users")]):
+    if (OUT / path / "summary.json").exists():
+        sweeps.append(row(load(path), parameter="Reference for sampled variants", setting=label, order=i,
+                          is_main=False, half_users=True))
 
 # Model agreement (shrunk scores, users scored by all four controlled models).
 df = None
@@ -92,7 +93,26 @@ Z = (Z - Z.mean(0)) / Z.std(0)
 ev = np.linalg.eigvalsh(np.cov(Z.T))[::-1]
 agreement_meta = {"users": df.height, "first_factor_share": round(float(ev[0] / ev.sum()), 3)}
 
-active = pl.read_csv(OUT / "active_users_by_year.csv").to_dicts() if (OUT / "active_users_by_year.csv").exists() else []
+# Active users per year (step 1 descriptives).
+active = []
+lines = (OUT / "describe_users.txt").read_text().split("## Artist plays and active users per year")[1].splitlines()
+for line in lines[2:]:
+    parts = line.split()
+    if len(parts) == 3 and parts[0].isdigit() and 2005 <= int(parts[0]) <= 2012:
+        active.append({"year": int(parts[0]), "active_users": int(parts[2])})
+
+# Revisions log from SPEC.md.
+revisions = []
+spec = (OUT.parent.parent / "SPEC.md").read_text().split("## Revisions")[1]
+for line in spec.splitlines():
+    cells = [c.strip() for c in line.strip().strip("|").split("|")]
+    if len(cells) == 4 and cells[0][:4].isdigit():
+        clean = lambda t: t.replace("**", "").replace("[P]", "(main)")
+        revisions.append({"n": len(revisions) + 1, "change": clean(cells[1]), "why": clean(cells[2]),
+                          "prompted_by_results": clean(cells[3])})
+(REP / "active_users.json").write_text(json.dumps(active, indent=0))
+(REP / "revisions.json").write_text(json.dumps(revisions, indent=0))
+print(len(active), "years;", len(revisions), "revisions")
 
 for name, data in [("models", models), ("controls", controls), ("sweeps", sweeps), ("agreement", agreement)]:
     (REP / f"{name}.json").write_text(json.dumps(data, indent=0))

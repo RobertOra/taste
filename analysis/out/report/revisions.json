@@ -1,0 +1,80 @@
+[
+{
+"n": 1,
+"change": "Initial spec",
+"why": "\u2014",
+"prompted_by_results": "no (only step-1 descriptives seen)"
+},
+{
+"n": 2,
+"change": "Weight as power family plays^alpha; added raw-capped and hit-indicator return metrics; continuous-parameter sweep policy",
+"why": "Robert asked about log/exponent transforms and continuous vs discrete parameters",
+"prompted_by_results": "no"
+},
+{
+"n": 3,
+"change": "Benchmark peers = other users' bets in the same month x popularity bin (all computed leave-one-out), rather than \"random artists of that popularity\"",
+"why": "Clarification while implementing: makes leave-one-out symmetric for the bet and its peers; excess return = how your bets did vs everyone else's comparable bets",
+"prompted_by_results": "no"
+},
+{
+"n": 4,
+"change": "Weeks map to months by their midpoint; market observed only to 2012-12",
+"why": "Implementation detail; data thin out in 2013",
+"prompted_by_results": "no"
+},
+{
+"n": 5,
+"change": "Durability (C): artists not found on ListenBrainz count as 0 listeners (main); dropping them is a variant",
+"why": "12% of artists missing, almost all tiny (30% of 1-4-listener artists, 0.4% of 5000+), so missing ~ never listened",
+"prompted_by_results": "no (coverage check)"
+},
+{
+"n": 6,
+"change": "Scenes: co-listening clusters partly encode *when* artists got popular (scene explains 10-29% of variance in artists' peak year; e.g. Skrillex, Gotye, Foster the People grouped \u2014 all 2011 breakouts). Proposed: genre-based scenes (MusicBrainz genres; 86% of plays covered, but only 9-18% of small artists) with untagged artists assigned by their listeners' earlier listening; current clusters kept as a contrast",
+"why": "Within-scene benchmarks would otherwise compare breakouts to breakouts and hide foresight",
+"prompted_by_results": "no (sanity check) \u2014 pending Robert's input"
+},
+{
+"n": 7,
+"change": "Scenes: year-by-year co-listening, 200 scenes (main) (each year's relatedness uses only earlier listening; artists existing before the year keep their pre-period co-listening position, new/small artists are placed by their listeners' earlier taste). Variants: 50 / 1000 scenes; all-years co-listening and genre-tag scenes as contrasts. Replaces the genre-tag proposal above",
+"why": "Robert preferred relatedness (co-listening) over labels; the actual problem was using future listening. Chosen on taste-independent quality criteria (analysis/out/scene_quality.txt): relatedness lift 9.0x vs 8.5x for the leaky all-years version (which was even fitted in-sample), with ~half the timing leak (0.11 vs 0.20); genre tags cover only 57% of bets. A first version had one catch-all scene holding 20-63% of listening (popular artists' diverse audiences average to a generic point) \u2014 fixed before comparison. Bets in 2005 have no scene (no earlier data)",
+"prompted_by_results": "no (scene-quality checks only)"
+},
+{
+"n": 8,
+"change": "Added momentum control: benchmark cells also by quintile of the artist's prior 6-month fixed-panel growth (leave-one-out). Artist-age cells (months since first listened; pre-2005 artists censored as one group) implemented as already specified",
+"why": "Standard factor control from finance (Carhart momentum) that should have been in the spec: adopting artists that are already rising earns returns without foresight. Together with scene and age controls, tests whether the primary signal is \"style exposure\" rather than skill",
+"prompted_by_results": "yes \u2014 the primary run showed a strong signal (skill share 0.62, cross-period persistence 0.25), which prompted a search for mechanical explanations"
+},
+{
+"n": 9,
+"change": "Controls (scene, age, momentum) applied additively (main): month x popularity-bin cells, then leave-one-out month x scene / month x age / month x momentum adjustments, backfitted. Fully crossed cells kept as a contrast only",
+"why": "Crossing all controls made cells tiny (8 artists per cell; 26% of bets in cells with a single artist), so bets were compared mostly to other people adopting the *same* artist, which mechanically erases artist-choice signal (persistence 0.13 crossed vs 0.23 additive). Each run now reports cell diagnostics",
+"prompted_by_results": "yes \u2014 the unexpectedly large drop with all controls crossed prompted the diagnosis"
+},
+{
+"n": 10,
+"change": "Model B uses taste communities instead of each user's k nearest neighbours: a user's community in year Y = users sharing their home scene, the scene they are most over-represented in during the previous 12 months (share of their plays / everyone's share, among scenes with >= 5% of their plays). Outcome = ln((later community adopters + 0.5) / community members active throughout); always adjusted additively for the artist's prior popularity within the community (deciles)",
+"why": "k-NN over 297k users x 36M bets (~7B lookups) was impractical. A first version used plain argmax of plays and put most users into a few big mainstream scenes (bet-weighted mean community ~26k users vs ~1.5k intended), so communities reflected popularity rather than taste; fixed before any B results",
+"prompted_by_results": "no"
+},
+{
+"n": 11,
+"change": "Variants with ~2-8x more bets (no onboarding cutoff, 2-week commitment, every first listen) run on a random half of users (hash), compared against the main controlled version on the same half",
+"why": "They exceed the machine's memory/disk budget at full size; half the users (~120k scored) is ample for persistence estimates",
+"prompted_by_results": "no"
+},
+{
+"n": 12,
+"change": "Sweep results so far (explore): persistence across separate periods stays 0.14-0.19 across onboarding, commitment window, horizon, weights, smoothing, bins and scene definitions; dating at first listen inflates it to 0.23 (trend-following credited as foresight, as predicted); a yes/no \"hit\" metric shows ~0.01",
+"why": "Logged as findings, not changes",
+"prompted_by_results": "\u2014"
+},
+{
+"n": 13,
+"change": "Model B also adjusted (additively) for month x community: the community's overall adoption rate that month",
+"why": "First B run showed very high persistence (0.33 across separate periods) that the impostors explained more of after controls (R^2 0.08 -> 0.21) \u2014 consistent with B rewarding membership in communities that adopt a lot, a stable trait of where you sit rather than foresight. B's outcome counts later adopters in *your* community, so the community's own rate must be the benchmark. Earlier B results kept as model_B/*_v1_no_community_fx",
+"prompted_by_results": "yes"
+}
+]

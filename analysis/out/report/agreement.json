@@ -1,0 +1,82 @@
+[
+{
+"model_x": "A. Prescience",
+"model_y": "A. Prescience",
+"r": 1.0
+},
+{
+"model_x": "A. Prescience",
+"model_y": "B. Community-leading",
+"r": 0.215
+},
+{
+"model_x": "A. Prescience",
+"model_y": "C. Durability",
+"r": 0.25
+},
+{
+"model_x": "A. Prescience",
+"model_y": "D. Discernment",
+"r": 0.453
+},
+{
+"model_x": "B. Community-leading",
+"model_y": "A. Prescience",
+"r": 0.215
+},
+{
+"model_x": "B. Community-leading",
+"model_y": "B. Community-leading",
+"r": 1.0
+},
+{
+"model_x": "B. Community-leading",
+"model_y": "C. Durability",
+"r": 0.136
+},
+{
+"model_x": "B. Community-leading",
+"model_y": "D. Discernment",
+"r": 0.177
+},
+{
+"model_x": "C. Durability",
+"model_y": "A. Prescience",
+"r": 0.25
+},
+{
+"model_x": "C. Durability",
+"model_y": "B. Community-leading",
+"r": 0.136
+},
+{
+"model_x": "C. Durability",
+"model_y": "C. Durability",
+"r": 1.0
+},
+{
+"model_x": "C. Durability",
+"model_y": "D. Discernment",
+"r": -0.12
+},
+{
+"model_x": "D. Discernment",
+"model_y": "A. Prescience",
+"r": 0.453
+},
+{
+"model_x": "D. Discernment",
+"model_y": "B. Community-leading",
+"r": 0.177
+},
+{
+"model_x": "D. Discernment",
+"model_y": "C. Durability",
+"r": -0.12
+},
+{
+"model_x": "D. Discernment",
+"model_y": "D. Discernment",
+"r": 1.0
+}
+]

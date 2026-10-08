@@ -1,0 +1,472 @@
+<style>
+.tr { display: grid; gap: var(--cds-gap-xl); font-family: var(--font-anthropic-sans); max-width: 72rem; margin-inline: auto; }
+.tr h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
+.tr h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; text-wrap: balance; }
+.tr h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
+.tr-take { font-size: var(--cds-font-size-body); line-height: 1.55; max-width: 68ch; margin: var(--cds-gap-sm) 0 0; }
+.tr-scope { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: var(--cds-gap-xs) 0 0; max-width: 75ch; line-height: 1.45; }
+.tr-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: var(--cds-gap-md); }
+.tr-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; position: relative; }
+.tr-tile { display: grid; gap: var(--cds-gap-xs); align-content: start; }
+.tr-tile .tr-v { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; }
+.tr-tile .tr-l { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); line-height: 1.4; }
+.tr-note { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); margin: var(--cds-gap-xs) 0 var(--cds-gap-md); max-width: 78ch; line-height: 1.45; }
+.tr-prose p { max-width: 70ch; line-height: 1.55; margin: 0 0 var(--cds-gap-sm); }
+.tr-prose ul { max-width: 70ch; line-height: 1.55; margin: 0 0 var(--cds-gap-sm); padding-left: 1.2em; }
+.tr-section { display: grid; gap: var(--cds-gap-md); }
+.tr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); }
+.tr-chart { min-height: 120px; position: relative; }
+.tr-chart svg { display: block; overflow: visible; }
+.tr-num { font-variant-numeric: tabular-nums; }
+.tr .tr-num b, .tr-take b { font-weight: var(--cds-font-weight-medium); }
+.tr-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+.tr-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.tr-sw { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.tr-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); z-index: 3; max-width: 18rem; line-height: 1.45; }
+.tr-tip .tr-tk { color: var(--cds-text-secondary); }
+.tr-tablewrap { overflow-x: auto; max-height: 34rem; overflow-y: auto; }
+.tr table { border-collapse: collapse; width: 100%; font-size: var(--cds-font-size-caption); }
+.tr th { text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); position: sticky; top: 0; background: var(--color-panel); }
+.tr td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: top; line-height: 1.45; }
+.tr td.tr-n { font-variant-numeric: tabular-nums; color: var(--color-fg-muted); }
+.tr-pill { display: inline-block; padding: 1px 8px; border-radius: 999px; border: 1px solid var(--color-border-line); white-space: nowrap; }
+.tr-pill.tr-yes { color: var(--color-warn); border-color: currentColor; }
+.tr-fail { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 120px; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.tr-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+[data-dash-source-state=empty] { color: transparent; }
+[data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+</style>
+
+<div class="tr">
+  <header id="top">
+    <h1>Is taste real?</h1>
+    <p class="tr-take" id="takeaway">
+      Early answer: <b>partly yes</b>. People whose picks outgrew comparable artists in 2006–08 tended to do it again in 2010–11
+      (correlation <b class="tr-num dash-skeleton" data-source="models" data-field="periods" data-where="model=A. Prescience&amp;version=All controls" data-fmt="f2">—</b>
+      across <span class="tr-num dash-skeleton" data-source="models" data-field="periods_users" data-where="model=A. Prescience&amp;version=All controls" data-fmt="int">—</span> users),
+      after accounting for scene, artist age, momentum and country. About a third of the raw signal was simply being in scenes that grew.
+    </p>
+    <p class="tr-scope">Explore half of MLHD+ only (Last.fm listeners, 2005–2013). The sealed half has not been touched. Every number here can still change, and nothing is confirmed until the sealed half is run once with frozen definitions.</p>
+  </header>
+
+  <section class="tr-tiles" id="tiles" aria-label="Headline figures, model A with all controls">
+    <div class="tr-card tr-tile">
+      <span class="tr-l">Persistence across separate periods</span>
+      <span class="tr-v dash-skeleton" data-source="models" data-field="periods" data-where="model=A. Prescience&amp;version=All controls" data-fmt="f2">—</span>
+      <span class="tr-l">Correlation of each person's score on 2006–08 bets with 2010–11 bets (no overlapping time windows)</span>
+    </div>
+    <div class="tr-card tr-tile">
+      <span class="tr-l">Spread between people that isn't luck</span>
+      <span class="tr-v dash-skeleton" data-source="models" data-field="not_luck" data-where="model=A. Prescience&amp;version=All controls" data-fmt="pct">—</span>
+      <span class="tr-l">Compared with shuffling every bet's result among comparable bets</span>
+    </div>
+    <div class="tr-card tr-tile">
+      <span class="tr-l">Explained by impostors</span>
+      <span class="tr-v dash-skeleton" data-source="models" data-field="impostor_r2" data-where="model=A. Prescience&amp;version=All controls" data-fmt="pct">—</span>
+      <span class="tr-l">Activity, exploration, obscurity, mainstreamness, history length, join year, data quality</span>
+    </div>
+    <div class="tr-card tr-tile">
+      <span class="tr-l">People scored</span>
+      <span class="tr-v dash-skeleton" data-source="models" data-field="users" data-where="model=A. Prescience&amp;version=All controls" data-fmt="compact">—</span>
+      <span class="tr-l">With at least 20 committed bets, out of <span class="tr-num dash-skeleton" data-source="models" data-field="bets_m" data-where="model=A. Prescience&amp;version=All controls" data-fmt="f1">—</span> million bets</span>
+    </div>
+  </section>
+
+  <section class="tr-section" id="models">
+    <div>
+      <h2>Four ways to define taste</h2>
+      <p class="tr-note">Persistence across separate periods for each model, before and after controls. A: your picks grow more than comparable artists. B: your taste community adopts them later. C: they're still listened to in 2026. D: other people who try them stick with them.</p>
+    </div>
+    <div class="tr-card">
+      <div class="tr-legend" id="models-legend"></div>
+      <div class="tr-chart dash-skeleton" id="models-chart" data-source="models"></div>
+    </div>
+    <div class="tr-prose">
+      <p><b>A (prescience)</b> is the cleanest result: small influence from impostors, stable across every setting tested.</p>
+      <p><b>B (community-leading)</b> and <b>D (discernment)</b> show the highest numbers after controls, but impostors explain more of them than of A
+      (<span class="tr-num dash-skeleton" data-source="models" data-field="impostor_r2" data-where="model=B. Community-leading&amp;version=All controls" data-fmt="pct">—</span> and
+      <span class="tr-num dash-skeleton" data-source="models" data-field="impostor_r2" data-where="model=D. Discernment&amp;version=All controls" data-fmt="pct">—</span>).
+      B may still pick up trend-following inside your own community, and D may partly reflect music types whose fans are loyal anyway. Treat both with caution.</p>
+      <p><b>C (durability)</b> is weak once controls are applied: whether your picks are still big in 2026 mostly reflects how mainstream they were.</p>
+    </div>
+  </section>
+
+  <section class="tr-section" id="controls">
+    <div>
+      <h2>What the controls remove (model A)</h2>
+      <p class="tr-note">Each control compares a bet only with bets on artists that share that trait. Scene does most of the work; age, momentum and country add little. The last bar crossed every control into tiny groups, which compared bets mostly with other people picking the same artist and erased the signal mechanically. It was replaced by applying controls side by side.</p>
+    </div>
+    <div class="tr-card">
+      <div class="tr-chart dash-skeleton" id="controls-chart" data-source="controls"></div>
+    </div>
+  </section>
+
+  <section class="tr-section" id="robustness">
+    <div>
+      <h2>Does it depend on the settings?</h2>
+      <p class="tr-note">Model A with all controls, changing one setting at a time. The vertical line is the main version. A flat cluster means the choice doesn't matter. Hollow dots ran on a random half or quarter of users and compare to the reference rows at the bottom. Hover a dot for more.</p>
+    </div>
+    <div class="tr-card">
+      <div class="tr-chart dash-skeleton" id="sweeps-chart" data-source="sweeps"></div>
+    </div>
+    <div class="tr-prose">
+      <ul>
+        <li>Almost every setting lands close to the main version, so the result doesn't hinge on any one choice.</li>
+        <li>Dating bets at the first listen instead of at commitment inflates the score, as expected: it credits trend-following during the weeks someone was deciding.</li>
+        <li>A yes/no "big hit" score shows almost nothing. Taste here looks like steady outperformance, not catching the occasional huge winner.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="tr-section" id="agreement">
+    <div>
+      <h2>Do the models agree?</h2>
+      <p class="tr-note">Correlation between people's scores on each pair of models (all controls). One shared factor explains
+        <span class="tr-num dash-skeleton" data-source="agreement_meta" data-field="first_factor_share" data-row="0" data-fmt="pct">—</span>
+        of the variation across the four scores, against one in four if they were unrelated. A and D are partly linked mechanically: an artist that keeps the people who try it also grows more.</p>
+    </div>
+    <div class="tr-grid">
+      <div class="tr-card">
+        <div class="tr-chart dash-skeleton" id="agree-chart" data-source="agreement"></div>
+      </div>
+      <div class="tr-card tr-prose">
+        <h3>Reading it</h3>
+        <p>Prescience and discernment go together most. Durability pulls slightly the other way from discernment: artists whose fans are loyal tend to be niche, while artists still big in 2026 tend to be mainstream.</p>
+        <p>So far this looks less like one general taste ability and more like two or three related ones.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tr-section" id="caveats">
+    <h2>What this can't say yet</h2>
+    <div class="tr-grid">
+      <div class="tr-card tr-prose">
+        <h3>Open explanations</h3>
+        <ul>
+          <li><b>Following music news.</b> Being early just before a big album release may mean reading blogs, not having taste. Needs release dates.</li>
+          <li><b>Influence.</b> Someone who shares music with friends partly causes the growth they're credited with predicting. Friendships aren't in the data.</li>
+          <li><b>Who is in the data.</b> Everyone here was still on Last.fm in 2012–13, and the user base skews indie.</li>
+          <li><b>Era.</b> This is mostly before algorithmic playlists. ListenBrainz (2015–2026) is the comparison.</li>
+        </ul>
+      </div>
+      <div class="tr-card">
+        <h3>Why popularity is measured within a fixed panel</h3>
+        <p class="tr-note">Active users in the explore half grew many times over the period, so raw listener counts make nearly every artist look like it's growing.</p>
+        <div class="tr-chart dash-skeleton" id="active-chart" data-source="active_users"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tr-section" id="revisions">
+    <div>
+      <h2>Every change to the plan</h2>
+      <p class="tr-note">From the revisions log in the project's spec. Changes marked as prompted by results were made after seeing a result, which is exactly what the sealed-half confirmation is there to check.</p>
+    </div>
+    <div class="tr-card tr-tablewrap">
+      <table id="rev-table" data-source="revisions" data-row-key="n">
+        <thead><tr>
+          <th data-field="n">#</th><th data-field="change">Change</th><th data-field="why">Why</th><th data-field="prompted_by_results">Prompted by results?</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  const fmt = {
+    f1: d3.format('.1f'), f2: d3.format('.2f'), pct: d3.format('.0%'), int: d3.format(','),
+    compact: (v) => Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(v),
+  };
+  const css = (name) => getComputedStyle(document.getElementById('dash-root')).getPropertyValue(name).trim();
+
+  function parseWhere(s) {
+    return s.split('&').map((kv) => kv.split('=').map(decodeURIComponent));
+  }
+  function fillMarks() {
+    document.querySelectorAll('.tr [data-field][data-fmt]').forEach((el) => {
+      const d = dash.data(el.dataset.source);
+      if (d.status !== 'ok') { el.textContent = '—'; return; }
+      let row;
+      if (el.dataset.row !== undefined) row = d.data[Number(el.dataset.row)];
+      else row = d.data.find((r) => parseWhere(el.dataset.where).every(([k, v]) => String(r[k]) === v));
+      el.classList.remove('dash-skeleton');
+      el.textContent = row ? fmt[el.dataset.fmt](Number(row[el.dataset.field])) : '—';
+    });
+  }
+
+  function state(el, ids) {
+    const sts = ids.map((i) => dash.data(i).status);
+    if (sts.some((s) => s === 'error' || s === 'connect' || s === 'missing' || s === 'declined')) {
+      el.classList.remove('dash-skeleton');
+      el.innerHTML = '';
+      const f = document.createElement('div');
+      f.className = 'tr-fail';
+      f.textContent = 'Failed to load';
+      el.appendChild(f);
+      return false;
+    }
+    if (sts.some((s) => s !== 'ok')) { el.innerHTML = ''; el.classList.add('dash-skeleton'); return false; }
+    el.classList.remove('dash-skeleton');
+    el.innerHTML = '';
+    return true;
+  }
+
+  function tooltip(box) {
+    const t = document.createElement('div');
+    t.className = 'tr-tip';
+    t.hidden = true;
+    box.appendChild(t);
+    return {
+      show(ev, title, lines) {
+        t.replaceChildren();
+        const h = document.createElement('div'); h.className = 'tr-tk'; h.textContent = title; t.appendChild(h);
+        lines.forEach(([k, v]) => {
+          const l = document.createElement('div');
+          const a = document.createElement('span'); a.className = 'tr-tk'; a.textContent = k + ' ';
+          const b = document.createElement('span'); b.className = 'tr-num'; b.textContent = v;
+          l.append(a, b); t.appendChild(l);
+        });
+        t.hidden = false;
+        const r = box.getBoundingClientRect();
+        let x = ev.clientX - r.left + 12, y = ev.clientY - r.top + 12;
+        const w = t.offsetWidth, hgt = t.offsetHeight;
+        if (x + w > box.clientWidth) x = Math.max(0, ev.clientX - r.left - w - 12);
+        if (y + hgt > box.clientHeight + 40) y = Math.max(0, ev.clientY - r.top - hgt - 12);
+        t.style.left = x + 'px'; t.style.top = y + 'px';
+      },
+      hide() { t.hidden = true; },
+    };
+  }
+
+  function measure(svg, texts) {
+    const g = svg.append('g').attr('opacity', 0);
+    const w = d3.max(texts, (s) => g.append('text').attr('font-size', css('--cds-font-size-caption') || '12px').text(s).node().getComputedTextLength()) || 0;
+    g.remove();
+    return w;
+  }
+
+  // Horizontal bars; rows: [{label, values: [{key, v, color, extra}]}]
+  function hbars(el, rows, opts) {
+    const width = el.clientWidth;
+    const svg = d3.select(el).append('svg').attr('width', '100%');
+    const fs = css('--cds-font-size-caption') || '12px';
+    const left = Math.min(measure(svg, rows.map((r) => r.label)) + 12, width * 0.45);
+    const nv = rows[0].values.length;
+    const barH = 14, gap = 4, groupGap = 14;
+    const groupH = nv * barH + (nv - 1) * gap;
+    const top = 6, bottom = 26, right = 44;
+    const height = top + rows.length * groupH + (rows.length - 1) * groupGap + bottom;
+    svg.attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
+    const maxV = d3.max(rows, (r) => d3.max(r.values, (v) => v.v));
+    const x = d3.scaleLinear([0, Math.max(maxV * 1.1, 0.05)], [left, width - right]).nice();
+    const ax = svg.append('g').attr('transform', `translate(0,${height - bottom + 6})`)
+      .call(d3.axisBottom(x).ticks(Math.max(2, Math.floor((width - left) / 80))).tickFormat(d3.format('.2f')).tickSize(0))
+      .attr('font-size', null).attr('font-family', null);
+    ax.select('.domain').remove();
+    ax.selectAll('text').attr('fill', css('--color-fg-muted')).style('font-size', fs);
+    svg.append('g').selectAll('line').data(x.ticks(Math.max(2, Math.floor((width - left) / 80)))).join('line')
+      .attr('x1', (d) => x(d)).attr('x2', (d) => x(d)).attr('y1', top - 4).attr('y2', height - bottom)
+      .attr('stroke', css('--cds-chart-grid')).attr('stroke-width', 1);
+    const tip = tooltip(el);
+    rows.forEach((r, i) => {
+      const y0 = top + i * (groupH + groupGap);
+      svg.append('text').attr('x', left - 10).attr('y', y0 + groupH / 2).attr('dy', '0.35em').attr('text-anchor', 'end')
+        .attr('fill', css('--color-fg')).style('font-size', fs).text(r.label);
+      r.values.forEach((v, j) => {
+        const y = y0 + j * (barH + gap);
+        svg.append('rect').attr('x', x(0)).attr('y', y).attr('height', barH).attr('rx', 4)
+          .attr('width', Math.max(1, x(Math.max(v.v, 0)) - x(0))).attr('fill', v.color)
+          .on('mousemove', (ev) => tip.show(ev, `${r.label} · ${v.key}`, v.extra))
+          .on('mouseleave', () => tip.hide());
+        svg.append('text').attr('x', x(Math.max(v.v, 0)) + 6).attr('y', y + barH / 2).attr('dy', '0.35em')
+          .attr('fill', css('--color-fg-muted')).style('font-size', fs).attr('class', 'tr-num').text(d3.format('.2f')(v.v));
+      });
+    });
+  }
+
+  const lines = (r) => [
+    ['Across separate periods', fmt.f2(r.periods)], ['Early vs late halves', fmt.f2(r.halves)],
+    ['Halves with a gap', fmt.f2(r.gap)], ['Random split (ceiling)', fmt.f2(r.random_split)],
+    ['Not luck', fmt.pct(r.not_luck)], ['Explained by impostors', fmt.pct(r.impostor_r2)],
+    ['People scored', fmt.int(r.users)],
+  ];
+
+  function drawModels() {
+    const el = document.getElementById('models-chart');
+    const lg = document.getElementById('models-legend');
+    lg.replaceChildren();
+    if (!state(el, ['models'])) return;
+    const data = dash.data('models').data;
+    const cols = [{ key: 'No controls', color: css('--cds-chart-muted') }, { key: 'All controls', color: dash.colors[0] }];
+    cols.forEach((c) => {
+      const s = document.createElement('span');
+      const sw = document.createElement('i'); sw.className = 'tr-sw'; sw.style.background = c.color;
+      s.append(sw, document.createTextNode(c.key)); lg.appendChild(s);
+    });
+    const models = [...new Set(data.map((d) => d.model))];
+    hbars(el, models.map((m) => ({
+      label: m,
+      values: cols.map((c) => {
+        const r = data.find((d) => d.model === m && d.version === c.key);
+        return { key: c.key, v: Number(r.periods), color: c.color, extra: lines(r) };
+      }),
+    })));
+  }
+
+  function drawControls() {
+    const el = document.getElementById('controls-chart');
+    if (!state(el, ['controls'])) return;
+    const data = dash.data('controls').data;
+    hbars(el, data.map((r) => ({
+      label: r.controls,
+      values: [{ key: 'Across separate periods', v: Number(r.periods),
+        color: r.controls.includes('artifact') ? css('--cds-chart-muted') : dash.colors[0], extra: lines(r) }],
+    })));
+  }
+
+  function drawSweeps() {
+    const el = document.getElementById('sweeps-chart');
+    if (!state(el, ['sweeps'])) return;
+    const data = dash.data('sweeps').data.map((d) => ({ ...d, periods: Number(d.periods) }));
+    const groups = d3.groups(data, (d) => d.parameter);
+    const width = el.clientWidth;
+    const svg = d3.select(el).append('svg').attr('width', '100%');
+    const fs = css('--cds-font-size-caption') || '12px';
+    const left = Math.min(measure(svg, data.map((d) => d.setting)) + 24, width * 0.5);
+    const rowH = 20, headH = 26, top = 4, bottom = 26, right = 40;
+    const nRows = data.length;
+    const height = top + groups.length * headH + nRows * rowH + bottom;
+    svg.attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
+    const x = d3.scaleLinear([0, Math.max(0.3, d3.max(data, (d) => d.periods) * 1.1)], [left, width - right]).nice();
+    const nt = Math.max(2, Math.floor((width - left) / 80));
+    svg.append('g').selectAll('line').data(x.ticks(nt)).join('line')
+      .attr('x1', (d) => x(d)).attr('x2', (d) => x(d)).attr('y1', top).attr('y2', height - bottom)
+      .attr('stroke', css('--cds-chart-grid'));
+    const ax = svg.append('g').attr('transform', `translate(0,${height - bottom + 6})`)
+      .call(d3.axisBottom(x).ticks(nt).tickFormat(d3.format('.2f')).tickSize(0)).attr('font-size', null).attr('font-family', null);
+    ax.select('.domain').remove();
+    ax.selectAll('text').attr('fill', css('--color-fg-muted')).style('font-size', fs);
+    const main = data.find((d) => d.is_main === true || d.is_main === 'true');
+    if (main) {
+      svg.append('line').attr('x1', x(main.periods)).attr('x2', x(main.periods)).attr('y1', top).attr('y2', height - bottom)
+        .attr('stroke', css('--cds-chart-reference')).attr('stroke-dasharray', '4 3');
+    }
+    const tip = tooltip(el);
+    let y = top;
+    groups.forEach(([param, rows]) => {
+      svg.append('text').attr('x', 0).attr('y', y + headH - 8).attr('fill', css('--color-fg'))
+        .style('font-size', fs).style('font-weight', css('--cds-font-weight-medium')).text(param);
+      y += headH;
+      rows.sort((a, b) => a.order - b.order).forEach((r) => {
+        const cy = y + rowH / 2;
+        const isMain = r.is_main === true || r.is_main === 'true';
+        const sampled = r.half_users === true || r.half_users === 'true';
+        svg.append('text').attr('x', 12).attr('y', cy).attr('dy', '0.35em').attr('fill', css(isMain ? '--color-fg' : '--color-fg-muted'))
+          .style('font-size', fs).text(r.setting + (isMain ? ' (main)' : ''));
+        svg.append('line').attr('x1', left).attr('x2', x(r.periods)).attr('y1', cy).attr('y2', cy)
+          .attr('stroke', css('--cds-chart-grid')).attr('stroke-width', 2);
+        svg.append('circle').attr('cx', x(r.periods)).attr('cy', cy).attr('r', 5)
+          .attr('fill', sampled ? css('--color-panel') : dash.colors[0]).attr('stroke', dash.colors[0]).attr('stroke-width', 2);
+        svg.append('text').attr('x', x(r.periods) + 10).attr('y', cy).attr('dy', '0.35em').attr('fill', css('--color-fg-muted'))
+          .style('font-size', fs).attr('class', 'tr-num').text(fmt.f2(r.periods));
+        svg.append('rect').attr('x', 0).attr('y', y).attr('width', width).attr('height', rowH).attr('fill', 'transparent')
+          .on('mousemove', (ev) => tip.show(ev, `${param}: ${r.setting}`, lines(r).concat(sampled ? [['Users', 'random subset']] : [])))
+          .on('mouseleave', () => tip.hide());
+        y += rowH;
+      });
+    });
+  }
+
+  function drawAgreement() {
+    const el = document.getElementById('agree-chart');
+    if (!state(el, ['agreement'])) return;
+    const data = dash.data('agreement').data.map((d) => ({ ...d, r: Number(d.r) }));
+    const models = [...new Set(data.map((d) => d.model_x))];
+    const width = el.clientWidth;
+    const svg = d3.select(el).append('svg').attr('width', '100%');
+    const fs = css('--cds-font-size-caption') || '12px';
+    const left = measure(svg, models) + 10;
+    const n = models.length;
+    const cell = Math.max(36, Math.min(72, (width - left) / n));
+    const top = 22;
+    const height = top + n * cell + 4;
+    svg.attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
+    const pos = dash.colors[0], neg = dash.colors[1];
+    const tip = tooltip(el);
+    models.forEach((m, j) => {
+      svg.append('text').attr('x', left + j * cell + cell / 2).attr('y', top - 8).attr('text-anchor', 'middle')
+        .attr('fill', css('--color-fg-muted')).style('font-size', fs).text(m.split('.')[0]);
+    });
+    models.forEach((my, i) => {
+      svg.append('text').attr('x', left - 10).attr('y', top + i * cell + cell / 2).attr('dy', '0.35em').attr('text-anchor', 'end')
+        .attr('fill', css('--color-fg')).style('font-size', fs).text(my);
+      models.forEach((mx, j) => {
+        const d = data.find((r) => r.model_x === my && r.model_y === mx);
+        const diag = i === j;
+        svg.append('rect').attr('x', left + j * cell + 1).attr('y', top + i * cell + 1).attr('width', cell - 2).attr('height', cell - 2)
+          .attr('rx', 4).attr('fill', diag ? css('--cds-chart-grid') : (d.r >= 0 ? pos : neg))
+          .attr('fill-opacity', diag ? 1 : Math.min(1, 0.12 + Math.abs(d.r) * 1.6))
+          .on('mousemove', (ev) => tip.show(ev, `${my} × ${mx}`, [['Correlation', fmt.f2(d.r)]]))
+          .on('mouseleave', () => tip.hide());
+        svg.append('text').attr('x', left + j * cell + cell / 2).attr('y', top + i * cell + cell / 2).attr('dy', '0.35em')
+          .attr('text-anchor', 'middle').attr('fill', css('--color-fg')).style('font-size', fs).attr('class', 'tr-num')
+          .style('pointer-events', 'none').text(diag ? '' : fmt.f2(d.r));
+      });
+    });
+  }
+
+  function drawActive() {
+    const el = document.getElementById('active-chart');
+    if (!state(el, ['active_users'])) return;
+    const data = dash.data('active_users').data.map((d) => ({ year: String(d.year), n: Number(d.active_users) }));
+    const width = el.clientWidth, height = 180, top = 8, bottom = 24, left = 44, right = 4;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
+    const fs = css('--cds-font-size-caption') || '12px';
+    const x = d3.scaleBand(data.map((d) => d.year), [left, width - right]).padding(0.25);
+    const y = d3.scaleLinear([0, d3.max(data, (d) => d.n)], [height - bottom, top]).nice();
+    svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1', left).attr('x2', width - right)
+      .attr('y1', (d) => y(d)).attr('y2', (d) => y(d)).attr('stroke', css('--cds-chart-grid'));
+    const ay = svg.append('g').attr('transform', `translate(${left - 6},0)`)
+      .call(d3.axisLeft(y).ticks(4).tickFormat(fmt.compact).tickSize(0)).attr('font-size', null).attr('font-family', null);
+    ay.select('.domain').remove(); ay.selectAll('text').attr('fill', css('--color-fg-muted')).style('font-size', fs);
+    const ax = svg.append('g').attr('transform', `translate(0,${height - bottom + 6})`)
+      .call(d3.axisBottom(x).tickSize(0).tickFormat((d) => (width < 420 ? "'" + d.slice(2) : d))).attr('font-size', null).attr('font-family', null);
+    ax.select('.domain').remove(); ax.selectAll('text').attr('fill', css('--color-fg-muted')).style('font-size', fs);
+    const tip = tooltip(el);
+    svg.append('g').selectAll('rect').data(data).join('rect').attr('x', (d) => x(d.year)).attr('width', x.bandwidth())
+      .attr('y', (d) => y(d.n)).attr('height', (d) => y(0) - y(d.n)).attr('rx', 4).attr('fill', dash.colors[0])
+      .on('mousemove', (ev, d) => tip.show(ev, d.year, [['Active users', fmt.int(d.n)]])).on('mouseleave', () => tip.hide());
+  }
+
+  function drawRevisions() {
+    const tb = document.querySelector('#rev-table tbody');
+    tb.replaceChildren();
+    const d = dash.data('revisions');
+    if (d.status !== 'ok') return;
+    d.data.forEach((r) => {
+      const tr = document.createElement('tr');
+      const td = (text, cls) => { const c = document.createElement('td'); if (cls) c.className = cls; c.textContent = text; return c; };
+      const p = document.createElement('td');
+      const pill = document.createElement('span');
+      const yes = String(r.prompted_by_results).toLowerCase().startsWith('yes');
+      pill.className = 'tr-pill' + (yes ? ' tr-yes' : '');
+      pill.textContent = r.prompted_by_results;
+      p.appendChild(pill);
+      tr.append(td(String(r.n), 'tr-n'), td(r.change), td(r.why), p);
+      tb.appendChild(tr);
+    });
+  }
+
+  dash.onData(() => {
+    fillMarks();
+    drawModels();
+    drawControls();
+    drawSweeps();
+    drawAgreement();
+    drawActive();
+    drawRevisions();
+  });
+})();
+</script>

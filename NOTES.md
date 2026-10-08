@@ -80,3 +80,12 @@ Incidents, both fixed:
 - 581k artists; top 1% get 76% of plays.
 - Strict breakouts (<0.1% -> >=1% penetration in 2 y): ~250-290 artists/yr. 93% of users have
   zero committed early bets on one -> hit-counting is far too sparse; use continuous returns on all bets.
+
+## Step 2 status (2026-10-08, explore half only)
+Report page: https://claude.ai/artifact/GLyaqWkJrEnJKPJNeG2zPt (source: analysis/report/index.html, data: analysis/out/report/).
+- Model A (prescience), all controls: persistence across separate periods 0.16, ~45% of spread not luck, impostors ~1%.
+  Stable 0.14-0.19 across all settings; scene control removes ~1/3 of the raw signal.
+- B (community, with month x community fix) 0.26 and D (discernment) 0.25, but impostors explain 16% / 11%.
+- C (durability, LB 2026) weak after controls (0.09).
+- Agreement: A-D 0.45, A-C 0.25, A-B 0.18, C-D -0.12; first factor 41% (chance 25%).
+Open: community-level momentum for B; music-news/release timing; influence; finer D confounds; ListenBrainz era comparison.
