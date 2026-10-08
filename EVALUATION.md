@@ -88,8 +88,11 @@ Averaged over cutoff years, weighted by people scored.
   comparable bets. Gate: the excess spread's interval excludes zero.
 - **Impostors**: share of the score explained by activity, exploration, obscurity, mainstreamness,
   history length, join year, data quality and scene mix (in plain terms: from someone's listening
-  habits alone, how much of their taste score could you predict?). Gate: under 10%, and the forward
-  correlation of the impostor-adjusted score still excludes zero. Always reported, with its interval.
+  habits alone, how much of their taste score could you predict?). Reported with its interval, not gated.
+- **Incremental validity (revised 2026-10-08):** the headline number for every candidate is its forward
+  prediction *after removing the impostors* (score residualized on impostor features); candidates are ranked
+  by it. Gate: its interval excludes zero. Also reported: unadjusted prediction and share kept.
+  Planned refinement before the freeze: impostor features computed from the past period only.
 
 ### 3.3 Stable (gate + description)
 Each person scored separately per calendar year. Correlations between years 1, 2, 3, 4, 5 apart,
@@ -184,7 +187,9 @@ Disk: song-level tables ~3-5 GB, release dates < 1 GB, sealed tables ~12 GB; pea
 
 ## 9. Decisions (Robert, 2026-10-08)
 1. Criteria order: approved (predictive first; validity and stability as gates).
-2. Impostor gate: 10%, always reported with its interval (Claude's call, as delegated).
+2. Impostor handling: no share cutoff; rank by impostor-adjusted forward prediction, gate on it being > 0
+   (revised from a 10% cutoff after small-sample tests showed equal shares can hide very different amounts of
+   real signal; Robert deferred to Claude).
 3. Candidates: keep everything unless there is a good reason not to -> all 12 construct x unit combinations.
 4. Release-timing check: included.
 5. Combined score: start separate; revisit at the freeze review.

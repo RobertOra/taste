@@ -31,6 +31,9 @@ for f in sorted(OUT.glob("*/scorecard.json")):
     fw = d.get("forward", {})
     rows.append({
         "candidate": d["candidate"],
+        "adj_forward": d.get("headline_adjusted_forward"),
+        "adj_forward_ci": fmt_ci(d.get("headline_adjusted_forward"), d.get("headline_adjusted_forward_ci")),
+        "kept": d.get("share_of_prediction_kept_after_impostors"),
         "forward": fw.get("rank_corr"), "forward_ci": fmt_ci(fw.get("rank_corr"), fw.get("rank_corr_ci")),
         "repeat_top20": fw.get("repeat_rate_top20"),
         "imp_adj_forward": fw.get("impostor_adjusted_rank_corr"),
@@ -41,8 +44,8 @@ for f in sorted(OUT.glob("*/scorecard.json")):
         "users": d.get("users_scored"), "coverage": d.get("coverage"),
         "gates": "pass" if d.get("passes_gates") else "FAIL: " + ", ".join(k for k, v in d.get("gates", {}).items() if not v),
     })
-df = pd.DataFrame(rows).sort_values("forward", ascending=False)
+df = pd.DataFrame(rows).sort_values("adj_forward", ascending=False)
 df.to_csv(OUT / "scoreboard.csv", index=False)
 pd.set_option("display.width", 250)
 pd.set_option("display.max_colwidth", 60)
-print(df.drop(columns=["forward"]).round(3).to_string(index=False))
+print(df.drop(columns=["adj_forward", "forward"]).round(3).to_string(index=False))

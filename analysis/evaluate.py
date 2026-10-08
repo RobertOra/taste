@@ -221,9 +221,14 @@ def main(name):
 
     # --- gates ----------------------------------------------------------------------------------------
     f = card.get("forward", {})
+    # Incremental validity: the headline is the forward prediction after removing the impostors; the only
+    # impostor-related gate is that it stays above zero. No arbitrary share cutoff (impostor R^2 is reported).
+    if f:
+        card["headline_adjusted_forward"] = f["impostor_adjusted_rank_corr"]
+        card["headline_adjusted_forward_ci"] = f["impostor_adjusted_rank_corr_ci"]
+        card["share_of_prediction_kept_after_impostors"] = f["impostor_adjusted_rank_corr"] / f["rank_corr"] if f["rank_corr"] else None
     card["gates"] = {
         "beats_luck": card["not_luck_share_ci"][0] is not None and card["not_luck_share_ci"][0] > 0,
-        "impostor_share_below_10pct": card["impostor_r2"] < 0.10,
         "impostor_adjusted_still_predicts": (f.get("impostor_adjusted_rank_corr_ci") or [None])[0] is not None
                                             and f["impostor_adjusted_rank_corr_ci"][0] > 0,
         "stable_3y": (card.get("stability_3y_corrected_ci") or [None])[0] is not None
@@ -231,8 +236,9 @@ def main(name):
     }
     card["passes_gates"] = all(card["gates"].values())
     (out / "scorecard.json").write_text(json.dumps(card, indent=1))
-    print(json.dumps({k: card[k] for k in ["candidate", "users_scored", "not_luck_share", "reliability", "impostor_r2",
-                                           "stability_3y_corrected", "passes_gates"]}
+    print(json.dumps({k: card.get(k) for k in ["candidate", "headline_adjusted_forward", "headline_adjusted_forward_ci",
+                                               "share_of_prediction_kept_after_impostors", "users_scored", "not_luck_share",
+                                               "reliability", "impostor_r2", "stability_3y_corrected", "passes_gates"]}
                      | {"forward": {k: v for k, v in f.items() if k != "by_cutoff"}}, indent=1))
 
 
