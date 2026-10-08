@@ -122,6 +122,27 @@ def main(name):
     card["impostor_corr"] = {c: float(np.corrcoef(Z[:, i + 1], y)[0, 1]) for i, c in enumerate(FEATS + ["n_bets"])}
 
     # --- forward test ---------------------------------------------------------------------------------
+    # Impostor features for the adjustment: from the past period only (years <= cutoff) when the per-year
+    # table exists, otherwise whole-history features (small leak, flagged in the card).
+    uyf_path = ROOT / "data" / "derived" / "user_year_features" / f"{half}.parquet"
+    uyf = pl.read_parquet(uyf_path) if uyf_path.exists() else None
+    card["impostor_features_past_only"] = uyf is not None
+
+    def past_feats(cut):
+        if uyf is None:
+            return feats
+        g = uyf.filter(pl.col("year") <= cut).group_by("user").agg(pl.all().exclude("user", "year").sum())
+        base = feats.select("user", "start_week", "join_year", "no_id_share")
+        return g.join(base, on="user").with_columns(
+            history_years=((cut + 1 - 1970) * 52.18 - pl.col("start_week")) / 52.18,
+            listens_per_active_month=pl.col("listens") / pl.col("active_months"),
+            unmatched_share=pl.col("unmatched_listens") / pl.col("listens"),
+            new_artists_per_year=pl.col("new_artists") / (((cut + 1 - 1970) * 52.18 - pl.col("start_week")) / 52.18).clip(0.25),
+            committed_per_year=pl.col("committed") / (((cut + 1 - 1970) * 52.18 - pl.col("start_week")) / 52.18).clip(0.25),
+            mainstream_share=pl.col("mainstream_plays") / pl.col("artist_plays"),
+            commit_rate=pl.col("committed") / pl.col("new_artists").clip(1),
+        )
+
     years = sorted(agg["year"].unique().to_list())
     fwd = []
     for cut in [yy for yy in years if yy + gap in years and yy >= 2006]:
@@ -135,7 +156,7 @@ def main(name):
         rp, rf = rank(p), rank(f)
         top_p, bot_p, top_f = rp > 0.8, rp <= 0.2, rf > 0.8
         # impostor-adjusted past score (residual on features) for the gate
-        jf = j.join(users, on="ui").join(feats, on="user").drop_nulls()
+        jf = j.join(users, on="ui").join(past_feats(cut).select("user", *FEATS), on="user").drop_nulls()
         Zj = jf.select([pl.col(c).cast(pl.Float64) for c in FEATS]).with_columns([pl.col(c).log() for c in LOG_FEATS]).to_numpy()
         Zj = np.column_stack([np.ones(len(Zj)), (Zj - Zj.mean(0)) / np.where(Zj.std(0) > 0, Zj.std(0), 1)])
         resid_p = jf["p"].to_numpy() - Zj @ np.linalg.lstsq(Zj, jf["p"].to_numpy(), rcond=None)[0]
