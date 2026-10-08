@@ -6,6 +6,16 @@ listed in a "Confirmation" section and committed; that commit is the freeze.
 
 Notation: **[P]** marks the primary setting of a parameter; others are variants.
 
+Revisions are welcome but must be explicit: every non-trivial change goes in the Revisions log at
+the bottom with the date, what changed, why, and whether it was prompted by seeing results.
+
+**Continuous parameters** (onboarding cutoff, commitment threshold, horizon, weight exponent, number of
+bins/scenes) are swept on a fine grid one at a time around the primary settings (others fixed), plus a
+coarse full grid for interactions. We read the *shape* of each curve: a plateau means the choice doesn't
+matter; a sharp peak suggests noise; a steady trend is itself a finding (e.g. signal growing with horizon).
+Peaks found on `explore` are inflated by noise (winner's curse), so any setting chosen for being best
+is only believed after it is confirmed on `sealed`.
+
 ---
 
 ## 0. Corrections applied in every variant
@@ -37,7 +47,7 @@ number of scenes (~50 / **~200 [P]** / ~1000), built on onboarding-period + pre-
 | Commitment rule | listened in >= 2 / **>= 4 [P]** / >= 8 distinct weeks; or >= 10 plays; "every first listen" (no commitment) as contrast |
 | Commitment window | must be met within **26 [P]** / 52 weeks of first listen |
 | Bet date | **date commitment was reached [P]**; first listen (contrast) |
-| Bet weight | **equal [P]**; log(1 + plays in first 26 weeks) ("conviction"); plays (contrast) |
+| Bet weight | plays-in-first-26-weeks ^ alpha: **alpha = 0, equal [P]**; sweep 0 to 1 (0.5 = square root, 1 = proportional); log(1 + plays) |
 | Min bets per user to be scored | 10 / **20 [P]** / 50 |
 
 **Popularity ("price")** of an artist at time t
@@ -50,7 +60,7 @@ number of scenes (~50 / **~200 [P]** / ~1000), built on onboarding-period + pre-
 | Parameter | Values |
 |---|---|
 | Horizon H | 26 / **52 [P]** / 104 weeks |
-| Return metric | **log growth of penetration with small-count smoothing [P]**; percentile of growth among benchmark peers (outlier-robust) |
+| Return metric | **log growth of penetration with small-count smoothing [P]**; percentile of growth among benchmark peers (outlier-robust); raw growth ratio, capped (rewards rare huge wins more: "hit-seeking"); hit indicator (top-10% growth among peers) |
 
 **Benchmark** ("expected return" for a bet)
 | Parameter | Values |
@@ -122,3 +132,9 @@ Computed for every user; a taste score that is mostly one of these is reported a
 
 ## Confirmation
 (empty until we decide; committing this section freezes it before any `sealed` analysis)
+
+## Revisions
+| Date | Change | Why | Prompted by results? |
+|---|---|---|---|
+| 2026-10-08 | Initial spec | — | no (only step-1 descriptives seen) |
+| 2026-10-08 | Weight as power family plays^alpha; added raw-capped and hit-indicator return metrics; continuous-parameter sweep policy | Robert asked about log/exponent transforms and continuous vs discrete parameters | no |
