@@ -27,6 +27,8 @@ Usage: derive_song_bets.py <half>
 
 import argparse
 import atexit
+import signal
+import sys
 import os
 import shutil
 from pathlib import Path
@@ -51,26 +53,29 @@ def main():
     tmp = ROOT / "data" / "_tmp" / f"songbets-{os.getpid()}"
     tmp.mkdir(parents=True, exist_ok=True)
     atexit.register(shutil.rmtree, tmp, True)
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))  # run cleanup when stopped
     con = duckdb.connect()
     con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; "
                 "SET max_temp_directory_size='25GB'")
     feats = f"read_parquet('{X}/user_features/{half}.parquet')"
 
     # 1. Bets from the raw sample: weekly listening per (user, song), commitment week, early plays.
-    con.execute(f"""CREATE TABLE sb AS
-        WITH w AS (SELECT user, recording, artists[1] AS artist, (ts::BIGINT // 604800)::INT AS week, count(*) AS plays
-                   FROM read_parquet('{D}/raw/{half}/*.parquet') GROUP BY ALL),
-             w2 AS (SELECT user, recording, week, sum(plays) AS plays, any_value(artist) AS artist FROM w GROUP BY ALL),
-             r AS (SELECT *, row_number() OVER (PARTITION BY user, recording ORDER BY week) AS rn,
-                          min(week) OVER (PARTITION BY user, recording) AS fw FROM w2),
-             agg AS (SELECT user, recording, any_value(artist) AS artist, min(week) AS first_week,
-                            min(week) FILTER (WHERE rn = 4) AS w4,
-                            sum(plays) FILTER (WHERE week < fw + 26)::INT AS plays_26w
-                     FROM r GROUP BY user, recording)
-        SELECT a.user, a.recording, a.artist, {MONTH.format(w='a.w4')}::SMALLINT AS m, a.plays_26w
-        FROM agg a JOIN {feats} f USING (user)
-        WHERE a.first_week >= f.start_week + 26 AND a.w4 IS NOT NULL AND a.w4 - a.first_week < 26
-          AND {MONTH.format(w='a.w4')} BETWEEN {2005 * 12} AND {LAST - 6}""")
+    con.execute("CREATE TABLE sb (user BIGINT, recording BIGINT, artist BIGINT, m SMALLINT, plays_26w INTEGER)")
+    for c in "0123456789abcdef":  # one archive at a time (users never span archives)
+        con.execute(f"""INSERT INTO sb
+            WITH w AS (SELECT user, recording, any_value(artists[1]) AS artist, (ts::BIGINT // 604800)::INT AS week,
+                              count(*) AS plays
+                       FROM read_parquet('{D}/raw/{half}/mlhdplus-complete-{c}.parquet') GROUP BY user, recording, week),
+                 r AS (SELECT *, row_number() OVER (PARTITION BY user, recording ORDER BY week) AS rn,
+                              min(week) OVER (PARTITION BY user, recording) AS fw FROM w),
+                 agg AS (SELECT user, recording, any_value(artist) AS artist, min(week) AS first_week,
+                                min(week) FILTER (WHERE rn = 4) AS w4,
+                                sum(plays) FILTER (WHERE week < fw + 26)::INT AS plays_26w
+                         FROM r GROUP BY user, recording)
+            SELECT a.user, a.recording, a.artist, {MONTH.format(w='a.w4')}::SMALLINT AS m, a.plays_26w
+            FROM agg a JOIN {feats} f USING (user)
+            WHERE a.first_week >= f.start_week + 26 AND a.w4 IS NOT NULL AND a.w4 - a.first_week < 26
+              AND {MONTH.format(w='a.w4')} BETWEEN {2005 * 12} AND {LAST - 6}""")
     n_bets = con.execute("SELECT count(*), count(DISTINCT user), count(DISTINCT recording) FROM sb").fetchone()
     print(f"song bets: {n_bets[0]:,} by {n_bets[1]:,} users on {n_bets[2]:,} songs", flush=True)
 
@@ -81,12 +86,12 @@ def main():
     con.execute(f"CREATE TABLE act AS SELECT DISTINCT user, month FROM read_parquet('{X}/user_artist_month/{half}/*.parquet')")
     con.execute(f"CREATE TABLE panel AS SELECT * FROM read_parquet('{X}/market/{half}/panel.parquet')")
     con.execute("""CREATE TABLE acc (h SMALLINT, recording BIGINT, m SMALLINT, l0 BIGINT, l1 BIGINT, tr BIGINT, kp BIGINT)""")
-    con.execute("CREATE TABLE accp (recording BIGINT, m SMALLINT, tr_prior BIGINT, kept_prior BIGINT)")
+    con.execute("CREATE TABLE adt (recording BIGINT, t SMALLINT, tr BIGINT, kp BIGINT)")
     con.execute("CREATE TABLE accf (recording BIGINT, song_first_m SMALLINT)")
     con.execute("CREATE TABLE own (user BIGINT, recording BIGINT, t SMALLINT, kept BOOLEAN, post BOOLEAN)")
     con.execute(f"CREATE TABLE home AS SELECT * FROM read_parquet('{X}/community/{half}_home.parquet')")
     con.execute("CREATE TABLE gkeys AS SELECT DISTINCT h.g, sb.recording, sb.m FROM sb JOIN home h ON h.user = sb.user AND h.year = sb.m // 12")
-    con.execute("CREATE TABLE accg (h SMALLINT, g SMALLINT, recording BIGINT, m SMALLINT, k BIGINT)")
+    con.execute("CREATE TABLE adg (year SMALLINT, g SMALLINT, recording BIGINT, t SMALLINT, k BIGINT)")
     for c in "0123456789abcdef":
         con.execute(f"""CREATE OR REPLACE TABLE ad AS
             SELECT ur.user, ur.recording, {MONTH.format(w='ur.first_week')}::SMALLINT AS t,
@@ -96,9 +101,11 @@ def main():
             SEMI JOIN songs USING (recording) JOIN {feats} f USING (user)""")
         con.execute("INSERT INTO own SELECT a.* FROM ad a SEMI JOIN sb USING (user, recording)")
         con.execute("INSERT INTO accf SELECT recording, min(t) FROM ad GROUP BY recording")
-        con.execute("""INSERT INTO accp SELECT k.recording, k.m, count(*) FILTER (WHERE ad.post),
-                       count(*) FILTER (WHERE ad.post AND ad.kept)
-                       FROM keys k JOIN ad ON ad.recording = k.recording AND ad.t <= k.m GROUP BY ALL""")
+        con.execute("""INSERT INTO adt SELECT recording, t, count(*) FILTER (WHERE post), count(*) FILTER (WHERE post AND kept)
+                       FROM ad GROUP BY recording, t""")
+        con.execute(f"""INSERT INTO adg SELECT hm.year, hm.g, ad.recording, ad.t, count(*) FROM ad
+                        JOIN home hm ON hm.user = ad.user
+                        WHERE ad.t BETWEEN hm.year * 12 AND hm.year * 12 + 11 + {max(HS)} GROUP BY ALL""")
         for h in HS:
             con.execute(f"""INSERT INTO acc
                 WITH k AS (SELECT * FROM keys WHERE m + {h} <= {LAST}),
@@ -116,16 +123,26 @@ def main():
                      u AS (SELECT recording, m FROM a0 UNION SELECT recording, m FROM a1 UNION SELECT recording, m FROM tl)
                 SELECT {h}, u.recording, u.m, coalesce(a0.l0, 0), coalesce(a1.l1, 0), coalesce(tl.tr, 0), coalesce(tl.kp, 0)
                 FROM u LEFT JOIN a0 USING (recording, m) LEFT JOIN a1 USING (recording, m) LEFT JOIN tl USING (recording, m)""")
-        for h in HS:  # later adoptions by community members (community as of the bet year)
-            con.execute(f"""INSERT INTO accg SELECT {h}, k.g, k.recording, k.m, count(*)
-                FROM gkeys k JOIN ad ON ad.recording = k.recording AND ad.t > k.m AND ad.t <= k.m + {h}
-                JOIN home hm ON hm.user = ad.user AND hm.year = k.m // 12 AND hm.g = k.g
-                WHERE k.m + {h} <= {LAST} GROUP BY ALL""")
         print(f"archive {c} done", flush=True)
     con.execute("CREATE TABLE tot AS SELECT h, recording, m, sum(l0) AS l0, sum(l1) AS l1, sum(tr) AS tr, sum(kp) AS kp FROM acc GROUP BY ALL")
-    con.execute("CREATE TABLE totp AS SELECT recording, m, sum(tr_prior) AS tr_prior, sum(kept_prior) AS kept_prior FROM accp GROUP BY ALL")
+    # Track record before the bet: running totals per song, looked up at the bet month.
+    con.execute("""CREATE TABLE cumt AS SELECT recording, t, sum(tr) OVER w AS ctr, sum(kp) OVER w AS ckp
+                   FROM (SELECT recording, t, sum(tr) AS tr, sum(kp) AS kp FROM adt GROUP BY ALL)
+                   WINDOW w AS (PARTITION BY recording ORDER BY t ROWS UNBOUNDED PRECEDING)""")
+    con.execute("""CREATE TABLE totp AS SELECT k.recording, k.m, coalesce(c.ctr, 0) AS tr_prior, coalesce(c.ckp, 0) AS kept_prior
+                   FROM keys k ASOF LEFT JOIN cumt c ON c.recording = k.recording AND k.m >= c.t""")
     con.execute("CREATE TABLE firstm AS SELECT recording, min(song_first_m) AS song_first_m FROM accf GROUP BY recording")
-    con.execute("CREATE TABLE totg AS SELECT h, g, recording, m, sum(k) AS k FROM accg GROUP BY ALL")
+    # Later adoptions by community members (community as of the bet year): running totals per (year, community, song).
+    con.execute("""CREATE TABLE cumg AS SELECT year, g, recording, t, sum(k) OVER w AS ck
+                   FROM (SELECT year, g, recording, t, sum(k) AS k FROM adg GROUP BY ALL)
+                   WINDOW w AS (PARTITION BY year, g, recording ORDER BY t ROWS UNBOUNDED PRECEDING)""")
+    con.execute("CREATE TABLE totg (h SMALLINT, g SMALLINT, recording BIGINT, m SMALLINT, k BIGINT)")
+    for h in HS:
+        con.execute(f"""INSERT INTO totg
+            WITH q AS (SELECT g, recording, m, (m // 12)::SMALLINT AS y, (m + {h})::SMALLINT AS mh FROM gkeys WHERE m + {h} <= {LAST})
+            SELECT {h}, q.g, q.recording, q.m, coalesce(c1.ck, 0) - coalesce(c0.ck, 0)
+            FROM q ASOF LEFT JOIN cumg c0 ON c0.year = q.y AND c0.g = q.g AND c0.recording = q.recording AND q.m >= c0.t
+                   ASOF LEFT JOIN cumg c1 ON c1.year = q.y AND c1.g = q.g AND c1.recording = q.recording AND q.mh >= c1.t""")
     # Community panel: members active in both m and m+H.
     con.execute("CREATE TABLE cpan (h SMALLINT, g SMALLINT, m SMALLINT, n BIGINT)")
     for h in HS:

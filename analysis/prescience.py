@@ -14,6 +14,8 @@ Writes analysis/out/prescience/<variant>/{summary.json, users.parquet} and bets 
 
 import argparse
 import atexit
+import signal
+import sys
 import json
 import os
 import shutil
@@ -68,7 +70,8 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     tmp = ROOT / "data" / "_tmp" / f"prescience-{os.getpid()}"
     tmp.mkdir(parents=True, exist_ok=True)
-    atexit.register(shutil.rmtree, tmp, True)  # also on failure
+    atexit.register(shutil.rmtree, tmp, True)
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))  # run cleanup when stopped  # also on failure
     con = duckdb.connect()
     con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; SET max_temp_directory_size='18GB'")
     H = a.horizon

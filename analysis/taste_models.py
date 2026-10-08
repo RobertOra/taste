@@ -28,6 +28,8 @@ Writes analysis/out/prescience/<variant>/{summary.json, users.parquet} and bets 
 
 import argparse
 import atexit
+import signal
+import sys
 import json
 import os
 import shutil
@@ -75,6 +77,8 @@ def parse():
     ap.add_argument("--min-bets", type=int, default=20)
     ap.add_argument("--perms", type=int, default=20)
     ap.add_argument("--name", default=None)
+    ap.add_argument("--mem", default="5GB", help="DuckDB memory limit")
+    ap.add_argument("--threads", type=int, default=6)
     ap.add_argument("--cand", default=None,
                     help="write per-user/year aggregates for analysis/evaluate.py to analysis/out/cand/<cand>/ and stop")
     return ap.parse_args()
@@ -92,9 +96,10 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     tmp = ROOT / "data" / "_tmp" / f"models-{os.getpid()}"
     tmp.mkdir(parents=True, exist_ok=True)
-    atexit.register(shutil.rmtree, tmp, True)  # also on failure
+    atexit.register(shutil.rmtree, tmp, True)
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))  # run cleanup when stopped  # also on failure
     con = duckdb.connect()
-    con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; SET max_temp_directory_size='18GB'")
+    con.execute(f"SET memory_limit='{a.mem}'; SET threads={a.threads}; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; SET max_temp_directory_size='18GB'")
     H = a.horizon
     datecol = "first_week" if a.date == "first" or a.rule == "all" else RULES[a.rule]
     commit = "TRUE" if a.rule == "all" else f"b.{RULES[a.rule]} IS NOT NULL AND b.{RULES[a.rule]} - b.first_week < {a.window}"

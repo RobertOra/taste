@@ -22,6 +22,8 @@ Usage: derive_community.py [--horizon 12]
 
 import argparse
 import atexit
+import signal
+import sys
 import os
 import shutil
 from pathlib import Path
@@ -44,6 +46,7 @@ def main():
     tmp = ROOT / "data" / "_tmp" / f"community-{os.getpid()}"
     tmp.mkdir(parents=True, exist_ok=True)
     atexit.register(shutil.rmtree, tmp, True)
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))  # run cleanup when stopped
     con = duckdb.connect()
     con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; "
                 "SET max_temp_directory_size='18GB'")
@@ -86,26 +89,35 @@ def main():
         con.execute(f"""CREATE OR REPLACE TABLE yb AS
             SELECT a.user, a.artist, a.m, h.g, (a.m + {H})::SMALLINT AS mh FROM adopt a JOIN home h USING (user)
             WHERE a.m BETWEEN {m0} AND {min(m1, LAST - H)}""")
-        con.execute(f"""CREATE OR REPLACE TABLE cl AS
-            WITH keys AS (SELECT DISTINCT g, artist, m FROM yb)
-            SELECT k.g, k.artist, k.m, count(*) AS l FROM keys k
-            JOIN {uam} u ON u.artist = k.artist AND u.month = k.m
-            JOIN home h ON h.user = u.user AND h.g = k.g
-            JOIN act f ON f.user = u.user AND f.month = k.m + {H}
-            GROUP BY ALL""")
-        # Community momentum: members listening at m-6 (active at m) vs at m (active at m-6), excluding the bettor.
-        con.execute(f"""CREATE OR REPLACE TABLE cm AS
-            WITH keys AS (SELECT DISTINCT g, artist, m FROM yb),
-                 b6 AS (SELECT k.g, k.artist, k.m, count(*) AS l FROM keys k
-                        JOIN {uam} u ON u.artist = k.artist AND u.month = k.m - 6
-                        JOIN home h ON h.user = u.user AND h.g = k.g
-                        JOIN act f ON f.user = u.user AND f.month = k.m GROUP BY ALL),
-                 b0 AS (SELECT k.g, k.artist, k.m, count(*) AS l FROM keys k
-                        JOIN {uam} u ON u.artist = k.artist AND u.month = k.m
-                        JOIN home h ON h.user = u.user AND h.g = k.g
-                        JOIN act f ON f.user = u.user AND f.month = k.m - 6 GROUP BY ALL)
-            SELECT k.g, k.artist, k.m, coalesce(b0.l, 0) AS l_now, coalesce(b6.l, 0) AS l_before
-            FROM keys k LEFT JOIN b0 USING (g, artist, m) LEFT JOIN b6 USING (g, artist, m)""")
+        # Community listening per (community, artist, month), aggregated first (one pass per archive), then
+        # looked up for the bets. Joining bets to raw listening directly multiplies rows by every community
+        # sharing an artist-month and blows up.
+        con.execute("CREATE OR REPLACE TABLE gl (g SMALLINT, artist BIGINT, month SMALLINT, l_h BIGINT, l_6 BIGINT, l_m6 BIGINT)")
+        con.execute("CREATE OR REPLACE TABLE karts AS SELECT DISTINCT artist FROM yb")
+        for c in "0123456789abcdef":
+            con.execute(f"""INSERT INTO gl
+                SELECT h.g, u.artist, u.month,
+                       count(*) FILTER (WHERE fh.user IS NOT NULL),   -- listening in month, active H months later
+                       count(*) FILTER (WHERE f6.user IS NOT NULL),   -- listening in month, active 6 months later
+                       count(*) FILTER (WHERE fm6.user IS NOT NULL)   -- listening in month, active 6 months earlier
+                FROM read_parquet('{X}/user_artist_month/explore/mlhdplus-{c}.parquet') u
+                SEMI JOIN karts USING (artist)
+                JOIN home h ON h.user = u.user
+                LEFT JOIN act fh ON fh.user = u.user AND fh.month = u.month + {H}
+                LEFT JOIN act f6 ON f6.user = u.user AND f6.month = u.month + 6
+                LEFT JOIN act fm6 ON fm6.user = u.user AND fm6.month = u.month - 6
+                WHERE u.month BETWEEN {m0 - 6} AND {min(m1, LAST - H)}
+                GROUP BY ALL""")
+        con.execute("CREATE OR REPLACE TABLE gl AS SELECT g, artist, month, sum(l_h) AS l_h, sum(l_6) AS l_6, sum(l_m6) AS l_m6 FROM gl GROUP BY ALL")
+        con.execute("""CREATE OR REPLACE TABLE cl AS
+            SELECT k.g, k.artist, k.m, coalesce(x.l_h, 0) AS l FROM (SELECT DISTINCT g, artist, m FROM yb) k
+            LEFT JOIN gl x ON x.g = k.g AND x.artist = k.artist AND x.month = k.m""")
+        # Community momentum: members listening at m (active at m-6) vs at m-6 (active at m), excluding the bettor.
+        con.execute("""CREATE OR REPLACE TABLE cm AS
+            SELECT k.g, k.artist, k.m, coalesce(now.l_m6, 0) AS l_now, coalesce(bef.l_6, 0) AS l_before
+            FROM (SELECT DISTINCT g, artist, m FROM yb) k
+            LEFT JOIN gl now ON now.g = k.g AND now.artist = k.artist AND now.month = k.m
+            LEFT JOIN gl bef ON bef.g = k.g AND bef.artist = k.artist AND bef.month = k.m - 6""")
         con.execute(f"""CREATE OR REPLACE TABLE part_{y} AS
             SELECT yb.user, yb.artist, yb.m, yb.g,
                    coalesce(c1.cn, 0) - coalesce(c0.cn, 0) AS k_later,

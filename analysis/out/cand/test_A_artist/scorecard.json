@@ -1,0 +1,181 @@
+{
+ "candidate": "test_A_artist",
+ "meta": {
+  "name": "test_A_artist",
+  "model": "A",
+  "unit": "artist",
+  "horizon": 12,
+  "half": "explore",
+  "bets": 4535464,
+  "users_with_bets": 34446,
+  "args": {
+   "model": "A",
+   "unit": "artist",
+   "onboarding": 26,
+   "rule": "w4",
+   "window": 26,
+   "date": "commit",
+   "horizon": 12,
+   "smooth": 1.0,
+   "bins": 20,
+   "scene": "yearly200",
+   "age": true,
+   "momentum": 5,
+   "country": true,
+   "release": true,
+   "adjust": "additive",
+   "metric": "log",
+   "weight": 0.0,
+   "user_sample": 8,
+   "min_bets": 20,
+   "perms": 3,
+   "name": null,
+   "mem": "2GB",
+   "threads": 3,
+   "cand": "test_A_artist"
+  },
+  "cells": {
+   "bets_per_cell": 4160.958053685356,
+   "share_single_item_cells": null,
+   "items_per_cell": 1395.891964747157
+  }
+ },
+ "users_with_bets": 34446,
+ "users_scored": 29939,
+ "coverage": 0.8691575219183649,
+ "not_luck_share": 0.4162342769260816,
+ "not_luck_share_ci": [
+  0.40082860637940176,
+  0.4357338565646734
+ ],
+ "reliability": 0.5198780521607353,
+ "reliability_ci": [
+  0.505320072330391,
+  0.538167925346589
+ ],
+ "percentile_range_for_observed_75th": [
+  22.839522828494246,
+  92.58338188240475
+ ],
+ "impostor_r2": 0.013563942112321925,
+ "impostor_r2_ci": [
+  0.011154572838763685,
+  0.01691885985961464
+ ],
+ "impostor_corr": {
+  "listens": -0.014442685077237763,
+  "history_years": 0.017064263952408537,
+  "join_year": -0.01651091612140734,
+  "listens_per_active_month": -0.03386333199365698,
+  "unmatched_share": 0.06298806878417874,
+  "no_id_share": 0.04465344139874213,
+  "new_artists_per_year": -0.023818271975896296,
+  "committed_per_year": -0.03007960129698051,
+  "mainstream_share": -0.08370128357326743,
+  "commit_rate": -0.021654605372051657,
+  "n_bets": -0.008021831993397602
+ },
+ "forward": {
+  "rank_corr": 0.1446910397369097,
+  "rank_corr_ci": [
+   0.13130445541880675,
+   0.15808639470246005
+  ],
+  "top_minus_bottom": 0.03899613961707514,
+  "top_minus_bottom_ci": [
+   0.034918576298635665,
+   0.04297733574818341
+  ],
+  "repeat_rate_top20": 0.2969348861630827,
+  "repeat_rate_top20_ci": [
+   0.2833084776431144,
+   0.31129496792938854
+  ],
+  "repeat_rate_chance": 0.2,
+  "impostor_adjusted_rank_corr": 0.13467329921522178,
+  "impostor_adjusted_rank_corr_ci": [
+   0.1214918313941691,
+   0.14829753681603736
+  ],
+  "by_cutoff": [
+   {
+    "cutoff": 2006,
+    "users": 2325,
+    "rank_corr": 0.13270534539583212
+   },
+   {
+    "cutoff": 2007,
+    "users": 5839,
+    "rank_corr": 0.15950340191729215
+   },
+   {
+    "cutoff": 2008,
+    "users": 10391,
+    "rank_corr": 0.1361297728194353
+   },
+   {
+    "cutoff": 2009,
+    "users": 12757,
+    "rank_corr": 0.1470691443940569
+   }
+  ],
+  "gap_years": 2
+ },
+ "stability_curve": [
+  {
+   "lag_years": 1,
+   "raw": 0.1691070216378076,
+   "corrected": 0.5163160487939696,
+   "users": 58763,
+   "overlapping_windows": true
+  },
+  {
+   "lag_years": 2,
+   "raw": 0.1192649462801829,
+   "corrected": 0.36671350280631965,
+   "users": 34594,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 3,
+   "raw": 0.08248192046397958,
+   "corrected": 0.27136964084285914,
+   "users": 18069,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 4,
+   "raw": 0.0806181551105462,
+   "corrected": 0.2872512911615876,
+   "users": 7873,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 5,
+   "raw": 0.05719196058625453,
+   "corrected": 0.22249367775211062,
+   "users": 2250,
+   "overlapping_windows": false
+  }
+ ],
+ "yearly_reliability": {
+  "2006": 0.2093814815402641,
+  "2007": 0.2609020309906619,
+  "2008": 0.33331525192499484,
+  "2009": 0.3568037940172075,
+  "2010": 0.3454354219876129,
+  "2011": 0.31557046617826506
+ },
+ "stability_3y_corrected": 0.27136964084285914,
+ "stability_3y_corrected_ci": [
+  0.2159926236530916,
+  0.3208176926970501
+ ],
+ "gates": {
+  "beats_luck": true,
+  "impostor_share_below_10pct": true,
+  "impostor_adjusted_still_predicts": true,
+  "stable_3y": true
+ },
+ "passes_gates": true
+}

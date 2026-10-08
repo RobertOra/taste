@@ -19,7 +19,7 @@ Leave-one-out is applied here (the bettor is removed from l0/l1 where present).
         mom_g   fixed-panel scene growth over the 6 months before the bet (leave-one-out)
         stayed                         this entrant still listened to the scene in >= 3 of months m+3..m+8
         tr_later_h{H}, kept_later_h{H} other people entering the same scene in (m, m+H], and how many stayed
-        tr_prior, kept_prior           other entrants in the 24 months before m, and how many stayed
+        tr_prior, kept_prior           other entrants before m (window starts the year before), and how many stayed
         lb_scene                       2026 ListenBrainz listeners summed over the scene's artists
         g, k_comm_h{H}, n_comm_h{H}    the bettor's community that year; members entering the scene in (m, m+H];
                                        members active in both m and m+H (excluding the bettor)
@@ -32,6 +32,8 @@ Usage: derive_scene_bets.py <half>
 
 import argparse
 import atexit
+import signal
+import sys
 import os
 import shutil
 from pathlib import Path
@@ -55,6 +57,7 @@ def main():
     tmp = ROOT / "data" / "_tmp" / f"scenebets-{os.getpid()}"
     tmp.mkdir(parents=True, exist_ok=True)
     atexit.register(shutil.rmtree, tmp, True)
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))  # run cleanup when stopped
     con = duckdb.connect()
     con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; "
                 "SET max_temp_directory_size='20GB'")
@@ -112,15 +115,25 @@ def main():
         con.execute(f"CREATE OR REPLACE TABLE entries AS SELECT * FROM allent WHERE m BETWEEN {y * 12} AND {y * 12 + 11}")
         # Other entrants of the same scene: later (by horizon) and prior; the bettor is never among them
         # (one entry per person and scene, at m).
-        con.execute(f"""CREATE OR REPLACE TABLE entries AS
-            SELECT e.*,
-                   (SELECT count(*) FROM allent x WHERE x.s = e.s AND x.m >= e.m - 24 AND x.m < e.m AND x.stayed IS NOT NULL) AS tr_prior,
-                   (SELECT count(*) FROM allent x WHERE x.s = e.s AND x.m >= e.m - 24 AND x.m < e.m AND x.stayed) AS kept_prior
-            FROM entries e""")
+        # Running totals of entrants (and of those who stayed) per scene and month, looked up by window.
+        con.execute("""CREATE OR REPLACE TABLE cum AS
+            SELECT s, m, sum(n) OVER w AS cn, sum(k) OVER w AS ck FROM (
+                SELECT s, m, count(*) FILTER (WHERE stayed IS NOT NULL) AS n, count(*) FILTER (WHERE stayed) AS k
+                FROM allent GROUP BY s, m)
+            WINDOW w AS (PARTITION BY s ORDER BY m ROWS UNBOUNDED PRECEDING)""")
+        con.execute("""CREATE OR REPLACE TABLE entries AS
+            WITH q AS (SELECT DISTINCT s, m, (m - 1)::SMALLINT AS mprev FROM entries)
+            SELECT e.*, coalesce(c.cn, 0) AS tr_prior, coalesce(c.ck, 0) AS kept_prior
+            FROM entries e JOIN q USING (s, m) ASOF LEFT JOIN cum c ON c.s = q.s AND q.mprev >= c.m""")
         home_ok = (X / "community" / f"{half}_home.parquet").exists()
         if home_ok:
             con.execute(f"""CREATE OR REPLACE TABLE home AS SELECT user, g FROM read_parquet('{X}/community/{half}_home.parquet')
                             WHERE year = {y}""")
+            # Running totals of entrants per (community, scene, month), communities as of year y.
+            con.execute("""CREATE OR REPLACE TABLE cumg AS
+                SELECT g, s, m, sum(k) OVER w AS ck FROM (
+                    SELECT h.g, x.s, x.m, count(*) AS k FROM allent x JOIN home h USING (user) GROUP BY ALL)
+                WINDOW w AS (PARTITION BY g, s ORDER BY m ROWS UNBOUNDED PRECEDING)""")
         # 4. Scene popularity in the fixed panel, with the bettor removed.
         cols = []
         for h in HS:
@@ -145,24 +158,27 @@ def main():
             cols += [f"l0_h{h}", f"l1_h{h}", f"n_panel_h{h}"]
             ok = f"e.m + {h} <= {LAST}"
             con.execute(f"""CREATE OR REPLACE TABLE entries AS
-                WITH lat AS (SELECT e.user, e.s, count(*) FILTER (WHERE x.stayed IS NOT NULL) AS tr,
-                                    count(*) FILTER (WHERE x.stayed) AS kp
-                             FROM entries e JOIN allent x ON x.s = e.s AND x.m > e.m AND x.m <= e.m + {h} GROUP BY ALL)
-                SELECT e.*, CASE WHEN {ok} THEN coalesce(lat.tr, 0) END AS tr_later_h{h},
-                       CASE WHEN {ok} THEN coalesce(lat.kp, 0) END AS kept_later_h{h}
-                FROM entries e LEFT JOIN lat USING (user, s)""")
+                WITH q AS (SELECT DISTINCT s, m, (m + {h})::SMALLINT AS mh FROM entries),
+                     lat AS (SELECT q.s, q.m, coalesce(c1.cn, 0) - coalesce(c0.cn, 0) AS tr, coalesce(c1.ck, 0) - coalesce(c0.ck, 0) AS kp
+                             FROM q ASOF LEFT JOIN cum c0 ON c0.s = q.s AND q.m >= c0.m
+                                    ASOF LEFT JOIN cum c1 ON c1.s = q.s AND q.mh >= c1.m)
+                SELECT e.*, CASE WHEN {ok} THEN lat.tr END AS tr_later_h{h},
+                       CASE WHEN {ok} THEN lat.kp END AS kept_later_h{h}
+                FROM entries e LEFT JOIN lat USING (s, m)""")
             cols += [f"tr_later_h{h}", f"kept_later_h{h}"]
             if home_ok:
                 con.execute(f"""CREATE OR REPLACE TABLE entries AS
-                    WITH ek AS (SELECT e.user, e.s, count(*) AS k FROM entries e JOIN home he ON he.user = e.user
-                                JOIN allent x ON x.s = e.s AND x.m > e.m AND x.m <= e.m + {h}
-                                JOIN home hx ON hx.user = x.user AND hx.g = he.g GROUP BY ALL),
+                    WITH q AS (SELECT DISTINCT he.g, e.s, e.m, (e.m + {h})::SMALLINT AS mh FROM entries e JOIN home he USING (user)),
+                         ek AS (SELECT q.g, q.s, q.m, coalesce(c1.ck, 0) - coalesce(c0.ck, 0) AS k
+                                FROM q ASOF LEFT JOIN cumg c0 ON c0.g = q.g AND c0.s = q.s AND q.m >= c0.m
+                                       ASOF LEFT JOIN cumg c1 ON c1.g = q.g AND c1.s = q.s AND q.mh >= c1.m),
                          cp AS (SELECT hm.g, a.month AS m, count(*) AS n FROM act a JOIN act b ON b.user = a.user
                                 AND b.month = a.month + {h} JOIN home hm ON hm.user = a.user
                                 WHERE a.month BETWEEN {y * 12} AND {y * 12 + 11} GROUP BY ALL)
                     SELECT e.*, CASE WHEN {ok} AND he.g IS NOT NULL THEN coalesce(ek.k, 0) END AS k_comm_h{h},
                            CASE WHEN {ok} AND he.g IS NOT NULL THEN cp.n - (f.user IS NOT NULL)::INT END AS n_comm_h{h}
-                    FROM entries e LEFT JOIN ek USING (user, s) LEFT JOIN home he ON he.user = e.user
+                    FROM entries e LEFT JOIN home he ON he.user = e.user
+                    LEFT JOIN ek ON ek.g = he.g AND ek.s = e.s AND ek.m = e.m
                     LEFT JOIN cp ON cp.g = he.g AND cp.m = e.m
                     LEFT JOIN act f ON f.user = e.user AND f.month = e.m + {h}""")
                 cols += [f"k_comm_h{h}", f"n_comm_h{h}"]
