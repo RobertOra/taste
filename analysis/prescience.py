@@ -13,6 +13,7 @@ Writes analysis/out/prescience/<variant>/{summary.json, users.parquet} and bets 
 """
 
 import argparse
+import atexit
 import json
 import os
 import shutil
@@ -67,8 +68,9 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
     tmp = ROOT / "data" / "_tmp" / f"prescience-{os.getpid()}"
     tmp.mkdir(parents=True, exist_ok=True)
+    atexit.register(shutil.rmtree, tmp, True)  # also on failure
     con = duckdb.connect()
-    con.execute(f"SET memory_limit='8GB'; SET threads=8; SET temp_directory='{tmp}'; SET preserve_insertion_order=false")
+    con.execute(f"SET memory_limit='7GB'; SET threads=8; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; SET max_temp_directory_size='18GB'")
     H = a.horizon
     datecol = "first_week" if a.date == "first" or a.rule == "all" else RULES[a.rule]
     commit = "TRUE" if a.rule == "all" else f"b.{RULES[a.rule]} IS NOT NULL AND b.{RULES[a.rule]} - b.first_week < {a.window}"
@@ -111,18 +113,21 @@ def main():
                "WHEN r.m - fs.fm < 12 THEN 2 WHEN r.m - fs.fm < 24 THEN 3 ELSE 4 END") if a.age else "0"
     # Momentum: fixed-panel growth over the 6 months before the bet (panel = active at m-6 and m), leave-one-out.
     if a.momentum:
+        # The bettor's own listening at m-6 and m, in one pass over the monthly table.
+        con.execute(f"""CREATE TABLE selfl AS
+            SELECT r.user, r.artist, r.m AS bm, bool_or(u.month = r.m - 6) AS l6, bool_or(u.month = r.m) AS lm
+            FROM r JOIN read_parquet('{X}/user_artist_month/explore/*.parquet') u
+              ON u.user = r.user AND u.artist = r.artist AND u.month BETWEEN r.m - 6 AND r.m
+            GROUP BY ALL""")
         con.execute(f"""CREATE TABLE mom AS
             SELECT r.user, r.artist, r.m AS bm,
-                   ln(greatest(coalesce(mk.l1, 0) - (u0.user IS NOT NULL AND a0.user IS NOT NULL)::INT, 0) + 1)
-                 - ln(greatest(coalesce(mk.l0, 0) - (u6.user IS NOT NULL AND a6.user IS NOT NULL)::INT, 0) + 1) AS g
+                   ln(greatest(coalesce(mk.l1, 0) - (coalesce(s.lm, false) AND a0.user IS NOT NULL)::INT, 0) + 1)
+                 - ln(greatest(coalesce(mk.l0, 0) - (coalesce(s.l6, false) AND a6.user IS NOT NULL)::INT, 0) + 1) AS g
             FROM r
             LEFT JOIN read_parquet('{X}/market/explore/listeners_h6.parquet') mk ON mk.artist = r.artist AND mk.month = r.m - 6
             LEFT JOIN act a0 ON a0.user = r.user AND a0.month = r.m - 6
-            LEFT JOIN read_parquet('{X}/user_artist_month/explore/*.parquet') u0
-                   ON u0.user = r.user AND u0.artist = r.artist AND u0.month = r.m
             LEFT JOIN act a6 ON a6.user = r.user AND a6.month = r.m
-            LEFT JOIN read_parquet('{X}/user_artist_month/explore/*.parquet') u6
-                   ON u6.user = r.user AND u6.artist = r.artist AND u6.month = r.m - 6""")
+            LEFT JOIN selfl s ON s.user = r.user AND s.artist = r.artist AND s.bm = r.m""")
         mom_sql = f"coalesce(ntile({a.momentum}) OVER (PARTITION BY r.m ORDER BY mo.g), 0)"
         mom_join = "LEFT JOIN mom mo ON mo.user = r.user AND mo.artist = r.artist AND mo.bm = r.m"
     else:
