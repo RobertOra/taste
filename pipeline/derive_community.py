@@ -118,6 +118,12 @@ def main():
             FROM (SELECT DISTINCT g, artist, m FROM yb) k
             LEFT JOIN gl now ON now.g = k.g AND now.artist = k.artist AND now.month = k.m
             LEFT JOIN gl bef ON bef.g = k.g AND bef.artist = k.artist AND bef.month = k.m - 6""")
+        # The bettor's own listening 6 months before the bet (only the bettors' rows, per archive).
+        con.execute("CREATE OR REPLACE TABLE self6 (user BIGINT, artist BIGINT, m SMALLINT)")
+        for c in "0123456789abcdef":
+            con.execute(f"""INSERT INTO self6 SELECT DISTINCT yb.user, yb.artist, yb.m
+                FROM read_parquet('{X}/user_artist_month/explore/mlhdplus-{c}.parquet') u
+                JOIN yb ON yb.user = u.user AND yb.artist = u.artist AND u.month = yb.m - 6""")
         con.execute(f"""CREATE OR REPLACE TABLE part_{y} AS
             SELECT yb.user, yb.artist, yb.m, yb.g,
                    coalesce(c1.cn, 0) - coalesce(c0.cn, 0) AS k_later,
@@ -133,7 +139,7 @@ def main():
             LEFT JOIN cl ON cl.g = yb.g AND cl.artist = yb.artist AND cl.m = yb.m
             LEFT JOIN cm ON cm.g = yb.g AND cm.artist = yb.artist AND cm.m = yb.m
             LEFT JOIN act a6 ON a6.user = yb.user AND a6.month = yb.m - 6
-            LEFT JOIN {uam} u6 ON u6.user = yb.user AND u6.artist = yb.artist AND u6.month = yb.m - 6""")
+            LEFT JOIN self6 u6 ON u6.user = yb.user AND u6.artist = yb.artist AND u6.m = yb.m""")
         n = con.execute(f"SELECT count(*), avg(k_later), avg(n_panel) FROM part_{y}").fetchone()
         print(f"{y}: {n[0]:,} bets, mean later community adopters {n[1]:.3f}, mean community panel {n[2]:.0f}", flush=True)
         parts.append(f"SELECT * FROM part_{y}")

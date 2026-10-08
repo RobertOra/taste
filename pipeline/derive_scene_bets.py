@@ -153,7 +153,8 @@ def main():
                 FROM entries e
                 LEFT JOIN mk ON mk.s = e.s AND mk.m = e.m
                 LEFT JOIN act f ON f.user = e.user AND f.month = e.m + {h}
-                LEFT JOIN usm u ON u.user = e.user AND u.s = e.s AND u.month = e.m + {h}
+                LEFT JOIN (SELECT DISTINCT e2.user, e2.s FROM entries e2 JOIN usm u2
+                           ON u2.user = e2.user AND u2.s = e2.s AND u2.month = e2.m + {h}) u ON u.user = e.user AND u.s = e.s
                 LEFT JOIN panel p ON p.month = e.m AND p.h = {h}""")
             cols += [f"l0_h{h}", f"l1_h{h}", f"n_panel_h{h}"]
             ok = f"e.m + {h} <= {LAST}"
@@ -194,7 +195,8 @@ def main():
                  - ln(greatest(coalesce(g0.l, 0) - (u6.user IS NOT NULL)::INT, 0) + 1) AS mom_g
             FROM entries e LEFT JOIN g0 ON g0.s = e.s AND g0.m = e.m LEFT JOIN g1 ON g1.s = e.s AND g1.m = e.m
             LEFT JOIN act a6 ON a6.user = e.user AND a6.month = e.m - 6
-            LEFT JOIN usm u6 ON u6.user = e.user AND u6.s = e.s AND u6.month = e.m - 6""")
+            LEFT JOIN (SELECT DISTINCT e2.user, e2.s FROM entries e2 JOIN usm u2
+                       ON u2.user = e2.user AND u2.s = e2.s AND u2.month = e2.m - 6) u6 ON u6.user = e.user AND u6.s = e.s""")
         con.execute(f"""CREATE OR REPLACE TABLE entries AS
             WITH lbs AS (SELECT a.s, sum(coalesce(lb.lb_users, 0)) AS lb_scene FROM amap a
                          LEFT JOIN read_parquet('{X}/lb_artist_popularity.parquet') lb USING (artist) GROUP BY a.s)
