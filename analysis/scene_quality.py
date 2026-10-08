@@ -18,7 +18,7 @@ from sklearn.metrics import normalized_mutual_info_score
 ROOT = Path(__file__).resolve().parent.parent
 X = ROOT / "data" / "derived"
 con = duckdb.connect()
-con.execute("SET memory_limit='6GB'; SET threads=8")
+con.execute("SET memory_limit='5GB'; SET threads=6")
 YEAR = "year(make_timestamp(w4::BIGINT * 604800000000))"
 
 con.execute(f"""CREATE TABLE bets AS

@@ -37,7 +37,7 @@ def main():
     tmp = ROOT / "data" / "_tmp" / f"bets-{os.getpid()}"
     tmp.mkdir(parents=True, exist_ok=True)
     con = duckdb.connect()
-    con.execute(f"SET memory_limit='7GB'; SET threads=8; SET temp_directory='{tmp}'; SET preserve_insertion_order=false")
+    con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false")
     for c in args.only:
         comp = SRC / "user_artist_week" / args.half / f"mlhdplus-complete-{c}.parquet"
         part = SRC / "user_artist_week_partial" / args.half / f"mlhdplus-partial-{c}.parquet"

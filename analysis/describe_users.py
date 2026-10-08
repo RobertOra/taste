@@ -10,7 +10,7 @@ H = "explore"
 con = duckdb.connect()
 tmp = ROOT / "data" / "_tmp" / "describe"
 tmp.mkdir(parents=True, exist_ok=True)
-con.execute(f"SET memory_limit='4GB'; SET threads=4; SET temp_directory='{tmp}'")
+con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'")
 
 
 def t(table):

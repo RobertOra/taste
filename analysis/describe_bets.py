@@ -15,7 +15,7 @@ MARKET = ROOT / "data" / "derived" / "market_year" / "explore.parquet"
 con = duckdb.connect()
 tmp = ROOT / "data" / "_tmp" / "describe"
 tmp.mkdir(parents=True, exist_ok=True)
-con.execute(f"SET memory_limit='8GB'; SET threads=8; SET temp_directory='{tmp}'")
+con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'")
 
 
 def show(title, sql):

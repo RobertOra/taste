@@ -34,7 +34,7 @@ def main():
     tmp = ROOT / "data" / "_tmp" / f"market-{os.getpid()}"
     tmp.mkdir(parents=True, exist_ok=True)
     con = duckdb.connect()
-    con.execute(f"SET memory_limit='7GB'; SET threads=8; SET temp_directory='{tmp}'; SET preserve_insertion_order=false")
+    con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false")
     panel_parts = []
     for h in args.horizons:
         dest = out / f"listeners_h{h}.parquet"

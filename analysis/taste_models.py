@@ -48,6 +48,9 @@ RULES = {"w2": "w2", "w4": "w4", "w8": "w8", "p10": "w_p10", "all": "first_week"
 def parse():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", choices=["A", "B", "C_lb", "D"], default="A")
+    ap.add_argument("--unit", choices=["artist", "song", "scene"], default="artist",
+                    help="artist: bets from data/derived/bets; song: raw-sample users' song bets (song_bets); "
+                         "scene: scene entries (scene_bets). Song/scene bets use the primary bet rule only.")
     ap.add_argument("--onboarding", type=int, default=26, help="weeks")
     ap.add_argument("--rule", choices=RULES, default="w4")
     ap.add_argument("--window", type=int, default=26, help="weeks allowed to reach commitment")
@@ -60,6 +63,9 @@ def parse():
     ap.add_argument("--age", action="store_true", help="benchmark also by artist age (months since first listened)")
     ap.add_argument("--momentum", type=int, default=0, help="benchmark also by N quantiles of prior 6-month growth")
     ap.add_argument("--country", action="store_true", help="benchmark also by artist country (MusicBrainz)")
+    ap.add_argument("--release", action="store_true",
+                    help="benchmark also by release timing: did the artist release an album/EP/single in the 3 months "
+                         "before the bet, the 3 months after, both, neither, or is there no release data")
     ap.add_argument("--adjust", choices=["cells", "additive"], default="cells",
                     help="cells: one benchmark cell per month x bin x scene x age x momentum; additive: month x bin cell "
                          "plus separate leave-one-out month x scene / month x age / month x momentum adjustments (backfitted)")
@@ -69,12 +75,14 @@ def parse():
     ap.add_argument("--min-bets", type=int, default=20)
     ap.add_argument("--perms", type=int, default=20)
     ap.add_argument("--name", default=None)
+    ap.add_argument("--cand", default=None,
+                    help="write per-user/year aggregates for analysis/evaluate.py to analysis/out/cand/<cand>/ and stop")
     return ap.parse_args()
 
 
 def variant_name(a):
     return a.name or (f"on{a.onboarding}_{a.rule}_win{a.window}_{a.date}_h{a.horizon}_s{a.smooth:g}_b{a.bins}"
-                      f"_{a.scene}{'_age' if a.age else ''}{f'_mom{a.momentum}' if a.momentum else ''}{'_ctry' if a.country else ''}_{a.adjust}_{a.metric}_w{a.weight:g}")
+                      f"_{a.scene}{'_age' if a.age else ''}{f'_mom{a.momentum}' if a.momentum else ''}{'_ctry' if a.country else ''}{'_rel' if a.release else ''}_{a.adjust}_{a.metric}_w{a.weight:g}")
 
 
 def main():
@@ -86,40 +94,53 @@ def main():
     tmp.mkdir(parents=True, exist_ok=True)
     atexit.register(shutil.rmtree, tmp, True)  # also on failure
     con = duckdb.connect()
-    con.execute(f"SET memory_limit='7GB'; SET threads=8; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; SET max_temp_directory_size='18GB'")
+    con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; SET max_temp_directory_size='18GB'")
     H = a.horizon
     datecol = "first_week" if a.date == "first" or a.rule == "all" else RULES[a.rule]
     commit = "TRUE" if a.rule == "all" else f"b.{RULES[a.rule]} IS NOT NULL AND b.{RULES[a.rule]} - b.first_week < {a.window}"
 
-    con.execute(f"""CREATE TABLE b AS
-        SELECT b.user, b.artist, {MONTH.format(w='b.' + datecol)}::SMALLINT AS m, b.plays_26w,
-               regexp_extract(b.filename, 'mlhdplus-(.)[.]parquet', 1) AS arch
-        FROM read_parquet('{X}/bets/explore/*.parquet', filename=true) b
-        JOIN read_parquet('{X}/user_features/explore.parquet') f USING (user)
-        WHERE b.first_week >= f.start_week + {a.onboarding} AND {commit} AND hash(b.user) % {a.user_sample} = 0
-          AND {MONTH.format(w='b.' + datecol)} BETWEEN {2005 * 12} AND {LAST - H}""")
     con.execute(f"""CREATE TABLE act AS SELECT DISTINCT user, month FROM read_parquet('{X}/user_artist_month/explore/*.parquet')""")
-    # Joins against the 1.8B-row monthly table are done per archive (users never span archives) to bound memory.
-    parts = []
-    for c in "0123456789abcdef":
-        con.execute(f"""CREATE TABLE r_{c} AS
-            SELECT b.*, coalesce(mk.l0, 0) - (a1.user IS NOT NULL)::INT AS l0,
-                   coalesce(mk.l1, 0) - (u1.user IS NOT NULL)::INT AS l1, p.n_panel
-            FROM (SELECT * FROM b WHERE arch = '{c}') b
-            LEFT JOIN read_parquet('{X}/market/explore/listeners_h{H}.parquet') mk ON mk.artist = b.artist AND mk.month = b.m
-            JOIN read_parquet('{X}/market/explore/panel.parquet') p ON p.month = b.m AND p.h = {H}
-            LEFT JOIN act a1 ON a1.user = b.user AND a1.month = b.m + {H}
-            LEFT JOIN read_parquet('{X}/user_artist_month/explore/mlhdplus-{c}.parquet') u1
-                   ON u1.user = b.user AND u1.artist = b.artist AND u1.month = b.m + {H}""")
-        parts.append(f"SELECT * FROM r_{c}")
-    con.execute(f"CREATE TABLE r AS {' UNION ALL '.join(parts)}")
-    for c in "0123456789abcdef":
-        con.execute(f"DROP TABLE r_{c}")
-    con.execute("DROP TABLE b")
+    if a.unit == "artist":
+        con.execute(f"""CREATE TABLE b AS
+            SELECT b.user, b.artist, {MONTH.format(w='b.' + datecol)}::SMALLINT AS m, b.plays_26w,
+                   regexp_extract(b.filename, 'mlhdplus-(.)[.]parquet', 1) AS arch
+            FROM read_parquet('{X}/bets/explore/*.parquet', filename=true) b
+            JOIN read_parquet('{X}/user_features/explore.parquet') f USING (user)
+            WHERE b.first_week >= f.start_week + {a.onboarding} AND {commit} AND hash(b.user) % {a.user_sample} = 0
+              AND {MONTH.format(w='b.' + datecol)} BETWEEN {2005 * 12} AND {LAST - H}""")
+        # Joins against the 1.8B-row monthly table are done per archive (users never span archives) to bound memory.
+        parts = []
+        for c in "0123456789abcdef":
+            con.execute(f"""CREATE TABLE r_{c} AS
+                SELECT b.*, b.artist AS item, coalesce(mk.l0, 0) - (a1.user IS NOT NULL)::INT AS l0,
+                       coalesce(mk.l1, 0) - (u1.user IS NOT NULL)::INT AS l1, p.n_panel
+                FROM (SELECT * FROM b WHERE arch = '{c}') b
+                LEFT JOIN read_parquet('{X}/market/explore/listeners_h{H}.parquet') mk ON mk.artist = b.artist AND mk.month = b.m
+                JOIN read_parquet('{X}/market/explore/panel.parquet') p ON p.month = b.m AND p.h = {H}
+                LEFT JOIN act a1 ON a1.user = b.user AND a1.month = b.m + {H}
+                LEFT JOIN read_parquet('{X}/user_artist_month/explore/mlhdplus-{c}.parquet') u1
+                       ON u1.user = b.user AND u1.artist = b.artist AND u1.month = b.m + {H}""")
+            parts.append(f"SELECT * FROM r_{c}")
+        con.execute(f"CREATE TABLE r AS {' UNION ALL '.join(parts)}")
+        for c in "0123456789abcdef":
+            con.execute(f"DROP TABLE r_{c}")
+        con.execute("DROP TABLE b")
+    elif a.unit == "song":
+        con.execute(f"""CREATE TABLE r AS
+            SELECT user, recording AS item, artist, m, plays_26w, song_first_m, l0_h{H} AS l0, l1_h{H} AS l1,
+                   n_panel_h{H} AS n_panel, tr_later_h{H} AS tr_later, kept_later_h{H} AS kept_later, tr_prior, kept_prior
+            FROM read_parquet('{X}/song_bets/explore.parquet')
+            WHERE l0_h{H} IS NOT NULL AND hash(user) % {a.user_sample} = 0""")
+    else:
+        con.execute(f"""CREATE TABLE r AS
+            SELECT user, scene::BIGINT * 10000 + year AS item, artist, m, plays_26w, l0_h{H} AS l0, l1_h{H} AS l1,
+                   n_panel_h{H} AS n_panel, mom_g
+            FROM read_parquet('{X}/scene_bets/explore.parquet')
+            WHERE l0_h{H} IS NOT NULL AND hash(user) % {a.user_sample} = 0""")
     bad = con.execute("SELECT count(*) FROM r WHERE l0 < 0 OR l1 < 0").fetchone()[0]
     assert bad == 0, f"{bad} bets with negative leave-one-out counts"
 
-    if a.scene == "none":
+    if a.scene == "none" or a.unit == "scene":  # a scene bet is already about the scene itself
         scene_sql, scene_join = "0", ""
     elif a.scene.startswith("yearly"):
         k = a.scene.removeprefix("yearly")
@@ -136,8 +157,18 @@ def main():
                     FROM read_parquet('{X}/user_artist_month/explore/*.parquet') GROUP BY artist""")
     age_sql = ("CASE WHEN fs.fm <= 2005 * 12 THEN 9 WHEN r.m - fs.fm < 3 THEN 0 WHEN r.m - fs.fm < 6 THEN 1 "
                "WHEN r.m - fs.fm < 12 THEN 2 WHEN r.m - fs.fm < 24 THEN 3 ELSE 4 END") if a.age else "0"
+    if a.age and a.unit == "song":  # song age instead of artist age
+        age_sql = ("CASE WHEN r.song_first_m <= 2005 * 12 THEN 9 WHEN r.m - r.song_first_m < 3 THEN 0 "
+                   "WHEN r.m - r.song_first_m < 6 THEN 1 WHEN r.m - r.song_first_m < 12 THEN 2 "
+                   "WHEN r.m - r.song_first_m < 24 THEN 3 ELSE 4 END")
+    if a.unit == "scene":
+        age_sql = "0"
     # Momentum: fixed-panel growth over the 6 months before the bet (panel = active at m-6 and m), leave-one-out.
-    if a.momentum:
+    if a.momentum and a.unit == "scene":  # scene growth over the 6 months before entry (from scene_bets)
+        mom_sql, mom_join = f"coalesce(ntile({a.momentum}) OVER (PARTITION BY r.m ORDER BY r.mom_g), 0)", ""
+    elif a.momentum and a.unit == "song":  # not available for songs (no monthly song listening for all users)
+        mom_sql, mom_join = "0", ""
+    elif a.momentum:
         # The bettor's own listening at m-6 and m, in one pass over the monthly table.
         con.execute("CREATE TABLE selfl (user BIGINT, artist BIGINT, bm SMALLINT, l6 BOOLEAN, lm BOOLEAN)")
         for c in "0123456789abcdef":
@@ -160,12 +191,38 @@ def main():
     else:
         mom_sql, mom_join = "0", ""
 
+    if a.release and a.unit != "scene":
+        con.execute(f"""CREATE TABLE relm AS
+            SELECT DISTINCT artist, (substr(first_release_date, 1, 4)::INT * 12 + substr(first_release_date, 6, 2)::INT - 1)::SMALLINT AS rm
+            FROM read_parquet('{X}/mb_release_groups.parquet')
+            WHERE regexp_matches(first_release_date, '^[0-9]{{4}}-[0-9]{{2}}')
+              AND primary_type IN ('Album', 'EP', 'Single') AND secondary_types NOT LIKE '%Compilation%'""")
+        con.execute("""CREATE TABLE rel AS
+            WITH k AS (SELECT DISTINCT artist, m FROM r)
+            SELECT k.artist AS rel_artist, k.m AS rel_m,
+                   CASE WHEN count(x.rm) = 0 THEN 4
+                        ELSE 2 * (count(*) FILTER (WHERE x.rm > k.m AND x.rm <= k.m + 3) > 0)::INT
+                           + (count(*) FILTER (WHERE x.rm >= k.m - 3 AND x.rm <= k.m) > 0)::INT END AS relc
+            FROM k LEFT JOIN relm x ON x.artist = k.artist GROUP BY k.artist, k.m""")
+        rel_sql, rel_join = "rel.relc", "LEFT JOIN rel ON rel.rel_artist = r.artist AND rel.rel_m = r.m"
+    else:
+        rel_sql, rel_join = "0", ""
     outcome_join = ""
-    if a.model == "A":
+    assert a.unit != "scene" or a.model == "A", "scene unit: only prescience is built so far"
+    assert a.unit != "song" or a.model != "B", "song unit: community-leading not built yet"
+    xb_sql = "0"
+    if a.model == "D" and a.unit == "song":
+        p0 = con.execute("SELECT sum(kept_later) / sum(tr_later) FROM r").fetchone()[0]
+        ret = f"(r.kept_later + 2 * {p0}) / (r.tr_later + 2)"
+        xb_sql = f"ntile(5) OVER (PARTITION BY r.m ORDER BY (r.kept_prior + 2 * {p0}) / (r.tr_prior + 2))"
+    elif a.model == "C_lb" and a.unit == "song":
+        ret = "ln(1 + coalesce(lb.lb_users, 0))"
+        outcome_join = f"LEFT JOIN read_parquet('{X}/lb_recording_popularity.parquet') lb ON lb.recording = r.item"
+    elif a.model == "A":
         ret = f"ln(l1 + {a.smooth}) - ln(l0 + {a.smooth})"
     elif a.model == "B":
         ret = "ln((cmt.k_later + 0.5) / greatest(cmt.cn_panel, 1))"
-        outcome_join = (f"JOIN (SELECT user AS cu, artist AS ca, m AS cm, g AS cg, k_later, n_panel AS cn_panel, c_pen "
+        outcome_join = (f"JOIN (SELECT user AS cu, artist AS ca, m AS cm, g AS cg, k_later, n_panel AS cn_panel, c_pen, c_mom "
                         f"FROM read_parquet('{X}/community/explore_h{H}.parquet')) cmt "
                         f"ON cmt.cu = r.user AND cmt.ca = r.artist AND cmt.cm = r.m")
     elif a.model == "C_lb":
@@ -184,7 +241,8 @@ def main():
         con.execute(f"""CREATE TABLE dd AS
             WITH q AS (SELECT DISTINCT artist, m, (m + {H})::SMALLINT AS mh FROM r)
             SELECT q.artist AS dd_artist, q.m AS dd_m, coalesce(c1.cn, 0) - coalesce(c0.cn, 0) AS n_later,
-                   coalesce(c1.cc, 0) - coalesce(c0.cc, 0) AS c_later
+                   coalesce(c1.cc, 0) - coalesce(c0.cc, 0) AS c_later,
+                   (coalesce(c0.cc, 0) + 2 * {p0}) / (coalesce(c0.cn, 0) + 2) AS conv_prior
             FROM q ASOF LEFT JOIN cum c0 ON q.artist = c0.artist AND q.m >= c0.t
                    ASOF LEFT JOIN cum c1 ON q.artist = c1.artist AND q.mh >= c1.t""")
         ret = f"(dd.c_later + 2 * {p0}) / (dd.n_later + 2)"
@@ -193,30 +251,36 @@ def main():
         SELECT r.*, {ret} AS ret, l0 / n_panel AS pen0, {scene_sql} AS scene,
                CASE WHEN l0 = 0 THEN 0 ELSE 1 + ntile({a.bins}) OVER (PARTITION BY m, l0 = 0 ORDER BY l0) END AS bin,
                pow(greatest(plays_26w, 1), {a.weight}) AS wt, {age_sql} AS age, {mom_sql} AS mq,
-               {"coalesce(mb.country, 'XX')" if a.country else "'-'"} AS ctry,
+               {"coalesce(mb.country, 'XX')" if a.country and a.unit != "scene" else "'-'"} AS ctry, {rel_sql} AS relc,
                {"ntile(10) OVER (PARTITION BY r.m ORDER BY cmt.c_pen)" if a.model == "B" else "0"} AS cpb,
-               {"cmt.cg" if a.model == "B" else "0"} AS cg
-        FROM r {scene_join} LEFT JOIN first_seen fs ON fs.artist = r.artist {mom_join} {outcome_join}
-        {f"LEFT JOIN read_parquet('{X}/mb_artists.parquet') mb ON mb.artist = r.artist" if a.country else ""}""")
-    for t in ("r", "first_seen", "mom", "selfl", "dd", "trials", "cum"):
+               {"cmt.cg" if a.model == "B" else "0"} AS cg,
+               {("ntile(5) OVER (PARTITION BY r.m ORDER BY cmt.c_mom)" if a.model == "B" else
+                 xb_sql if a.unit == "song" else
+                 "ntile(5) OVER (PARTITION BY r.m ORDER BY dd.conv_prior)" if a.model == "D" else "0")} AS xb
+        FROM r {scene_join} LEFT JOIN first_seen fs ON fs.artist = r.artist {mom_join} {outcome_join} {rel_join}
+        {f"LEFT JOIN read_parquet('{X}/mb_artists.parquet') mb ON mb.artist = r.artist" if a.country and a.unit != "scene" else ""}""")
+    for t in ("r", "first_seen", "mom", "selfl", "dd", "trials", "cum", "rel", "relm"):
         con.execute(f"DROP TABLE IF EXISTS {t}")
-    cell = "m, bin, scene, age, mq, ctry, cpb, cg" if a.adjust == "cells" else "m, bin"
+    cell = "m, bin, scene, age, mq, ctry, cpb, cg, xb, relc" if a.adjust == "cells" else "m, bin"
     extra_fx = [] if a.adjust == "cells" else [g for g, on in (("scene", a.scene != "none"), ("age", a.age),
-                                                                   ("mq", a.momentum > 0), ("ctry", a.country)) if on]
+                                                                   ("mq", a.momentum > 0), ("ctry", a.country), ("relc", a.release)) if on]
     if a.adjust != "cells" and a.model == "B":
-        extra_fx += ["cpb", "cg"]  # prior popularity in the community; the community's own adoption rate that month
+        extra_fx += ["cpb", "cg", "xb"]  # prior popularity in the community; the community's own adoption rate
+                                         # that month; momentum within the community
+    if a.adjust != "cells" and a.model == "D":
+        extra_fx.append("xb")  # the artist's track record of converting triers before the bet
     if a.metric == "log":
         val = "ret"
     elif a.metric == "rawcap":
         assert a.model == "A", "rawcap only makes sense for growth returns"
         val = "least(exp(ret), 20)"
     elif a.metric == "rank":
-        val = "percent_rank() OVER (PARTITION BY m, bin, scene, age, mq, ctry, cpb, cg ORDER BY ret)"
+        val = "percent_rank() OVER (PARTITION BY m, bin, scene, age, mq, ctry, cpb, cg, xb, relc ORDER BY ret)"
     else:
-        val = "(percent_rank() OVER (PARTITION BY m, bin, scene, age, mq, ctry, cpb, cg ORDER BY ret) >= 0.9)::INT"
+        val = "(percent_rank() OVER (PARTITION BY m, bin, scene, age, mq, ctry, cpb, cg, xb, relc ORDER BY ret) >= 0.9)::INT"
     con.execute(f"""CREATE TABLE e AS
-        WITH v AS (SELECT user, artist, m, bin, scene, age, mq, ctry, cpb, cg, pen0, wt, {val} AS v FROM r2)
-        SELECT user, artist, m, bin, scene, age, mq, ctry, cpb, cg, pen0, wt, v,
+        WITH v AS (SELECT user, artist, item, m, bin, scene, age, mq, ctry, cpb, cg, xb, relc, pen0, wt, {val} AS v FROM r2)
+        SELECT user, artist, item, m, bin, scene, age, mq, ctry, cpb, cg, xb, relc, pen0, wt, v,
                v - (sum(v) OVER c - v) / nullif(count(*) OVER c - 1, 0) AS e
         FROM v WINDOW c AS (PARTITION BY {cell})""")
     con.execute("DELETE FROM e WHERE e IS NULL")
@@ -227,9 +291,32 @@ def main():
             con.execute(f"""CREATE OR REPLACE TABLE e AS SELECT * REPLACE (
                 e - (sum(e) OVER w - e) / nullif(count(*) OVER w - 1, 0) AS e) FROM e WINDOW w AS (PARTITION BY m, {g})""")
             con.execute("DELETE FROM e WHERE e IS NULL")
-    diag = con.execute(f"""WITH c AS (SELECT {cell}, count(*) AS n, count(DISTINCT artist) AS na FROM e GROUP BY ALL)
+    diag = con.execute(f"""WITH c AS (SELECT {cell}, count(*) AS n, count(DISTINCT item) AS na FROM e GROUP BY ALL)
         SELECT sum(n * n) / sum(n), sum(n) FILTER (WHERE na = 1) / sum(n), sum(n * na) / sum(n) FROM c""").fetchone()
     n_bets, n_users = con.execute("SELECT count(*), count(DISTINCT user) FROM e").fetchone()
+    if a.cand:
+        # Compact aggregates for the evaluator: per user x bet year x random half of their bets (by item),
+        # plus the same sums after shuffling excess outcomes among comparable bets (luck baseline).
+        cdir = ROOT / "analysis" / "out" / "cand" / a.cand
+        cdir.mkdir(parents=True, exist_ok=True)
+        key = "(m // 12)::SMALLINT AS year, (hash(item) % 2)::TINYINT AS half"
+        con.execute(f"""CREATE TABLE agg AS SELECT user, {key}, count(*)::INT AS n, sum(wt) AS sw,
+                        sum(wt * e) AS swe, sum(wt * e * e) AS swe2 FROM e GROUP BY ALL""")
+        for k in range(a.perms):
+            con.execute(f"""CREATE OR REPLACE TEMP TABLE pk AS
+                WITH o AS (SELECT user, m, item, wt, {cell}, row_number() OVER (PARTITION BY {cell} ORDER BY random()) AS k FROM e),
+                     sh AS (SELECT e AS ep, {cell}, row_number() OVER (PARTITION BY {cell} ORDER BY random()) AS k FROM e)
+                SELECT o.user, (o.m // 12)::SMALLINT AS year, (hash(o.item) % 2)::TINYINT AS half, sum(o.wt * sh.ep) AS v
+                FROM o JOIN sh USING ({cell}, k) GROUP BY ALL""")
+            con.execute(f"ALTER TABLE agg ADD COLUMN swe_p{k} DOUBLE")
+            con.execute(f"UPDATE agg SET swe_p{k} = pk.v FROM pk WHERE pk.user = agg.user AND pk.year = agg.year AND pk.half = agg.half")
+        con.execute(f"COPY agg TO '{cdir}/agg.parquet' (FORMAT parquet, COMPRESSION zstd)")
+        (cdir / "meta.json").write_text(json.dumps({
+            "name": a.cand, "model": a.model, "unit": a.unit, "horizon": a.horizon, "half": "explore",
+            "bets": n_bets, "users_with_bets": n_users, "args": vars(a),
+            "cells": {"bets_per_cell": diag[0], "share_single_item_cells": diag[1], "items_per_cell": diag[2]}}, indent=1))
+        print(f"wrote {cdir}/agg.parquet ({n_bets:,} bets, {n_users:,} users)")
+        return
 
     def user_means(col="e", where="TRUE", min_n=a.min_bets):
         return con.sql(f"""SELECT user, sum(wt * {col}) / sum(wt) AS score, count(*) AS n,
@@ -284,7 +371,8 @@ def main():
                            FROM e) GROUP BY user""").pl()
     df = users.join(feats, on="user").join(extra, on="user").drop_nulls()
     cols = ["listens", "history_years", "join_year", "listens_per_active_month", "unmatched_share", "no_id_share",
-            "new_artists_per_year", "committed_per_year", "mainstream_share", "obscurity_logpen", "scene_entropy", "n"]
+            "new_artists_per_year", "committed_per_year", "mainstream_share", "obscurity_logpen", "scene_entropy", "n",
+            "commit_rate"]
     cols = [c for c in cols if df[c].cast(pl.Float64).std() > 0]  # e.g. scene_entropy is constant without scenes
     Z = df.select([pl.col(c).cast(pl.Float64) for c in cols]).with_columns(
         pl.col("listens").log(), pl.col("listens_per_active_month").log(), pl.col("n").log()).to_numpy()

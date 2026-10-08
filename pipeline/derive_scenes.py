@@ -34,7 +34,7 @@ def main():
     con = duckdb.connect()
     tmp = ROOT / "data" / "_tmp" / f"scenes-{os.getpid()}"
     tmp.mkdir(parents=True, exist_ok=True)
-    con.execute(f"SET memory_limit='6GB'; SET threads=8; SET temp_directory='{tmp}'")
+    con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'")
     ua = f"read_parquet('{UA}/*.parquet')"
     listeners = con.sql(f"SELECT artist, count(*)::INT AS n_listeners FROM {ua} GROUP BY artist").pl()
     core = listeners.filter(pl.col("n_listeners") >= MIN_LISTENERS).sort("artist").with_row_index("col")

@@ -6,6 +6,7 @@
         artists_tried, new_artists_per_year, committed_per_year   (after 26-week onboarding; committed = 4 distinct
                                                                      weeks within 26 weeks of first listen)
         mainstream_share   share of plays going to the top 1% of artists by plays in this half
+        commit_rate        share of new artists (after onboarding) the user commits to: a loyal-listener trait
 Variant-dependent controls (obscurity of bets, scene mix) are computed with the scores.
 """
 
@@ -29,7 +30,7 @@ def main():
     tmp = ROOT / "data" / "_tmp" / f"features-{os.getpid()}"
     tmp.mkdir(parents=True, exist_ok=True)
     con = duckdb.connect()
-    con.execute(f"SET memory_limit='7GB'; SET threads=8; SET temp_directory='{tmp}'")
+    con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'")
     bets = f"read_parquet('{X}/bets/{h}/*.parquet')"
     uam = f"read_parquet('{X}/user_artist_month/{h}/*.parquet')"
     con.execute(f"""COPY (
@@ -55,7 +56,8 @@ def main():
                s.artists_tried,
                coalesce(p.n_new, 0) / greatest((s.end_week - s.start_week + 1 - 26) / 52.18, 0.25) AS new_artists_per_year,
                coalesce(p.n_committed, 0) / greatest((s.end_week - s.start_week + 1 - 26) / 52.18, 0.25) AS committed_per_year,
-               m.mainstream_share
+               m.mainstream_share,
+               coalesce(p.n_committed, 0) / greatest(coalesce(p.n_new, 0), 1) AS commit_rate
         FROM span s JOIN act a USING (user) JOIN q USING (user) JOIN ms m USING (user) LEFT JOIN post p USING (user)
         ORDER BY s.user
     ) TO '{out}' (FORMAT parquet)""")

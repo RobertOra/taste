@@ -9,8 +9,11 @@ For every committed adoption (user u, artist a, commitment month m) with m in ye
     k_later  = other members of u's community who commit to a in months (m, m+H]
     n_panel  = members of the community active (any listen) in both m and m+H, excluding u
     c_pen    = members (excluding u) who listened to a in month m, / n_panel   (prior community popularity)
+    c_mom    = community momentum: ln(1 + members listening in m) - ln(1 + members listening in m-6), among members
+               active in both months, excluding u (is the artist already rising among people like you?)
 
-    data/derived/community/explore_h<H>.parquet   user, artist, m, g (community), k_later, n_panel, c_pen
+    data/derived/community/explore_h<H>.parquet   user, artist, m, g (community), k_later, n_panel, c_pen, c_mom
+    data/derived/community/explore_home.parquet   user, year, g   (each user's community per year; reused for songs)
 Commitment = 4 distinct weeks within 26 weeks of first listen, after the adopter's 26-week onboarding
 (the primary bet definition); used for both bettors and later adopters.
 
@@ -42,7 +45,7 @@ def main():
     tmp.mkdir(parents=True, exist_ok=True)
     atexit.register(shutil.rmtree, tmp, True)
     con = duckdb.connect()
-    con.execute(f"SET memory_limit='7GB'; SET threads=8; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; "
+    con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; "
                 "SET max_temp_directory_size='18GB'")
     uam = f"read_parquet('{X}/user_artist_month/explore/*.parquet')"
     con.execute(f"""CREATE TABLE adopt AS
@@ -66,6 +69,8 @@ def main():
                  gs AS (SELECT scene, sum(p) / (SELECT sum(p) FROM up) AS gshare FROM up GROUP BY scene)
             SELECT user, arg_max(scene, share / gshare) AS g FROM us JOIN gs USING (scene)
             WHERE share >= 0.05 GROUP BY user""")
+        con.execute(f"CREATE TABLE IF NOT EXISTS home_all AS SELECT user, {y}::SMALLINT AS year, g FROM home LIMIT 0")
+        con.execute(f"INSERT INTO home_all SELECT user, {y}, g FROM home")
         sizes = con.execute("SELECT quantile_cont(n, [0.1, 0.5, 0.9]), max(n), count(*) FROM (SELECT g, count(*) AS n FROM home GROUP BY g)").fetchone()
         print(f"{y}: community sizes q10/50/90 {[round(x) for x in sizes[0]]}, max {sizes[1]}, communities {sizes[2]}", flush=True)
         # Later community adoptions: cumulative counts per (community, artist) over commitment months.
@@ -88,21 +93,40 @@ def main():
             JOIN home h ON h.user = u.user AND h.g = k.g
             JOIN act f ON f.user = u.user AND f.month = k.m + {H}
             GROUP BY ALL""")
+        # Community momentum: members listening at m-6 (active at m) vs at m (active at m-6), excluding the bettor.
+        con.execute(f"""CREATE OR REPLACE TABLE cm AS
+            WITH keys AS (SELECT DISTINCT g, artist, m FROM yb),
+                 b6 AS (SELECT k.g, k.artist, k.m, count(*) AS l FROM keys k
+                        JOIN {uam} u ON u.artist = k.artist AND u.month = k.m - 6
+                        JOIN home h ON h.user = u.user AND h.g = k.g
+                        JOIN act f ON f.user = u.user AND f.month = k.m GROUP BY ALL),
+                 b0 AS (SELECT k.g, k.artist, k.m, count(*) AS l FROM keys k
+                        JOIN {uam} u ON u.artist = k.artist AND u.month = k.m
+                        JOIN home h ON h.user = u.user AND h.g = k.g
+                        JOIN act f ON f.user = u.user AND f.month = k.m - 6 GROUP BY ALL)
+            SELECT k.g, k.artist, k.m, coalesce(b0.l, 0) AS l_now, coalesce(b6.l, 0) AS l_before
+            FROM keys k LEFT JOIN b0 USING (g, artist, m) LEFT JOIN b6 USING (g, artist, m)""")
         con.execute(f"""CREATE OR REPLACE TABLE part_{y} AS
             SELECT yb.user, yb.artist, yb.m, yb.g,
                    coalesce(c1.cn, 0) - coalesce(c0.cn, 0) AS k_later,
                    cp.n - (af.user IS NOT NULL)::INT AS n_panel,
-                   (coalesce(cl.l, 0) - (af.user IS NOT NULL)::INT) / greatest(cp.n - (af.user IS NOT NULL)::INT, 1) AS c_pen
+                   (coalesce(cl.l, 0) - (af.user IS NOT NULL)::INT) / greatest(cp.n - (af.user IS NOT NULL)::INT, 1) AS c_pen,
+                   ln(greatest(cm.l_now - (a6.user IS NOT NULL)::INT, 0) + 1)
+                 - ln(greatest(cm.l_before - (u6.user IS NOT NULL)::INT, 0) + 1) AS c_mom
             FROM yb
             ASOF LEFT JOIN cadopt c0 ON c0.g = yb.g AND c0.artist = yb.artist AND yb.m >= c0.t
             ASOF LEFT JOIN cadopt c1 ON c1.g = yb.g AND c1.artist = yb.artist AND yb.mh >= c1.t
             JOIN cpanel cp ON cp.g = yb.g AND cp.m = yb.m
             LEFT JOIN act af ON af.user = yb.user AND af.month = yb.mh
-            LEFT JOIN cl ON cl.g = yb.g AND cl.artist = yb.artist AND cl.m = yb.m""")
+            LEFT JOIN cl ON cl.g = yb.g AND cl.artist = yb.artist AND cl.m = yb.m
+            LEFT JOIN cm ON cm.g = yb.g AND cm.artist = yb.artist AND cm.m = yb.m
+            LEFT JOIN act a6 ON a6.user = yb.user AND a6.month = yb.m - 6
+            LEFT JOIN {uam} u6 ON u6.user = yb.user AND u6.artist = yb.artist AND u6.month = yb.m - 6""")
         n = con.execute(f"SELECT count(*), avg(k_later), avg(n_panel) FROM part_{y}").fetchone()
         print(f"{y}: {n[0]:,} bets, mean later community adopters {n[1]:.3f}, mean community panel {n[2]:.0f}", flush=True)
         parts.append(f"SELECT * FROM part_{y}")
     con.execute(f"COPY ({' UNION ALL '.join(parts)}) TO '{out}' (FORMAT parquet, COMPRESSION zstd)")
+    con.execute(f"COPY home_all TO '{out.parent / 'explore_home.parquet'}' (FORMAT parquet)")
 
 
 if __name__ == "__main__":

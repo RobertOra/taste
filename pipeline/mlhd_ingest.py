@@ -439,7 +439,7 @@ def compact(out_dir, pattern_by_half, stem, keep_sources=False):
     shutil.rmtree(tmpdir, ignore_errors=True)
     tmpdir.mkdir(parents=True)
     con = duckdb.connect()
-    con.execute(f"SET memory_limit='2GB'; SET threads=3; SET temp_directory='{tmpdir}'; "
+    con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmpdir}'; "
                 "SET preserve_insertion_order=false")
     for table, order in COMPACT_ORDER.items():
         for half_dir in sorted((out_dir / table).glob("*")):

@@ -70,7 +70,7 @@ def main():
     tmp.mkdir(parents=True, exist_ok=True)
     atexit.register(shutil.rmtree, tmp, True)  # also on failure
     con = duckdb.connect()
-    con.execute(f"SET memory_limit='7GB'; SET threads=8; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; SET max_temp_directory_size='18GB'")
+    con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; SET max_temp_directory_size='18GB'")
     H = a.horizon
     datecol = "first_week" if a.date == "first" or a.rule == "all" else RULES[a.rule]
     commit = "TRUE" if a.rule == "all" else f"b.{RULES[a.rule]} IS NOT NULL AND b.{RULES[a.rule]} - b.first_week < {a.window}"
@@ -221,7 +221,8 @@ def main():
                            FROM e) GROUP BY user""").pl()
     df = users.join(feats, on="user").join(extra, on="user").drop_nulls()
     cols = ["listens", "history_years", "join_year", "listens_per_active_month", "unmatched_share", "no_id_share",
-            "new_artists_per_year", "committed_per_year", "mainstream_share", "obscurity_logpen", "scene_entropy", "n"]
+            "new_artists_per_year", "committed_per_year", "mainstream_share", "obscurity_logpen", "scene_entropy", "n",
+            "commit_rate"]
     cols = [c for c in cols if df[c].cast(pl.Float64).std() > 0]  # e.g. scene_entropy is constant without scenes
     Z = df.select([pl.col(c).cast(pl.Float64) for c in cols]).with_columns(
         pl.col("listens").log(), pl.col("listens_per_active_month").log(), pl.col("n").log()).to_numpy()

@@ -20,7 +20,7 @@ only = sys.argv[2] if len(sys.argv) > 2 else None  # "partial" or "complete" to 
 con = duckdb.connect()
 tmp = out / "_tmp" / "validate"
 tmp.mkdir(parents=True, exist_ok=True)
-con.execute(f"SET memory_limit='4GB'; SET threads=4; SET temp_directory='{tmp}'; SET preserve_insertion_order=false")
+con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false")
 failures = 0
 
 
