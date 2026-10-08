@@ -1,0 +1,17 @@
+('yearly co-listening', 50, 5.36, 1.0, 0.055, 0.392)
+('yearly co-listening', 200, 9.02, 1.0, 0.111, 0.442)
+('yearly co-listening', 1000, 14.88, 1.0, 0.169, 0.472)
+('all-years co-listening', 50, 5.72, 1.0, 0.104, 0.411)
+('all-years co-listening', 200, 8.46, 1.0, 0.195, 0.459)
+('all-years co-listening', 1000, 12.99, 1.0, 0.293, 0.483)
+('genre (tagged only)', 50, 1.5, 0.572, 0.021, 0.612)
+('genre (tagged only)', 200, 3.3, 0.572, 0.067, 0.742)
+            definition    k  relatedness_lift  pairs_covered  timing_leak_eta2  genre_nmi
+   yearly co-listening   50              5.36          1.000             0.055      0.392
+   yearly co-listening  200              9.02          1.000             0.111      0.442
+   yearly co-listening 1000             14.88          1.000             0.169      0.472
+all-years co-listening   50              5.72          1.000             0.104      0.411
+all-years co-listening  200              8.46          1.000             0.195      0.459
+all-years co-listening 1000             12.99          1.000             0.293      0.483
+   genre (tagged only)   50              1.50          0.572             0.021      0.612
+   genre (tagged only)  200              3.30          0.572             0.067      0.742
