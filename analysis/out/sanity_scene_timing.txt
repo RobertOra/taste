@@ -1,0 +1,3 @@
+k=50: share of variance in artists' peak year explained by scene = 0.104
+k=200: share of variance in artists' peak year explained by scene = 0.195
+k=1000: share of variance in artists' peak year explained by scene = 0.293

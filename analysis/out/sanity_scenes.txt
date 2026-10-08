@@ -1,0 +1,39 @@
+                  name  n_listeners  scene_50  scene_200  scene_1000
+             Radiohead       214857         4        171         610
+                The xx       142814         4         46         460
+           The Beatles       199573         4        171         992
+                 Adele       151591         7         46         378
+             Lady Gaga       153237         7        126         504
+         Justin Bieber        61104         7        126         219
+          Lana Del Rey       116650         7         46         673
+              Bon Iver       131716        16         46         610
+        Mumford & Sons       119984        16         46         673
+       Vampire Weekend       132666        19         46         460
+Florence + the Machine       154978        42         46         460
+         Kings of Leon       166453        42         46         844
+        Arctic Monkeys       163671        47        130         844
+         Amy Winehouse       136136        47         46         743
+              Skrillex        96993        49        155         677
+     Foster the People       114719        49         91         460
+                 Gotye       120320        49         46         673
+                  MGMT       167308        49        171         460
+
+most similar among these artists:
+  Florence + the Machine   -> Lana Del Rey, Adele, Gotye
+  Skrillex                 -> Gotye, Foster the People, Justin Bieber
+  Arctic Monkeys           -> Kings of Leon, MGMT, Vampire Weekend
+  Radiohead                -> The Beatles, MGMT, Arctic Monkeys
+  Adele                    -> Lana Del Rey, Florence + the Machine, Gotye
+  Kings of Leon            -> Arctic Monkeys, MGMT, Vampire Weekend
+  Bon Iver                 -> The xx, Vampire Weekend, Mumford & Sons
+  Lady Gaga                -> Justin Bieber, Adele, Lana Del Rey
+  Foster the People        -> Gotye, Mumford & Sons, MGMT
+  Vampire Weekend          -> MGMT, The xx, Bon Iver
+  Justin Bieber            -> Lady Gaga, Adele, Lana Del Rey
+  Gotye                    -> Foster the People, Florence + the Machine, Adele
+  Mumford & Sons           -> Gotye, Bon Iver, Foster the People
+  The xx                   -> MGMT, Bon Iver, Vampire Weekend
+  Lana Del Rey             -> Florence + the Machine, Adele, Gotye
+  Amy Winehouse            -> Adele, Florence + the Machine, Lana Del Rey
+  The Beatles              -> Radiohead, MGMT, Arctic Monkeys
+  MGMT                     -> Vampire Weekend, The xx, Arctic Monkeys

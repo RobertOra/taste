@@ -1,0 +1,15 @@
+  bucket  artists  missing_in_mb  has_genre  has_tag
+     1-4   118636          0.050      0.056    0.085
+    5-49   203836          0.026      0.090    0.122
+  50-499   179564          0.013      0.176    0.213
+500-4999    66149          0.007      0.378    0.432
+   5000+    13275          0.002      0.776    0.825
+ share_of_plays_with_genre
+                     0.863
+             name                                                    genres
+        Lady Gaga                    [americana, art pop, dance, dance-pop]
+         Skrillex            [afro house, bass house, breakbeat, breakcore]
+Foster the People      [alternative rock, dance-pop, electronic, indie pop]
+   Arctic Monkeys          [alternative rock, art rock, baroque pop, dance]
+         Bon Iver           [ambient pop, art pop, contemporary folk, folk]
+            Gotye [alternative pop, alternative rock, art pop, chamber pop]
