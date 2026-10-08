@@ -21,6 +21,8 @@ for f in sorted(OUT.glob("*/summary.json")):
         "random": round(p["random_split"]["pearson"], 3),
         "impostor_r2": round(s["impostors"]["r2_all"], 3),
         "resid_halves": round(s["impostors"]["residual_persistence_halves"], 3),
+        "artists_per_cell": round(s.get("cells", {}).get("artists_per_cell_bet_weighted", float("nan")), 1),
+        "single_artist_cells": round(s.get("cells", {}).get("share_bets_in_single_artist_cells", float("nan")) or 0.0, 3),
     })
 pd.set_option("display.width", 200)
 print(pd.DataFrame(rows).to_string(index=False))

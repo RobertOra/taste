@@ -43,6 +43,9 @@ def parse():
                     default="none")
     ap.add_argument("--age", action="store_true", help="benchmark also by artist age (months since first listened)")
     ap.add_argument("--momentum", type=int, default=0, help="benchmark also by N quantiles of prior 6-month growth")
+    ap.add_argument("--adjust", choices=["cells", "additive"], default="cells",
+                    help="cells: one benchmark cell per month x bin x scene x age x momentum; additive: month x bin cell "
+                         "plus separate leave-one-out month x scene / month x age / month x momentum adjustments (backfitted)")
     ap.add_argument("--metric", choices=["log", "rank", "rawcap", "hit"], default="log")
     ap.add_argument("--weight", type=float, default=0.0, help="alpha in plays_26w^alpha")
     ap.add_argument("--min-bets", type=int, default=20)
@@ -53,7 +56,7 @@ def parse():
 
 def variant_name(a):
     return a.name or (f"on{a.onboarding}_{a.rule}_win{a.window}_{a.date}_h{a.horizon}_s{a.smooth:g}_b{a.bins}"
-                      f"_{a.scene}{'_age' if a.age else ''}{f'_mom{a.momentum}' if a.momentum else ''}_{a.metric}_w{a.weight:g}")
+                      f"_{a.scene}{'_age' if a.age else ''}{f'_mom{a.momentum}' if a.momentum else ''}_{a.adjust}_{a.metric}_w{a.weight:g}")
 
 
 def main():
@@ -108,7 +111,7 @@ def main():
     # Momentum: fixed-panel growth over the 6 months before the bet (panel = active at m-6 and m), leave-one-out.
     if a.momentum:
         con.execute(f"""CREATE TABLE mom AS
-            SELECT r.user, r.artist, r.m,
+            SELECT r.user, r.artist, r.m AS bm,
                    ln(greatest(coalesce(mk.l1, 0) - (u0.user IS NOT NULL AND a0.user IS NOT NULL)::INT, 0) + 1)
                  - ln(greatest(coalesce(mk.l0, 0) - (u6.user IS NOT NULL AND a6.user IS NOT NULL)::INT, 0) + 1) AS g
             FROM r
@@ -120,7 +123,7 @@ def main():
             LEFT JOIN read_parquet('{X}/user_artist_month/explore/*.parquet') u6
                    ON u6.user = r.user AND u6.artist = r.artist AND u6.month = r.m - 6""")
         mom_sql = f"coalesce(ntile({a.momentum}) OVER (PARTITION BY r.m ORDER BY mo.g), 0)"
-        mom_join = "LEFT JOIN mom mo ON mo.user = r.user AND mo.artist = r.artist AND mo.m = r.m"
+        mom_join = "LEFT JOIN mom mo ON mo.user = r.user AND mo.artist = r.artist AND mo.bm = r.m"
     else:
         mom_sql, mom_join = "0", ""
 
@@ -130,7 +133,9 @@ def main():
                CASE WHEN l0 = 0 THEN 0 ELSE 1 + ntile({a.bins}) OVER (PARTITION BY m, l0 = 0 ORDER BY l0) END AS bin,
                pow(greatest(plays_26w, 1), {a.weight}) AS wt, {age_sql} AS age, {mom_sql} AS mq
         FROM r {scene_join} LEFT JOIN first_seen fs ON fs.artist = r.artist {mom_join}""")
-    cell = "m, bin, scene, age, mq"
+    cell = "m, bin, scene, age, mq" if a.adjust == "cells" else "m, bin"
+    extra_fx = [] if a.adjust == "cells" else [g for g, on in (("scene", a.scene != "none"), ("age", a.age),
+                                                                   ("mq", a.momentum > 0)) if on]
     if a.metric == "log":
         val = "ret"
     elif a.metric == "rawcap":
@@ -145,6 +150,14 @@ def main():
                v - (sum(v) OVER c - v) / nullif(count(*) OVER c - 1, 0) AS e
         FROM v WINDOW c AS (PARTITION BY {cell})""")
     con.execute("DELETE FROM e WHERE e IS NULL")
+    # Additive adjustment: remove leave-one-out month x factor means of the excess, cycling until stable.
+    for _ in range(4 if extra_fx else 0):
+        for g in extra_fx:
+            con.execute(f"""CREATE OR REPLACE TABLE e AS SELECT * REPLACE (
+                e - (sum(e) OVER w - e) / nullif(count(*) OVER w - 1, 0) AS e) FROM e WINDOW w AS (PARTITION BY m, {g})""")
+            con.execute("DELETE FROM e WHERE e IS NULL")
+    diag = con.execute(f"""WITH c AS (SELECT {cell}, count(*) AS n, count(DISTINCT artist) AS na FROM e GROUP BY ALL)
+        SELECT sum(n * n) / sum(n), sum(n) FILTER (WHERE na = 1) / sum(n), sum(n * na) / sum(n) FROM c""").fetchone()
     n_bets, n_users = con.execute("SELECT count(*), count(DISTINCT user) FROM e").fetchone()
 
     def user_means(col="e", where="TRUE", min_n=a.min_bets):
@@ -225,6 +238,8 @@ def main():
     summary = {
         "variant": name, "args": vars(a), "bets": n_bets, "users_with_bets": n_users, "users_scored": users.height,
         "median_bets_per_scored_user": float(users["n"].median()),
+        "cells": {"bets_per_cell_bet_weighted": diag[0], "share_bets_in_single_artist_cells": diag[1],
+                  "artists_per_cell_bet_weighted": diag[2]},
         "luck": {"observed_var": obs_var, "null_var_mean": float(null_vars.mean()), "null_var_max": float(null_vars.max()),
                  "skill_share_of_variance": float(1 - null_vars.mean() / obs_var)},
         "empirical_bayes": {"tau2": tau2, "noise_var_mean": float(noise),

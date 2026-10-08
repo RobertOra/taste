@@ -1,0 +1,81 @@
+{
+ "variant": "add_all",
+ "args": {
+  "onboarding": 26,
+  "rule": "w4",
+  "window": 26,
+  "date": "commit",
+  "horizon": 12,
+  "smooth": 1.0,
+  "bins": 20,
+  "scene": "yearly200",
+  "age": true,
+  "momentum": 5,
+  "adjust": "additive",
+  "metric": "log",
+  "weight": 0.0,
+  "min_bets": 20,
+  "perms": 10,
+  "name": "add_all"
+ },
+ "bets": 36526230,
+ "users_with_bets": 275164,
+ "users_scored": 240203,
+ "median_bets_per_scored_user": 108.0,
+ "cells": {
+  "bets_per_cell_bet_weighted": 33426.838331960345,
+  "share_bets_in_single_artist_cells": null,
+  "artists_per_cell_bet_weighted": 4222.898502747204
+ },
+ "luck": {
+  "observed_var": 0.003096643318830832,
+  "null_var_mean": 0.001677558579168302,
+  "null_var_max": 0.001684433902225015,
+  "skill_share_of_variance": 0.4582654808944284
+ },
+ "empirical_bayes": {
+  "tau2": 0.0016148158040661977,
+  "noise_var_mean": 0.0014818275147646344,
+  "reliability_mean": 0.6205134795352076
+ },
+ "persistence": {
+  "halves": {
+   "pearson": 0.23344990092545118,
+   "spearman": 0.20227226209920235,
+   "users": 231498
+  },
+  "halves_with_gap": {
+   "pearson": 0.15194775813801412,
+   "spearman": 0.13654366006459617,
+   "users": 115511
+  },
+  "periods_2006_08_vs_2010_11": {
+   "pearson": 0.15894084210705986,
+   "spearman": 0.14422535538823322,
+   "users": 83861
+  },
+  "random_split": {
+   "pearson": 0.36341222116902683,
+   "spearman": 0.3203841355551864,
+   "users": 234335
+  }
+ },
+ "impostors": {
+  "r2_all": 0.009677751600319029,
+  "corr_with_score": {
+   "listens": -0.04721396391277319,
+   "history_years": 0.00694531887232786,
+   "join_year": -0.007081673424924172,
+   "listens_per_active_month": -0.06230373717805954,
+   "unmatched_share": 0.014055418244393407,
+   "no_id_share": -0.011732415790666395,
+   "new_artists_per_year": -0.03159576981433204,
+   "committed_per_year": -0.04693971477034464,
+   "mainstream_share": 0.004283642984376529,
+   "obscurity_logpen": 0.00205694611813609,
+   "scene_entropy": -0.05470147511130391,
+   "n": -0.029320999258954258
+  },
+  "residual_persistence_halves": 0.2288878208401587
+ }
+}

@@ -9,64 +9,72 @@
   "smooth": 1.0,
   "bins": 20,
   "scene": "none",
+  "age": false,
+  "momentum": 0,
+  "adjust": "cells",
   "metric": "log",
   "weight": 0.0,
   "min_bets": 20,
-  "perms": 20,
+  "perms": 10,
   "name": "primary"
  },
  "bets": 36526231,
  "users_with_bets": 275164,
  "users_scored": 240203,
  "median_bets_per_scored_user": 108.0,
+ "cells": {
+  "bets_per_cell_bet_weighted": 33426.837507242395,
+  "share_bets_in_single_artist_cells": null,
+  "artists_per_cell_bet_weighted": 4223.017534713615
+ },
  "luck": {
-  "observed_var": 0.004620300976581234,
-  "null_var_mean": 0.0017736461511089197,
-  "null_var_max": 0.0017862609453875014,
-  "skill_share_of_variance": 0.6161189151748033
+  "observed_var": 0.00462029968418606,
+  "null_var_mean": 0.001777299192023897,
+  "null_var_max": 0.001785502104400318,
+  "skill_share_of_variance": 0.6153281575853025
  },
  "empirical_bayes": {
-  "tau2": 0.003073084529671719,
-  "noise_var_mean": 0.0015472164469095154,
-  "reliability_mean": 0.7311333492597798
+  "tau2": 0.003073070236673206,
+  "noise_var_mean": 0.0015472294475128538,
+  "reliability_mean": 0.7311311450191806
  },
  "persistence": {
   "halves": {
-   "pearson": 0.3544224894925789,
-   "spearman": 0.3354411041029741,
+   "pearson": 0.3544126919517026,
+   "spearman": 0.3354016499687567,
    "users": 231498
   },
   "halves_with_gap": {
-   "pearson": 0.23739223850052107,
-   "spearman": 0.23266417881255208,
+   "pearson": 0.23739548977204206,
+   "spearman": 0.2326621883470608,
    "users": 115511
   },
   "periods_2006_08_vs_2010_11": {
-   "pearson": 0.2545675970638259,
-   "spearman": 0.24721678409997863,
+   "pearson": 0.25457872442363644,
+   "spearman": 0.24721067707949868,
    "users": 83861
   },
   "random_split": {
-   "pearson": 0.511124022444079,
-   "spearman": 0.4823912287444632,
+   "pearson": 0.5111189843622791,
+   "spearman": 0.4823631810733142,
    "users": 234335
   }
  },
  "impostors": {
-  "r2_all": 0.020059315277502154,
+  "r2_all": 0.020062320302999814,
   "corr_with_score": {
-   "listens": -0.024694195514197968,
-   "history_years": 0.06556155569217265,
-   "join_year": -0.06433632118547787,
-   "listens_per_active_month": -0.07169465177963485,
-   "unmatched_share": -0.0013905003116112932,
-   "no_id_share": -0.02294675474435426,
-   "new_artists_per_year": 0.04754021386938384,
-   "committed_per_year": -0.01049665239599816,
-   "mainstream_share": -0.044763179633213,
-   "obscurity_logpen": -0.02410902194550213,
-   "n": 0.04281188933005748
+   "listens": -0.02470952967947893,
+   "history_years": 0.06555981220730606,
+   "join_year": -0.064336671266991,
+   "listens_per_active_month": -0.07170262834250277,
+   "unmatched_share": -0.001390980198100378,
+   "no_id_share": -0.022944919258506745,
+   "new_artists_per_year": 0.04753496445681387,
+   "committed_per_year": -0.010502352671881904,
+   "mainstream_share": -0.044777341574002844,
+   "obscurity_logpen": -0.02411646045383931,
+   "n": 0.04280452121633995
   },
-  "residual_persistence_halves": 0.3459154613794044
+  "residual_persistence_halves": 0.3459039468372573
  }
 }

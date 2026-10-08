@@ -1,0 +1,74 @@
+{
+ "variant": "ctrl_age",
+ "args": {
+  "onboarding": 26,
+  "rule": "w4",
+  "window": 26,
+  "date": "commit",
+  "horizon": 12,
+  "smooth": 1.0,
+  "bins": 20,
+  "scene": "none",
+  "age": true,
+  "momentum": 0,
+  "metric": "log",
+  "weight": 0.0,
+  "min_bets": 20,
+  "perms": 20,
+  "name": "ctrl_age"
+ },
+ "bets": 36526224,
+ "users_with_bets": 275164,
+ "users_scored": 240203,
+ "median_bets_per_scored_user": 108.0,
+ "luck": {
+  "observed_var": 0.004228410753115555,
+  "null_var_mean": 0.001701511099252898,
+  "null_var_max": 0.0017138430518968777,
+  "skill_share_of_variance": 0.5976003282086066
+ },
+ "empirical_bayes": {
+  "tau2": 0.0027267239398849506,
+  "noise_var_mean": 0.0015016868132306045,
+  "reliability_mean": 0.7151218324722171
+ },
+ "persistence": {
+  "halves": {
+   "pearson": 0.3371439344370975,
+   "spearman": 0.32405257698780127,
+   "users": 231498
+  },
+  "halves_with_gap": {
+   "pearson": 0.22081054120482005,
+   "spearman": 0.22020332515232213,
+   "users": 115511
+  },
+  "periods_2006_08_vs_2010_11": {
+   "pearson": 0.23553313689729036,
+   "spearman": 0.23266318825056653,
+   "users": 83861
+  },
+  "random_split": {
+   "pearson": 0.489192750864896,
+   "spearman": 0.46838047871422395,
+   "users": 234335
+  }
+ },
+ "impostors": {
+  "r2_all": 0.020675944457421602,
+  "corr_with_score": {
+   "listens": -0.026766526014961642,
+   "history_years": 0.06162604987873218,
+   "join_year": -0.06067540772517205,
+   "listens_per_active_month": -0.0705848645809808,
+   "unmatched_share": -0.0010293756178028004,
+   "no_id_share": -0.02096607203467068,
+   "new_artists_per_year": 0.04894111534982253,
+   "committed_per_year": -0.0156172239453944,
+   "mainstream_share": -0.05625692270626233,
+   "obscurity_logpen": -0.03655118164630464,
+   "n": 0.03515384954331531
+  },
+  "residual_persistence_halves": 0.3281902014645149
+ }
+}
