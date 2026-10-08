@@ -10,7 +10,7 @@ For every committed adoption (user u, artist a, commitment month m) with m in ye
     n_panel  = members of the community active (any listen) in both m and m+H, excluding u
     c_pen    = members (excluding u) who listened to a in month m, / n_panel   (prior community popularity)
 
-    data/derived/community/explore_h<H>.parquet   user, artist, m, k_later, n_panel, c_pen
+    data/derived/community/explore_h<H>.parquet   user, artist, m, g (community), k_later, n_panel, c_pen
 Commitment = 4 distinct weeks within 26 weeks of first listen, after the adopter's 26-week onboarding
 (the primary bet definition); used for both bettors and later adopters.
 
@@ -89,7 +89,7 @@ def main():
             JOIN act f ON f.user = u.user AND f.month = k.m + {H}
             GROUP BY ALL""")
         con.execute(f"""CREATE OR REPLACE TABLE part_{y} AS
-            SELECT yb.user, yb.artist, yb.m,
+            SELECT yb.user, yb.artist, yb.m, yb.g,
                    coalesce(c1.cn, 0) - coalesce(c0.cn, 0) AS k_later,
                    cp.n - (af.user IS NOT NULL)::INT AS n_panel,
                    (coalesce(cl.l, 0) - (af.user IS NOT NULL)::INT) / greatest(cp.n - (af.user IS NOT NULL)::INT, 1) AS c_pen

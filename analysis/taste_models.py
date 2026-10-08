@@ -5,8 +5,9 @@ Same bets, popularity bins, controls and tests as analysis/prescience.py; only t
   C_lb  durability: ln(1 + ListenBrainz listeners in 2026) of the artist (artists absent on LB = 0)
   B     community-leading: ln((k + 0.5) / n) where k = other members of your taste community (home scene in the
         previous 12 months) who commit to the artist in the H months after you, n = community members active
-        throughout (pipeline/derive_community.py); always adjusted for the artist's prior popularity within the
-        community (decile of c_pen, additive)
+        throughout (pipeline/derive_community.py); always adjusted (additively) for the artist's prior popularity
+        within the community (decile of c_pen) and for the community's overall adoption rate that month
+        (month x community), so a community that adopts a lot doesn't make its members look prescient
   D     discernment: conversion of *other* users' trials of the artist in the H months after the bet
         (share of post-onboarding first listens reaching commitment within 26 weeks), beta-smoothed
         (C + 2 * p0) / (N + 2) with p0 = overall conversion rate
@@ -164,7 +165,7 @@ def main():
         ret = f"ln(l1 + {a.smooth}) - ln(l0 + {a.smooth})"
     elif a.model == "B":
         ret = "ln((cmt.k_later + 0.5) / greatest(cmt.cn_panel, 1))"
-        outcome_join = (f"JOIN (SELECT user AS cu, artist AS ca, m AS cm, k_later, n_panel AS cn_panel, c_pen "
+        outcome_join = (f"JOIN (SELECT user AS cu, artist AS ca, m AS cm, g AS cg, k_later, n_panel AS cn_panel, c_pen "
                         f"FROM read_parquet('{X}/community/explore_h{H}.parquet')) cmt "
                         f"ON cmt.cu = r.user AND cmt.ca = r.artist AND cmt.cm = r.m")
     elif a.model == "C_lb":
@@ -193,28 +194,29 @@ def main():
                CASE WHEN l0 = 0 THEN 0 ELSE 1 + ntile({a.bins}) OVER (PARTITION BY m, l0 = 0 ORDER BY l0) END AS bin,
                pow(greatest(plays_26w, 1), {a.weight}) AS wt, {age_sql} AS age, {mom_sql} AS mq,
                {"coalesce(mb.country, 'XX')" if a.country else "'-'"} AS ctry,
-               {"ntile(10) OVER (PARTITION BY r.m ORDER BY cmt.c_pen)" if a.model == "B" else "0"} AS cpb
+               {"ntile(10) OVER (PARTITION BY r.m ORDER BY cmt.c_pen)" if a.model == "B" else "0"} AS cpb,
+               {"cmt.cg" if a.model == "B" else "0"} AS cg
         FROM r {scene_join} LEFT JOIN first_seen fs ON fs.artist = r.artist {mom_join} {outcome_join}
         {f"LEFT JOIN read_parquet('{X}/mb_artists.parquet') mb ON mb.artist = r.artist" if a.country else ""}""")
     for t in ("r", "first_seen", "mom", "selfl", "dd", "trials", "cum"):
         con.execute(f"DROP TABLE IF EXISTS {t}")
-    cell = "m, bin, scene, age, mq, ctry, cpb" if a.adjust == "cells" else "m, bin"
+    cell = "m, bin, scene, age, mq, ctry, cpb, cg" if a.adjust == "cells" else "m, bin"
     extra_fx = [] if a.adjust == "cells" else [g for g, on in (("scene", a.scene != "none"), ("age", a.age),
                                                                    ("mq", a.momentum > 0), ("ctry", a.country)) if on]
     if a.adjust != "cells" and a.model == "B":
-        extra_fx.append("cpb")
+        extra_fx += ["cpb", "cg"]  # prior popularity in the community; the community's own adoption rate that month
     if a.metric == "log":
         val = "ret"
     elif a.metric == "rawcap":
         assert a.model == "A", "rawcap only makes sense for growth returns"
         val = "least(exp(ret), 20)"
     elif a.metric == "rank":
-        val = "percent_rank() OVER (PARTITION BY m, bin, scene, age, mq, ctry, cpb ORDER BY ret)"
+        val = "percent_rank() OVER (PARTITION BY m, bin, scene, age, mq, ctry, cpb, cg ORDER BY ret)"
     else:
-        val = "(percent_rank() OVER (PARTITION BY m, bin, scene, age, mq, ctry, cpb ORDER BY ret) >= 0.9)::INT"
+        val = "(percent_rank() OVER (PARTITION BY m, bin, scene, age, mq, ctry, cpb, cg ORDER BY ret) >= 0.9)::INT"
     con.execute(f"""CREATE TABLE e AS
-        WITH v AS (SELECT user, artist, m, bin, scene, age, mq, ctry, cpb, pen0, wt, {val} AS v FROM r2)
-        SELECT user, artist, m, bin, scene, age, mq, ctry, cpb, pen0, wt, v,
+        WITH v AS (SELECT user, artist, m, bin, scene, age, mq, ctry, cpb, cg, pen0, wt, {val} AS v FROM r2)
+        SELECT user, artist, m, bin, scene, age, mq, ctry, cpb, cg, pen0, wt, v,
                v - (sum(v) OVER c - v) / nullif(count(*) OVER c - 1, 0) AS e
         FROM v WINDOW c AS (PARTITION BY {cell})""")
     con.execute("DELETE FROM e WHERE e IS NULL")

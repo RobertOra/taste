@@ -1,0 +1,85 @@
+{
+ "variant": "sw_rule_w2",
+ "model": "A",
+ "args": {
+  "model": "A",
+  "onboarding": 26,
+  "rule": "w2",
+  "window": 26,
+  "date": "commit",
+  "horizon": 12,
+  "smooth": 1.0,
+  "bins": 20,
+  "scene": "yearly200",
+  "age": true,
+  "momentum": 5,
+  "country": true,
+  "adjust": "additive",
+  "metric": "log",
+  "weight": 0.0,
+  "user_sample": 2,
+  "min_bets": 20,
+  "perms": 5,
+  "name": "sw_rule_w2"
+ },
+ "bets": 44250398,
+ "users_with_bets": 140275,
+ "users_scored": 132822,
+ "median_bets_per_scored_user": 230.0,
+ "cells": {
+  "bets_per_cell_bet_weighted": 39925.64823394357,
+  "share_bets_in_single_artist_cells": null,
+  "artists_per_cell_bet_weighted": 5208.828460638931
+ },
+ "luck": {
+  "observed_var": 0.002242120116574701,
+  "null_var_mean": 0.0010208659733952272,
+  "null_var_max": 0.0010278152008172568,
+  "skill_share_of_variance": 0.5446872066092473
+ },
+ "empirical_bayes": {
+  "tau2": 0.001363707824179572,
+  "noise_var_mean": 0.000878412292395129,
+  "reliability_mean": 0.7015752536167652
+ },
+ "persistence": {
+  "halves": {
+   "pearson": 0.2659450204844027,
+   "spearman": 0.2358261133607284,
+   "users": 129126
+  },
+  "halves_with_gap": {
+   "pearson": 0.16895704906073103,
+   "spearman": 0.1553746778296986,
+   "users": 76684
+  },
+  "periods_2006_08_vs_2010_11": {
+   "pearson": 0.18738065730060996,
+   "spearman": 0.16969356800233995,
+   "users": 52410
+  },
+  "random_split": {
+   "pearson": 0.44955951418016526,
+   "spearman": 0.40850418675350125,
+   "users": 131586
+  }
+ },
+ "impostors": {
+  "r2_all": 0.014340496657219814,
+  "corr_with_score": {
+   "listens": -0.024826189503630854,
+   "history_years": 0.009955760887927104,
+   "join_year": -0.010967773415600898,
+   "listens_per_active_month": -0.03768957017710647,
+   "unmatched_share": 0.03889418119186871,
+   "no_id_share": 0.01851616330508571,
+   "new_artists_per_year": -0.03460079949972688,
+   "committed_per_year": -0.008061889471931701,
+   "mainstream_share": -0.04981322971541052,
+   "obscurity_logpen": -0.055695992943413875,
+   "scene_entropy": -0.029633017540336194,
+   "n": -0.013316685242178198
+  },
+  "residual_persistence_halves": 0.2594029725245063
+ }
+}
