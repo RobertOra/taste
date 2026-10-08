@@ -33,7 +33,7 @@ never stored. See the module docstring for table schemas. Summary:
 - 1/8 of users: full raw history (exact timestamps, releases)
 - id = last 15 hex digits of the MBID as int64; `*_map` tables map back.
 
-Storage: short-term cap 100 GB, long-term <= 50 GB. Plan after ingest: re-encode
+Storage: short-term cap 150 GB (raised 2026-10-08), long-term <= 50 GB. Projected peak ~110-125 GB (sealed tables, ListenBrainz, temp space); trim to ~40-55 GB after the analysis. Plan after ingest: re-encode
 ids densely (~20-30% saving), derive what we need from raw, trim raw sample.
 
 ## Operating the ingest
