@@ -107,30 +107,38 @@ def main():
                         JOIN home hm ON hm.user = ad.user
                         WHERE ad.t BETWEEN hm.year * 12 AND hm.year * 12 + 11 + {max(HS)} GROUP BY ALL""")
         for h in HS:
+            # Adopters whose first play falls in [m-5, m] (l0) or [m+H-5, m+H] (l1) of a bet month m, and who are
+            # in the fixed panel (active in m and m+H): expand each adopter to the 6 bet months it can count
+            # toward, keep only months that have bets, then check the panel.
             con.execute(f"""INSERT INTO acc
-                WITH k AS (SELECT * FROM keys WHERE m + {h} <= {LAST}),
-                     a0 AS (SELECT k.recording, k.m, count(*) AS l0 FROM k JOIN ad ON ad.recording = k.recording
-                            AND ad.t BETWEEN k.m - 5 AND k.m
-                            JOIN act x ON x.user = ad.user AND x.month = k.m
-                            JOIN act y ON y.user = ad.user AND y.month = k.m + {h} GROUP BY ALL),
-                     a1 AS (SELECT k.recording, k.m, count(*) AS l1 FROM k JOIN ad ON ad.recording = k.recording
-                            AND ad.t BETWEEN k.m + {h} - 5 AND k.m + {h}
-                            JOIN act x ON x.user = ad.user AND x.month = k.m
-                            JOIN act y ON y.user = ad.user AND y.month = k.m + {h} GROUP BY ALL),
-                     tl AS (SELECT k.recording, k.m, count(*) AS tr, count(*) FILTER (WHERE ad.kept) AS kp
-                            FROM k JOIN ad ON ad.recording = k.recording AND ad.t > k.m AND ad.t <= k.m + {h}
-                            WHERE ad.post GROUP BY ALL),
-                     u AS (SELECT recording, m FROM a0 UNION SELECT recording, m FROM a1 UNION SELECT recording, m FROM tl)
-                SELECT {h}, u.recording, u.m, coalesce(a0.l0, 0), coalesce(a1.l1, 0), coalesce(tl.tr, 0), coalesce(tl.kp, 0)
-                FROM u LEFT JOIN a0 USING (recording, m) LEFT JOIN a1 USING (recording, m) LEFT JOIN tl USING (recording, m)""")
+                WITH x0 AS (SELECT ad.user, ad.recording, (ad.t + d.d)::SMALLINT AS m FROM ad, range(0, 6) d(d)),
+                     x1 AS (SELECT ad.user, ad.recording, (ad.t - {h} + d.d)::SMALLINT AS m FROM ad, range(0, 6) d(d)),
+                     a0 AS (SELECT x.recording, x.m, count(*) AS l0 FROM x0 x SEMI JOIN keys k ON k.recording = x.recording AND k.m = x.m
+                            JOIN act a ON a.user = x.user AND a.month = x.m JOIN act b ON b.user = x.user AND b.month = x.m + {h}
+                            WHERE x.m + {h} <= {LAST} GROUP BY ALL),
+                     a1 AS (SELECT x.recording, x.m, count(*) AS l1 FROM x1 x SEMI JOIN keys k ON k.recording = x.recording AND k.m = x.m
+                            JOIN act a ON a.user = x.user AND a.month = x.m JOIN act b ON b.user = x.user AND b.month = x.m + {h}
+                            WHERE x.m + {h} <= {LAST} GROUP BY ALL)
+                SELECT {h}, recording, m, coalesce(a0.l0, 0), coalesce(a1.l1, 0), 0, 0
+                FROM a0 FULL JOIN a1 USING (recording, m)""")
         print(f"archive {c} done", flush=True)
-    con.execute("CREATE TABLE tot AS SELECT h, recording, m, sum(l0) AS l0, sum(l1) AS l1, sum(tr) AS tr, sum(kp) AS kp FROM acc GROUP BY ALL")
+    con.execute("CREATE TABLE tot0 AS SELECT h, recording, m, sum(l0) AS l0, sum(l1) AS l1 FROM acc GROUP BY ALL")
     # Track record before the bet: running totals per song, looked up at the bet month.
     con.execute("""CREATE TABLE cumt AS SELECT recording, t, sum(tr) OVER w AS ctr, sum(kp) OVER w AS ckp
                    FROM (SELECT recording, t, sum(tr) AS tr, sum(kp) AS kp FROM adt GROUP BY ALL)
                    WINDOW w AS (PARTITION BY recording ORDER BY t ROWS UNBOUNDED PRECEDING)""")
     con.execute("""CREATE TABLE totp AS SELECT k.recording, k.m, coalesce(c.ctr, 0) AS tr_prior, coalesce(c.ckp, 0) AS kept_prior
                    FROM keys k ASOF LEFT JOIN cumt c ON c.recording = k.recording AND k.m >= c.t""")
+    # Later post-onboarding trials and how many kept playing, in (m, m+H]: difference of running totals.
+    con.execute("CREATE TABLE tot (h SMALLINT, recording BIGINT, m SMALLINT, l0 BIGINT, l1 BIGINT, tr BIGINT, kp BIGINT)")
+    for h in HS:
+        con.execute(f"""INSERT INTO tot
+            WITH q AS (SELECT recording, m, (m + {h})::SMALLINT AS mh FROM keys WHERE m + {h} <= {LAST}),
+                 lt AS (SELECT q.recording, q.m, coalesce(c1.ctr, 0) - coalesce(c0.ctr, 0) AS tr, coalesce(c1.ckp, 0) - coalesce(c0.ckp, 0) AS kp
+                        FROM q ASOF LEFT JOIN cumt c0 ON c0.recording = q.recording AND q.m >= c0.t
+                               ASOF LEFT JOIN cumt c1 ON c1.recording = q.recording AND q.mh >= c1.t)
+            SELECT {h}, lt.recording, lt.m, coalesce(t0.l0, 0), coalesce(t0.l1, 0), lt.tr, lt.kp
+            FROM lt LEFT JOIN tot0 t0 ON t0.h = {h} AND t0.recording = lt.recording AND t0.m = lt.m""")
     con.execute("CREATE TABLE firstm AS SELECT recording, min(song_first_m) AS song_first_m FROM accf GROUP BY recording")
     # Later adoptions by community members (community as of the bet year): running totals per (year, community, song).
     con.execute("""CREATE TABLE cumg AS SELECT year, g, recording, t, sum(k) OVER w AS ck

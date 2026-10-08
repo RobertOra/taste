@@ -102,16 +102,22 @@ def main():
                  first AS (SELECT user, s, arg_min(artist, m) AS artist, min(m) AS m,
                                   arg_min(plays_26w, m) AS plays_26w FROM sb GROUP BY user, s)
             SELECT * FROM first WHERE m BETWEEN {y * 12 - 12} AND {m_hi}""")
+        # "New to the scene" and "stayed", via rolling sums over each person's own monthly listening (linear;
+        # matching every entry against a whole year of listening explodes).
+        con.execute("""CREATE OR REPLACE TABLE roll AS
+            SELECT user, s, month,
+                   sum(plays) OVER (PARTITION BY user, s ORDER BY month RANGE BETWEEN 12 PRECEDING AND 1 PRECEDING) AS ps,
+                   count(*) OVER (PARTITION BY user, s ORDER BY month RANGE BETWEEN 3 FOLLOWING AND 8 FOLLOWING) AS months_after
+            FROM usm""")
+        con.execute("""CREATE OR REPLACE TABLE rollu AS
+            SELECT user, month, sum(p) OVER (PARTITION BY user ORDER BY month RANGE BETWEEN 12 PRECEDING AND 1 PRECEDING) AS pt
+            FROM (SELECT user, month, sum(plays) AS p FROM usm GROUP BY ALL)""")
         con.execute(f"""CREATE OR REPLACE TABLE allent AS
-            WITH prior AS (SELECT e.user, e.s, sum(u.plays) FILTER (WHERE u.s = e.s) AS ps, sum(u.plays) AS pt
-                           FROM allent e JOIN usm u ON u.user = e.user AND u.month BETWEEN e.m - 12 AND e.m - 1
-                           GROUP BY e.user, e.s),
-                 st AS (SELECT e.user, e.s, count(DISTINCT u.month) AS months FROM allent e
-                        JOIN usm u ON u.user = e.user AND u.s = e.s AND u.month BETWEEN e.m + 3 AND e.m + 8
-                        GROUP BY e.user, e.s)
-            SELECT e.*, CASE WHEN e.m + 8 <= {LAST} THEN coalesce(st.months, 0) >= 3 END AS stayed
-            FROM allent e LEFT JOIN prior p USING (user, s) LEFT JOIN st USING (user, s)
-            WHERE coalesce(p.ps, 0) < 0.05 * greatest(coalesce(p.pt, 0), 1)""")
+            SELECT e.*, CASE WHEN e.m + 8 <= {LAST} THEN coalesce(r.months_after, 0) >= 3 END AS stayed
+            FROM allent e
+            JOIN roll r ON r.user = e.user AND r.s = e.s AND r.month = e.m
+            JOIN rollu ru ON ru.user = e.user AND ru.month = e.m
+            WHERE coalesce(r.ps, 0) < 0.05 * greatest(coalesce(ru.pt, 0), 1)""")
         con.execute(f"CREATE OR REPLACE TABLE entries AS SELECT * FROM allent WHERE m BETWEEN {y * 12} AND {y * 12 + 11}")
         # Other entrants of the same scene: later (by horizon) and prior; the bettor is never among them
         # (one entry per person and scene, at m).
