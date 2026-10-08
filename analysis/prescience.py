@@ -43,6 +43,7 @@ def parse():
                     default="none")
     ap.add_argument("--age", action="store_true", help="benchmark also by artist age (months since first listened)")
     ap.add_argument("--momentum", type=int, default=0, help="benchmark also by N quantiles of prior 6-month growth")
+    ap.add_argument("--country", action="store_true", help="benchmark also by artist country (MusicBrainz)")
     ap.add_argument("--adjust", choices=["cells", "additive"], default="cells",
                     help="cells: one benchmark cell per month x bin x scene x age x momentum; additive: month x bin cell "
                          "plus separate leave-one-out month x scene / month x age / month x momentum adjustments (backfitted)")
@@ -56,7 +57,7 @@ def parse():
 
 def variant_name(a):
     return a.name or (f"on{a.onboarding}_{a.rule}_win{a.window}_{a.date}_h{a.horizon}_s{a.smooth:g}_b{a.bins}"
-                      f"_{a.scene}{'_age' if a.age else ''}{f'_mom{a.momentum}' if a.momentum else ''}_{a.adjust}_{a.metric}_w{a.weight:g}")
+                      f"_{a.scene}{'_age' if a.age else ''}{f'_mom{a.momentum}' if a.momentum else ''}{'_ctry' if a.country else ''}_{a.adjust}_{a.metric}_w{a.weight:g}")
 
 
 def main():
@@ -131,22 +132,24 @@ def main():
     con.execute(f"""CREATE TABLE r2 AS
         SELECT r.*, {ret} AS ret, l0 / n_panel AS pen0, {scene_sql} AS scene,
                CASE WHEN l0 = 0 THEN 0 ELSE 1 + ntile({a.bins}) OVER (PARTITION BY m, l0 = 0 ORDER BY l0) END AS bin,
-               pow(greatest(plays_26w, 1), {a.weight}) AS wt, {age_sql} AS age, {mom_sql} AS mq
-        FROM r {scene_join} LEFT JOIN first_seen fs ON fs.artist = r.artist {mom_join}""")
-    cell = "m, bin, scene, age, mq" if a.adjust == "cells" else "m, bin"
+               pow(greatest(plays_26w, 1), {a.weight}) AS wt, {age_sql} AS age, {mom_sql} AS mq,
+               {"coalesce(mb.country, 'XX')" if a.country else "'-'"} AS ctry
+        FROM r {scene_join} LEFT JOIN first_seen fs ON fs.artist = r.artist {mom_join}
+        {f"LEFT JOIN read_parquet('{X}/mb_artists.parquet') mb ON mb.artist = r.artist" if a.country else ""}""")
+    cell = "m, bin, scene, age, mq, ctry" if a.adjust == "cells" else "m, bin"
     extra_fx = [] if a.adjust == "cells" else [g for g, on in (("scene", a.scene != "none"), ("age", a.age),
-                                                                   ("mq", a.momentum > 0)) if on]
+                                                                   ("mq", a.momentum > 0), ("ctry", a.country)) if on]
     if a.metric == "log":
         val = "ret"
     elif a.metric == "rawcap":
         val = "least(exp(ret), 20)"
     elif a.metric == "rank":
-        val = "percent_rank() OVER (PARTITION BY m, bin, scene, age, mq ORDER BY ret)"
+        val = "percent_rank() OVER (PARTITION BY m, bin, scene, age, mq, ctry ORDER BY ret)"
     else:
-        val = "(percent_rank() OVER (PARTITION BY m, bin, scene, age, mq ORDER BY ret) >= 0.9)::INT"
+        val = "(percent_rank() OVER (PARTITION BY m, bin, scene, age, mq, ctry ORDER BY ret) >= 0.9)::INT"
     con.execute(f"""CREATE TABLE e AS
         WITH v AS (SELECT *, {val} AS v FROM r2)
-        SELECT user, artist, m, bin, scene, age, mq, pen0, wt, v,
+        SELECT user, artist, m, bin, scene, age, mq, ctry, pen0, wt, v,
                v - (sum(v) OVER c - v) / nullif(count(*) OVER c - 1, 0) AS e
         FROM v WINDOW c AS (PARTITION BY {cell})""")
     con.execute("DELETE FROM e WHERE e IS NULL")
