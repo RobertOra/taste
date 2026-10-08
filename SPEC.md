@@ -1,0 +1,124 @@
+# Taste: models, parameters, tests
+
+Living spec. Exploration on the `explore` half may use any variant below (and new ones —
+add them here). Before anything touches the `sealed` half, the variants to confirm are
+listed in a "Confirmation" section and committed; that commit is the freeze.
+
+Notation: **[P]** marks the primary setting of a parameter; others are variants.
+
+---
+
+## 0. Corrections applied in every variant
+These prevent known biases rather than define taste, so they are not varied freely.
+
+| Correction | Why | Allowed range |
+|---|---|---|
+| Ignore bets in each user's onboarding period | early "first listens" are mostly music the user already knew | 13 / **26 [P]** / 52 weeks |
+| Popularity = share of a fixed panel of users | the active user base grows ~15x 2005-2012 and changes composition | panel = users active at both t and t+H **[P]**; all active users (contrast only) |
+| Leave-one-out | a user's own listening must not count toward the popularity they're scored on | always |
+| Bet dated at commitment, not first listen | otherwise growth while the user was deciding (trend-following) counts as foresight | first-listen dating run only as a contrast, to measure that bias |
+| Only bets with a full horizon of data after them | data ends mid-2013; panels thin out during 2013 | market observed to 2012-12-31 **[P]** |
+
+## 1. Units
+| Unit | Role | Notes |
+|---|---|---|
+| **Artist [P]** | main unit | weekly per-user detail for all users (matched + unmatched listens) |
+| Song (recording) | second unit | benchmark also by song age (weeks since first appearance in data); popularity = adoption (new listeners per period) since weekly per-user plays aren't stored; commitment from plays + span |
+| Scene | unit and control | clusters of artists from co-listening; also used as a benchmark dimension to split *scene timing* from *within-scene picking* |
+
+Scene parameters: clustering method (co-listening embedding + k-means **[P]**; graph community detection),
+number of scenes (~50 / **~200 [P]** / ~1000), built on onboarding-period + pre-period listening only.
+
+## 2. Shared building blocks
+
+**Bet** = a user's committed adoption of an artist after onboarding.
+| Parameter | Values |
+|---|---|
+| Commitment rule | listened in >= 2 / **>= 4 [P]** / >= 8 distinct weeks; or >= 10 plays; "every first listen" (no commitment) as contrast |
+| Commitment window | must be met within **26 [P]** / 52 weeks of first listen |
+| Bet date | **date commitment was reached [P]**; first listen (contrast) |
+| Bet weight | **equal [P]**; log(1 + plays in first 26 weeks) ("conviction"); plays (contrast) |
+| Min bets per user to be scored | 10 / **20 [P]** / 50 |
+
+**Popularity ("price")** of an artist at time t
+| Parameter | Values |
+|---|---|
+| Measure | **listener penetration: share of panel active that month who played the artist [P]**; adoption penetration (share of panel who have ever played it); play share |
+| Time resolution | weekly / **monthly [P]** / quarterly |
+
+**Return** over horizon H
+| Parameter | Values |
+|---|---|
+| Horizon H | 26 / **52 [P]** / 104 weeks |
+| Return metric | **log growth of penetration with small-count smoothing [P]**; percentile of growth among benchmark peers (outlier-robust) |
+
+**Benchmark** ("expected return" for a bet)
+| Parameter | Values |
+|---|---|
+| Peer group | **same popularity bin x same month [P]**; + same scene; + same artist age (time since first appearance) |
+| Popularity bins | 10 / **20 [P]** / 50 quantile bins of log penetration |
+
+**Score aggregation**: weighted mean of a user's excess returns, shrunk toward the population mean
+by the number of bets (empirical Bayes) **[P]**; median (robust contrast).
+
+## 3. Taste models
+
+### Family 1: ahead of the curve
+**A. Prescience (investment model)**
+Score = average excess return of the user's bets (building blocks above).
+- Variants: all of section 2; plus **portfolio version** (each month's listening shares treated as holdings,
+  return = growth of what you hold) as a contrast — expected to measure loyalty more than foresight.
+- Side questions (not taste definitions): **sizing** — do a user's heavier bets earn more than their
+  lighter ones? **exit timing** — do users leave artists shortly before they decline more than chance?
+
+**B. Leading your taste community**
+Do people with similar taste later adopt what you adopted?
+- Community: **k nearest users by listening similarity in a pre-period [P]**; same scene (variant).
+- k = 50 / **200 [P]** / 1000; similarity = **cosine on log plays [P]**; Jaccard on artist sets.
+- Score = share of your bets later adopted by your community within H, minus the expected share for
+  artists of the same popularity among that community.
+- H as in section 2.
+
+### Family 2: recognizing quality
+**C. Durability**
+Are the artists you committed to still listened to years later?
+- Outcome: **2026 listeners on ListenBrainz (popularity API) [P]**; within MLHD, share of the artist's
+  other adopters still listening 2+ years after adopting.
+- Benchmark: same popularity bin x same month at bet time (as section 2).
+
+**D. Discernment (conversion)**
+When other people try the artists you like, do they stick with them?
+- Artist conversion = share of other users whose first listen leads to commitment (same commitment
+  rule as bets), leave-one-out.
+- Timing: **only others' trials after your bet [P]**; all trials (variant).
+- Score = average of (conversion - expected conversion for same popularity bin x month) over your bets.
+
+(E. Critical consensus — dropped.)
+
+## 4. Impostors and controls
+Computed for every user; a taste score that is mostly one of these is reported as that, not as taste.
+- Exploration: new artists per year; committed bets per year
+- Obscurity: mean log popularity of bets at bet time
+- Mainstreamness: share of plays to top-1% artists
+- Activity: listens per active week; history length; join year (cohort)
+- Data quality: unmatched share; no-id share
+- Scene mix: share of bets in each scene; scene diversity
+
+## 5. Tests (every variant)
+1. **Luck baseline.** Shuffle excess returns across bets within the same benchmark cell (keeps each user's
+   number of bets, popularity and timing). Compare spread of user scores to the shuffled spread.
+   Report the share of variance not explained by luck.
+2. **Persistence.** Score each user on the first vs second half of their bets (by time); correlate.
+   Also random split-halves (reliability ceiling). Real taste => positive correlation across time.
+3. **Impostor check.** Regress score on impostors; report R^2; repeat test 2 on the residual score.
+4. **Model agreement.** Correlations among A-D (raw and residualized); is there one general factor?
+5. **Robustness.** Run 1-4 across the parameter grid; show the distribution of results (specification curve).
+6. **Confirmation** on `sealed` for the variants listed below.
+
+## 6. Later questions (after the taste answer)
+- What predicts taste: exploration style, scene breadth, listening intensity, cohort, discovery patterns (raw sample).
+- Eras (needs ListenBrainz): do individuals lead or follow the crowd in each era; are discoveries becoming
+  more alike; do hits rise and fade faster; does measurable taste exist in both eras.
+
+## Confirmation
+(empty until we decide; committing this section freezes it before any `sealed` analysis)
