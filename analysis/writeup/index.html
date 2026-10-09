@@ -197,11 +197,10 @@
       <div class="wu-card">
         <h3>Trust your obsessions</h3>
         <p>Each person's most-replayed quarter of new artists grew
-          <span class="wu-num dash-skeleton" data-source="obsession" data-field="most_vs_least" data-where="level=Artists" data-fmt="pct0">—</span>
-          more than their least-replayed quarter, and for songs
-          <span class="wu-num" data-source="obsession" data-field="most_vs_least" data-where="level=Songs" data-fmt="pct0">—</span> more. Plays
-          are counted only until the person was hooked, so there's no hindsight. People bet hardest on their best finds.</p>
-        <p class="wu-note">First half only; not yet checked on the hidden half.</p>
+          <span class="wu-num dash-skeleton" data-source="obsession" data-field="most_vs_least" data-where="level=Artists" data-fmt="pct0">—</span> more than their least-replayed quarter, and for songs
+          <span class="wu-num" data-source="obsession" data-field="most_vs_least" data-where="level=Songs" data-fmt="pct0">—</span> more. Plays are counted only until the person was hooked, so there's no
+          hindsight. People bet hardest on their best finds, though the effect is modest.</p>
+        <p class="wu-note">Artists: hidden half. Songs: first half only.</p>
       </div>
       <div class="wu-card">
         <h3>Judge pickers by all their picks, not their hits</h3>
@@ -213,12 +212,20 @@
       </div>
     </div>
     <div class="wu-card">
+      <h3>How hooked someone got, and how the artist did</h3>
+      <p class="wu-note">Hidden half, artists. Each dot is a tenth of all picks, sorted by how many times the person played the artist
+        before committing (listening in four separate weeks). Growth is compared with similar picks, with every correction. The more someone
+        replayed an artist early on, the better it tended to do, steadily but modestly.</p>
+      <div class="wu-chart dash-skeleton" id="ob-chart" data-source="obsdeciles"></div>
+    </div>
+    <div class="wu-card">
       <h3>One person's score is fuzzy</h3>
-      <p>Taste scores are reliable for groups but noisy for individuals. Someone who scores at the 75th percentile for discernment on songs
-        could really be anywhere from about the
-        <span class="wu-num dash-skeleton" data-source="results" data-field="pctl75_lo" data-where="key=D_song" data-fmt="int">—</span>th to the
-        <span class="wu-num" data-source="results" data-field="pctl75_hi" data-where="key=D_song" data-fmt="int">—</span>th (80% range). A
-        future website should show a range, not a single number.</p>
+      <p>Taste scores are reliable for groups but noisy for individuals, because single picks are so unpredictable. Someone measured at the
+        75th percentile for discernment on songs, with a typical history of <span class="wu-num dash-skeleton" data-source="fuzzy" data-field="picks" data-where="typical=true" data-fmt="int">—</span> song picks,
+        could truly be anywhere from about the <span class="wu-num" data-source="fuzzy" data-field="lo" data-where="typical=true" data-fmt="ord">—</span> to the <span class="wu-num" data-source="fuzzy" data-field="hi" data-where="typical=true" data-fmt="ord">—</span>
+        percentile (80% range). More history narrows it: with <span class="wu-num" data-source="fuzzy" data-field="picks" data-where="picks=1500" data-fmt="int">—</span> picks, it's the
+        <span class="wu-num" data-source="fuzzy" data-field="lo" data-where="picks=1500" data-fmt="ord">—</span> to the <span class="wu-num" data-source="fuzzy" data-field="hi" data-where="picks=1500" data-fmt="ord">—</span>. A future website should show a range,
+        not a single number.</p>
     </div>
   </section>
 
@@ -262,6 +269,9 @@
       explain little: choosing people by their habits alone finds pickers whose new artists took off
       <span class="wu-num dash-skeleton" data-source="toppickers" data-field="value" data-where="key=by_traits" data-fmt="times">—</span> as often as similar artists, against
       <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_record" data-fmt="times">—</span> when choosing by track record.</p>
+    <p>Habits like these explain only about <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=r2_traits" data-fmt="pct1">—</span> of the differences in how people's later
+      picks did, against <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=r2_record" data-fmt="pct1">—</span> for their track record (both small, because single picks are so
+      noisy).</p>
     <p>What the best pickers have is two kinds of judgment at once. They're early to scenes that are about to take off, and within those
       scenes they pick the artists that take off.</p>
     <div class="wu-eq">
@@ -276,21 +286,6 @@
       <div class="wu-card wu-take"><span class="wu-tt">Overall</span>
         <span class="wu-big dash-skeleton" data-source="toppickers" data-field="value" data-where="key=total" data-fmt="times">—</span>
         <span class="wu-cap">as often as similar artists, for the top 1% of pickers.</span></div>
-    </div>
-    <div class="wu-card">
-      <h3>The top 1%'s habits, next to everyone else's</h3>
-      <div class="wu-tablewrap">
-        <table id="pf-table" data-source="profile" data-row-key="band">
-          <thead><tr><th data-field="band">Pickers</th><th class="wu-r" data-field="picks_per_year">New artists picked per year</th>
-            <th class="wu-r" data-field="listens_per_month">Listens per month</th><th class="wu-r" data-field="pick_popularity">Popularity of picks (percentile)</th>
-            <th class="wu-r" data-field="top_scene_share">Picks in their main scene</th><th class="wu-r" data-field="mainstream_share">Mainstream listening</th>
-            <th class="wu-r" data-field="plays_before_committing">Plays before committing</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <p class="wu-note">Hidden half; averages over the years used to rank people. Habits like these explain about
-        <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=r2_traits" data-fmt="pct1">—</span> of the differences in how people's later picks did; their track record explains
-        <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=r2_record" data-fmt="pct1">—</span>, small in absolute terms because single picks are so noisy.</p>
     </div>
   </section>
 
@@ -336,9 +331,9 @@
       strength matched what the first half had shown.</p>
     <p><b>We checked the takeoff and good-picker numbers the same way.</b> They were found afterwards, on the first half. Before touching the hidden half
       again, we wrote down each prediction, exactly how it would be measured, and a stricter bar for passing (99% sure, since there were
-      several), in four rounds. Then we checked each once. All sixteen held.</p>
+      several), in five rounds. Then we checked each once. All seventeen held.</p>
     <div class="wu-card">
-      <h3>Takeoff, good-picker, and best-picker checks on the hidden half</h3>
+      <h3>Takeoff, good-picker, best-picker, and obsession checks on the hidden half</h3>
       <div class="wu-tablewrap">
         <table id="hl-table" data-source="headlines" data-row-key="key">
           <thead><tr><th data-field="claim">Prediction</th><th class="wu-r" data-field="hidden">Hidden half</th>
@@ -856,6 +851,31 @@
     bandHover(f, rows, x, (d) => [`Pickers ranked ${d.band}`, [['Extra growth', `${fmt.spct1(d.v)} (${fmt.spct1(d.lo)} to ${fmt.spct1(d.hi)})`, col], ['People', fmt.int(+d.people)]]]);
   }
 
+  function drawObsession() {
+    const el = document.getElementById('ob-chart');
+    if (!ready(el, ['obsdeciles'])) return;
+    const col = dash.colors[0];
+    const rows = dash.data('obsdeciles').data.map((r) => ({ ...r, d: +r.decile, v: +r.growth, lo: +r.lo, hi: +r.hi }));
+    const f = frame(el, 240, { t: 28, r: 16, b: 40, l: 44 });
+    const { svg, fs, width, height, m } = f;
+    const x = d3.scalePoint(rows.map((r) => r.d), [m.l, width - m.r]).padding(0.4);
+    const y = d3.scaleLinear([Math.min(0, d3.min(rows, (r) => r.lo)) * 1.1, Math.max(0, d3.max(rows, (r) => r.hi)) * 1.1], [height - m.b, m.t]).nice();
+    gridY(f, y, d3.format('+.0%'), 4);
+    svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', css('--cds-chart-axis'));
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`)
+      .call(d3.axisBottom(x).tickFormat((k) => d3.format('.0f')(+rows.find((r) => r.d === k).median_plays)).tickSize(0)), fs);
+    svg.append('text').attr('x', (m.l + width - m.r) / 2).attr('y', height - 4).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted'))
+      .style('font-size', fs).text('Typical plays before committing (each point is a tenth of all picks)');
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Growth vs similar picks');
+    svg.append('path').datum(rows).attr('d', d3.line().x((d) => x(d.d)).y((d) => y(d.v))).attr('fill', 'none').attr('stroke', col).attr('stroke-width', 2);
+    errorDots(svg, rows, (d) => x(d.d), y, col, false);
+    const tip = tooltip(el);
+    rows.forEach((d) => svg.append('circle').attr('cx', x(d.d)).attr('cy', y(d.v)).attr('r', 12).attr('fill', 'transparent')
+      .on('mousemove', (ev) => tip.show(ev, `Tenth ${d.d} of picks (typically ${d3.format('.0f')(+d.median_plays)} plays)`,
+        [['Growth vs similar', `${fmt.spct1(d.v)} (${fmt.spct1(d.lo)} to ${fmt.spct1(d.hi)})`, col], ['Picks', fmt.int(+d.picks)]]))
+      .on('mouseleave', () => tip.hide()));
+  }
+
   function drawFanValue() {
     const el = document.getElementById('fv-chart');
     if (!ready(el, ['fanvalue'])) return;
@@ -1094,12 +1114,10 @@
   dash.onData(() => {
     fillMarks();
     drawRepeat();
+    drawObsession();
     drawLadder();
     drawThresholds();
     drawGrowthBand();
-    fillTable('pf-table', 'profile', [['band'], ['picks_per_year', d3.format('.0f'), 'wu-r'], ['listens_per_month', fmt.int, 'wu-r'],
-      ['pick_popularity', (v) => fmt.ord(+v), 'wu-r'], ['top_scene_share', fmt.pct, 'wu-r'], ['mainstream_share', fmt.pct, 'wu-r'],
-      ['plays_before_committing', d3.format('.0f'), 'wu-r']], 'band');
     drawFanValue();
     drawCrowd();
     const hl = (r, f) => (r[f] === null || r[f] === undefined ? '–' : r.unit === 'times as often' ? fmt.times(+r[f])

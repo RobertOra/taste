@@ -273,6 +273,19 @@
   "confirmed": true
  },
  {
+  "key": "P8",
+  "claim": "Each person's most-hooked quarter of artist picks vs their least-hooked: extra growth",
+  "unit": "more growth",
+  "hidden": 0.026411469639892535,
+  "lo": 0.02595547700677568,
+  "hi": 0.026819337965262417,
+  "lo99": 0.025788026170949024,
+  "first_half": 0.027528821607753995,
+  "rate": null,
+  "rate_compared": null,
+  "confirmed": true
+ },
+ {
   "key": "H2growth",
   "claim": "3+ good pickers agree: growth vs similar artists (descriptive)",
   "unit": "more growth",

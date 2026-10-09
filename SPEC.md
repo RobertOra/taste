@@ -227,6 +227,9 @@ explore half). Outcome: each pick's excess growth under the frozen prescience me
   quarter: difference > 0 (99% lower bound). Explore +0.0272 [0.0267, 0.0277; 99% low 0.0266].
 Descriptive: deciles of plays before committing across all picks.
 
+**Sealed result (run once, 2026-10-09): confirmed.** P8 +0.0261 [0.0256, 0.0265; 99% low 0.0255] (most-hooked quarter
++1.5%, least-hooked -1.1%). Deciles: -1.5% (about 4 plays) to +2.2% (about 92 plays), as on the explore half.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|

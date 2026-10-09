@@ -92,6 +92,12 @@ def headlines():
         est, fe = ts[k], te[k]
         rows.append({"key": key, "claim": claim, "unit": unit, "hidden": est["est"], "lo": est["lo"], "hi": est["hi"], "lo99": est["lo99"],
                      "first_half": fe["est"], "rate": None, "rate_compared": None, "confirmed": est["lo99"] > (0 if unit == "points" else 1)})
+    ob = json.loads((OUT / "obsession_sealed.json").read_text())["A_artist"]["within_plays"]
+    obe = json.loads((OUT / "obsession.json").read_text())["A_artist"]["within_plays"]
+    rows.append({"key": "P8", "claim": "Each person's most-hooked quarter of artist picks vs their least-hooked: extra growth", "unit": "more growth",
+                 "hidden": float(np.expm1(ob["diff"])), "lo": float(np.expm1(ob["ci"][0])), "hi": float(np.expm1(ob["ci"][1])),
+                 "lo99": float(np.expm1(ob["lo99"])), "first_half": float(np.expm1(obe["diff"])), "rate": None, "rate_compared": None,
+                 "confirmed": ob["lo99"] > 0})
     rows.append({"key": "H2growth", "claim": "3+ good pickers agree: growth vs similar artists (descriptive)", "unit": "more growth",
                  "hidden": hs["H2"]["best"]["growth_vs_similar"], "lo": None, "hi": None, "lo99": None,
                  "first_half": he["H2"]["best"]["growth_vs_similar"], "rate": None, "rate_compared": None, "confirmed": None})
@@ -148,10 +154,21 @@ def agree():
 
 
 def obsession():
-    o = json.loads((OUT / "obsession.json").read_text())
-    return [{"level": lab, "most_vs_least": float(np.expm1(o[k]["within_plays"]["diff"])),
-             "lo": float(np.expm1(o[k]["within_plays"]["ci"][0])), "hi": float(np.expm1(o[k]["within_plays"]["ci"][1])),
-             "people": o[k]["within_plays"]["people"]} for k, lab in (("A_song", "Songs"), ("A_artist", "Artists"))]
+    """Artists: hidden half (P8 confirmed); songs: first half only."""
+    os_, oe = json.loads((OUT / "obsession_sealed.json").read_text()), json.loads((OUT / "obsession.json").read_text())
+    rows = []
+    for k, lab, src, half in (("A_artist", "Artists", os_, "Hidden half"), ("A_song", "Songs", oe, "First half")):
+        w = src[k]["within_plays"]
+        rows.append({"level": lab, "half": half, "most_vs_least": float(np.expm1(w["diff"])), "lo": float(np.expm1(w["ci"][0])),
+                     "hi": float(np.expm1(w["ci"][1])), "people": w["people"],
+                     "least_quarter": float(np.expm1(w["quarter_means"][0])), "most_quarter": float(np.expm1(w["quarter_means"][3]))})
+    return rows
+
+
+def obsdeciles():
+    r = json.loads((OUT / "obsession_sealed.json").read_text())["A_artist"]["deciles_plays_ci"]
+    return [{"key": str(d["decile"]), "decile": d["decile"], "median_plays": d["median_plays"], "growth": float(np.expm1(d["e"])),
+             "lo": float(np.expm1(d["lo"])), "hi": float(np.expm1(d["hi"])), "picks": d["picks"]} for d in r]
 
 
 def ladder():
@@ -186,7 +203,7 @@ def crowd():
 
 
 if __name__ == "__main__":
-    for name, fn in (("headlines", headlines), ("obsession", obsession), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
+    for name, fn in (("headlines", headlines), ("obsession", obsession), ("obsdeciles", obsdeciles), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
         rows = fn()
         (W / f"{name}.json").write_text(json.dumps(rows, indent=1))
         print(name, json.dumps(rows)[:600])
