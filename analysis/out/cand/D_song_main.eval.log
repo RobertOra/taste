@@ -1,38 +1,38 @@
 {
  "candidate": "D_song_main",
- "headline_adjusted_forward": 0.2408257677336558,
+ "headline_adjusted_forward": 0.2408496485595995,
  "headline_adjusted_forward_ci": [
-  0.22925002110674927,
-  0.2537850630402189
+  0.22917357541894154,
+  0.2537307430455261
  ],
- "share_of_prediction_kept_after_impostors": 0.8854774692013174,
+ "share_of_prediction_kept_after_impostors": 0.8854894246709125,
  "users_scored": 31279,
- "not_luck_share": 0.6604068321936823,
- "reliability": 0.6695885969010086,
- "impostor_r2": 0.08865869505010449,
- "stability_3y_corrected": 0.3975761887502302,
+ "not_luck_share": 0.6609878552831148,
+ "reliability": 0.6696649425315253,
+ "impostor_r2": 0.08863293293440688,
+ "stability_3y_corrected": 0.3980126312733071,
  "passes_gates": true,
  "forward": {
-  "rank_corr": 0.2719727786533922,
+  "rank_corr": 0.27199607567206124,
   "rank_corr_ci": [
-   0.25994171339230476,
-   0.2848428636321185
+   0.25990692049319547,
+   0.2848293088167547
   ],
-  "top_minus_bottom": 0.011221067279965247,
+  "top_minus_bottom": 0.011222220238310984,
   "top_minus_bottom_ci": [
-   0.010594026094552424,
-   0.011810319950257943
+   0.010585993497760628,
+   0.011790841546157216
   ],
-  "repeat_rate_top20": 0.3419054871134429,
+  "repeat_rate_top20": 0.34119895118398114,
   "repeat_rate_top20_ci": [
-   0.32715029231300813,
-   0.35339718547658217
+   0.3258982782995579,
+   0.3527833326968728
   ],
   "repeat_rate_chance": 0.2,
-  "impostor_adjusted_rank_corr": 0.2408257677336558,
+  "impostor_adjusted_rank_corr": 0.2408496485595995,
   "impostor_adjusted_rank_corr_ci": [
-   0.22925002110674927,
-   0.2537850630402189
+   0.22917357541894154,
+   0.2537307430455261
   ],
   "gap_years": 2
  }

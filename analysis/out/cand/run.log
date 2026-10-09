@@ -314,3 +314,195 @@ skip D_scene_bins50
 STAGE sweeps DONE 07:54
 COMMUNITY HORIZONS DONE 07:54
 done A_artist_main (112s)
+done A_song_main (32s)
+done A_scene_main (30s)
+done B_artist_main (302s)
+FAILED B_song_main (see analysis/out/cand/B_song_main.*.log)
+FAILED B_scene_main (see analysis/out/cand/B_scene_main.*.log)
+done C_lb_artist_main (115s)
+done C_lb_song_main (32s)
+done C_lb_scene_main (32s)
+done D_artist_main (341s)
+done D_song_main (34s)
+done D_scene_main (31s)
+STAGE main DONE 08:34
+skip A_artist_main
+skip A_song_main
+skip A_scene_main
+skip B_artist_main
+done B_song_main (34s)
+done B_scene_main (32s)
+skip C_lb_artist_main
+skip C_lb_song_main
+skip C_lb_scene_main
+skip D_artist_main
+skip D_song_main
+skip D_scene_main
+STAGE main DONE 08:39
+skip A_artist_nocontrols
+skip A_artist_no_scene
+skip A_artist_no_age
+skip A_artist_no_country
+skip A_artist_no_release
+skip A_artist_no_momentum
+skip A_artist_first_listen
+skip A_artist_scene1000
+skip A_song_nocontrols
+skip A_song_no_scene
+skip A_song_no_age
+skip A_song_no_country
+skip A_song_no_release
+skip A_scene_nocontrols
+skip A_scene_no_momentum
+skip B_artist_nocontrols
+skip B_artist_no_scene
+skip B_artist_no_age
+skip B_artist_no_country
+skip B_artist_no_release
+skip B_artist_no_momentum
+skip B_artist_first_listen
+skip B_artist_scene1000
+done B_song_nocontrols (29s)
+done B_song_no_scene (37s)
+done B_song_no_age (40s)
+done B_song_no_country (40s)
+done B_song_no_release (41s)
+done B_scene_nocontrols (32s)
+done B_scene_no_momentum (35s)
+skip C_lb_artist_nocontrols
+skip C_lb_artist_no_scene
+skip C_lb_artist_no_age
+skip C_lb_artist_no_country
+skip C_lb_artist_no_release
+skip C_lb_artist_no_momentum
+skip C_lb_artist_first_listen
+skip C_lb_artist_scene1000
+skip C_lb_song_nocontrols
+skip C_lb_song_no_scene
+skip C_lb_song_no_age
+skip C_lb_song_no_country
+skip C_lb_song_no_release
+skip C_lb_scene_nocontrols
+skip C_lb_scene_no_momentum
+skip D_artist_nocontrols
+skip D_artist_no_scene
+skip D_artist_no_age
+skip D_artist_no_country
+skip D_artist_no_release
+skip D_artist_no_momentum
+skip D_artist_first_listen
+skip D_artist_scene1000
+skip D_song_nocontrols
+skip D_song_no_scene
+skip D_song_no_age
+skip D_song_no_country
+skip D_song_no_release
+skip D_scene_nocontrols
+skip D_scene_no_momentum
+STAGE justx DONE 08:43
+skip A_artist_h6
+skip A_artist_h24
+skip A_artist_w0.5
+skip A_artist_w1
+skip A_artist_rank
+skip A_artist_bins10
+skip A_artist_bins50
+skip A_artist_on13
+skip A_artist_on52
+skip A_artist_rule_w8
+skip A_artist_rule_p10
+skip A_artist_rule_w2
+skip A_song_h6
+skip A_song_h24
+skip A_song_w0.5
+skip A_song_w1
+skip A_song_rank
+skip A_song_bins10
+skip A_song_bins50
+skip A_scene_h6
+skip A_scene_h24
+skip A_scene_w0.5
+skip A_scene_w1
+skip A_scene_rank
+skip A_scene_bins10
+skip A_scene_bins50
+skip B_artist_h6
+skip B_artist_h24
+skip B_artist_w0.5
+skip B_artist_w1
+skip B_artist_rank
+skip B_artist_bins10
+skip B_artist_bins50
+skip B_artist_on13
+skip B_artist_on52
+skip B_artist_rule_w8
+skip B_artist_rule_p10
+skip B_artist_rule_w2
+done B_song_h6 (43s)
+done B_song_h24 (34s)
+done B_song_w0.5 (43s)
+done B_song_w1 (43s)
+done B_song_rank (45s)
+done B_song_bins10 (43s)
+done B_song_bins50 (43s)
+done B_scene_h6 (38s)
+done B_scene_h24 (32s)
+done B_scene_w0.5 (36s)
+done B_scene_w1 (38s)
+done B_scene_rank (39s)
+done B_scene_bins10 (38s)
+done B_scene_bins50 (37s)
+skip C_lb_artist_h6
+skip C_lb_artist_h24
+skip C_lb_artist_w0.5
+skip C_lb_artist_w1
+skip C_lb_artist_rank
+skip C_lb_artist_bins10
+skip C_lb_artist_bins50
+skip C_lb_artist_on13
+skip C_lb_artist_on52
+skip C_lb_artist_rule_w8
+skip C_lb_artist_rule_p10
+skip C_lb_artist_rule_w2
+skip C_lb_song_h6
+skip C_lb_song_h24
+skip C_lb_song_w0.5
+skip C_lb_song_w1
+skip C_lb_song_rank
+skip C_lb_song_bins10
+skip C_lb_song_bins50
+skip C_lb_scene_h6
+skip C_lb_scene_h24
+skip C_lb_scene_w0.5
+skip C_lb_scene_w1
+skip C_lb_scene_rank
+skip C_lb_scene_bins10
+skip C_lb_scene_bins50
+skip D_artist_h6
+skip D_artist_h24
+skip D_artist_w0.5
+skip D_artist_w1
+skip D_artist_rank
+skip D_artist_bins10
+skip D_artist_bins50
+skip D_artist_on13
+skip D_artist_on52
+skip D_artist_rule_w8
+skip D_artist_rule_p10
+skip D_artist_rule_w2
+skip D_song_h6
+skip D_song_h24
+skip D_song_w0.5
+skip D_song_w1
+skip D_song_rank
+skip D_song_bins10
+skip D_song_bins50
+skip D_scene_h6
+skip D_scene_h24
+skip D_scene_w0.5
+skip D_scene_w1
+skip D_scene_rank
+skip D_scene_bins10
+skip D_scene_bins50
+STAGE sweeps DONE 08:52
+B FIX DONE 08:52
