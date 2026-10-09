@@ -6,7 +6,10 @@ excess growth under the frozen measure (all controls). Bins of plays: 1-4, 5-6, 
 Gain from getting hooked = mean outcome of picks with 10+ plays minus picks with 1-4 plays, within a group.
 Test: top fifth's gain minus bottom fifth's gain > 0. Also the all-picks curve by the same bins. Bootstrap over people.
 
-Usage: obs_taste.py --half explore|sealed
+With --deciles (descriptive): the same curves by tenths of all picks (by plays before committing) instead of fixed bins,
+with a top 1% group added; written to obs_taste_<half>_deciles.json. The P9 test is unchanged.
+
+Usage: obs_taste.py --half explore|sealed [--deciles]
 """
 
 import argparse
@@ -34,7 +37,9 @@ def label(lo, hi):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--half", choices=["explore", "sealed"], required=True)
-    half = ap.parse_args().half
+    ap.add_argument("--deciles", action="store_true")
+    args = ap.parse_args()
+    half = args.half
     _, f = bets_with_bands(half)
     ob = pl.read_parquet(X / "obsession" / f"{half}_artist.parquet", columns=["user", "artist", "plays_to_commit"])
     f = f.filter(pl.col("period") == "future").join(ob, on=["user", "artist"], how="inner").filter(pl.col("plays_to_commit") > 0)
@@ -43,6 +48,27 @@ def main():
     for lo, hi in BINS:
         lab = pl.when(pl.col("plays_to_commit").is_between(lo, hi)).then(pl.lit(label(lo, hi))).otherwise(lab)
     f = f.with_columns(pb=lab, hooked=(pl.col("plays_to_commit") >= 10), casual=(pl.col("plays_to_commit") <= 4))
+    if args.deciles:
+        f = f.with_columns(dec=((pl.col("plays_to_commit").rank("ordinal") - 1) * 10 // pl.len()).cast(pl.Int8))
+        med = f.group_by("dec").agg(pl.col("plays_to_commit").median().alias("med")).sort("dec")
+        meds = dict(zip(med["dec"].to_list(), med["med"].to_list()))
+        curve = []
+        for g in ("bottom", "middle", "top", "top1", "all"):
+            d = f if g == "all" else (f.filter(pl.col("q") > 0.99) if g == "top1" else f.filter(pl.col("grp") == g))
+            for k in range(10):
+                x = d.filter(pl.col("dec") == k)
+                per = x.group_by("user").agg(s=pl.col("e").sum(), n=pl.len())
+                sv, nv = per["s"].to_numpy(), per["n"].to_numpy().astype(float)
+                w = RNG.poisson(1.0, (300, per.height)).astype(float)
+                bs = (w @ sv) / (w @ nv)
+                curve.append({"key": f"{g}:{k + 1}", "group": g, "decile": k + 1, "median_plays": float(meds[k]),
+                              "growth": float(np.expm1(sv.sum() / nv.sum())), "lo": float(np.expm1(np.percentile(bs, 2.5))),
+                              "hi": float(np.expm1(np.percentile(bs, 97.5))), "picks": int(nv.sum()), "people": per.height})
+        for g in ("bottom", "middle", "top", "top1", "all"):
+            print(f"  {g:7s} " + "  ".join(f"{r['median_plays']:.0f}:{r['growth']:+.1%}" for r in curve if r["group"] == g))
+        print("  top1 picks per tenth:", [r["picks"] for r in curve if r["group"] == "top1"])
+        (ROOT / "analysis" / "out" / f"obs_taste_{half}_deciles.json").write_text(json.dumps({"curve": curve}, indent=1))
+        return
 
     curve = []
     for g in ("bottom", "middle", "top", "all"):

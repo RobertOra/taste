@@ -170,7 +170,7 @@ def obsession():
 
 
 def obstaste():
-    return json.loads((OUT / "obs_taste_sealed.json").read_text())["curve"]
+    return json.loads((OUT / "obs_taste_sealed_deciles.json").read_text())["curve"]
 
 
 def obsdeciles():
