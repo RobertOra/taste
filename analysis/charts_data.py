@@ -135,8 +135,55 @@ def scene_split():
     return rows
 
 
+def crowd_log():
+    """Hidden half, descriptive: growth multiplier by number of good pickers among new fans (each count with >= 100
+    artist-months), within niche / middle / crowded, plus a constant per-picker boost fitted within cells (all counts)."""
+    df = pl.read_parquet(X / "pickers" / "rate_A_sealed.parquet")
+    df = df.with_columns(g=((pl.col("l1") + 1) / (pl.col("l0") + 1)).log(), sz=(pl.col("l0") + 1).log(2).floor().cast(pl.Int16),
+                         mo=(((pl.col("l0") + 1) / (pl.col("l_pre") + 1)).log() / 0.5).floor().clip(-3, 3).cast(pl.Int8),
+                         ub=pl.col("n_unrated").clip(0, 4), others=pl.col("n_ord") + pl.col("n_poor"))
+    cell = ["m", "sz", "mo", "ub", "n_ord", "n_poor"]
+    df = df.with_columns(cs=pl.len().over(cell), cg=pl.col("n_good").n_unique().over(cell)).filter((pl.col("cs") >= 2) & (pl.col("cg") >= 2))
+    df = df.with_columns(gx=pl.col("g") - (pl.col("g").sum().over(cell) - pl.col("g")) / (pl.col("cs") - 1),
+                         grp=pl.when(pl.col("others") <= 2).then(pl.lit("niche")).when(pl.col("others") <= 5).then(pl.lit("middle")).otherwise(pl.lit("crowded")))
+    rows = []
+    for grp in ("niche", "middle", "crowded"):
+        d = df.filter(pl.col("grp") == grp)
+        for k in range(0, 40):
+            x = d.filter(pl.col("n_good") == k)
+            if x.height < 100:
+                break
+            a = x.group_by("artist").agg(s=pl.col("gx").sum(), n=pl.len())
+            sv, nv = a["s"].to_numpy(), a["n"].to_numpy().astype(float)
+            w = RNG.poisson(1.0, (500, a.height)).astype(float)
+            bs = (w @ sv) / (w @ nv)
+            rows.append({"key": f"{grp}:{k}", "kind": "point", "group": grp, "good": k, "mult": float(np.exp(sv.sum() / nv.sum())),
+                         "lo": float(np.exp(np.percentile(bs, 2.5))), "hi": float(np.exp(np.percentile(bs, 97.5))), "artist_months": x.height})
+        kmax = rows[-1]["good"]
+        sub = d.filter(pl.col("n_good") <= kmax).with_columns(Gd=pl.col("n_good").cast(pl.Float64))
+        sub = sub.with_columns(xd=pl.col("Gd") - pl.col("Gd").mean().over(cell), yd=pl.col("g") - pl.col("g").mean().over(cell))
+        xg, yg = sub["xd"].to_numpy(), sub["yd"].to_numpy()
+        ua, inv = np.unique(sub["artist"].to_numpy(), return_inverse=True)
+        boots = []
+        for _ in range(500):
+            w = RNG.poisson(1.0, len(ua))[inv].astype(float)
+            boots.append(((w * xg) @ yg) / ((w * xg) @ xg))
+        est = float((xg @ yg) / (xg @ xg))
+        base = next(r["mult"] for r in rows if r["group"] == grp and r["good"] == 0)
+        rows.append({"key": f"{grp}:fit", "kind": "fit", "group": grp, "good": None, "mult": base, "boost": float(np.exp(est)),
+                     "boost_lo": float(np.exp(np.percentile(boots, 2.5))), "boost_hi": float(np.exp(np.percentile(boots, 97.5))), "kmax": kmax})
+    return rows
+
+
 if __name__ == "__main__":
     W = ROOT / "analysis" / "writeup"
+    if "--crowd-log" in sys.argv:
+        rows = crowd_log()
+        (W / "crowdlog.json").write_text(json.dumps(rows, indent=1))
+        for r in rows:
+            if r["kind"] == "fit":
+                print(f"  {r['group']}: per good picker x{r['boost']:.3f} [{r['boost_lo']:.3f}, {r['boost_hi']:.3f}], counts 0-{r['kmax']}")
+        raise SystemExit
     if "--scene-split" in sys.argv:
         rows = scene_split()
         (W / "scenesplit.json").write_text(json.dumps(rows, indent=1))
