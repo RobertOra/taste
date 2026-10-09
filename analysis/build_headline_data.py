@@ -42,6 +42,35 @@ def headlines():
                      "lo": float(np.expm1(g["good_ci"][0])), "hi": float(np.expm1(g["good_ci"][1])), "lo99": float(np.expm1(g["good_ci"][2])),
                      "first_half": float(np.expm1(ge["good_vs_ordinary"])), "rate": None, "rate_compared": None,
                      "confirmed": g["good_ci"][2] > 0})
+    ls, le = (json.loads((OUT / f"ladder_{h}.json").read_text()) for h in ("sealed", "explore"))
+    su, se = ls["summary"], le["summary"]
+    rows.append({"key": "P4a", "claim": "Top 1% of pickers' picks vs similar artists: grew 10× or more", "unit": "times as often",
+                 "hidden": su["top1_odds_10x"], "lo": su["top1_lo"], "hi": su["top1_hi"], "lo99": su["top1_lo99"],
+                 "first_half": se["top1_odds_10x"], "rate": None, "rate_compared": None, "confirmed": su["top1_lo99"] > 2})
+    rows.append({"key": "P4b", "claim": "Top 1% vs the 90–95% band: chance of growing 10×", "unit": "times as often",
+                 "hidden": su["top1_vs_90_95"], "lo": su["top1_vs_90_95_lo"], "hi": su["top1_vs_90_95_hi"], "lo99": su["top1_vs_90_95_lo99"],
+                 "first_half": se["top1_vs_90_95"], "rate": None, "rate_compared": None, "confirmed": su["top1_vs_90_95_lo99"] > 1})
+    cs, ce = ls["crowd_summary"], le["crowd_summary"]
+    rows.append({"key": "P5a", "claim": "Niche artist found by 2 good pickers vs none: extra growth", "unit": "more growth",
+                 "hidden": cs["niche_2_vs_0"], "lo": cs["niche_2_vs_0_lo"], "hi": cs["niche_2_vs_0_hi"], "lo99": cs["niche_2_vs_0_lo99"],
+                 "first_half": ce["niche_2_vs_0"], "rate": None, "rate_compared": None, "confirmed": cs["niche_2_vs_0_lo99"] > 0})
+    for k, lab in (("niche", "niche"), ("crowded", "crowded")):
+        rows.append({"key": f"slope_{k}", "claim": f"Each good picker, {lab} artists (descriptive)", "unit": "more growth",
+                     "hidden": cs["slopes"][k]["per_picker"], "lo": cs["slopes"][k]["lo"], "hi": cs["slopes"][k]["hi"], "lo99": None,
+                     "first_half": ce["slopes"][k]["per_picker"], "rate": None, "rate_compared": None, "confirmed": None})
+    rows.append({"key": "P5b", "claim": "Each good picker adds more for niche than crowded artists (difference)", "unit": "more growth",
+                 "hidden": float(np.expm1(cs["slope_niche_minus_crowded"])), "lo": float(np.expm1(cs["slope_diff_lo"])),
+                 "hi": float(np.expm1(cs["slope_diff_hi"])), "lo99": float(np.expm1(cs["slope_diff_lo99"])),
+                 "first_half": float(np.expm1(ce["slope_niche_minus_crowded"])), "rate": None, "rate_compared": None,
+                 "confirmed": cs["slope_diff_lo99"] > 0})
+    gs, ge = ls["count_vs_share"], le["count_vs_share"]
+    rows.append({"key": "P5c", "claim": "Each good new fan vs each ordinary new fan: extra growth", "unit": "more growth",
+                 "hidden": gs["good_minus_ordinary"]["effect"], "lo": gs["good_minus_ordinary"]["lo"], "hi": gs["good_minus_ordinary"]["hi"],
+                 "lo99": gs["good_minus_ordinary"]["lo99"], "first_half": ge["good_minus_ordinary"]["effect"], "rate": None,
+                 "rate_compared": None, "confirmed": gs["good_minus_ordinary"]["lo99"] > 0})
+    for k, lab in (("n_ord", "Each ordinary new fan (descriptive)"), ("n_poor", "Each poor new fan (descriptive)"), ("n_good", "Each good new fan (descriptive)")):
+        rows.append({"key": k, "claim": lab, "unit": "more growth", "hidden": gs[k]["effect"], "lo": gs[k]["lo"], "hi": gs[k]["hi"],
+                     "lo99": None, "first_half": ge[k]["effect"], "rate": None, "rate_compared": None, "confirmed": None})
     rows.append({"key": "H2growth", "claim": "3+ good pickers agree: growth vs similar artists (descriptive)", "unit": "more growth",
                  "hidden": hs["H2"]["best"]["growth_vs_similar"], "lo": None, "hi": None, "lo99": None,
                  "first_half": he["H2"]["best"]["growth_vs_similar"], "rate": None, "rate_compared": None, "confirmed": None})
@@ -104,8 +133,23 @@ def obsession():
              "people": o[k]["within_plays"]["people"]} for k, lab in (("A_song", "Songs"), ("A_artist", "Artists"))]
 
 
+def ladder():
+    rows = []
+    for h, lab in (("sealed", "Hidden half"), ("explore", "First half")):
+        for r in json.loads((OUT / f"ladder_{h}.json").read_text())["ladder"]:
+            mid = (r["lo_pct"] + r["hi_pct"]) / 2
+            rows.append({"key": f"{h}:{r['band']}", "half": lab, "band": r["band"], "top_share": 1 - mid, "people": r["people"],
+                         "events_10x": r["events_10x"], "odds_10x": r["odds_10x"], "odds_10x_lo": r["odds_10x_lo"],
+                         "odds_10x_hi": r["odds_10x_hi"], "growth": r["growth"]})
+    return rows
+
+
+def crowd():
+    return [{"key": f"{r['crowd']}:{r['label']}", **r} for r in json.loads((OUT / "ladder_sealed.json").read_text())["crowd_curve"]]
+
+
 if __name__ == "__main__":
-    for name, fn in (("headlines", headlines), ("takeoff", takeoff), ("agree", agree), ("obsession", obsession)):
+    for name, fn in (("headlines", headlines), ("takeoff", takeoff), ("obsession", obsession), ("ladder", ladder), ("crowd", crowd)):
         rows = fn()
         (W / f"{name}.json").write_text(json.dumps(rows, indent=1))
         print(name, json.dumps(rows)[:600])

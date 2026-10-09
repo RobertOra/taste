@@ -186,6 +186,12 @@ above the stated value.
   Explore: niche +7.3%, crowded +2.1% per picker.
 - P5c. Each good new fan adds more growth than each ordinary new fan (difference > 0). Explore: good +2.0%, ordinary +0.1%.
 Descriptive only: the fine ladder bands (top 0.5%, 0.2%, 0.1% get wide), the full crowding curves, and count vs share.
+
+**Sealed results (run once, 2026-10-09): all five confirmed** (95% interval; 99% lower bound).
+- P4a top 1% 10x odds 4.70 [4.17, 5.26; 4.04]. P4b vs 90-95% band 2.58 [2.25, 2.94; 2.17].
+- P5a niche 2 good vs none +12.3% [11.4, 13.1; 11.1]. P5b slope niche - crowded +0.049 [0.047, 0.053; 0.046]
+  (niche +7.1%, middle +3.6%, crowded +2.0% per good picker). P5c good - ordinary +1.60% [1.38, 1.80; 1.33].
+Descriptive: bands finer than the top 0.5% overlap (99.8-99.9% 4.1 [3.2, 5.3]; top 0.1% 7.1 [4.7, 9.7]).
 Correction to an earlier exploratory claim (chat only, never on the page): "the count of good pickers matters, not their
 share" came from a quick check that dropped artists with poor pickers and didn't hold other fans fixed; with them held
 fixed, share also matters and the effect depends on crowding.
