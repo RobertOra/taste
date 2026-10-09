@@ -257,6 +257,16 @@ bound above the stated value.
 Reading: the recent record matters more than the old one, but the old record still adds something (more on the sealed half
 than the explore half suggested), and a one-year record goes stale only slowly.
 
+## Is bad taste real too? (written 2026-10-09 19:09, before any sealed run of analysis/bad_taste.py)
+Exploratory on the explore half; tested once on the sealed half with the committed code (artists, ladder design). Flops = picks
+that lost at least half their listeners within a year. Confirmed = 99% bootstrap lower bound above the stated value.
+- P11a. Bottom-fifth pickers' picks flop more often than middle-fifth pickers' (flop odds ratio > 1). Explore 1.21 [1.18, 1.23; 99% low 1.17].
+- P11b. Good taste helps more than bad taste hurts: (top fifth growth - all) - (all - bottom fifth growth) > 0.
+  Explore +3.4 vs -2.3 points, difference 0.011 [0.008, 0.013; 99% low 0.007].
+- P11c. Top-fifth pickers' picks also flop more often than middle-fifth pickers' (bolder bets): ratio > 1. Explore 1.11 [1.09, 1.13; 99% low 1.08].
+Descriptive: the bands; bad-taste persistence (bottom fifth staying bottom) from the frozen songs forward test, already seen on
+the sealed half in an earlier descriptive table (32.6%), so not a test here.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|
