@@ -71,6 +71,20 @@ def headlines():
     for k, lab in (("n_ord", "Each ordinary new fan (descriptive)"), ("n_poor", "Each poor new fan (descriptive)"), ("n_good", "Each good new fan (descriptive)")):
         rows.append({"key": k, "claim": lab, "unit": "more growth", "hidden": gs[k]["effect"], "lo": gs[k]["lo"], "hi": gs[k]["hi"],
                      "lo99": None, "first_half": ge[k]["effect"], "rate": None, "rate_compared": None, "confirmed": None})
+    fv = json.loads((OUT / "fan_value_sealed.json").read_text())
+    fe = json.loads((OUT / "fan_value_explore.json").read_text())
+    pick = lambda d, k: next(r for r in d["rows"] if r["key"] == k)
+    for key, claim, k, t in (("P6a", "Small artist: a good new fan vs an ordinary one, extra growth", "size:small:good_minus_ordinary", "P6a_small_good_minus_ordinary"),
+                             ("P6b", "That gap, small artists minus big artists", None, "P6b_gap_small_minus_big")):
+        if k:
+            r, e = pick(fv, k), pick(fe, k)
+            hidden, lo, hi, first = r["effect"], r["lo"], r["hi"], e["effect"]
+        else:
+            hidden, lo, hi, first = fv["tests"][t]["est"], None, None, fe["tests"][t]["est"]
+        rows.append({"key": key, "claim": claim, "unit": "more growth", "hidden": float(np.expm1(hidden)),
+                     "lo": None if lo is None else float(np.expm1(lo)), "hi": None if hi is None else float(np.expm1(hi)),
+                     "lo99": float(np.expm1(fv["tests"][t]["lo99"])), "first_half": float(np.expm1(first)), "rate": None,
+                     "rate_compared": None, "confirmed": fv["tests"][t]["lo99"] > 0})
     rows.append({"key": "H2growth", "claim": "3+ good pickers agree: growth vs similar artists (descriptive)", "unit": "more growth",
                  "hidden": hs["H2"]["best"]["growth_vs_similar"], "lo": None, "hi": None, "lo99": None,
                  "first_half": he["H2"]["best"]["growth_vs_similar"], "rate": None, "rate_compared": None, "confirmed": None})
@@ -134,14 +148,30 @@ def obsession():
 
 
 def ladder():
+    """Hidden half, merged into bands for a plain percentile axis; plus the finest top bands as detail rows."""
+    lad = json.loads((OUT / "ladder_sealed.json").read_text())["ladder"]
+    merge = [("0–10", 0, .1), ("10–20", .1, .2), ("20–30", .2, .3), ("30–40", .3, .4), ("40–50", .4, .5), ("50–60", .5, .6),
+             ("60–70", .6, .7), ("70–80", .7, .8), ("80–90", .8, .9), ("90–95", .9, .95), ("95–99", .95, .99), ("99–100", .99, 1.0)]
     rows = []
-    for h, lab in (("sealed", "Hidden half"), ("explore", "First half")):
-        for r in json.loads((OUT / f"ladder_{h}.json").read_text())["ladder"]:
-            mid = (r["lo_pct"] + r["hi_pct"]) / 2
-            rows.append({"key": f"{h}:{r['band']}", "half": lab, "band": r["band"], "top_share": 1 - mid, "people": r["people"],
-                         "events_10x": r["events_10x"], "odds_10x": r["odds_10x"], "odds_10x_lo": r["odds_10x_lo"],
-                         "odds_10x_hi": r["odds_10x_hi"], "growth": r["growth"]})
+    for lab, lo, hi in merge:
+        rs = [r for r in lad if r["lo_pct"] >= lo - 1e-9 and r["hi_pct"] <= hi + 1e-9]
+        ev = sum(r["events_10x"] for r in rs); picks = sum(r["picks"] for r in rs)
+        exp_ev = sum(r["events_10x"] / r["odds_10x"] for r in rs)
+        rows.append({"key": lab, "band": f"{lab}%", "mid": (lo + hi) / 2 * 100, "people": sum(r["people"] for r in rs), "picks": picks,
+                     "events_10x": ev, "rate": ev / picks, "similar_rate": exp_ev / picks, "odds": ev / exp_ev, "detail": False})
+    for r in lad:
+        if r["lo_pct"] >= 0.99:
+            rows.append({"key": "detail:" + r["band"], "band": r["band"], "mid": None, "people": r["people"], "picks": r["picks"],
+                         "events_10x": r["events_10x"], "rate": r["events_10x"] / r["picks"], "similar_rate": None, "odds": r["odds_10x"],
+                         "odds_lo": r["odds_10x_lo"], "odds_hi": r["odds_10x_hi"], "detail": True})
     return rows
+
+
+def fanvalue():
+    fv = json.loads((OUT / "fan_value_sealed.json").read_text())
+    return [{"key": f"{r['stage']}:{r['fan']}", "stage": r["stage"], "fan": r["fan"], "effect": r["effect"], "lo": r["lo"], "hi": r["hi"],
+             "artist_months": r["artist_months"]} for r in fv["rows"]
+            if r["stage_type"] == "size" and r["fan"] in ("good", "ordinary", "poor")]
 
 
 def crowd():
@@ -149,7 +179,7 @@ def crowd():
 
 
 if __name__ == "__main__":
-    for name, fn in (("headlines", headlines), ("takeoff", takeoff), ("obsession", obsession), ("ladder", ladder), ("crowd", crowd)):
+    for name, fn in (("headlines", headlines), ("obsession", obsession), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
         rows = fn()
         (W / f"{name}.json").write_text(json.dumps(rows, indent=1))
         print(name, json.dumps(rows)[:600])

@@ -204,6 +204,9 @@ bound above 0 (log-growth units).
 - P6b. That gap is larger for small than for big artists (> 100 listeners). Explore: +0.088 (99% low +0.059).
 Descriptive: each fan type by size and by artist age; the share of good fans (inconsistent sign across stages).
 
+**Sealed results (run once, 2026-10-09): both confirmed.** P6a gap +0.121 log (99% low +0.094): small artists, good fan
++20.2%, ordinary +6.5%, poor +2.6%. P6b +0.105 (99% low +0.078): big artists, good +1.7%, ordinary +0.0%, poor -1.4%.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|

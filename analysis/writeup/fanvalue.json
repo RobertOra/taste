@@ -1,0 +1,83 @@
+[
+ {
+  "key": "small:good",
+  "stage": "small",
+  "fan": "good",
+  "effect": 0.2015404113081308,
+  "lo": 0.18005966501408124,
+  "hi": 0.2224747942942705,
+  "artist_months": 550222
+ },
+ {
+  "key": "small:ordinary",
+  "stage": "small",
+  "fan": "ordinary",
+  "effect": 0.0646307844693111,
+  "lo": 0.05664332354470919,
+  "hi": 0.07229114486199116,
+  "artist_months": 550222
+ },
+ {
+  "key": "small:poor",
+  "stage": "small",
+  "fan": "poor",
+  "effect": 0.025756561480146736,
+  "lo": 0.017699411308708685,
+  "hi": 0.033423764351131965,
+  "artist_months": 550222
+ },
+ {
+  "key": "medium:good",
+  "stage": "medium",
+  "fan": "good",
+  "effect": 0.10350349207720486,
+  "lo": 0.09498909163578773,
+  "hi": 0.11144384573856253,
+  "artist_months": 533628
+ },
+ {
+  "key": "medium:ordinary",
+  "stage": "medium",
+  "fan": "ordinary",
+  "effect": 0.019933913525475317,
+  "lo": 0.017312527774853457,
+  "hi": 0.02242459213803362,
+  "artist_months": 533628
+ },
+ {
+  "key": "medium:poor",
+  "stage": "medium",
+  "fan": "poor",
+  "effect": -0.01675418348995184,
+  "lo": -0.0201574038062154,
+  "hi": -0.013455718348085654,
+  "artist_months": 533628
+ },
+ {
+  "key": "big:good",
+  "stage": "big",
+  "fan": "good",
+  "effect": 0.01647044460945522,
+  "lo": 0.014654067760499098,
+  "hi": 0.018231144218536534,
+  "artist_months": 538112
+ },
+ {
+  "key": "big:ordinary",
+  "stage": "big",
+  "fan": "ordinary",
+  "effect": 0.00024686860861051905,
+  "lo": -0.000271482675527643,
+  "hi": 0.0008219571460261395,
+  "artist_months": 538112
+ },
+ {
+  "key": "big:poor",
+  "stage": "big",
+  "fan": "poor",
+  "effect": -0.01349564201669909,
+  "lo": -0.014503174155384142,
+  "hi": -0.012492841747961286,
+  "artist_months": 538112
+ }
+]

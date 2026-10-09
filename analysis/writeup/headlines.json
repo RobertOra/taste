@@ -208,6 +208,32 @@
   "confirmed": null
  },
  {
+  "key": "P6a",
+  "claim": "Small artist: a good new fan vs an ordinary one, extra growth",
+  "unit": "more growth",
+  "hidden": 0.12859822281681,
+  "lo": 0.10605456180947825,
+  "hi": 0.15111359292347656,
+  "lo99": 0.09892096537810209,
+  "first_half": 0.11186376040355384,
+  "rate": null,
+  "rate_compared": null,
+  "confirmed": true
+ },
+ {
+  "key": "P6b",
+  "claim": "That gap, small artists minus big artists",
+  "unit": "more growth",
+  "hidden": 0.11039860583210492,
+  "lo": null,
+  "hi": null,
+  "lo99": 0.08123350338078665,
+  "first_half": 0.09244804436925903,
+  "rate": null,
+  "rate_compared": null,
+  "confirmed": true
+ },
+ {
   "key": "H2growth",
   "claim": "3+ good pickers agree: growth vs similar artists (descriptive)",
   "unit": "more growth",
