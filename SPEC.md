@@ -168,6 +168,12 @@ roughly Bonferroni for six tests at 5% overall.
   comparison. Explore: +2.0% [1.9, 2.1]; same scene +1.2% [1.1, 1.3].
 Descriptive only: favorites (H1), the all-poor comparison (too few events), and growth gaps.
 
+**Sealed results (run once, 12:29-12:37, 2026-10-09): all six confirmed** (95% interval; 99% lower bound).
+- P1a 10x ratio 2.19 [2.10, 2.29; 2.07]. P1b 4x ratio 1.92 [1.87, 1.97; 1.86].
+- P2a 4x vs similar 2.84 [2.15, 3.66; 1.97]. P2b 10x vs similar 2.48 [1.35, 4.23; 1.11] (narrowest; 24 vs ~10 expected events).
+- P3a +2.0% [1.8, 2.1; 1.8]. P3b same scene +1.3% [1.2, 1.4; 1.1].
+Descriptive: favorites ratio 10x 2.11, 4x 1.89 (no sharper than all picks); 3+ good pickers' artists grew +20% vs similar.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|

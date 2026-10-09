@@ -1,0 +1,564 @@
+{
+ "no_scene": {
+  "artist_months": 1612953,
+  "artists": 232556,
+  "with_scene": false,
+  "g": {
+   "good_vs_ordinary": 0.019666959406460197,
+   "good_ci": [
+    0.018455537747238043,
+    0.020858824098532458,
+    0.01815295018674878
+   ],
+   "poor_vs_ordinary": -0.019227564861279425,
+   "poor_ci": [
+    -0.020350124095577377,
+    -0.018233495077986155,
+    -0.02053136409611415
+   ]
+  },
+  "dbl": {
+   "good_vs_ordinary": 0.006409073925367697,
+   "good_ci": [
+    0.005840471916192013,
+    0.00692473410576038,
+    0.00572524999462291
+   ],
+   "poor_vs_ordinary": -0.0049956490119165056,
+   "poor_ci": [
+    -0.005384908545019266,
+    -0.004611366669329833,
+    -0.005509651482820597
+   ]
+  },
+  "brk": {
+   "good_vs_ordinary": 0.0024898832189441827,
+   "good_ci": [
+    0.0022288248862767975,
+    0.00274258216449525,
+    0.0021800887886970002
+   ],
+   "poor_vs_ordinary": -0.0020409071262511534,
+   "poor_ci": [
+    -0.0022421674657175797,
+    -0.0018504990253349208,
+    -0.0022989710886266107
+   ]
+  },
+  "base_rates": {
+   "doubling": 0.06611103981331136,
+   "breakout_4x": 0.016097803221792575,
+   "median_l0": 45.0
+  },
+  "table": [
+   {
+    "pickers": 1,
+    "good": 0,
+    "artist_months": 774185,
+    "excess_growth": -0.008681377032767954,
+    "doubling": 0.07853032543901006,
+    "doubling_expected": 0.08199153728878114,
+    "breakout": 0.017420900689111774,
+    "breakout_expected": 0.019208223297181942
+   },
+   {
+    "pickers": 1,
+    "good": 1,
+    "artist_months": 197193,
+    "excess_growth": 0.034083318769497176,
+    "doubling": 0.10431911883281861,
+    "doubling_expected": 0.09073030839880204,
+    "breakout": 0.02872312911715933,
+    "breakout_expected": 0.02170605268275852
+   },
+   {
+    "pickers": 2,
+    "good": 0,
+    "artist_months": 165794,
+    "excess_growth": -0.015171417237439451,
+    "doubling": 0.03726310964208596,
+    "doubling_expected": 0.04262015421341736,
+    "breakout": 0.008824203529681413,
+    "breakout_expected": 0.010994553489265714
+   },
+   {
+    "pickers": 2,
+    "good": 1,
+    "artist_months": 77517,
+    "excess_growth": 0.020567244591581827,
+    "doubling": 0.05796147941741812,
+    "doubling_expected": 0.05069106920991279,
+    "breakout": 0.01661571010230014,
+    "breakout_expected": 0.01380320098100241
+   },
+   {
+    "pickers": 2,
+    "good": 2,
+    "artist_months": 11144,
+    "excess_growth": 0.08264706123998458,
+    "doubling": 0.09287508973438621,
+    "doubling_expected": 0.0637486127419124,
+    "breakout": 0.0313173007896626,
+    "breakout_expected": 0.018591732623502912
+   },
+   {
+    "pickers": 3,
+    "good": 0,
+    "artist_months": 61949,
+    "excess_growth": -0.01827941897757378,
+    "doubling": 0.02579541235532454,
+    "doubling_expected": 0.03193482021328265,
+    "breakout": 0.005859658751553697,
+    "breakout_expected": 0.008269279629310112
+   },
+   {
+    "pickers": 3,
+    "good": 1,
+    "artist_months": 41287,
+    "excess_growth": 0.009215143024047566,
+    "doubling": 0.04141739530602853,
+    "doubling_expected": 0.03859897566000347,
+    "breakout": 0.011165742243321142,
+    "breakout_expected": 0.010460273088251308
+   },
+   {
+    "pickers": 3,
+    "good": 2,
+    "artist_months": 10638,
+    "excess_growth": 0.05487843730190351,
+    "doubling": 0.06824591088550479,
+    "doubling_expected": 0.04994148078719203,
+    "breakout": 0.022560631697687534,
+    "breakout_expected": 0.014385799688968066
+   },
+   {
+    "pickers": 3,
+    "good": 3,
+    "artist_months": 1248,
+    "excess_growth": 0.1347189905370326,
+    "doubling": 0.12179487179487179,
+    "doubling_expected": 0.06631125153737231,
+    "breakout": 0.046474358974358976,
+    "breakout_expected": 0.019885387947110394
+   },
+   {
+    "pickers": 4,
+    "good": 0,
+    "artist_months": 28928,
+    "excess_growth": -0.021437880916567904,
+    "doubling": 0.020948561946902654,
+    "doubling_expected": 0.028059929437031207,
+    "breakout": 0.00508158185840708,
+    "breakout_expected": 0.007332570110026416
+   },
+   {
+    "pickers": 4,
+    "good": 1,
+    "artist_months": 24589,
+    "excess_growth": 0.00306806120963049,
+    "doubling": 0.034039611208263855,
+    "doubling_expected": 0.0343489902994674,
+    "breakout": 0.008784415795680995,
+    "breakout_expected": 0.00950013262551546
+   },
+   {
+    "pickers": 4,
+    "good": 2,
+    "artist_months": 9244,
+    "excess_growth": 0.034371280297637155,
+    "doubling": 0.0572263089571614,
+    "doubling_expected": 0.04487122709667503,
+    "breakout": 0.017416702726092602,
+    "breakout_expected": 0.013633432244907795
+   },
+   {
+    "pickers": 4,
+    "good": 3,
+    "artist_months": 1850,
+    "excess_growth": 0.09363932116141538,
+    "doubling": 0.10864864864864865,
+    "doubling_expected": 0.06485680760597398,
+    "breakout": 0.04216216216216216,
+    "breakout_expected": 0.021032718835251787
+   },
+   {
+    "pickers": 4,
+    "good": 4,
+    "artist_months": 217,
+    "excess_growth": 0.2477124555340825,
+    "doubling": 0.18433179723502305,
+    "doubling_expected": 0.10092314018083595,
+    "breakout": 0.08294930875576037,
+    "breakout_expected": 0.04307222677978209
+   },
+   {
+    "pickers": 5,
+    "good": 0,
+    "artist_months": 15403,
+    "excess_growth": -0.026816984667456766,
+    "doubling": 0.01973641498409401,
+    "doubling_expected": 0.02988792582789342,
+    "breakout": 0.004414724404336818,
+    "breakout_expected": 0.00794329533835998
+   },
+   {
+    "pickers": 5,
+    "good": 1,
+    "artist_months": 16271,
+    "excess_growth": -0.006193822456895816,
+    "doubling": 0.030483682625530084,
+    "doubling_expected": 0.03475544511028729,
+    "breakout": 0.007375084506176633,
+    "breakout_expected": 0.00948207576230282
+   },
+   {
+    "pickers": 5,
+    "good": 2,
+    "artist_months": 7715,
+    "excess_growth": 0.014049520429167229,
+    "doubling": 0.0491250810110175,
+    "doubling_expected": 0.04437133397590403,
+    "breakout": 0.015165262475696694,
+    "breakout_expected": 0.013312148145429399
+   },
+   {
+    "pickers": 5,
+    "good": 3,
+    "artist_months": 2185,
+    "excess_growth": 0.06948050899125742,
+    "doubling": 0.08512585812356979,
+    "doubling_expected": 0.058246567158578545,
+    "breakout": 0.032951945080091534,
+    "breakout_expected": 0.018901240091868693
+   },
+   {
+    "pickers": 5,
+    "good": 4,
+    "artist_months": 412,
+    "excess_growth": 0.15075203353333616,
+    "doubling": 0.12378640776699029,
+    "doubling_expected": 0.08139361486577594,
+    "breakout": 0.05339805825242718,
+    "breakout_expected": 0.028677354495898952
+   }
+  ],
+  "five_plus": [
+   {
+    "gb": 0,
+    "n": 39699,
+    "excess_growth": -0.02678079003635833,
+    "doubling": 0.01750673820499257,
+    "doubling_expected": 0.026218900483800985,
+    "breakout": 0.004080707322602585,
+    "breakout_expected": 0.0068638702201255656
+   },
+   {
+    "gb": 1,
+    "n": 56087,
+    "excess_growth": -0.012473920320103285,
+    "doubling": 0.024105407670226613,
+    "doubling_expected": 0.029348904627056294,
+    "breakout": 0.005634104159609178,
+    "breakout_expected": 0.007726542928777801
+   },
+   {
+    "gb": 2,
+    "n": 42206,
+    "excess_growth": -0.0021706194696888255,
+    "doubling": 0.03241245320570535,
+    "doubling_expected": 0.03405791235681819,
+    "breakout": 0.009027152537553903,
+    "breakout_expected": 0.009356604341233053
+   },
+   {
+    "gb": 3,
+    "n": 24979,
+    "excess_growth": 0.016749615374291853,
+    "doubling": 0.04383682293126226,
+    "doubling_expected": 0.039308249320457164,
+    "breakout": 0.01321109732175027,
+    "breakout_expected": 0.011279143171381883
+   },
+   {
+    "gb": 4,
+    "n": 44199,
+    "excess_growth": 0.03248987252087767,
+    "doubling": 0.05997873255051019,
+    "doubling_expected": 0.04648781300862711,
+    "breakout": 0.0177153329260843,
+    "breakout_expected": 0.013337542541253059
+   }
+  ]
+ },
+ "scene": {
+  "artist_months": 1119648,
+  "artists": 215110,
+  "with_scene": true,
+  "g": {
+   "good_vs_ordinary": 0.012634297286554822,
+   "good_ci": [
+    0.011732629921623071,
+    0.013740742652933001,
+    0.011447680128918518
+   ],
+   "poor_vs_ordinary": -0.012610444353299452,
+   "poor_ci": [
+    -0.01349285111895898,
+    -0.01171256008687642,
+    -0.013773575203847078
+   ]
+  },
+  "dbl": {
+   "good_vs_ordinary": 0.004089326187249572,
+   "good_ci": [
+    0.0036398620411129345,
+    0.004615402439082269,
+    0.0034688606882155954
+   ],
+   "poor_vs_ordinary": -0.0030764333316978354,
+   "poor_ci": [
+    -0.00343377436240268,
+    -0.002744072647657739,
+    -0.0035280928165524923
+   ]
+  },
+  "brk": {
+   "good_vs_ordinary": 0.001539823633855732,
+   "good_ci": [
+    0.0013311058742235431,
+    0.0018022532721498738,
+    0.0012489347434135104
+   ],
+   "poor_vs_ordinary": -0.0010965472709196203,
+   "poor_ci": [
+    -0.0012659007406428623,
+    -0.0009390856599212431,
+    -0.0013383752623091609
+   ]
+  },
+  "base_rates": {
+   "doubling": 0.061999842807739576,
+   "breakout_4x": 0.014003508245448569,
+   "median_l0": 37.0
+  },
+  "table": [
+   {
+    "pickers": 1,
+    "good": 0,
+    "artist_months": 609694,
+    "excess_growth": -0.004399046420608099,
+    "doubling": 0.07323673842944166,
+    "doubling_expected": 0.07491395988453649,
+    "breakout": 0.015455293967137613,
+    "breakout_expected": 0.016313928128746342
+   },
+   {
+    "pickers": 1,
+    "good": 1,
+    "artist_months": 153932,
+    "excess_growth": 0.01742374690360831,
+    "doubling": 0.09741963984096874,
+    "doubling_expected": 0.0907764996372256,
+    "breakout": 0.025615206714653223,
+    "breakout_expected": 0.02221432777766889
+   },
+   {
+    "pickers": 2,
+    "good": 0,
+    "artist_months": 93445,
+    "excess_growth": -0.006485012646201496,
+    "doubling": 0.026250735726898174,
+    "doubling_expected": 0.027939407487002327,
+    "breakout": 0.005425651452726203,
+    "breakout_expected": 0.0060032029551533
+   },
+   {
+    "pickers": 2,
+    "good": 1,
+    "artist_months": 42193,
+    "excess_growth": 0.009118608913444728,
+    "doubling": 0.04045694783494892,
+    "doubling_expected": 0.03805681549086853,
+    "breakout": 0.009977958429123314,
+    "breakout_expected": 0.009258006113527171
+   },
+   {
+    "pickers": 2,
+    "good": 2,
+    "artist_months": 5621,
+    "excess_growth": 0.039361419825533796,
+    "doubling": 0.06831524639743818,
+    "doubling_expected": 0.05825846848796502,
+    "breakout": 0.020458993061732787,
+    "breakout_expected": 0.016261812472451148
+   },
+   {
+    "pickers": 3,
+    "good": 0,
+    "artist_months": 30208,
+    "excess_growth": -0.006253209131237037,
+    "doubling": 0.01724708686440678,
+    "doubling_expected": 0.019039593880695576,
+    "breakout": 0.0033765889830508476,
+    "breakout_expected": 0.004146822291850099
+   },
+   {
+    "pickers": 3,
+    "good": 1,
+    "artist_months": 19118,
+    "excess_growth": 0.0026086515565894733,
+    "doubling": 0.026833350768908883,
+    "doubling_expected": 0.026660957459158103,
+    "breakout": 0.0058060466576001675,
+    "breakout_expected": 0.005671368158291476
+   },
+   {
+    "pickers": 3,
+    "good": 2,
+    "artist_months": 4624,
+    "excess_growth": 0.026619869309723192,
+    "doubling": 0.04498269896193772,
+    "doubling_expected": 0.036310670658637786,
+    "breakout": 0.013192041522491349,
+    "breakout_expected": 0.009812768690363845
+   },
+   {
+    "pickers": 3,
+    "good": 3,
+    "artist_months": 479,
+    "excess_growth": 0.033266107075930744,
+    "doubling": 0.08559498956158663,
+    "doubling_expected": 0.06314660171653907,
+    "breakout": 0.029227557411273485,
+    "breakout_expected": 0.018649965205288797
+   },
+   {
+    "pickers": 4,
+    "good": 0,
+    "artist_months": 13497,
+    "excess_growth": -0.0061031834761424986,
+    "doubling": 0.013114025338964214,
+    "doubling_expected": 0.014424810451705317,
+    "breakout": 0.002296806697784693,
+    "breakout_expected": 0.0034259817878399784
+   },
+   {
+    "pickers": 4,
+    "good": 1,
+    "artist_months": 10825,
+    "excess_growth": 0.00025920839138610834,
+    "doubling": 0.02087759815242494,
+    "doubling_expected": 0.02152391949851534,
+    "breakout": 0.00535796766743649,
+    "breakout_expected": 0.005441328494446277
+   },
+   {
+    "pickers": 4,
+    "good": 2,
+    "artist_months": 3733,
+    "excess_growth": 0.014754508743663882,
+    "doubling": 0.035360300026788104,
+    "doubling_expected": 0.0315296008572194,
+    "breakout": 0.011251004553978034,
+    "breakout_expected": 0.008531373974717128
+   },
+   {
+    "pickers": 4,
+    "good": 3,
+    "artist_months": 678,
+    "excess_growth": 0.02551571927176759,
+    "doubling": 0.08112094395280237,
+    "doubling_expected": 0.06997822727911222,
+    "breakout": 0.028023598820058997,
+    "breakout_expected": 0.02127756707402725
+   },
+   {
+    "pickers": 5,
+    "good": 0,
+    "artist_months": 8674,
+    "excess_growth": -0.010777919444507853,
+    "doubling": 0.012335715932672355,
+    "doubling_expected": 0.015668826344408544,
+    "breakout": 0.00276688955499193,
+    "breakout_expected": 0.0033595199666216504
+   },
+   {
+    "pickers": 5,
+    "good": 1,
+    "artist_months": 8948,
+    "excess_growth": 5.753455696758257e-05,
+    "doubling": 0.020898524810013412,
+    "doubling_expected": 0.02116709998638922,
+    "breakout": 0.0049172999552972736,
+    "breakout_expected": 0.0049336199984389515
+   },
+   {
+    "pickers": 5,
+    "good": 2,
+    "artist_months": 4025,
+    "excess_growth": -0.0006803719951484124,
+    "doubling": 0.032546583850931676,
+    "doubling_expected": 0.033063088740107376,
+    "breakout": 0.0084472049689441,
+    "breakout_expected": 0.009179532682638271
+   },
+   {
+    "pickers": 5,
+    "good": 3,
+    "artist_months": 1076,
+    "excess_growth": 0.02883088171782077,
+    "doubling": 0.0687732342007435,
+    "doubling_expected": 0.05144568360181743,
+    "breakout": 0.02137546468401487,
+    "breakout_expected": 0.017589396353336874
+   }
+  ],
+  "five_plus": [
+   {
+    "gb": 0,
+    "n": 24212,
+    "excess_growth": -0.008850314643253147,
+    "doubling": 0.011564513464397819,
+    "doubling_expected": 0.01371858038373146,
+    "breakout": 0.002602015529489509,
+    "breakout_expected": 0.00293514543215105
+   },
+   {
+    "gb": 1,
+    "n": 34391,
+    "excess_growth": -0.002810149947170436,
+    "doubling": 0.016690413189497252,
+    "doubling_expected": 0.018067382331101858,
+    "breakout": 0.0037800587362972872,
+    "breakout_expected": 0.004158402942241737
+   },
+   {
+    "gb": 2,
+    "n": 26174,
+    "excess_growth": -0.0036726527825330668,
+    "doubling": 0.022388629938106516,
+    "doubling_expected": 0.023711125024241903,
+    "breakout": 0.005387025292274777,
+    "breakout_expected": 0.0060951111574990705
+   },
+   {
+    "gb": 3,
+    "n": 15771,
+    "excess_growth": 0.004142690398369286,
+    "doubling": 0.029674719421723415,
+    "doubling_expected": 0.0290303569415053,
+    "breakout": 0.007482087375562742,
+    "breakout_expected": 0.00720442455607893
+   },
+   {
+    "gb": 4,
+    "n": 30985,
+    "excess_growth": 0.011028605087394608,
+    "doubling": 0.04631273196708085,
+    "doubling_expected": 0.04231201033697536,
+    "breakout": 0.01213490398579958,
+    "breakout_expected": 0.010997844250438009
+   }
+  ]
+ }
+}
