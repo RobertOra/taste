@@ -70,6 +70,10 @@ def main():
                 rows.append({"key": f"{dim}:{lev}:{NAMES[c]}", "stage_type": dim, "stage": lev, "fan": NAMES[c], "artist_months": d.height,
                              "effect": float(np.expm1(est[i])), "lo": float(np.expm1(np.percentile(bs[:, i], 2.5))),
                              "hi": float(np.expm1(np.percentile(bs[:, i], 97.5)))})
+            pg = bs[:, 2] - bs[:, 1]
+            rows.append({"key": f"{dim}:{lev}:poor_minus_ordinary", "stage_type": dim, "stage": lev, "fan": "poor_minus_ordinary",
+                         "artist_months": d.height, "effect": float(est[2] - est[1]), "lo": float(np.percentile(pg, 2.5)),
+                         "hi": float(np.percentile(pg, 97.5))})
             gap = bs[:, 0] - bs[:, 1]
             rows.append({"key": f"{dim}:{lev}:good_minus_ordinary", "stage_type": dim, "stage": lev, "fan": "good_minus_ordinary",
                          "artist_months": d.height, "effect": float(est[0] - est[1]), "lo": float(np.percentile(gap, 2.5)),

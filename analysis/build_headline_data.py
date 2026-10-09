@@ -190,7 +190,17 @@ def obsession():
 
 def recency():
     r = json.loads((OUT / "recency_sealed.json").read_text())
-    return r["extremes"]
+    return [{"kind": "fifth", **m} for m in r["marginal"]] + [{"kind": "top", **t} for t in r["topshares"]]
+
+
+def fanrel():
+    rows = json.loads((OUT / "fan_value_sealed.json").read_text())["rows"]
+    out = []
+    for r in rows:
+        if r["stage_type"] == "size" and r["fan"] in ("good_minus_ordinary", "poor_minus_ordinary"):
+            out.append({"key": f"{r['stage']}:{r['fan'].split('_')[0]}", "stage": r["stage"], "fan": r["fan"].split("_")[0],
+                        "effect": float(np.expm1(r["effect"])), "lo": float(np.expm1(r["lo"])), "hi": float(np.expm1(r["hi"]))})
+    return out
 
 
 def badtaste():
@@ -244,7 +254,7 @@ def crowd():
 
 
 if __name__ == "__main__":
-    for name, fn in (("headlines", headlines), ("obsession", obsession), ("obstaste", obstaste), ("recency", recency), ("badtaste", badtaste), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
+    for name, fn in (("headlines", headlines), ("obsession", obsession), ("obstaste", obstaste), ("recency", recency), ("badtaste", badtaste), ("fanrel", fanrel), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
         rows = fn()
         (W / f"{name}.json").write_text(json.dumps(rows, indent=1))
         print(name, json.dumps(rows)[:600])

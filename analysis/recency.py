@@ -8,7 +8,7 @@ Outcome: later picks' 10x takeoffs vs similar artists (same month and size), and
         recent bottom) minus average over recent fifths of log(odds old top / old bottom) > 0.
 - Descriptive: later 10x odds by fifths of the recent record alone and of the old record alone; average later growth by
   tenths of each; the weight on each record when both predict later growth together (least squares on ranks); and the
-  worst 10%, best 10%, 5%, and 2% chosen by each record.
+  worst 10%, best 10%, 5%, and 2% chosen by each record; and tenfold odds for the top 20/10/5/2/1% on each record.
 - Going stale: top 10% rated on a single year (2006 or 2007, >= 20 picks), the same people judged on each later year
   (>= 10 picks in every later year through 2011). P10c: odds 2 years later / odds 4 years later > 1 (pooled 2006, 2007).
 Bootstrap over people (1,000 draws).
@@ -124,6 +124,13 @@ def main():
             extremes.append({"key": f"{lab}:{which}", "group": lab, "record": which, "people": int(sel.sum()),
                              "growth": float(np.expm1(g[sel].sum() / n[sel].sum())), "lo": pct(gb, 2.5), "hi": pct(gb, 97.5),
                              "odds": float(h[sel].sum() / ex[sel].sum()), "odds_lo": pct(ob, 2.5), "odds_hi": pct(ob, 97.5)})
+    topshares = []
+    for share in (0.2, 0.1, 0.05, 0.02, 0.01):
+        for which, col in (("recent", "q2"), ("old", "q1")):
+            sel = (d[col] > 1 - share).to_numpy()
+            ob = (W[:, sel] @ h[sel]) / (W[:, sel] @ ex[sel])
+            topshares.append({"key": f"top{int(share * 100)}:{which}", "share": share, "record": which, "people": int(sel.sum()),
+                              "odds": float(h[sel].sum() / ex[sel].sum()), "lo": pct(ob, 2.5), "hi": pct(ob, 97.5)})
     yv = g / n
     Xr = np.column_stack([np.ones(N), d["q1"].to_numpy(), d["q2"].to_numpy()])
     coef = np.linalg.lstsq(Xr, yv, rcond=None)[0]
@@ -136,7 +143,7 @@ def main():
     for dd in decay:
         print(f"  {dd['years_later']} years later: {dd['odds']:.2f} [{dd['lo']:.2f}, {dd['hi']:.2f}] ({dd['people']} people)")
     print(json.dumps(tests, indent=1))
-    (ROOT / "analysis" / "out" / f"recency_{half}.json").write_text(json.dumps({"cells": cells, "decay": decay, "tests": tests, "marginal": marginal, "growth_tenths": growth_tenths, "weights": weights, "extremes": extremes}, indent=1))
+    (ROOT / "analysis" / "out" / f"recency_{half}.json").write_text(json.dumps({"cells": cells, "decay": decay, "tests": tests, "marginal": marginal, "growth_tenths": growth_tenths, "weights": weights, "extremes": extremes, "topshares": topshares}, indent=1))
 
 
 if __name__ == "__main__":
