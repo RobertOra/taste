@@ -1,0 +1,158 @@
+[
+{
+"model": "Discernment, songs",
+"check": "Being in a scene that grew",
+"with_check": 0.241,
+"without_check": 0.38
+},
+{
+"model": "Discernment, songs",
+"check": "Following new releases",
+"with_check": 0.241,
+"without_check": 0.246
+},
+{
+"model": "Discernment, songs",
+"check": "Hearing about albums before release",
+"with_check": 0.241,
+"without_check": 0.242
+},
+{
+"model": "Discernment, songs",
+"check": "Being early to local acts",
+"with_check": 0.241,
+"without_check": 0.242
+},
+{
+"model": "Discernment, songs",
+"check": "All of the above at once",
+"with_check": 0.241,
+"without_check": 0.423
+},
+{
+"model": "Discernment, artists",
+"check": "Being in a scene that grew",
+"with_check": 0.161,
+"without_check": 0.33
+},
+{
+"model": "Discernment, artists",
+"check": "Following trends (credit from the first listen)",
+"with_check": 0.161,
+"without_check": 0.18
+},
+{
+"model": "Discernment, artists",
+"check": "Picking what was already rising",
+"with_check": 0.161,
+"without_check": 0.192
+},
+{
+"model": "Discernment, artists",
+"check": "Following new releases",
+"with_check": 0.161,
+"without_check": 0.164
+},
+{
+"model": "Discernment, artists",
+"check": "Hearing about albums before release",
+"with_check": 0.161,
+"without_check": 0.16
+},
+{
+"model": "Discernment, artists",
+"check": "Being early to local acts",
+"with_check": 0.161,
+"without_check": 0.158
+},
+{
+"model": "Discernment, artists",
+"check": "All of the above at once",
+"with_check": 0.161,
+"without_check": 0.332
+},
+{
+"model": "Prescience, artists",
+"check": "Being in a scene that grew",
+"with_check": 0.144,
+"without_check": 0.214
+},
+{
+"model": "Prescience, artists",
+"check": "Following trends (credit from the first listen)",
+"with_check": 0.144,
+"without_check": 0.175
+},
+{
+"model": "Prescience, artists",
+"check": "Picking what was already rising",
+"with_check": 0.144,
+"without_check": 0.144
+},
+{
+"model": "Prescience, artists",
+"check": "Following new releases",
+"with_check": 0.144,
+"without_check": 0.147
+},
+{
+"model": "Prescience, artists",
+"check": "Hearing about albums before release",
+"with_check": 0.144,
+"without_check": 0.143
+},
+{
+"model": "Prescience, artists",
+"check": "Being early to local acts",
+"with_check": 0.144,
+"without_check": 0.146
+},
+{
+"model": "Prescience, artists",
+"check": "All of the above at once",
+"with_check": 0.144,
+"without_check": 0.238
+},
+{
+"model": "Community-leading, artists",
+"check": "Being in a scene that grew",
+"with_check": 0.214,
+"without_check": 0.226
+},
+{
+"model": "Community-leading, artists",
+"check": "Following trends (credit from the first listen)",
+"with_check": 0.214,
+"without_check": 0.144
+},
+{
+"model": "Community-leading, artists",
+"check": "Picking what was already rising",
+"with_check": 0.214,
+"without_check": 0.232
+},
+{
+"model": "Community-leading, artists",
+"check": "Following new releases",
+"with_check": 0.214,
+"without_check": 0.219
+},
+{
+"model": "Community-leading, artists",
+"check": "Hearing about albums before release",
+"with_check": 0.214,
+"without_check": 0.214
+},
+{
+"model": "Community-leading, artists",
+"check": "Being early to local acts",
+"with_check": 0.214,
+"without_check": 0.215
+},
+{
+"model": "Community-leading, artists",
+"check": "All of the above at once",
+"with_check": 0.214,
+"without_check": 0.257
+}
+]

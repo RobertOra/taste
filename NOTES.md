@@ -82,7 +82,7 @@ Incidents, both fixed:
   zero committed early bets on one -> hit-counting is far too sparse; use continuous returns on all bets.
 
 ## Step 2 status (2026-10-08, explore half only)
-Report page: https://claude.ai/artifact/GLyaqWkJrEnJKPJNeG2zPt (source: analysis/report/index.html, data: analysis/out/report/).
+Report page (superseded by the write-up below): source analysis/report/index.html.
 - Model A (prescience), all controls: persistence across separate periods 0.16, ~45% of spread not luck, impostors ~1%.
   Stable 0.14-0.19 across all settings; scene control removes ~1/3 of the raw signal.
 - B (community, with month x community fix) 0.26 and D (discernment) 0.25, but impostors explain 16% / 11%.
@@ -111,3 +111,5 @@ the frozen one-sided Holm test). Full table: analysis/out/sealed_run.log, analys
 | Prescience, scenes | 0.061 [0.055, 0.069] | 0.061 [0.055, 0.069] |
 | Community-leading, scenes | 0.035 [0.027, 0.043] | 0.053 [0.046, 0.061] |
 | Durability, scenes | 0.006 [-0.001, 0.013] | 0.012 [0.004, 0.019] |
+
+Write-up for a general reader: https://claude.ai/artifact/GLyaqWkJrEnJKPJNeG2zPt (source: analysis/writeup/; data built by analysis/build_writeup_data.py).
