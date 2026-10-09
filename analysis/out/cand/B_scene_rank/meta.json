@@ -1,0 +1,40 @@
+{
+ "name": "B_scene_rank",
+ "model": "B",
+ "unit": "scene",
+ "horizon": 12,
+ "half": "explore",
+ "bets": 8310311,
+ "users_with_bets": 259240,
+ "args": {
+  "model": "B",
+  "unit": "scene",
+  "onboarding": 26,
+  "rule": "w4",
+  "window": 26,
+  "date": "commit",
+  "horizon": 12,
+  "smooth": 1.0,
+  "bins": 20,
+  "scene": "yearly200",
+  "age": true,
+  "momentum": 5,
+  "country": true,
+  "release": true,
+  "adjust": "additive",
+  "metric": "rank",
+  "weight": 0.0,
+  "user_sample": 1,
+  "min_bets": 20,
+  "perms": 10,
+  "name": null,
+  "mem": "5GB",
+  "threads": 6,
+  "cand": "B_scene_rank"
+ },
+ "cells": {
+  "bets_per_cell": 7150.806241908395,
+  "share_single_item_cells": null,
+  "items_per_cell": 10.955644018617354
+ }
+}

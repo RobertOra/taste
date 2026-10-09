@@ -1,0 +1,40 @@
+{
+ "name": "B_artist_bins50",
+ "model": "B",
+ "unit": "artist",
+ "horizon": 12,
+ "half": "explore",
+ "bets": 34595885,
+ "users_with_bets": 261231,
+ "args": {
+  "model": "B",
+  "unit": "artist",
+  "onboarding": 26,
+  "rule": "w4",
+  "window": 26,
+  "date": "commit",
+  "horizon": 12,
+  "smooth": 1.0,
+  "bins": 50,
+  "scene": "yearly200",
+  "age": true,
+  "momentum": 5,
+  "country": true,
+  "release": true,
+  "adjust": "additive",
+  "metric": "log",
+  "weight": 0.0,
+  "user_sample": 1,
+  "min_bets": 20,
+  "perms": 10,
+  "name": null,
+  "mem": "5GB",
+  "threads": 6,
+  "cand": "B_artist_bins50"
+ },
+ "cells": {
+  "bets_per_cell": 12886.61951862194,
+  "share_single_item_cells": null,
+  "items_per_cell": 1691.8404809415917
+ }
+}

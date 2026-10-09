@@ -43,7 +43,7 @@
  "users_with_bets": 32638,
  "users_scored": 30523,
  "coverage": 0.9351982351859796,
- "not_luck_share": 0.9326736589620044,
+ "not_luck_share": 0.9326736589620043,
  "not_luck_share_ci": [
   0.9315482284744613,
   0.933960713790548
@@ -77,9 +77,9 @@
  },
  "impostor_features_past_only": true,
  "forward": {
-  "rank_corr": 0.3336383229836906,
+  "rank_corr": 0.33363832298369067,
   "rank_corr_ci": [
-   0.32138841984354266,
+   0.3213884198435427,
    0.3503739173631085
   ],
   "top_minus_bottom": 0.43642856865048935,
@@ -102,17 +102,17 @@
    {
     "cutoff": 2006,
     "users": 1924,
-    "rank_corr": 0.283016212189379
+    "rank_corr": 0.2830162121893791
    },
    {
     "cutoff": 2007,
     "users": 5307,
-    "rank_corr": 0.3336790809724547
+    "rank_corr": 0.3336790809724545
    },
    {
     "cutoff": 2008,
     "users": 10011,
-    "rank_corr": 0.3544776353663405
+    "rank_corr": 0.3544776353663406
    },
    {
     "cutoff": 2009,
@@ -126,35 +126,35 @@
   {
    "lag_years": 1,
    "raw": 0.4297195213145014,
-   "corrected": 0.5083161581591648,
+   "corrected": 0.5083161581591651,
    "users": 55264,
    "overlapping_windows": true
   },
   {
    "lag_years": 2,
-   "raw": 0.31796783068007883,
-   "corrected": 0.3772393016045809,
+   "raw": 0.31796783068007894,
+   "corrected": 0.3772393016045813,
    "users": 31971,
    "overlapping_windows": false
   },
   {
    "lag_years": 3,
-   "raw": 0.25762359789678835,
-   "corrected": 0.30828198273287294,
+   "raw": 0.25762359789678846,
+   "corrected": 0.3082819827328732,
    "users": 16378,
    "overlapping_windows": false
   },
   {
    "lag_years": 4,
    "raw": 0.22737950483366282,
-   "corrected": 0.27681877636391045,
+   "corrected": 0.2768187763639105,
    "users": 6713,
    "overlapping_windows": false
   },
   {
    "lag_years": 5,
-   "raw": 0.1619570988910177,
-   "corrected": 0.2061961943576112,
+   "raw": 0.16195709889101767,
+   "corrected": 0.20619619435761116,
    "users": 1762,
    "overlapping_windows": false
   }
@@ -162,22 +162,22 @@
  "yearly_reliability": {
   "2006": 0.7341497392750287,
   "2007": 0.8223614830285974,
-  "2008": 0.8457759643041614,
-  "2009": 0.8537952372767199,
-  "2010": 0.8520731629077275,
-  "2011": 0.840338067362378
+  "2008": 0.8457759643041609,
+  "2009": 0.8537952372767192,
+  "2010": 0.8520731629077265,
+  "2011": 0.8403380673623778
  },
- "stability_3y_corrected": 0.30828198273287294,
+ "stability_3y_corrected": 0.3082819827328732,
  "stability_3y_corrected_ci": [
-  0.287994470030204,
-  0.3325619555277854
+  0.2879944700302041,
+  0.33256195552778556
  ],
  "headline_adjusted_forward": 0.3082366024152516,
  "headline_adjusted_forward_ci": [
   0.29713845600707184,
   0.3249474707603354
  ],
- "share_of_prediction_kept_after_impostors": 0.9238644999133365,
+ "share_of_prediction_kept_after_impostors": 0.9238644999133364,
  "gates": {
   "beats_luck": true,
   "impostor_adjusted_still_predicts": true,

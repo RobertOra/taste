@@ -1,0 +1,40 @@
+{
+ "name": "D_song_h6",
+ "model": "D",
+ "unit": "song",
+ "horizon": 6,
+ "half": "explore",
+ "bets": 8600434,
+ "users_with_bets": 36407,
+ "args": {
+  "model": "D",
+  "unit": "song",
+  "onboarding": 26,
+  "rule": "w4",
+  "window": 26,
+  "date": "commit",
+  "horizon": 6,
+  "smooth": 1.0,
+  "bins": 20,
+  "scene": "yearly200",
+  "age": true,
+  "momentum": 5,
+  "country": true,
+  "release": true,
+  "adjust": "additive",
+  "metric": "log",
+  "weight": 0.0,
+  "user_sample": 1,
+  "min_bets": 20,
+  "perms": 10,
+  "name": null,
+  "mem": "5GB",
+  "threads": 6,
+  "cand": "D_song_h6"
+ },
+ "cells": {
+  "bets_per_cell": 7175.446027723718,
+  "share_single_item_cells": null,
+  "items_per_cell": 2821.1408978895715
+ }
+}

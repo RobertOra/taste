@@ -1,0 +1,88 @@
+{
+ "candidate": "B_artist_rule_w8",
+ "meta": {
+  "name": "B_artist_rule_w8",
+  "model": "B",
+  "unit": "artist",
+  "horizon": 12,
+  "half": "explore",
+  "bets": 173033,
+  "users_with_bets": 78865,
+  "args": {
+   "model": "B",
+   "unit": "artist",
+   "onboarding": 26,
+   "rule": "w8",
+   "window": 26,
+   "date": "commit",
+   "horizon": 12,
+   "smooth": 1.0,
+   "bins": 20,
+   "scene": "yearly200",
+   "age": true,
+   "momentum": 5,
+   "country": true,
+   "release": true,
+   "adjust": "additive",
+   "metric": "log",
+   "weight": 0.0,
+   "user_sample": 1,
+   "min_bets": 20,
+   "perms": 10,
+   "name": null,
+   "mem": "5GB",
+   "threads": 6,
+   "cand": "B_artist_rule_w8"
+  },
+  "cells": {
+   "bets_per_cell": 474.297047384025,
+   "share_single_item_cells": null,
+   "items_per_cell": 263.65277143666236
+  }
+ },
+ "users_with_bets": 78865,
+ "users_scored": 230,
+ "coverage": 0.002916376085716097,
+ "not_luck_share": -0.513580698482577,
+ "not_luck_share_ci": [
+  -0.9738598642375295,
+  -0.1796475472987537
+ ],
+ "reliability": 0.3435581112592044,
+ "reliability_ci": [
+  -0.12487564906457717,
+  0.6236190484733707
+ ],
+ "percentile_range_for_observed_75th": [
+  16.555900537490242,
+  92.44016431837233
+ ],
+ "impostor_r2": 0.06201660881883886,
+ "impostor_r2_ci": [
+  0.0480249804656105,
+  0.1801112704281555
+ ],
+ "impostor_corr": {
+  "listens": 0.10761721452894643,
+  "history_years": 0.10390698645643939,
+  "join_year": -0.1152166194430132,
+  "listens_per_active_month": 0.08264648613703737,
+  "unmatched_share": 0.05850420102381225,
+  "no_id_share": 0.03286708564482984,
+  "new_artists_per_year": 0.05682693269602963,
+  "committed_per_year": 0.04727163634041093,
+  "mainstream_share": -0.17323735233086918,
+  "commit_rate": 0.00043907947586763457,
+  "n_bets": 0.01097817982096293
+ },
+ "impostor_features_past_only": true,
+ "stability_curve": [],
+ "yearly_reliability": {},
+ "stability_3y_corrected": null,
+ "gates": {
+  "beats_luck": false,
+  "impostor_adjusted_still_predicts": false,
+  "stable_3y": false
+ },
+ "passes_gates": false
+}
