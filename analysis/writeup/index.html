@@ -158,8 +158,8 @@
       <li><a href="#fanvalue"><b>Good pickers matter most early.</b></a> One good new fan went with <span class="wu-num" data-source="fanvalue" data-field="effect" data-where="key=small:good" data-fmt="spct0">—</span>
         growth for a small artist, against <span class="wu-num" data-source="fanvalue" data-field="effect" data-where="key=small:ordinary" data-fmt="spct1">—</span> for an ordinary fan. Several good pickers add up;
         poor pickers count against an artist.</li>
-      <li><a href="#recency"><b>Recent form matters more than history.</b></a> Taste drifts: someone's last couple of years separate good from poor
-        pickers <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P10b_recent" data-fmt="times">—</span>, their earlier years only <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P10b_old" data-fmt="times">—</span>.</li>
+      <li><a href="#recency"><b>Recent form matters more than history.</b></a> Taste drifts: someone's last couple of years count about
+        <span class="wu-num dash-skeleton" data-source="recency" data-field="weight_ratio" data-where="key=weights" data-fmt="times1">—</span> as much as the years before, at every level of taste.</li>
       <li><a href="#whygood"><b>It's judgment, not habits.</b></a> Choosing the top 1% by listening habits finds pickers at
         <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_traits" data-fmt="times">—</span>; by track record, <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_record" data-fmt="times">—</span>.</li>
       <li><a href="#scenesplit"><b>Good taste is right scenes and right artists.</b></a> For the top 1%, their scenes took off
@@ -278,17 +278,18 @@
 
   <section class="wu-section" id="recency">
     <h2>Recent form matters more than history</h2>
-    <p>Taste drifts. Rate people separately on 2005–06 and on 2007–08, then judge the new artists they found in 2010–11: the recent record
-      separated good from poor pickers <span class="wu-num dash-skeleton" data-source="headlines" data-field="hidden" data-where="key=P10b_recent" data-fmt="times">—</span> (top fifth against bottom fifth), while the
-      old record, once you knew the recent one, separated them only <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P10b_old" data-fmt="times">—</span>. History isn't
-      worthless, but your last couple of years say much more about your next one.</p>
+    <p>Taste drifts. We ranked everyone twice, on their 2005–06 picks and on their 2007–08 picks, and looked at how the new artists they found
+      in 2010–11 did. The recent ranking sorts people more sharply at both ends: its best tenth's finds grew
+      <span class="wu-num dash-skeleton" data-source="recency" data-field="growth" data-where="key=recent:10" data-fmt="spct1">—</span> against similar artists and its worst tenth's <span class="wu-num" data-source="recency" data-field="growth" data-where="key=recent:1" data-fmt="spct1">—</span>;
+      on the old ranking, <span class="wu-num" data-source="recency" data-field="growth" data-where="key=old:10" data-fmt="spct1">—</span> and <span class="wu-num" data-source="recency" data-field="growth" data-where="key=old:1" data-fmt="spct1">—</span>. Using both together,
+      the recent record counts about <span class="wu-num" data-source="recency" data-field="weight_ratio" data-where="key=weights" data-fmt="times1">—</span> as much as the old one. History isn't worthless, but your last
+      couple of years say more about your next one.</p>
     <div class="wu-card">
       <h3>Ranking people by their recent record, or by their old one</h3>
-      <p class="wu-note">Hidden half. Everyone was ranked twice: on their 2005–06 picks (old) and on their 2007–08 picks (recent). Each
-        point is a fifth of people on one ranking, and how often the new artists they found in 2010–11 grew tenfold, against similar artists.
-        The old ranking still rises, partly because people with good old records often have good recent ones too; holding the recent record
-        fixed, the old one adds little. Two related predictions (a recent star with a poor history beats an old star with a poor recent
-        record; a one-year record goes stale within four years) pointed the same way but didn't clear our strict bar. Bars are 95% ranges.</p>
+      <p class="wu-note">Hidden half. Each point is a tenth of people on one ranking, and how much more the new artists they found in 2010–11 grew
+        than similar artists (same size, same month). The recent line is steeper at both ends. Two related predictions (a recent star with a poor
+        history beats an old star with a poor recent record; a one-year record goes stale within four years) pointed the same way but didn't clear
+        our strict bar. Bars are 95% ranges.</p>
       <div class="wu-legend" id="rc-legend"></div>
       <div class="wu-chart dash-skeleton" id="rc-chart" data-source="recency"></div>
     </div>
@@ -567,6 +568,7 @@
     text: (v) => String(v),
     times: (v) => `${d3.format('.1f')(v)}×`, pct0: d3.format('.0%'), pct1: d3.format('.1%'), pct2: d3.format('.2%'),
     spct1: d3.format('+.1%'), spct0: d3.format('+.0%'), k0: (v) => d3.format('.0f')(v * 1000),
+    times1: (v) => `${d3.format('.1f')(v)}×`,
     pts: (v) => `${d3.format('+.1f')(v * 100)} points`,
     ord: (v) => { const n = Math.round(v), t = n % 100; return n + ((t >= 11 && t <= 13) ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th')); },
   };
@@ -985,24 +987,25 @@
     if (!ready(el, ['recency'])) return;
     const series = [['recent', 'Ranked by recent record (2007–08)', dash.colors[0]], ['old', 'Ranked by old record (2005–06)', css('--cds-chart-muted')]];
     legend('rc-legend', series.map(([, l, c]) => [l, c, 'line']));
-    const rows = dash.data('recency').data.map((r) => ({ ...r, fifth: +r.fifth, v: +r.odds, lo: +r.lo, hi: +r.hi }));
-    const names = ['Bottom fifth', 'Second', 'Middle', 'Fourth', 'Top fifth'];
-    const f = frame(el, 260, { t: 28, r: 16, b: 30, l: 40 });
+    const rows = dash.data('recency').data.filter((r) => r.record !== 'both').map((r) => ({ ...r, t: +r.tenth, v: +r.growth, lo: +r.lo, hi: +r.hi }));
+    const f = frame(el, 270, { t: 28, r: 16, b: 40, l: 44 });
     const { svg, fs, width, height, m } = f;
-    const x = d3.scalePoint([1, 2, 3, 4, 5], [m.l, width - m.r]).padding(0.4);
-    const y = d3.scaleLinear([0, d3.max(rows, (r) => r.hi) * 1.08], [height - m.b, m.t]).nice();
-    gridY(f, y, (v) => `${v}×`, 4);
-    svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(1)).attr('y2', y(1)).attr('stroke', css('--cds-chart-reference')).attr('stroke-dasharray', '4 3');
-    svg.append('text').attr('x', m.l + 4).attr('y', y(1) - 5).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Same as similar artists');
-    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`).call(d3.axisBottom(x).tickFormat((k) => names[k - 1]).tickSize(0)), fs);
-    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Later tenfold takeoffs, times as often as similar artists');
+    const x = d3.scalePoint(d3.range(1, 11), [m.l, width - m.r]).padding(0.4);
+    const y = d3.scaleLinear([Math.min(0, d3.min(rows, (r) => r.lo)) * 1.1, d3.max(rows, (r) => r.hi) * 1.08], [height - m.b, m.t]).nice();
+    gridY(f, y, d3.format('+.0%'), 5);
+    svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', css('--cds-chart-axis'));
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`)
+      .call(d3.axisBottom(x).tickFormat((k) => (k === 1 ? 'Worst' : k === 10 ? 'Best' : String(k))).tickSize(0)), fs);
+    svg.append('text').attr('x', (m.l + width - m.r) / 2).attr('y', height - 4).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted'))
+      .style('font-size', fs).text('Tenth of people on each ranking');
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Growth of their 2010–11 new artists vs similar artists');
     const tip = tooltip(el);
     series.forEach(([k, label, c]) => {
-      const pts = rows.filter((r) => r.record === k).sort((a, b) => a.fifth - b.fifth);
-      svg.append('path').datum(pts).attr('d', d3.line().x((d) => x(d.fifth)).y((d) => y(d.v))).attr('fill', 'none').attr('stroke', c).attr('stroke-width', 2);
-      errorDots(svg, pts, (d) => x(d.fifth), y, c, false);
-      pts.forEach((d) => svg.append('circle').attr('cx', x(d.fifth)).attr('cy', y(d.v)).attr('r', 10).attr('fill', 'transparent')
-        .on('mousemove', (ev) => tip.show(ev, `${label}: ${names[d.fifth - 1].toLowerCase()}`, [['Tenfold takeoffs', `${fmt.times(d.v)} (${fmt.times(d.lo)} to ${fmt.times(d.hi)})`, c],
+      const pts = rows.filter((r) => r.record === k).sort((a, b) => a.t - b.t);
+      svg.append('path').datum(pts).attr('d', d3.line().x((d) => x(d.t)).y((d) => y(d.v))).attr('fill', 'none').attr('stroke', c).attr('stroke-width', 2);
+      errorDots(svg, pts, (d) => x(d.t), y, c, false);
+      pts.forEach((d) => svg.append('circle').attr('cx', x(d.t)).attr('cy', y(d.v)).attr('r', 10).attr('fill', 'transparent')
+        .on('mousemove', (ev) => tip.show(ev, `${label}: tenth ${d.t}`, [['Growth vs similar', `${fmt.spct1(d.v)} (${fmt.spct1(d.lo)} to ${fmt.spct1(d.hi)})`, c],
           ['People', fmt.int(+d.people)]])).on('mouseleave', () => tip.hide()));
     });
   }

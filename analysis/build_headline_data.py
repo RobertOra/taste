@@ -183,7 +183,9 @@ def obsession():
 
 
 def recency():
-    return json.loads((OUT / "recency_sealed.json").read_text())["marginal"]
+    r = json.loads((OUT / "recency_sealed.json").read_text())
+    return r["growth_tenths"] + [{"key": "weights", "record": "both", "tenth": None, "people": None, "growth": None, "lo": None, "hi": None,
+                                  "weight_ratio": r["weights"]["ratio"]}]
 
 
 def obstaste():

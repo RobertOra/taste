@@ -6,7 +6,8 @@ Outcome: later picks' 10x takeoffs vs similar artists (same month and size), and
   P10a: (recent top fifth, old bottom fifth) beats (old top fifth, recent bottom fifth): ratio of 10x odds > 1.
   P10b: the recent record separates people more than the old one: average over old fifths of log(odds recent top /
         recent bottom) minus average over recent fifths of log(odds old top / old bottom) > 0.
-- Descriptive: later 10x odds by fifths of the recent record alone and of the old record alone.
+- Descriptive: later 10x odds by fifths of the recent record alone and of the old record alone; average later growth by
+  tenths of each; and the weight on each record when both predict later growth together (least squares on ranks).
 - Going stale: top 10% rated on a single year (2006 or 2007, >= 20 picks), the same people judged on each later year
   (>= 10 picks in every later year through 2011). P10c: odds 2 years later / odds 4 years later > 1 (pooled 2006, 2007).
 Bootstrap over people (1,000 draws).
@@ -107,7 +108,18 @@ def main():
             ob = (W[:, sel] @ h[sel]) / (W[:, sel] @ ex[sel])
             marginal.append({"key": f"{which}:{k + 1}", "record": which, "fifth": k + 1, "people": int(sel.sum()),
                              "odds": float(h[sel].sum() / ex[sel].sum()), "lo": pct(ob, 2.5), "hi": pct(ob, 97.5)})
-    print(f"people in old-vs-recent: {N:,}")
+    growth_tenths = []
+    for which, col in (("recent", "q2"), ("old", "q1")):
+        for k in range(10):
+            sel = ((d[col] > k / 10) & (d[col] <= (k + 1) / 10 + 1e-9)).to_numpy()
+            gb = np.expm1((W[:, sel] @ g[sel]) / (W[:, sel] @ n[sel]))
+            growth_tenths.append({"key": f"{which}:{k + 1}", "record": which, "tenth": k + 1, "people": int(sel.sum()),
+                                  "growth": float(np.expm1(g[sel].sum() / n[sel].sum())), "lo": pct(gb, 2.5), "hi": pct(gb, 97.5)})
+    yv = g / n
+    Xr = np.column_stack([np.ones(N), d["q1"].to_numpy(), d["q2"].to_numpy()])
+    coef = np.linalg.lstsq(Xr, yv, rcond=None)[0]
+    weights = {"recent": float(coef[2]), "old": float(coef[1]), "ratio": float(coef[2] / coef[1])}
+    print(f"people in old-vs-recent: {N:,}; weights recent {coef[2]:.4f} old {coef[1]:.4f} ratio {coef[2] / coef[1]:.2f}")
     for mm in marginal:
         print(f"  by {mm['record']:6s} record, fifth {mm['fifth']}: {mm['odds']:.2f} [{mm['lo']:.2f}, {mm['hi']:.2f}]")
     for c in cells:
@@ -115,7 +127,7 @@ def main():
     for dd in decay:
         print(f"  {dd['years_later']} years later: {dd['odds']:.2f} [{dd['lo']:.2f}, {dd['hi']:.2f}] ({dd['people']} people)")
     print(json.dumps(tests, indent=1))
-    (ROOT / "analysis" / "out" / f"recency_{half}.json").write_text(json.dumps({"cells": cells, "decay": decay, "tests": tests, "marginal": marginal}, indent=1))
+    (ROOT / "analysis" / "out" / f"recency_{half}.json").write_text(json.dumps({"cells": cells, "decay": decay, "tests": tests, "marginal": marginal, "growth_tenths": growth_tenths, "weights": weights}, indent=1))
 
 
 if __name__ == "__main__":
