@@ -227,14 +227,6 @@
       <div class="wu-legend" id="ld-legend"></div>
       <div class="wu-chart dash-skeleton" id="ld-chart" data-source="ladder"></div>
     </div>
-    <div class="wu-card" id="topone">
-      <h3>Inside the top 1%</h3>
-      <p class="wu-note">Hidden half. The top 1% split four ways, and how often their new artists grew tenfold against similar artists. The top 0.1%
-        (about <span class="wu-num dash-skeleton" data-source="ladder" data-field="people" data-where="key=detail:99.9–100%25" data-fmt="int">—</span> people) looked even better, at <span class="wu-num" data-source="ladder" data-field="odds" data-where="key=detail:99.9–100%25" data-fmt="times">—</span>,
-        but with so few people the range runs from <span class="wu-num" data-source="ladder" data-field="odds_lo" data-where="key=detail:99.9–100%25" data-fmt="times">—</span> to
-        <span class="wu-num" data-source="ladder" data-field="odds_hi" data-where="key=detail:99.9–100%25" data-fmt="times">—</span>: suggestive, not certain. Bars are 95% ranges.</p>
-      <div class="wu-chart dash-skeleton" id="t1-chart" data-source="ladder"></div>
-    </div>
     <div class="wu-card" id="every-size">
       <h3>The same at every size of takeoff</h3>
       <p class="wu-note">How many times as often the top pickers' new artists took off as similar artists did, for each size of takeoff.
@@ -261,7 +253,7 @@
       it (<span class="wu-num" data-source="fanvalue" data-field="effect" data-where="key=big:poor" data-fmt="spct1">—</span>). What counts is how many good pickers find an artist early, not what share of its
       fans they are.</p>
     <div class="wu-card">
-      <h3>Extra growth over the next year from one new fan</h3>
+      <h3>Extra growth over the next year from one new fan, compared with not having that fan</h3>
       <p class="wu-note">Hidden half. Each bar compares artists of the same size and momentum in the same month, holding the other kinds of new
         fans fixed; growth is counted only among listeners who weren't used to rate the pickers. Bars show 95% ranges. The same pattern
         holds by how new the artist is.</p>
@@ -384,11 +376,12 @@
     <p><b>How bad are they for an artist?</b> Compared with an ordinary new fan, a new fan with a poor track record went with
       <span class="wu-num dash-skeleton" data-source="fanrel" data-field="effect" data-where="key=small:poor" data-fmt="spct1">—</span> growth for a small artist over the next year and <span class="wu-num" data-source="fanrel" data-field="effect" data-where="key=big:poor" data-fmt="spct1">—</span>
       for a big one; a good picker, <span class="wu-num" data-source="fanrel" data-field="effect" data-where="key=small:good" data-fmt="spct1">—</span> and <span class="wu-num" data-source="fanrel" data-field="effect" data-where="key=big:good" data-fmt="spct1">—</span>. A poor picker is a real
-      bad sign, but a smaller one than a good picker is a good sign. Their own picks fizzle: the worst fifth's new artists lost half their listeners within
+      bad sign, but a smaller one than a good picker is a good sign. (For a small artist, even a poor picker is better than no new fan at all, as
+      the chart in "What one new fan is worth" shows; it's just worse than an ordinary one.) Their own picks fizzle: the worst fifth's new artists lost half their listeners within
       a year <span class="wu-num" data-source="badtaste" data-field="flop" data-where="key=worst" data-fmt="pct1">—</span> of the time, against <span class="wu-num" data-source="badtaste" data-field="flop_similar" data-where="key=worst" data-fmt="pct1">—</span> for similar artists. We
       can't tell whether poor pickers actually hurt an artist or just pick ones that were going to fade.</p>
     <div class="wu-card">
-      <h3>What one new fan means for an artist, compared with an ordinary fan</h3>
+      <h3>What one new fan means for an artist, compared with an ordinary new fan in the same spot</h3>
       <p class="wu-note">Hidden half. Extra (or lost) growth over the next year when one of an artist's new fans is a proven good or poor picker
         instead of an ordinary one, for artists of the same size and momentum in the same month. Bars are 95% ranges.</p>
       <div class="wu-legend" id="fr-legend"></div>
@@ -1069,26 +1062,6 @@
     });
   }
 
-  function drawTopOne() {
-    const el = document.getElementById('t1-chart');
-    if (!ready(el, ['ladder'])) return;
-    const col = dash.colors[0];
-    const rows = dash.data('ladder').data.filter((r) => truthy(r.detail)).map((r) => ({ ...r, v: +r.odds, lo: +r.odds_lo, hi: +r.odds_hi }));
-    const f = frame(el, 240, { t: 28, r: 16, b: 30, l: 40 });
-    const { svg, fs, width, height, m } = f;
-    const x = d3.scalePoint(rows.map((r) => r.band), [m.l, width - m.r]).padding(0.5);
-    const y = d3.scaleLinear([0, d3.max(rows, (r) => r.hi) * 1.08], [height - m.b, m.t]).nice();
-    gridY(f, y, (v) => `${v}×`, 4);
-    svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(1)).attr('y2', y(1)).attr('stroke', css('--cds-chart-reference')).attr('stroke-dasharray', '4 3');
-    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`).call(d3.axisBottom(x).tickFormat((b) => `Ranked ${b}`).tickSize(0)), fs);
-    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Tenfold takeoffs, times as often as similar artists');
-    errorDots(svg, rows, (d) => x(d.band), y, col, false);
-    const tip = tooltip(el);
-    rows.forEach((d) => svg.append('circle').attr('cx', x(d.band)).attr('cy', y(d.v)).attr('r', 12).attr('fill', 'transparent')
-      .on('mousemove', (ev) => tip.show(ev, `Pickers ranked ${d.band}`, [['Tenfold takeoffs', `${fmt.times(d.v)} (${fmt.times(d.lo)} to ${fmt.times(d.hi)})`, col],
-        ['People', fmt.int(+d.people)], ['Tenfold takeoffs found', fmt.int(+d.events_10x)]])).on('mouseleave', () => tip.hide()));
-  }
-
   function drawHabits() {
     const el = document.getElementById('hb-chart');
     if (!ready(el, ['toppickers'])) return;
@@ -1438,7 +1411,6 @@
     drawStayBad();
     drawSceneSplit();
     drawLadder();
-    drawTopOne();
     drawThresholds();
     drawGrowthBand();
     drawFanValue();
