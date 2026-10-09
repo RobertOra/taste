@@ -190,13 +190,12 @@ def obsession():
 
 def recency():
     r = json.loads((OUT / "recency_sealed.json").read_text())
-    return r["growth_tenths"] + [{"key": "weights", "record": "both", "tenth": None, "people": None, "growth": None, "lo": None, "hi": None,
-                                  "weight_ratio": r["weights"]["ratio"]}]
+    return r["extremes"]
 
 
 def badtaste():
     r = json.loads((OUT / "bad_taste_sealed.json").read_text())
-    rows = [{"kind": "band", **b} for b in r["bands"]]
+    rows = [{"kind": "group", **g} for g in r["groups"]]
     rows.append({"kind": "summary", "key": "persistence", "band": None, "mid": None, "people": None,
                  "top_stays_top": r["persistence"]["top_stays_top"], "bottom_stays_bottom": r["persistence"]["bottom_stays_bottom"],
                  "top_above": r["tests"]["P11b_asymmetry"]["top_minus_all"], "bottom_below": -r["tests"]["P11b_asymmetry"]["all_minus_bottom"]})

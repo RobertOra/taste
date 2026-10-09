@@ -77,6 +77,21 @@ def main():
                                 "est": float((pe(top, "g", "n") - pe(allp, "g", "n")) - (pe(allp, "g", "n") - pe(bot, "g", "n"))),
                                 "lo": pct(asym, 2.5), "hi": pct(asym, 97.5), "lo99": pct(asym, 0.5)}}
 
+    # descriptive: what happened to each group's new artists (rates, with similar artists' rates)
+    groups = []
+    f2 = f.with_columns(dbl=(pl.col("v") >= np.log(2)).cast(pl.Float64))
+    sd = b.with_columns(dbl=(pl.col("v") >= np.log(2)).cast(pl.Float64)).group_by("m", "bin").agg(sd=pl.col("dbl").mean())
+    f2 = f2.join(sd, on=["m", "bin"])
+    for lab, lo, hi in (("worst10", 0, .1), ("worst", 0, .2), ("middle", .4, .6), ("best", .8, 1.0001), ("best10", .9, 1.0001)):
+        per = f2.filter((pl.col("q") > lo) & (pl.col("q") <= hi)).group_by("user").agg(
+            n=pl.len(), fl=pl.col("flop").sum(), ef=pl.col("sf").sum(), db=pl.col("dbl").sum(), ed=pl.col("sd").sum())
+        A = {k: per[k].to_numpy().astype(float) for k in ("n", "fl", "ef", "db", "ed")}
+        w = RNG.poisson(1.0, (B, per.height)).astype(float)
+        fr, dr = (w @ A["fl"]) / (w @ A["n"]), (w @ A["db"]) / (w @ A["n"])
+        groups.append({"key": lab, "people": per.height, "flop": float(A["fl"].sum() / A["n"].sum()), "flop_lo": pct(fr, 2.5), "flop_hi": pct(fr, 97.5),
+                       "flop_similar": float(A["ef"].sum() / A["n"].sum()), "double": float(A["db"].sum() / A["n"].sum()),
+                       "double_lo": pct(dr, 2.5), "double_hi": pct(dr, 97.5), "double_similar": float(A["ed"].sum() / A["n"].sum())})
+
     # persistence (frozen discernment-for-songs candidate of this half)
     name = ("sealed_" if half == "sealed" else "") + "D_song_main"
     agg = pl.read_parquet(CAND / name / "agg.parquet")
@@ -97,7 +112,7 @@ def main():
         print(f"  {r['band']:>8} people {r['people']:>6,}  growth {r['growth']:+6.1%}  flops {r['flop_rate']:.1%} vs {r['flop_similar']:.1%} "
               f"({r['flop_odds']:.2f}x [{r['flop_lo']:.2f}, {r['flop_hi']:.2f}])  takeoffs {r['takeoff_odds']:.2f}x")
     print(json.dumps(tests, indent=1)); print("persistence:", persistence)
-    (ROOT / "analysis" / "out" / f"bad_taste_{half}.json").write_text(json.dumps({"bands": bands, "tests": tests, "persistence": persistence}, indent=1))
+    (ROOT / "analysis" / "out" / f"bad_taste_{half}.json").write_text(json.dumps({"bands": bands, "tests": tests, "persistence": persistence, "groups": groups}, indent=1))
 
 
 if __name__ == "__main__":
