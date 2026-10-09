@@ -230,6 +230,13 @@ Descriptive: deciles of plays before committing across all picks.
 **Sealed result (run once, 2026-10-09): confirmed.** P8 +0.0261 [0.0256, 0.0265; 99% low 0.0255] (most-hooked quarter
 +1.5%, least-hooked -1.1%). Deciles: -1.5% (about 4 plays) to +2.2% (about 92 plays), as on the explore half.
 
+## Obsession and taste (written 2026-10-09 18:05, before any sealed run of analysis/obs_taste.py)
+Exploratory on the explore half; tested once on the sealed half with the committed code (artists).
+- P9. Getting hooked pays off more for top-fifth pickers than for bottom-fifth pickers: (picks with 10+ plays before
+  committing minus picks with 1-4) for the top fifth, minus the same for the bottom fifth, > 0 (99% lower bound).
+  Explore: top +4.4 points, bottom +2.2, difference +0.022 [0.018, 0.025; 99% low 0.017].
+Descriptive: the curves by plays bin for each group and for all picks.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|
