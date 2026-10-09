@@ -164,10 +164,11 @@ def main():
                     FROM read_parquet('{X}/user_artist_month/explore/*.parquet') GROUP BY artist""")
     age_sql = ("CASE WHEN fs.fm <= 2005 * 12 THEN 9 WHEN r.m - fs.fm < 3 THEN 0 WHEN r.m - fs.fm < 6 THEN 1 "
                "WHEN r.m - fs.fm < 12 THEN 2 WHEN r.m - fs.fm < 24 THEN 3 ELSE 4 END") if a.age else "0"
-    if a.age and a.unit == "song":  # song age instead of artist age
-        age_sql = ("CASE WHEN r.song_first_m <= 2005 * 12 THEN 9 WHEN r.m - r.song_first_m < 3 THEN 0 "
-                   "WHEN r.m - r.song_first_m < 6 THEN 1 WHEN r.m - r.song_first_m < 12 THEN 2 "
-                   "WHEN r.m - r.song_first_m < 24 THEN 3 ELSE 4 END")
+    if a.age and a.unit == "song":  # song age instead of artist age; fine early bins (songs gain most listeners
+        # in their first months, so following new releases must not count as foresight)
+        age_sql = ("CASE WHEN r.song_first_m <= 2005 * 12 THEN 9 WHEN r.m - r.song_first_m <= 2 THEN r.m - r.song_first_m "
+                   "WHEN r.m - r.song_first_m < 6 THEN 3 WHEN r.m - r.song_first_m < 12 THEN 4 "
+                   "WHEN r.m - r.song_first_m < 24 THEN 5 ELSE 6 END")
     if a.unit == "scene":
         age_sql = "0"
     # Momentum: fixed-panel growth over the 6 months before the bet (panel = active at m-6 and m), leave-one-out.

@@ -13,3 +13,16 @@ done D_scene_main (32s)
 STAGE main DONE 23:03
 STAGE sweeps DONE 01:27
 STAGE justx DONE 01:27
+skip A_artist_main
+done A_song_main (29s)
+skip A_scene_main
+skip B_artist_main
+done B_song_main (31s)
+skip B_scene_main
+skip C_lb_artist_main
+done C_lb_song_main (31s)
+skip C_lb_scene_main
+skip D_artist_main
+done D_song_main (34s)
+skip D_scene_main
+STAGE main DONE 01:33
