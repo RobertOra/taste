@@ -80,6 +80,7 @@ def parse():
     ap.add_argument("--perms", type=int, default=20)
     ap.add_argument("--name", default=None)
     ap.add_argument("--mem", default="5GB", help="DuckDB memory limit")
+    ap.add_argument("--bets-out", default=None, help="also write per-bet excess outcomes (before any song collapsing) here")
     ap.add_argument("--threads", type=int, default=6)
     ap.add_argument("--cand", default=None,
                     help="write per-user/year aggregates for analysis/evaluate.py to analysis/out/cand/<cand>/ and stop")
@@ -306,8 +307,8 @@ def main():
     else:
         val = "(percent_rank() OVER (PARTITION BY m, bin, scene, age, mq, ctry, cpb, cg, xb, relc ORDER BY ret) >= 0.9)::INT"
     con.execute(f"""CREATE TABLE e AS
-        WITH v AS (SELECT user, artist, item, m, bin, scene, age, mq, ctry, cpb, cg, xb, relc, pen0, wt, {val} AS v FROM r2)
-        SELECT user, artist, item, m, bin, scene, age, mq, ctry, cpb, cg, xb, relc, pen0, wt, v,
+        WITH v AS (SELECT user, artist, item, m, bin, scene, age, mq, ctry, cpb, cg, xb, relc, pen0, wt, plays_26w, {val} AS v FROM r2)
+        SELECT user, artist, item, m, bin, scene, age, mq, ctry, cpb, cg, xb, relc, pen0, wt, plays_26w, v,
                v - (sum(v) OVER c - v) / nullif(count(*) OVER c - 1, 0) AS e
         FROM v WINDOW c AS (PARTITION BY {cell})""")
     con.execute("DELETE FROM e WHERE e IS NULL")
@@ -318,13 +319,16 @@ def main():
             con.execute(f"""CREATE OR REPLACE TABLE e AS SELECT * REPLACE (
                 e - (sum(e) OVER w - e) / nullif(count(*) OVER w - 1, 0) AS e) FROM e WINDOW w AS (PARTITION BY m, {g})""")
             con.execute("DELETE FROM e WHERE e IS NULL")
+    if a.bets_out:
+        con.execute(f"COPY (SELECT user, item, artist, m, bin, plays_26w, e FROM e) TO '{a.bets_out}' (FORMAT parquet)")
     if a.unit == "song":
         # Songs by the same artist adopted in the same month move together; treating them as independent bets
         # inflates reliability and the luck test. Collapse them into one bet (their weighted mean excess), with
-        # the artist as the item for split halves.
-        con.execute("""CREATE OR REPLACE TABLE e AS
+        # the artist as the item for split halves. With --weight, the merged bet is weighted by its total early plays.
+        con.execute(f"""CREATE OR REPLACE TABLE e AS
             SELECT user, artist, artist AS item, m, min(bin) AS bin, 0 AS scene, 0 AS age, 0 AS mq, '-' AS ctry,
-                   0 AS cpb, 0 AS cg, 0 AS xb, 0 AS relc, avg(pen0) AS pen0, 1.0 AS wt, avg(v) AS v,
+                   0 AS cpb, 0 AS cg, 0 AS xb, 0 AS relc, avg(pen0) AS pen0,
+                   pow(greatest(sum(plays_26w), 1), {a.weight}) AS wt, avg(v) AS v,
                    sum(wt * e) / sum(wt) AS e, count(*) AS songs
             FROM e GROUP BY user, artist, m""")
     diag = con.execute(f"""WITH c AS (SELECT {cell}, count(*) AS n, count(DISTINCT item) AS na FROM e GROUP BY ALL)
