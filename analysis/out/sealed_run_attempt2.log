@@ -1,0 +1,4 @@
+== check: explore rerun reproduces A_artist_main 09:14
+reproduces (diff 7.3e-06, tolerance 1e-3: tie-breaking in popularity bins and parallel sums)
+== sealed community prior 09:16
+STOPPED: comm prior failed

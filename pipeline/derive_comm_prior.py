@@ -48,14 +48,18 @@ def main():
         FROM read_parquet('{X}/song_bets/{half}.parquet') s JOIN home h ON h.user = s.user AND h.year = s.m // 12""")
     con.execute("CREATE TABLE need AS SELECT DISTINCT (m // 12)::SMALLINT AS year, g, recording FROM sb")
     con.execute("CREATE TABLE cnt (year SMALLINT, g SMALLINT, recording BIGINT, t SMALLINT, k BIGINT)")
+    con.execute("CREATE TABLE songs AS SELECT DISTINCT recording FROM need")
     for c in "0123456789abcdef":
+        # Keep only bet songs first, then attach the adopter's community for each year (bounded by the window).
         con.execute(f"""INSERT INTO cnt
-            SELECT h.year, h.g, ur.recording, {MONTH.format(w='ur.first_week')}::SMALLINT AS t, count(*)
-            FROM read_parquet('{D}/user_recording/{half}/mlhdplus-complete-{c}.parquet') ur
-            JOIN home h ON h.user = ur.user
-            SEMI JOIN need n ON n.year = h.year AND n.g = h.g AND n.recording = ur.recording
-            WHERE {MONTH.format(w='ur.first_week')} BETWEEN h.year * 12 - 24 AND h.year * 12 + 11
+            WITH ad AS (SELECT ur.user, ur.recording, {MONTH.format(w='ur.first_week')}::SMALLINT AS t
+                        FROM read_parquet('{D}/user_recording/{half}/mlhdplus-complete-{c}.parquet') ur
+                        SEMI JOIN songs USING (recording))
+            SELECT h.year, h.g, ad.recording, ad.t, count(*)
+            FROM ad JOIN home h ON h.user = ad.user AND ad.t BETWEEN h.year * 12 - 24 AND h.year * 12 + 11
+            SEMI JOIN need n ON n.year = h.year AND n.g = h.g AND n.recording = ad.recording
             GROUP BY ALL""")
+        con.execute("CREATE OR REPLACE TABLE cnt AS SELECT year, g, recording, t, sum(k) AS k FROM cnt GROUP BY ALL")
     con.execute("CREATE OR REPLACE TABLE cnt AS SELECT year, g, recording, t, sum(k) AS k FROM cnt GROUP BY ALL")
     # The bettor's own first play is at or before m and inside the window if within 24 months: remove it.
     con.execute(f"""CREATE TABLE own AS SELECT ur.user, ur.recording, {MONTH.format(w='ur.first_week')}::SMALLINT AS t
