@@ -111,8 +111,37 @@ def scatter(cut=2008):
     return dots, lines
 
 
+def scene_split():
+    """Hidden half, descriptive: for each band of pickers, 10x odds vs similar size, split into scene choice x picks within scenes."""
+    sys.path.insert(0, str(ROOT / "analysis"))
+    from explain import bets_with_bands
+    b, f = bets_with_bands("sealed")
+    sc = pl.read_parquet(X / "scenes_yearly" / "explore.parquet", columns=["artist", "year", "scene_200"])
+    b = b.join(sc, on=["artist", "year"], how="left").with_columns(pl.col("scene_200").fill_null(-1), x10=(pl.col("v") >= np.log(10)).cast(pl.Float64))
+    e1 = b.group_by("m", "bin").agg(s10=pl.col("x10").mean())
+    e2 = b.group_by("m", "bin", "scene_200").agg(s10_sc=pl.col("x10").mean())
+    f = (f.filter(pl.col("period") == "future").join(sc, on=["artist", "year"], how="left").with_columns(pl.col("scene_200").fill_null(-1))
+         .join(e1, on=["m", "bin"]).join(e2, on=["m", "bin", "scene_200"]).with_columns(x10=(pl.col("v") >= np.log(10)).cast(pl.Float64)))
+    rows = []
+    for lab, lo, hi in (("0–50", 0, .5), ("50–75", .5, .75), ("75–90", .75, .9), ("90–95", .9, .95), ("95–99", .95, .99), ("99–100", .99, 1.0)):
+        per = f.filter(pl.col("band") == lab).group_by("user").agg(h=pl.col("x10").sum(), e=pl.col("s10").sum(), es=pl.col("s10_sc").sum())
+        h, e, es = (per[c].to_numpy().astype(float) for c in ("h", "e", "es"))
+        w = RNG.poisson(1.0, (500, per.height)).astype(float)
+        sq, ws = (w @ es) / (w @ e), (w @ h) / (w @ es)
+        rows.append({"key": lab, "band": f"{lab}%", "mid": (lo + hi) / 2 * 100, "people": per.height, "total": float(h.sum() / e.sum()),
+                     "scenes": float(es.sum() / e.sum()), "scenes_lo": float(np.percentile(sq, 2.5)), "scenes_hi": float(np.percentile(sq, 97.5)),
+                     "artists": float(h.sum() / es.sum()), "artists_lo": float(np.percentile(ws, 2.5)), "artists_hi": float(np.percentile(ws, 97.5))})
+    return rows
+
+
 if __name__ == "__main__":
     W = ROOT / "analysis" / "writeup"
+    if "--scene-split" in sys.argv:
+        rows = scene_split()
+        (W / "scenesplit.json").write_text(json.dumps(rows, indent=1))
+        for r in rows:
+            print(f"  {r['band']:>8}: scenes {r['scenes']:.2f} x artists {r['artists']:.2f} = {r['total']:.2f}")
+        raise SystemExit
     dots, lines = scatter()
     (W / "scatter.json").write_text(json.dumps(dots, separators=(",", ":")))
     (W / "scatterline.json").write_text(json.dumps(lines, indent=1))

@@ -54,6 +54,10 @@
   border: 1px solid var(--color-border-line); background: transparent; color: var(--color-fg-muted); }
 .wu-chip[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); border-color: var(--color-fg); }
 .wu-chip:focus-visible { outline: 2px solid var(--color-fg-muted); outline-offset: 2px; }
+.wu-list { margin: 0; padding-left: 1.4em; display: grid; gap: var(--cds-gap-sm); }
+.wu-list li { max-width: 70ch; }
+.wu-list a { color: inherit; text-decoration: underline; text-decoration-color: var(--color-border-line); text-underline-offset: 3px; }
+.wu-list a:hover { text-decoration-color: currentColor; }
 [data-dash-source-state=empty] { color: transparent; }
 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 </style>
@@ -142,6 +146,30 @@
     </ul>
   </section>
 
+  <section class="wu-section" id="list">
+    <h2>What we found, in short</h2>
+    <ol class="wu-list">
+      <li><a href="#findings"><b>Taste is real.</b></a> <span class="wu-num dash-skeleton" data-source="results" data-field="repeat_top20" data-where="key=D_song" data-fmt="pct">—</span> of the top fifth at picking
+        songs were still in the top fifth years later, against 20% by chance.</li>
+      <li><a href="#ladder"><b>The best pickers are far better.</b></a> The top 1%'s new artists grew tenfold
+        <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P4a" data-fmt="times">—</span> as often as similar artists. The bottom half did no better than chance.</li>
+      <li><a href="#fanvalue"><b>Good pickers matter most early.</b></a> One good new fan went with <span class="wu-num" data-source="fanvalue" data-field="effect" data-where="key=small:good" data-fmt="spct0">—</span>
+        growth for a small artist, against <span class="wu-num" data-source="fanvalue" data-field="effect" data-where="key=small:ordinary" data-fmt="spct1">—</span> for an ordinary fan. Several good pickers add up;
+        poor pickers count against an artist.</li>
+      <li><a href="#recency"><b>Recent form matters more than history.</b></a> Taste drifts: someone's last couple of years separate good from poor
+        pickers <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P10b_recent" data-fmt="times">—</span>, their earlier years only <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P10b_old" data-fmt="times">—</span>.</li>
+      <li><a href="#whygood"><b>It's judgment, not habits.</b></a> Choosing the top 1% by listening habits finds pickers at
+        <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_traits" data-fmt="times">—</span>; by track record, <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_record" data-fmt="times">—</span>.</li>
+      <li><a href="#scenesplit"><b>Good taste is right scenes and right artists.</b></a> For the top 1%, their scenes took off
+        <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=scene_quality" data-fmt="times">—</span> as often, and their artists within those scenes <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=within_scene" data-fmt="times">—</span>.</li>
+      <li><a href="#obsession"><b>Trust your obsessions, especially if you pick well.</b></a> People's most-replayed finds beat their least-replayed ones,
+        and good pickers' edge lives almost entirely in what they got hooked on.</li>
+      <li><a href="#every-size"><b>It's a steady edge, not a nose for hits.</b></a> Good taste raises the odds by about the same multiple whether the
+        takeoff is double or a hundredfold, and judging people on hits alone doesn't work.</li>
+      <li><a href="#findings"><b>It shows most in songs,</b></a> then artists, then scenes; and "others stick with your picks" is among its clearest forms.</li>
+    </ol>
+  </section>
+
   <section class="wu-section" id="findings">
     <h2>The same people keep picking well</h2>
     <p>The simplest way to see it: rank everyone by how well they picked songs in earlier years, then rank them again on completely
@@ -176,31 +204,6 @@
     </ul>
   </section>
 
-  <section class="wu-section" id="obsession">
-    <h2>Trust your obsessions</h2>
-    <p>Each person's most-replayed quarter of new artists grew
-          <span class="wu-num dash-skeleton" data-source="obsession" data-field="most_vs_least" data-where="level=Artists" data-fmt="pct0">—</span> more than their least-replayed quarter (hidden half), and for songs (first half only)
-          <span class="wu-num" data-source="obsession" data-field="most_vs_least" data-where="level=Songs" data-fmt="pct0">—</span> more. Plays are counted only until the person was hooked, so there's no
-          hindsight. People bet hardest on their best finds, though the effect is modest.</p>
-    <div class="wu-card">
-      <h3>How hooked someone got, and how the artist did</h3>
-      <p class="wu-note">Hidden half, artists. All picks split into tenths by how many times the person played the artist before committing
-        (listening in four separate weeks); each label is the typical number of plays in that tenth. Growth is compared with similar picks,
-        with every correction; bars are 95% ranges.</p>
-      <div class="wu-chart dash-skeleton" id="ob-chart" data-source="obstaste"></div>
-    </div>
-    <div class="wu-card">
-      <h3>Getting hooked matters most for good pickers</h3>
-      <p class="wu-note">The same, split by how people picked in earlier years (the top 1% are also part of the top fifth). A good picker's
-        casual picks do about average; their edge lives in the artists they got hooked on. For the top 1%, even casual picks beat similar ones
-        by about <span class="wu-num dash-skeleton" data-source="obstaste" data-field="growth" data-where="key=top1:1" data-fmt="spct0">—</span>, and the ones they got hooked on by about
-        <span class="wu-num" data-source="obstaste" data-field="growth" data-where="key=top1:6" data-fmt="spct0">—</span>. Going from a few plays to ten or more was worth
-        <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P9" data-fmt="pts">—</span> more to top-fifth pickers than to bottom-fifth ones. Hidden half.</p>
-      <div class="wu-legend" id="ot-legend"></div>
-      <div class="wu-chart dash-skeleton" id="ot-chart" data-source="obstaste"></div>
-    </div>
-  </section>
-
   <section class="wu-section" id="ladder">
     <h2>The best pickers' finds take off far more often</h2>
     <p>So taste is real. How much does it matter? A little for most people, a lot for a few. We ranked listeners by how their picks did
@@ -218,7 +221,7 @@
       <div class="wu-legend" id="ld-legend"></div>
       <div class="wu-chart dash-skeleton" id="ld-chart" data-source="ladder"></div>
     </div>
-    <div class="wu-card">
+    <div class="wu-card" id="every-size">
       <h3>The same at every size of takeoff</h3>
       <p class="wu-note">How many times as often the top pickers' new artists took off as similar artists did, for each size of takeoff.
         Hover over or click a size to highlight it. The pattern holds from doubling all the way to 100-fold, though the 100-fold line rests
@@ -231,33 +234,6 @@
       <p class="wu-note">The typical boost rather than the rare takeoff: how much more their new artists grew over the next year than similar
         artists (same size, same month). Hidden half; the shaded band is the 95% range.</p>
       <div class="wu-chart dash-skeleton" id="gb-chart" data-source="growthband"></div>
-    </div>
-  </section>
-
-  <section class="wu-section" id="whygood">
-    <h2>What makes the best pickers good</h2>
-    <p>Not listening more. The top 1% pick about as many new artists a year as everyone else and listen about as much. Their picks are
-      less popular when they find them, and they stay closer to a few scenes. But these habits are small differences, and together they
-      explain little: choosing people by their habits alone finds pickers whose new artists took off
-      <span class="wu-num dash-skeleton" data-source="toppickers" data-field="value" data-where="key=by_traits" data-fmt="times">—</span> as often as similar artists, against
-      <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_record" data-fmt="times">—</span> when choosing by track record.</p>
-    <p>Habits like these explain only about <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=r2_traits" data-fmt="pct1">—</span> of the differences in how people's later
-      picks did, against <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=r2_record" data-fmt="pct1">—</span> for their track record (both small, because single picks are so
-      noisy).</p>
-    <p>What the best pickers have is two kinds of judgment at once. They're early to scenes that are about to take off, and within those
-      scenes they pick the artists that take off.</p>
-    <div class="wu-eq">
-      <div class="wu-card wu-take"><span class="wu-tt">Right scenes</span>
-        <span class="wu-big dash-skeleton" data-source="toppickers" data-field="value" data-where="key=scene_quality" data-fmt="times">—</span>
-        <span class="wu-cap">Their scenes took off this much more often than artists of the same size elsewhere.</span></div>
-      <span class="wu-op" aria-hidden="true">×</span>
-      <div class="wu-card wu-take"><span class="wu-tt">Right artists</span>
-        <span class="wu-big dash-skeleton" data-source="toppickers" data-field="value" data-where="key=within_scene" data-fmt="times">—</span>
-        <span class="wu-cap">Within those scenes, their artists took off this much more often than others the same size.</span></div>
-      <span class="wu-op" aria-hidden="true">=</span>
-      <div class="wu-card wu-take"><span class="wu-tt">Overall</span>
-        <span class="wu-big dash-skeleton" data-source="toppickers" data-field="value" data-where="key=total" data-fmt="times">—</span>
-        <span class="wu-cap">as often as similar artists, for the top 1% of pickers.</span></div>
     </div>
   </section>
 
@@ -295,6 +271,89 @@
     </div>
   </section>
 
+  <section class="wu-section" id="recency">
+    <h2>Recent form matters more than history</h2>
+    <p>Taste drifts. Rate people separately on 2005–06 and on 2007–08, then judge the new artists they found in 2010–11: the recent record
+      separated good from poor pickers <span class="wu-num dash-skeleton" data-source="headlines" data-field="hidden" data-where="key=P10b_recent" data-fmt="times">—</span> (top fifth against bottom fifth), while the
+      old record, once you knew the recent one, separated them only <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P10b_old" data-fmt="times">—</span>. History isn't
+      worthless, but your last couple of years say much more about your next one.</p>
+    <div class="wu-card">
+      <h3>Later takeoffs by recent and old record</h3>
+      <p class="wu-note">Hidden half. How often each group's 2010–11 new artists grew tenfold, against similar artists; bars are 95% ranges.
+        Within each recent group, the old record changes little. Two related predictions, that a recent star with a poor history beats an old
+        star with a poor recent record, and that a one-year record goes stale within four years, pointed the same way but didn't clear our
+        strict bar.</p>
+      <div class="wu-legend" id="rc-legend"></div>
+      <div class="wu-chart dash-skeleton" id="rc-chart" data-source="recency"></div>
+    </div>
+  </section>
+
+  <section class="wu-section" id="whygood">
+    <h2>What makes the best pickers good</h2>
+    <p>Not listening more. The top 1% pick about as many new artists a year as everyone else and listen about as much. Their picks are
+      less popular when they find them, and they stay closer to a few scenes. But these habits are small differences, and together they
+      explain little: choosing people by their habits alone finds pickers whose new artists took off
+      <span class="wu-num dash-skeleton" data-source="toppickers" data-field="value" data-where="key=by_traits" data-fmt="times">—</span> as often as similar artists, against
+      <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_record" data-fmt="times">—</span> when choosing by track record.</p>
+    <p>Habits like these explain only about <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=r2_traits" data-fmt="pct1">—</span> of the differences in how people's later
+      picks did, against <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=r2_record" data-fmt="pct1">—</span> for their track record (both small, because single picks are so
+      noisy).</p>
+    <div class="wu-card">
+      <h3>Picking the best pickers: by habits, or by track record</h3>
+      <p class="wu-note">Hidden half. The top 1% of listeners chosen two ways, and how often their later new artists grew tenfold against similar
+        artists.</p>
+      <div class="wu-chart dash-skeleton" id="hb-chart" data-source="toppickers"></div>
+    </div>
+    <p>What the best pickers have is two kinds of judgment at once. They're early to scenes that are about to take off, and within those
+      scenes they pick the artists that take off.</p>
+    <div class="wu-eq">
+      <div class="wu-card wu-take"><span class="wu-tt">Right scenes</span>
+        <span class="wu-big dash-skeleton" data-source="toppickers" data-field="value" data-where="key=scene_quality" data-fmt="times">—</span>
+        <span class="wu-cap">Their scenes took off this much more often than artists of the same size elsewhere.</span></div>
+      <span class="wu-op" aria-hidden="true">×</span>
+      <div class="wu-card wu-take"><span class="wu-tt">Right artists</span>
+        <span class="wu-big dash-skeleton" data-source="toppickers" data-field="value" data-where="key=within_scene" data-fmt="times">—</span>
+        <span class="wu-cap">Within those scenes, their artists took off this much more often than others the same size.</span></div>
+      <span class="wu-op" aria-hidden="true">=</span>
+      <div class="wu-card wu-take"><span class="wu-tt">Overall</span>
+        <span class="wu-big dash-skeleton" data-source="toppickers" data-field="value" data-where="key=total" data-fmt="times">—</span>
+        <span class="wu-cap">as often as similar artists, for the top 1% of pickers.</span></div>
+    </div>
+    <div class="wu-card" id="scenesplit">
+      <h3>Right scenes and right artists, all the way up the ladder</h3>
+      <p class="wu-note">Hidden half. For each band of pickers: how much more often their scenes took off than artists of the same size elsewhere,
+        and how much more often their artists took off than others the same size in the same scene. Both rise together; multiplied, they give
+        each band's overall edge. Bars are 95% ranges.</p>
+      <div class="wu-legend" id="ss-legend"></div>
+      <div class="wu-chart dash-skeleton" id="ss-chart" data-source="scenesplit"></div>
+    </div>
+  </section>
+
+  <section class="wu-section" id="obsession">
+    <h2>Trust your obsessions</h2>
+    <p>Each person's most-replayed quarter of new artists grew
+          <span class="wu-num dash-skeleton" data-source="obsession" data-field="most_vs_least" data-where="level=Artists" data-fmt="pct0">—</span> more than their least-replayed quarter (hidden half), and for songs (first half only)
+          <span class="wu-num" data-source="obsession" data-field="most_vs_least" data-where="level=Songs" data-fmt="pct0">—</span> more. Plays are counted only until the person was hooked, so there's no
+          hindsight. People bet hardest on their best finds, though the effect is modest.</p>
+    <div class="wu-card">
+      <h3>How hooked someone got, and how the artist did</h3>
+      <p class="wu-note">Hidden half, artists. All picks split into tenths by how many times the person played the artist before committing
+        (listening in four separate weeks); each label is the typical number of plays in that tenth. Growth is compared with similar picks,
+        with every correction; bars are 95% ranges.</p>
+      <div class="wu-chart dash-skeleton" id="ob-chart" data-source="obstaste"></div>
+    </div>
+    <div class="wu-card">
+      <h3>Getting hooked matters most for good pickers</h3>
+      <p class="wu-note">The same, split by how people picked in earlier years (the top 1% are also part of the top fifth). A good picker's
+        casual picks do about average; their edge lives in the artists they got hooked on. For the top 1%, even casual picks beat similar ones
+        by about <span class="wu-num dash-skeleton" data-source="obstaste" data-field="growth" data-where="key=top1:1" data-fmt="spct0">—</span>, and the ones they got hooked on by about
+        <span class="wu-num" data-source="obstaste" data-field="growth" data-where="key=top1:6" data-fmt="spct0">—</span>. Going from a few plays to ten or more was worth
+        <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P9" data-fmt="pts">—</span> more to top-fifth pickers than to bottom-fifth ones. Hidden half.</p>
+      <div class="wu-legend" id="ot-legend"></div>
+      <div class="wu-chart dash-skeleton" id="ot-chart" data-source="obstaste"></div>
+    </div>
+  </section>
+
   <section class="wu-section" id="sure">
     <h2>How sure we are</h2>
     <p><b>We hid half the listeners.</b> All the exploring, adjusting, and fixing happened on one half. Before looking at the other half, we
@@ -303,7 +362,8 @@
       strength matched what the first half had shown.</p>
     <p><b>We checked the takeoff and good-picker numbers the same way.</b> They were found afterwards, on the first half. Before touching the hidden half
       again, we wrote down each prediction, exactly how it would be measured, and a stricter bar for passing (99% sure, since there were
-      several), in six rounds. Then we checked each once. All eighteen held.</p>
+      several), in seven rounds. Then we checked each once. Of twenty-one predictions, nineteen held; the two that didn't, both about how fast
+      taste drifts, pointed the right way but fell short of the bar, and the page says so where they come up.</p>
     <div class="wu-card">
       <h3>Checks of these findings on the hidden half</h3>
       <div class="wu-tablewrap">
@@ -915,6 +975,82 @@
     });
   }
 
+  function drawRecency() {
+    const el = document.getElementById('rc-chart');
+    if (!ready(el, ['recency'])) return;
+    const olds = [['top', 'Old record: top fifth', dash.colors[0]], ['middle', 'Old record: middle', css('--cds-chart-muted')], ['bottom', 'Old record: bottom fifth', dash.colors[1]]];
+    const recents = [['top', 'Recent top fifth'], ['middle', 'Recent middle'], ['bottom', 'Recent bottom fifth']];
+    legend('rc-legend', olds.map(([, l, c]) => [l, c, 'dot']));
+    const rows = dash.data('recency').data.map((r) => ({ ...r, v: +r.odds, lo: +r.lo, hi: +r.hi }));
+    const f = frame(el, 260, { t: 28, r: 8, b: 30, l: 40 });
+    const { svg, fs, width, height, m } = f;
+    const x0 = d3.scaleBand(recents.map((d) => d[0]), [m.l, width - m.r]).paddingInner(0.25).paddingOuter(0.1);
+    const x1 = d3.scaleBand(olds.map((d) => d[0]), [0, x0.bandwidth()]).padding(0.12);
+    const y = d3.scaleLinear([0, d3.max(rows, (r) => r.hi) * 1.08], [height - m.b, m.t]).nice();
+    gridY(f, y, (d) => `${d}×`, 4);
+    svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(1)).attr('y2', y(1)).attr('stroke', css('--cds-chart-reference')).attr('stroke-dasharray', '4 3');
+    svg.append('text').attr('x', width - m.r).attr('y', y(1) - 5).attr('text-anchor', 'end').attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Same as similar artists');
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`).call(d3.axisBottom(x0).tickFormat((k) => recents.find((q) => q[0] === k)[1]).tickSize(0)), fs);
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Tenfold takeoffs, times as often as similar artists');
+    const tip = tooltip(el);
+    rows.forEach((r) => {
+      const o = olds.find((q) => q[0] === r.old); const bx = x0(r.recent) + x1(r.old), bw = x1.bandwidth();
+      const top = y(r.v), bot = y(0), rad = Math.min(4, bw / 2, bot - top);
+      svg.append('path').attr('d', `M${bx},${bot}V${top + rad}Q${bx},${top} ${bx + rad},${top}H${bx + bw - rad}Q${bx + bw},${top} ${bx + bw},${top + rad}V${bot}Z`).attr('fill', o[2]);
+      svg.append('line').attr('x1', bx + bw / 2).attr('x2', bx + bw / 2).attr('y1', y(r.lo)).attr('y2', y(r.hi)).attr('stroke', css('--color-fg-muted')).attr('stroke-width', 1.5);
+      svg.append('rect').attr('x', bx).attr('y', m.t).attr('width', bw).attr('height', height - m.t - m.b).attr('fill', 'transparent')
+        .on('mousemove', (ev) => tip.show(ev, `${recents.find((q) => q[0] === r.recent)[1]}, ${o[1].toLowerCase()}`,
+          [['Tenfold takeoffs', `${fmt.times(r.v)} (${fmt.times(r.lo)} to ${fmt.times(r.hi)})`, o[2]], ['Growth vs similar', fmt.spct1(+r.growth)], ['People', fmt.int(+r.people)]]))
+        .on('mouseleave', () => tip.hide());
+    });
+  }
+
+  function drawHabits() {
+    const el = document.getElementById('hb-chart');
+    if (!ready(el, ['toppickers'])) return;
+    const d = dash.data('toppickers').data;
+    const get = (k) => +d.find((r) => r.key === k).value;
+    const bars = [['Similar artists', 1, css('--cds-chart-muted')], ['Top 1% by listening habits', get('by_traits'), css('--cds-chart-muted')],
+      ['Top 1% by track record', get('by_record'), dash.colors[0]]];
+    const f = frame(el, 30 + bars.length * 40, { t: 4, r: 56, b: 26, l: 0 });
+    const { svg, fs, width, height, m } = f;
+    const left = Math.min(textWidth(svg, bars.map((b) => b[0]), fs) + 14, width * 0.5);
+    const x = d3.scaleLinear([0, d3.max(bars, (b) => b[1]) * 1.05], [left, width - m.r]).nice();
+    svg.append('g').selectAll('line').data(x.ticks(5)).join('line').attr('x1', (v) => x(v)).attr('x2', (v) => x(v)).attr('y1', m.t).attr('y2', height - m.b)
+      .attr('stroke', (v) => (v === 0 ? css('--cds-chart-axis') : css('--cds-chart-grid')));
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 6})`).call(d3.axisBottom(x).ticks(5).tickFormat((v) => `${v}×`).tickSize(0)), fs);
+    bars.forEach(([label, v, c], i) => {
+      const cy = m.t + i * 40 + 20, h = 18;
+      svg.append('text').attr('x', 0).attr('y', cy).attr('dy', '0.35em').attr('fill', css('--color-fg-muted')).style('font-size', fs).text(label);
+      svg.append('path').attr('d', `M${x(0)},${cy - h / 2}H${x(v) - 4}Q${x(v)},${cy - h / 2} ${x(v)},${cy - h / 2 + 4}V${cy + h / 2 - 4}Q${x(v)},${cy + h / 2} ${x(v) - 4},${cy + h / 2}H${x(0)}Z`).attr('fill', c);
+      svg.append('text').attr('x', x(v) + 6).attr('y', cy).attr('dy', '0.35em').attr('fill', css('--color-fg')).style('font-size', fs).text(fmt.times(v));
+    });
+  }
+
+  function drawSceneSplit() {
+    const el = document.getElementById('ss-chart');
+    if (!ready(el, ['scenesplit'])) return;
+    const series = [['scenes', 'Right scenes', dash.colors[0]], ['artists', 'Right artists within them', dash.colors[1]]];
+    legend('ss-legend', series.map(([, l, c]) => [l, c, 'line']));
+    const rows = dash.data('scenesplit').data.map((r) => ({ ...r, mid: +r.mid }));
+    const f = frame(el, 260, { t: 28, r: 16, b: 40, l: 36 });
+    const { svg, fs, width, m } = f;
+    const x = d3.scaleLinear([0, 100], [m.l, width - m.r]);
+    const y = d3.scaleLinear([0, d3.max(rows, (r) => Math.max(+r.scenes_hi, +r.artists_hi)) * 1.08], [f.height - m.b, m.t]).nice();
+    gridY(f, y, (v) => `${v}×`, 4);
+    svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(1)).attr('y2', y(1)).attr('stroke', css('--cds-chart-reference')).attr('stroke-dasharray', '4 3');
+    axisXRank(f, x, "Picker's rank from earlier years (percentile)");
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Tenfold takeoffs, times as often');
+    const tip = tooltip(el);
+    series.forEach(([k, label, c]) => {
+      const pts = rows.map((r) => ({ ...r, v: +r[k], lo: +r[`${k}_lo`], hi: +r[`${k}_hi`] }));
+      svg.append('path').datum(pts).attr('d', d3.line().x((d) => x(d.mid)).y((d) => y(d.v))).attr('fill', 'none').attr('stroke', c).attr('stroke-width', 2);
+      errorDots(svg, pts, (d) => x(d.mid), y, c, false);
+    });
+    bandHover(f, rows, x, (d) => [`Pickers ranked ${d.band}`, [['Right scenes', fmt.times(+d.scenes), dash.colors[0]],
+      ['Right artists within them', fmt.times(+d.artists), dash.colors[1]], ['Overall', fmt.times(+d.total)], ['People', fmt.int(+d.people)]]]);
+  }
+
   function drawFanValue() {
     const el = document.getElementById('fv-chart');
     if (!ready(el, ['fanvalue'])) return;
@@ -1153,15 +1289,18 @@
   dash.onData(() => {
     fillMarks();
     drawRepeat();
+    drawRecency();
     drawObsession();
     drawObsTaste();
+    drawHabits();
+    drawSceneSplit();
     drawLadder();
     drawThresholds();
     drawGrowthBand();
     drawFanValue();
     drawCrowd();
     const hl = (r, f) => (r[f] === null || r[f] === undefined ? '–' : r.unit === 'times as often' ? fmt.times(+r[f])
-      : r.unit === 'points' ? `${d3.format('.1f')(+r[f] * 100)} points` : fmt.spct1(+r[f]));
+      : r.unit === 'points' ? `${d3.format('.1f')(+r[f] * 100)} points` : r.unit === 'log' ? d3.format('+.2f')(+r[f]) : fmt.spct1(+r[f]));
     (function fillHeadlines() {
       const tb = document.querySelector('#hl-table tbody'); tb.replaceChildren();
       const d = dash.data('headlines'); if (d.status !== 'ok') return;

@@ -250,6 +250,13 @@ bound above the stated value.
 - P10c. A one-year record goes stale: the same top-10% people's 10x odds 2 years later / 4 years later > 1.
   Explore 1.24 [1.12, 1.39; 99% low 1.09].
 
+**Sealed results (run once, 2026-10-10): P10b confirmed; P10a and P10c not confirmed.**
+- P10b recent spread 2.20x vs old 1.31x, difference 0.52 [0.19, 0.82; 99% low 0.11]. Confirmed.
+- P10a 1.76 [1.12, 2.77; 99% low 0.97]. Same direction, misses the 99% bar. Not confirmed.
+- P10c 1.13 [1.00, 1.26; 99% low 0.97]. Same direction, weaker than explore. Not confirmed.
+Reading: the recent record matters more than the old one, but the old record still adds something (more on the sealed half
+than the explore half suggested), and a one-year record goes stale only slowly.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|

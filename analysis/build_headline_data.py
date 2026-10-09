@@ -102,6 +102,19 @@ def headlines():
     rows.append({"key": "P9", "claim": "Getting hooked pays off more for top-fifth than bottom-fifth pickers (difference)", "unit": "points",
                  "hidden": t9["diff"], "lo": t9["lo"], "hi": t9["hi"], "lo99": t9["lo99"], "first_half": t9e["diff"], "rate": None,
                  "rate_compared": None, "confirmed": t9["lo99"] > 0})
+    rs, re_ = (json.loads((OUT / f"recency_{h}.json").read_text())["tests"] for h in ("sealed", "explore"))
+    for key, claim, unit, est, fe, bar in (
+            ("P10a", "Recent top fifth with a poor old record vs old top fifth with a poor recent record: tenfold takeoffs", "times as often", rs["P10a"], re_["P10a"], 1),
+            ("P10b", "Recent record separates people more than the old one (log spread difference)", "log", rs["P10b"], re_["P10b"], 0),
+            ("P10c", "Same top pickers, 2 years later vs 4 years later: tenfold takeoffs", "times as often", rs["P10c"], re_["P10c"], 1)):
+        rows.append({"key": key, "claim": claim, "unit": unit, "hidden": est["est"], "lo": est["lo"], "hi": est["hi"], "lo99": est["lo99"],
+                     "first_half": fe["est"], "rate": None, "rate_compared": None, "confirmed": est["lo99"] > bar})
+    rows.append({"key": "P10b_recent", "claim": "Recent record: top vs bottom fifth, tenfold takeoffs (descriptive)", "unit": "times as often",
+                 "hidden": rs["P10b"]["recent_spread"], "lo": None, "hi": None, "lo99": None, "first_half": re_["P10b"]["recent_spread"],
+                 "rate": None, "rate_compared": None, "confirmed": None})
+    rows.append({"key": "P10b_old", "claim": "Old record, once the recent one is known: top vs bottom fifth (descriptive)", "unit": "times as often",
+                 "hidden": rs["P10b"]["old_spread"], "lo": None, "hi": None, "lo99": None, "first_half": re_["P10b"]["old_spread"],
+                 "rate": None, "rate_compared": None, "confirmed": None})
     rows.append({"key": "H2growth", "claim": "3+ good pickers agree: growth vs similar artists (descriptive)", "unit": "more growth",
                  "hidden": hs["H2"]["best"]["growth_vs_similar"], "lo": None, "hi": None, "lo99": None,
                  "first_half": he["H2"]["best"]["growth_vs_similar"], "rate": None, "rate_compared": None, "confirmed": None})
@@ -169,6 +182,11 @@ def obsession():
     return rows
 
 
+def recency():
+    r = json.loads((OUT / "recency_sealed.json").read_text())
+    return r["cells"]
+
+
 def obstaste():
     return json.loads((OUT / "obs_taste_sealed_deciles.json").read_text())["curve"]
 
@@ -211,7 +229,7 @@ def crowd():
 
 
 if __name__ == "__main__":
-    for name, fn in (("headlines", headlines), ("obsession", obsession), ("obstaste", obstaste), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
+    for name, fn in (("headlines", headlines), ("obsession", obsession), ("obstaste", obstaste), ("recency", recency), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
         rows = fn()
         (W / f"{name}.json").write_text(json.dumps(rows, indent=1))
         print(name, json.dumps(rows)[:600])
