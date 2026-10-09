@@ -60,7 +60,7 @@ def main():
     signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))  # run cleanup when stopped
     con = duckdb.connect()
     con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; "
-                "SET max_temp_directory_size='20GB'")
+                "SET max_temp_directory_size='40GB'")
     sy = f"read_parquet('{X}/scenes_yearly/explore.parquet')"  # scenes are built on explore listening only
     con.execute(f"""CREATE TABLE abets AS
         SELECT b.user, b.artist, {MONTH.format(w='b.w4')}::SMALLINT AS m, b.plays_26w,
