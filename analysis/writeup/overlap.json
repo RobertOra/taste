@@ -1,0 +1,194 @@
+[
+{
+"level": "Artists",
+"a": "Discernment",
+"b": "Discernment",
+"r": 1.0
+},
+{
+"level": "Artists",
+"a": "Discernment",
+"b": "Community-leading",
+"r": 0.37
+},
+{
+"level": "Artists",
+"a": "Discernment",
+"b": "Prescience",
+"r": 0.55
+},
+{
+"level": "Artists",
+"a": "Discernment",
+"b": "Durability",
+"r": 0.07
+},
+{
+"level": "Artists",
+"a": "Community-leading",
+"b": "Discernment",
+"r": 0.37
+},
+{
+"level": "Artists",
+"a": "Community-leading",
+"b": "Community-leading",
+"r": 1.0
+},
+{
+"level": "Artists",
+"a": "Community-leading",
+"b": "Prescience",
+"r": 0.26
+},
+{
+"level": "Artists",
+"a": "Community-leading",
+"b": "Durability",
+"r": 0.14
+},
+{
+"level": "Artists",
+"a": "Prescience",
+"b": "Discernment",
+"r": 0.55
+},
+{
+"level": "Artists",
+"a": "Prescience",
+"b": "Community-leading",
+"r": 0.26
+},
+{
+"level": "Artists",
+"a": "Prescience",
+"b": "Prescience",
+"r": 1.0
+},
+{
+"level": "Artists",
+"a": "Prescience",
+"b": "Durability",
+"r": 0.23
+},
+{
+"level": "Artists",
+"a": "Durability",
+"b": "Discernment",
+"r": 0.07
+},
+{
+"level": "Artists",
+"a": "Durability",
+"b": "Community-leading",
+"r": 0.14
+},
+{
+"level": "Artists",
+"a": "Durability",
+"b": "Prescience",
+"r": 0.23
+},
+{
+"level": "Artists",
+"a": "Durability",
+"b": "Durability",
+"r": 1.0
+},
+{
+"level": "Songs",
+"a": "Discernment",
+"b": "Discernment",
+"r": 1.0
+},
+{
+"level": "Songs",
+"a": "Discernment",
+"b": "Community-leading",
+"r": 0.13
+},
+{
+"level": "Songs",
+"a": "Discernment",
+"b": "Prescience",
+"r": 0.3
+},
+{
+"level": "Songs",
+"a": "Discernment",
+"b": "Durability",
+"r": 0.16
+},
+{
+"level": "Songs",
+"a": "Community-leading",
+"b": "Discernment",
+"r": 0.13
+},
+{
+"level": "Songs",
+"a": "Community-leading",
+"b": "Community-leading",
+"r": 1.0
+},
+{
+"level": "Songs",
+"a": "Community-leading",
+"b": "Prescience",
+"r": 0.13
+},
+{
+"level": "Songs",
+"a": "Community-leading",
+"b": "Durability",
+"r": -0.03
+},
+{
+"level": "Songs",
+"a": "Prescience",
+"b": "Discernment",
+"r": 0.3
+},
+{
+"level": "Songs",
+"a": "Prescience",
+"b": "Community-leading",
+"r": 0.13
+},
+{
+"level": "Songs",
+"a": "Prescience",
+"b": "Prescience",
+"r": 1.0
+},
+{
+"level": "Songs",
+"a": "Prescience",
+"b": "Durability",
+"r": 0.66
+},
+{
+"level": "Songs",
+"a": "Durability",
+"b": "Discernment",
+"r": 0.16
+},
+{
+"level": "Songs",
+"a": "Durability",
+"b": "Community-leading",
+"r": -0.03
+},
+{
+"level": "Songs",
+"a": "Durability",
+"b": "Prescience",
+"r": 0.66
+},
+{
+"level": "Songs",
+"a": "Durability",
+"b": "Durability",
+"r": 1.0
+}
+]

@@ -71,6 +71,8 @@ for m in ("D", "B", "A", "C_lb"):
             "stability_3y": round(s["stability_3y_corrected"], 3), "reliability": round(s["reliability"], 3),
             "impostor_share": round(s["impostor_r2"], 3), "people": s["users_scored"],
             "confirmed": c["confirmed"], "size_replicates": c["size_replicates"],
+            # 80% range of the true percentile for someone observed at the 75th percentile (from reliability)
+            "pctl75_lo": round(s["percentile_range_for_observed_75th"][0]), "pctl75_hi": round(s["percentile_range_for_observed_75th"][1]),
         })
 write("results", res)
 
@@ -80,15 +82,50 @@ CHECKS = [("no_scene", "Being in a scene that grew"), ("first_listen", "Followin
           ("no_release", "Hearing about albums before release"), ("no_country", "Being early to local acts"),
           ("nocontrols", "All of the above at once")]
 jx = []
-for key in ("D_song", "D_artist", "A_artist", "B_artist"):
-    m, u = key.split("_", 1) if not key.startswith("C_lb") else ("C_lb", key[5:])
-    base = card(f"{key}_main")["headline_adjusted_forward"]
-    for sfx, label in CHECKS:
-        f = CAND / f"{key}_{sfx}" / "scorecard.json"
-        if f.exists():
-            jx.append({"model": f"{NAMES[m]}, {LEVEL[u].lower()}", "check": label,
-                       "with_check": round(base, 3), "without_check": round(json.loads(f.read_text())["headline_adjusted_forward"], 3)})
+for m in ("D", "B", "A", "C_lb"):
+    for u in ("song", "artist", "scene"):
+        key = f"{m}_{u}"
+        base = card(f"{key}_main")["headline_adjusted_forward"]
+        jx.append({"model": f"{NAMES[m]}, {LEVEL[u].lower()}", "check": "With every correction", "value": round(base, 3)})
+        for sfx, label in CHECKS:
+            f = CAND / f"{key}_{sfx}" / "scorecard.json"
+            if f.exists():
+                jx.append({"model": f"{NAMES[m]}, {LEVEL[u].lower()}", "check": label,
+                           "value": round(json.loads(f.read_text())["headline_adjusted_forward"], 3)})
 write("justx", jx)
+
+# --- more findings: big hits, time windows, overlap -------------------------------------------------------------
+more = []
+for u in ("artist", "song"):
+    more.append({"finding": "hits", "level": LEVEL[u], "label": "Steady outperformance (all bets)",
+                 "value": round(card(f"A_{u}_main")["headline_adjusted_forward"], 3)})
+    more.append({"finding": "hits", "level": LEVEL[u], "label": "Catching big hits only",
+                 "value": round(card(f"A_{u}_hit")["headline_adjusted_forward"], 3)})
+for m in ("D", "B", "A", "C_lb"):
+    for u in ("song", "artist", "scene"):
+        for sfx, label in (("h6", "6 months"), ("main", "12 months"), ("h24", "24 months")):
+            f = CAND / f"{m}_{u}_{sfx}" / "scorecard.json"
+            if f.exists():
+                more.append({"finding": "window", "level": LEVEL[u], "label": f"{NAMES[m]}, {LEVEL[u].lower()}: {label}",
+                             "model": f"{NAMES[m]}, {LEVEL[u].lower()}", "window": label,
+                             "value": round(json.loads(f.read_text())["headline_adjusted_forward"], 3)})
+write("more", more)
+
+import numpy as np
+import polars as pl
+ov = []
+for u in ("artist", "song"):
+    names = [f"{m}_{u}_main" for m in ("D", "B", "A", "C_lb")]
+    df = None
+    for n in names:
+        a = pl.read_parquet(CAND / n / "agg.parquet").group_by("user").agg(pl.col("n").sum(), pl.col("sw").sum(), pl.col("swe").sum())
+        a = a.filter(pl.col("n") >= 20).select("user", (pl.col("swe") / pl.col("sw")).alias(n))
+        df = a if df is None else df.join(a, on="user")
+    C = np.corrcoef(df.select(names).to_numpy().T)
+    for i, a in enumerate(names):
+        for j, b in enumerate(names):
+            ov.append({"level": LEVEL[u], "a": NAMES[a.split("_" + u)[0]], "b": NAMES[b.split("_" + u)[0]], "r": round(float(C[i, j]), 2)})
+write("overlap", ov)
 
 # --- robustness ------------------------------------------------------------------------------------------
 SWEEPS = {"h6": "6-month window", "h24": "24-month window", "w0.5": "Square-root weights", "w1": "Weighted by plays",

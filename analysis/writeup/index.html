@@ -1,20 +1,23 @@
 <style>
-.wu { display: grid; gap: var(--cds-gap-xl); font-family: var(--font-anthropic-sans); max-width: 46rem; margin-inline: auto; }
+.wu { display: grid; gap: var(--cds-gap-xl); font-family: var(--font-anthropic-sans); max-width: 48rem; margin-inline: auto; }
 .wu h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); margin: 0; text-wrap: balance; }
 .wu h2 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-heading); margin: 0 0 var(--cds-gap-sm); text-wrap: balance; }
 .wu h3 { font-size: var(--cds-font-size-body); font-weight: var(--cds-font-weight-medium); margin: 0 0 var(--cds-gap-xs); }
 .wu p, .wu li { font-size: var(--cds-font-size-body); line-height: 1.65; max-width: 66ch; }
 .wu p { margin: 0 0 var(--cds-gap-sm); }
-.wu ul, .wu ol { margin: 0 0 var(--cds-gap-sm); padding-left: 1.25em; }
+.wu ul { margin: 0 0 var(--cds-gap-sm); padding-left: 1.25em; }
 .wu .wu-lede { font-size: calc(var(--cds-font-size-body) * 1.12); line-height: 1.6; margin-top: var(--cds-gap-sm); }
 .wu .wu-scope { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); line-height: 1.5; }
 .wu .wu-num { font-variant-numeric: tabular-nums; }
-.wu .wu-lede b, .wu p b { font-weight: var(--cds-font-weight-medium); }
-.wu-figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: var(--cds-gap-md); }
+.wu .wu-lede b, .wu p b, .wu li b { font-weight: var(--cds-font-weight-medium); }
+.wu-section { border-top: 1px solid var(--color-border-line); padding-top: var(--cds-gap-lg); display: grid; gap: var(--cds-gap-md); }
+.wu-eyebrow { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .06em; text-transform: uppercase; margin: 0 0 var(--cds-gap-xs); }
+.wu-takeaways { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); gap: var(--cds-gap-md); }
 .wu-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; position: relative; }
-.wu-fig { display: grid; gap: var(--cds-gap-xs); align-content: start; }
-.wu-fig .wu-big { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; }
-.wu-fig .wu-cap { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); line-height: 1.45; }
+.wu-take { display: grid; gap: var(--cds-gap-xs); align-content: start; }
+.wu-take .wu-tt { font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-body); }
+.wu-take .wu-big { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.wu-take .wu-cap { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); line-height: 1.5; }
 .wu-note { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); line-height: 1.5; margin: var(--cds-gap-xs) 0 var(--cds-gap-sm); }
 .wu-chart { position: relative; min-height: 140px; }
 .wu-chart svg { display: block; overflow: visible; }
@@ -22,8 +25,7 @@
 .wu-legend span { display: inline-flex; align-items: center; gap: 6px; }
 .wu-sw { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
 .wu-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
-.wu-kinds { display: grid; gap: var(--cds-gap-sm); padding: 0; list-style: none; }
-.wu-kinds li { padding-left: 0; }
+.wu-grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); gap: var(--cds-gap-md); }
 .wu-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); z-index: 3; max-width: 18rem; line-height: 1.45; }
 .wu-tip .wu-k { color: var(--cds-text-secondary); }
 .wu-tablewrap { overflow-x: auto; }
@@ -31,6 +33,11 @@
 .wu th { text-align: left; font-weight: var(--cds-font-weight-medium); color: var(--color-fg-muted); padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: bottom; }
 .wu td { padding: var(--cds-pad-xs) var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); vertical-align: top; line-height: 1.45; }
 .wu td.wu-r, .wu th.wu-r { text-align: right; font-variant-numeric: tabular-nums; }
+.wu .wu-strong { font-weight: var(--cds-font-weight-medium); color: var(--color-fg); }
+.wu td.wu-na { color: var(--color-fg-muted); text-align: center; }
+.wu dl { margin: 0; display: grid; gap: var(--cds-gap-sm); }
+.wu dt { font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-body); }
+.wu dd { margin: 0; font-size: var(--cds-font-size-body); line-height: 1.6; max-width: 66ch; }
 .wu details { border-top: 1px solid var(--color-border-line); padding-top: var(--cds-gap-md); }
 .wu summary { cursor: pointer; font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-heading); }
 .wu summary:focus-visible { outline: 2px solid var(--color-fg-muted); outline-offset: 4px; }
@@ -47,64 +54,87 @@
   <header id="top">
     <h1>Is good taste real?</h1>
     <p class="wu-lede">
-      Mostly, yes. People who picked music well in one stretch of years tended to pick well again years later, even after
-      ruling out luck, following trends and simply liking popular things. Among the best <b>discerning listeners</b>
-      by their early picks,
-      <b class="wu-num dash-skeleton" data-source="results" data-field="repeat_top20" data-where="key=D_song" data-fmt="pct">—</b>
-      were still in the top fifth years later. Chance alone would give 20%.
+      Mostly, yes. People who picked music well in one stretch of years tended to pick well again years later, even after ruling out
+      luck, following trends, and simply liking popular things. The effect is moderate: good taste tilts the odds rather than making
+      anyone a prophet.
     </p>
-    <p class="wu-scope">An analysis of how
+    <p class="wu-scope">How
       <span class="wu-num dash-skeleton" data-source="facts" data-field="listeners" data-row="0" data-fmt="int">—</span> Last.fm listeners
       discovered music between <span class="wu-num" data-source="facts" data-field="first_year" data-row="0" data-fmt="text">—</span> and
-      <span class="wu-num" data-source="facts" data-field="last_year" data-row="0" data-fmt="text">—</span>. Half of them were kept
-      hidden until the method was locked in, and the results held on that hidden half.</p>
+      <span class="wu-num" data-source="facts" data-field="last_year" data-row="0" data-fmt="text">—</span>. Half of them were kept hidden
+      until the method was locked in, and every finding below held on that hidden half.</p>
   </header>
 
-  <section class="wu-figs" aria-label="Key figures">
-    <div class="wu-card wu-fig">
-      <span class="wu-cap">Top-fifth listeners who stayed in the top fifth</span>
-      <span class="wu-big dash-skeleton" data-source="results" data-field="repeat_top20" data-where="key=D_song" data-fmt="pct">—</span>
-      <span class="wu-cap">Picking songs others stick with. Chance: 20%</span>
+  <section id="takeaways" aria-label="Key findings">
+    <p class="wu-eyebrow">Key findings</p>
+    <div class="wu-takeaways">
+      <div class="wu-card wu-take">
+        <span class="wu-tt">Good taste repeats</span>
+        <span class="wu-big dash-skeleton" data-source="results" data-field="repeat_top20" data-where="key=D_song" data-fmt="pct">—</span>
+        <span class="wu-cap">of listeners in the top fifth for picking songs others stick with were still in the top fifth years later.
+          By chance it would be 20%.</span>
+      </div>
+      <div class="wu-card wu-take">
+        <span class="wu-tt">It shows most in songs</span>
+        <span class="wu-big"><span class="wu-num dash-skeleton" data-source="results" data-field="repeat_top20" data-where="key=D_song" data-fmt="pct">—</span>
+          · <span class="wu-num" data-source="results" data-field="repeat_top20" data-where="key=D_artist" data-fmt="pct">—</span>
+          · <span class="wu-num" data-source="results" data-field="repeat_top20" data-where="key=D_scene" data-fmt="pct">—</span></span>
+        <span class="wu-cap">stayed in the top fifth for songs, artists, and scenes respectively. Picking individual songs is the clearest skill.</span>
+      </div>
+      <div class="wu-card wu-take">
+        <span class="wu-tt">A growing scene isn't taste</span>
+        <span class="wu-big"><span class="wu-num dash-skeleton" data-source="justx" data-field="value" data-where="model=Discernment%2C artists&amp;check=Being in a scene that grew" data-fmt="f2">—</span>
+          → <span class="wu-num" data-source="justx" data-field="value" data-where="model=Discernment%2C artists&amp;check=With every correction" data-fmt="f2">—</span></span>
+        <span class="wu-cap">Picking well among artists looks about twice as strong until you account for some people's favorite scenes simply
+          growing. Only the second number counts as taste.</span>
+      </div>
+      <div class="wu-card wu-take">
+        <span class="wu-tt">Steady, not lucky</span>
+        <span class="wu-big"><span class="wu-num dash-skeleton" data-source="more" data-field="value" data-where="finding=hits&amp;level=Artists&amp;label=Steady outperformance (all bets)" data-fmt="f2">—</span>
+          vs <span class="wu-num" data-source="more" data-field="value" data-where="finding=hits&amp;level=Artists&amp;label=Catching big hits only" data-fmt="f2">—</span></span>
+        <span class="wu-cap">Good pickers beat the odds a little on most picks. Scoring people only on whether they caught the year's breakout
+          artists shows almost nothing.</span>
+      </div>
+      <div class="wu-card wu-take">
+        <span class="wu-tt">"Still big today" is mostly mainstream taste</span>
+        <span class="wu-big"><span class="wu-num dash-skeleton" data-source="results" data-field="sealed" data-where="key=C_lb_artist" data-fmt="f2">—</span>
+          vs <span class="wu-num" data-source="results" data-field="sealed" data-where="key=D_artist" data-fmt="f2">—</span></span>
+        <span class="wu-cap">Picking artists that people still play in 2026 barely predicts anything once liking popular music is taken out,
+          compared with picking artists others stick with.</span>
+      </div>
     </div>
-    <div class="wu-card wu-fig">
-      <span class="wu-cap">Kinds of taste that passed the hidden-half test</span>
-      <span class="wu-big dash-skeleton" data-source="summary" data-field="confirmed_text" data-row="0" data-fmt="text">—</span>
-      <span class="wu-cap">Every model tested held up</span>
-    </div>
-    <div class="wu-card wu-fig">
-      <span class="wu-cap">Listeners scored at the artist level</span>
-      <span class="wu-big dash-skeleton" data-source="results" data-field="people" data-where="key=D_artist" data-fmt="compact">—</span>
-      <span class="wu-cap">In the hidden half alone</span>
-    </div>
+    <p class="wu-note">Numbers like 0.16 are prediction strengths: how well someone's score from earlier years predicts their later picks,
+      from 0 (not at all) to 1 (perfectly).</p>
   </section>
 
-  <section id="question">
+  <section class="wu-section" id="question">
     <h2>The question</h2>
-    <p>Some people seem to have a knack for finding music before everyone else, or for liking things that turn out to be good.
-      But that impression is easy to fake. Someone who listens to a thousand new artists a year will find some future hits by
-      volume alone. Someone who only listens to what's already popular will always look "right". And anyone can get lucky.</p>
-    <p>So the question isn't whether some people's picks did well. It's whether <b>the same people keep picking well</b>, year
-      after year, once luck and those other explanations are taken out.</p>
+    <p>Some people seem to have a knack for finding music before everyone else, or for liking things that turn out to be good. But that
+      impression is easy to fake. Someone who listens to a thousand new artists a year will find some future hits by volume alone. Someone
+      who only listens to what's already popular will always look "right." And anyone can get lucky.</p>
+    <p>So the question isn't whether some people's picks did well. It's whether <b>the same people keep picking well</b>, year after year,
+      once luck and those other explanations are taken out.</p>
   </section>
 
-  <section id="method">
+  <section class="wu-section" id="method">
     <h2>How we measured it</h2>
     <p>We treated listening like investing. When someone gets into an artist (plays them in at least four separate weeks), that's a
-      <b>bet</b>. We note how popular the artist was at that moment, then look at what happened next and compare it with
-      every other bet made that month on artists that were exactly as popular.</p>
+      <b>bet</b>. We note how popular the artist was at that moment, then look at what happened next and compare it with every other bet
+      made that month on artists that were exactly as popular.</p>
     <div class="wu-card">
       <h3>One bet: Florence + the Machine, July 2008</h3>
-      <p class="wu-note">Share of listeners who played each artist in a given month. In July 2008, Florence had the same audience as
+      <p class="wu-note">In July 2008, Florence had the same audience as
         <span class="wu-num dash-skeleton" data-source="example" data-field="n_peers" data-row="0" data-fmt="int">—</span>
-        other artists. A year later she had grown more than any of them, while the typical one shrank slightly. Someone who got into
-        Florence that summer made a very good bet. One good bet proves little; the question is whether a person's bets keep beating comparable ones.</p>
+        other artists. A year later she had grown more than any of them, while the typical one shrank slightly. Someone who got into Florence
+        that summer made a very good bet. But one good bet proves little; what matters is whether a person's bets keep beating comparable ones.</p>
       <div class="wu-legend" id="ex-legend"></div>
       <div class="wu-chart dash-skeleton" id="ex-chart" data-source="example"></div>
     </div>
-    <p>A person's taste score is how their bets did on average compared with the bets around them. Then the real test: does a score
-      built from someone's earlier years predict how their bets do <b>two or more years later</b>, on completely different music?</p>
-    <p>"Good taste" can mean different things, so we measured four, each for single songs, for artists, and for whole scenes:</p>
-    <ul class="wu-kinds">
+    <p>A person's taste score is how their bets did on average compared with the bets around them. The real test is whether a score built
+      from someone's earlier years predicts how their bets do <b>two or more years later</b>, on completely different music.</p>
+    <p>"Good taste" can mean different things, so we measured four kinds, each for single songs, for artists, and for whole scenes
+      (exact definitions are in the appendix):</p>
+    <ul>
       <li><b>Discernment:</b> other people who try your picks tend to stick with them.</li>
       <li><b>Community-leading:</b> people with taste like yours adopt your picks later.</li>
       <li><b>Prescience:</b> your picks grow more than comparable ones.</li>
@@ -112,86 +142,143 @@
     </ul>
   </section>
 
-  <section id="findings">
+  <section class="wu-section" id="findings">
     <h2>What we found</h2>
-    <p>All four kinds of taste are real to some degree. Each dot below is how well earlier taste scores predicted later results for
-      one measure, on the hidden half of listeners. Zero would mean no prediction at all. Bars show the range we're 95% sure of.</p>
+    <p>All four kinds of taste are real to some degree. Each dot is how well earlier taste scores predicted later results for one measure,
+      on the hidden half of listeners. Zero would mean no prediction at all. Bars show the range we're 95% sure of, and hollow dots show what
+      the first half had suggested.</p>
     <div class="wu-card">
       <div class="wu-legend" id="res-legend"></div>
       <div class="wu-chart dash-skeleton" id="res-chart" data-source="results"></div>
     </div>
     <ul>
       <li><b>Taste shows most in songs</b>, less in artists, and least in which scenes people move into.</li>
-      <li><b>Discernment and community-leading are the strongest kinds.</b> Spotting what others will love, and what your own crowd
-        will pick up next, is the clearest skill.</li>
-      <li><b>"Still big in 2026" barely counts as taste for artists.</b> Most of it is explained by simply liking popular music.</li>
-      <li>The effect is moderate, not huge. Good taste tilts the odds; it doesn't make someone a prophet.</li>
+      <li><b>Discernment and community-leading are the strongest kinds.</b> Spotting what others will love, and what your own crowd will
+        pick up next, is the clearest skill.</li>
+      <li><b>For artists and scenes, "still big in 2026" barely counts as taste.</b> Most of it is explained by simply liking popular music.
+        For songs it does better.</li>
     </ul>
   </section>
 
-  <section id="sure">
-    <h2>How sure we are</h2>
-    <p><b>We hid half the listeners.</b> All the exploring, adjusting and fixing happened on one half. Before looking at the other
-      half, we wrote down exactly what we would test and what would count as passing, and saved that record. Then we ran it once.
-      Every measure passed, and for <span class="wu-num dash-skeleton" data-source="summary" data-field="replicated_text" data-row="0" data-fmt="text">—</span>
-      the strength matched what we had seen before (hollow dots in the chart above).</p>
-    <p><b>We checked the obvious explanations.</b> Every score already excludes listening volume, exploring a lot, liking
-      mainstream music, how long someone used Last.fm and data quality. The table shows what happens if we also stop correcting for
-      one more explanation. Big jumps mean that explanation mattered, and it's corrected for in every result above.</p>
-    <div class="wu-card">
-      <h3>Is it just…?</h3>
-      <p class="wu-note">Prediction strength with the correction, and without it (half used for exploring).</p>
-      <div class="wu-tablewrap">
-        <table id="jx-table" data-source="justx" data-row-key="model,check">
-          <thead><tr><th data-field="check">Explanation</th><th data-field="model">Measure</th>
-            <th class="wu-r" data-field="with_check">With correction</th><th class="wu-r" data-field="without_check">Without</th></tr></thead>
-          <tbody></tbody>
-        </table>
+  <section class="wu-section" id="more">
+    <h2>A few more things we learned</h2>
+    <div class="wu-grid2">
+      <div class="wu-card">
+        <h3>Taste predicts the near future best</h3>
+        <p class="wu-note">Prediction strength when bets are judged over 6, 12, or 24 months (first half). Shorter windows predict better for
+          every measure. Part of that is simply that 6-month results are measured closer in time.</p>
+        <div class="wu-legend" id="win-legend"></div>
+        <div class="wu-chart dash-skeleton" id="win-chart" data-source="more"></div>
+      </div>
+      <div class="wu-card">
+        <h3>The kinds of taste overlap, partly</h3>
+        <p class="wu-note">How closely people's scores on two kinds of taste go together, at the artist level (0 = unrelated, 1 = identical).
+          Discernment and prescience go together most; durability is nearly separate.</p>
+        <div class="wu-chart dash-skeleton" id="ov-chart" data-source="overlap"></div>
       </div>
     </div>
-    <p>Being part of a scene that grew is the biggest one: liking indie folk just before indie folk took off makes someone look prescient
-      without them choosing well within it. We count only picking well relative to others in the same scene, and measure scene-picking
-      separately (the "scenes" rows above).</p>
+    <div class="wu-card">
+      <h3>One person's score is fuzzy</h3>
+      <p>Taste scores are reliable for groups but noisy for individuals. Someone who scores at the 75th percentile for discernment on songs
+        could really be anywhere from about the
+        <span class="wu-num dash-skeleton" data-source="results" data-field="pctl75_lo" data-where="key=D_song" data-fmt="int">—</span>th to the
+        <span class="wu-num" data-source="results" data-field="pctl75_hi" data-where="key=D_song" data-fmt="int">—</span>th (80% range). A
+        future website should show a range, not a single number.</p>
+    </div>
   </section>
 
-  <section id="limits">
+  <section class="wu-section" id="sure">
+    <h2>How sure we are</h2>
+    <p><b>We hid half the listeners.</b> All the exploring, adjusting, and fixing happened on one half. Before looking at the other half, we
+      wrote down exactly what we would test and what would count as passing, and saved that record. Then we ran it once. Every measure passed,
+      and for <span class="wu-num dash-skeleton" data-source="summary" data-field="replicated_text" data-row="0" data-fmt="text">—</span> the
+      strength matched what the first half had shown.</p>
+    <p><b>We checked the obvious explanations.</b> Every score already excludes listening volume, exploring a lot, liking mainstream music,
+      how long someone used Last.fm, how loyal they are to music in general, and data quality. The grid shows what happens if we also stop
+      correcting for one more explanation (first half). Bigger numbers mean that explanation was inflating the score; every result above
+      corrects for all of them.</p>
+    <div class="wu-card">
+      <h3>Is it just…?</h3>
+      <div class="wu-tablewrap">
+        <table id="jx-grid" data-source="justx"><thead></thead><tbody></tbody></table>
+      </div>
+      <p class="wu-note">A dash means the explanation doesn't apply to that measure (for example, scenes have no "scene that grew" check
+        because the scene is the thing being picked).</p>
+    </div>
+  </section>
+
+  <section class="wu-section" id="limits">
     <h2>What this can't tell us</h2>
     <ul>
-      <li><b>Influence versus foresight.</b> Someone who shares music with friends partly causes the growth they get credit for.
-        The data has no friendships, so we can't separate the two.</li>
-      <li><b>Who these listeners are.</b> Last.fm users who were still active in 2012–13 lean towards indie and rock, and are keener
-        than the average listener.</li>
-      <li><b>The era.</b> This is mostly before algorithmic playlists. Whether taste works the same way when an algorithm suggests
-        your next song is open.</li>
+      <li><b>Influence versus foresight.</b> Someone who shares music with friends partly causes the growth they get credit for. The data
+        has no friendships, so we can't separate the two.</li>
+      <li><b>Who these listeners are.</b> Last.fm users who were still active in 2012–13 lean towards indie and rock, and are keener than
+        the average listener.</li>
+      <li><b>The era.</b> This is mostly before algorithmic playlists. Whether taste works the same way when an algorithm suggests your next
+        song is open.</li>
+      <li><b>Two weak results.</b> Community-leading for scenes came in lower on the hidden half than the first half suggested, and durability
+        for scenes only barely passed.</li>
     </ul>
   </section>
 
-  <section id="next">
+  <section class="wu-section" id="next">
     <h2>What's next</h2>
-    <p>Repeating the analysis on ListenBrainz (2015–2026) to see whether taste holds in the streaming-algorithm era, and looking at
-      what predicts good taste. If it holds up, a site that scores someone's own listening history becomes possible, with an honest
-      range rather than a single number.</p>
+    <p>Repeating the analysis on ListenBrainz (2015–2026) to see whether taste holds in the streaming-algorithm era, and looking at what
+      predicts good taste. If it holds up, a site that scores someone's own listening history becomes possible, with an honest range rather
+      than a single number.</p>
   </section>
 
   <details id="appendix">
     <summary>Technical appendix</summary>
     <div class="wu-appx">
+      <div class="wu-card">
+        <h3>The four kinds of taste</h3>
+        <dl>
+          <dt>Discernment</dt>
+          <dd>For each bet, the share of other listeners who first tried the same song, artist, or scene in the following 12 months and then
+            stuck with it (songs: at least 4 plays over at least 3 weeks; artists: listened in 4 separate weeks within 26 weeks; scenes: kept
+            listening in at least 3 of the 6 months starting 3 months after entering). Compared with bets on items with the same prior record of
+            keeping new listeners.</dd>
+          <dt>Community-leading</dt>
+          <dd>For each bet, the share of the listener's taste community (listeners whose favorite scene over the previous year matches theirs)
+            who adopted the same item in the following 12 months. Compared with bets on items equally popular within that community beforehand,
+            and adjusted for how much that community adopted overall that month.</dd>
+          <dt>Prescience</dt>
+          <dd>For each bet, the growth in how many listeners played the item over the next 12 months (log ratio), counted within a fixed panel of
+            listeners active at both ends, excluding the bettor. Songs use new listeners in the six months before and after. Compared with bets
+            on items equally popular at the time.</dd>
+          <dt>Durability</dt>
+          <dd>For each bet, how many ListenBrainz users listen to the item in 2026 (log), compared with bets on items equally popular at the
+            time.</dd>
+        </dl>
+      </div>
+      <div class="wu-card">
+        <h3>Songs, artists, and scenes</h3>
+        <dl>
+          <dt>Artists</dt>
+          <dd>A bet is a listener's first committed adoption of an artist: listened in at least 4 separate weeks, the 4th within 26 weeks of
+            the first play, after the listener's first 26 weeks on Last.fm. Dated at the 4th week.</dd>
+          <dt>Songs</dt>
+          <dd>The same rule applied to single songs, for the 1/8 of listeners with week-by-week detail. Songs by one artist adopted in the same
+            month count as one bet, so an album isn't counted many times over.</dd>
+          <dt>Scenes</dt>
+          <dd>Groups of artists that the same people listen to, rebuilt each year from earlier listening only (200 scenes). A bet is entering a
+            scene new to the listener: their first committed artist there, with under 5% of their listening in it over the previous year.</dd>
+        </dl>
+      </div>
       <div>
-        <h3>Definitions</h3>
+        <h3>Method details</h3>
         <ul>
           <li>Data: MLHD+ (Last.fm scrobbles,
             <span class="wu-num" data-source="facts" data-field="listeners" data-row="0" data-fmt="int">—</span> listeners,
             <span class="wu-num" data-source="facts" data-field="listens_billion" data-row="0" data-fmt="text">—</span> billion listens),
             split at random by listener into an explore half and a hidden (sealed) half.</li>
-          <li>Bet: first committed adoption (4 distinct listening weeks within 26 weeks) after a 26-week onboarding period, dated at
-            commitment. Song bets come from the 1/8 of listeners with full listening detail; songs by one artist adopted in the same month
-            count as one bet. Scene bets: entering a scene new to the listener.</li>
-          <li>Comparison: other listeners' bets in the same month and popularity group (fixed panel, the listener excluded), adjusted for
-            scene, artist or song age, prior growth, country and release timing.</li>
-          <li>Headline: rank correlation between a listener's score up to a cutoff year and their score from bets made two or more years
-            later, after removing what impostor traits (measured up to the cutoff) explain.</li>
-          <li>Confirmation (fixed before the hidden half was analysed): Holm-corrected one-sided test within each family (discernment;
-            the other nine) at 5%, and 3-year stability above zero.</li>
+          <li>Every comparison is with other listeners' bets in the same month and popularity group, adjusted for scene, item age, prior
+            growth, country, and release timing.</li>
+          <li>Prediction strength: rank correlation between a listener's score up to a cutoff year and their score from bets made two or more
+            years later, after removing what impostor traits (measured up to the cutoff) explain.</li>
+          <li>Passing (fixed before the hidden half was analysed): Holm-corrected one-sided test within each family (discernment; the other
+            nine) at 5%, and 3-year stability above zero.</li>
         </ul>
       </div>
       <div class="wu-card">
@@ -201,28 +288,28 @@
             <thead><tr>
               <th data-field="model">Kind</th><th data-field="level">Level</th>
               <th class="wu-r" data-field="sealed">Hidden half</th><th class="wu-r" data-field="sealed_lo">95% low</th>
-              <th class="wu-r" data-field="sealed_hi">95% high</th><th class="wu-r" data-field="explore">Explore half</th>
+              <th class="wu-r" data-field="sealed_hi">95% high</th><th class="wu-r" data-field="explore">First half</th>
               <th class="wu-r" data-field="repeat_top20">Top fifth stays</th><th class="wu-r" data-field="stability_3y">3-year stability</th>
               <th class="wu-r" data-field="reliability">Reliability</th><th class="wu-r" data-field="impostor_share">Impostor share</th>
-              <th class="wu-r" data-field="people">Listeners</th><th data-field="confirmed">Confirmed</th>
+              <th class="wu-r" data-field="people">Listeners</th><th data-field="confirmed">Passed</th>
             </tr></thead>
             <tbody></tbody>
           </table>
         </div>
         <p class="wu-note">Durability for scenes passes the pre-set one-sided test only barely; its two-sided 95% range includes zero.
-          Community-leading for scenes came in below its explore-half range.</p>
+          Community-leading for scenes came in below its first-half range. "Top fifth stays" is before removing impostor traits.</p>
       </div>
       <div class="wu-card">
         <h3>Robustness: each measure across alternative settings</h3>
-        <p class="wu-note">Explore half. Filled dot: main settings. Each other dot changes one setting (time window, weights, popularity
-          groups, onboarding, commitment rule). Ranked outcomes suit growth measures but not discernment and community-leading, whose outcomes
-          are mostly zeros; commitment-rule variants don't apply to community-leading.</p>
+        <p class="wu-note">First half. Filled dot: main settings. Each other dot changes one setting (time window, weights, popularity groups,
+          onboarding, or commitment rule). Ranked outcomes suit growth measures but not discernment and community-leading, whose outcomes are
+          mostly zeros; commitment-rule variants don't apply to community-leading.</p>
         <div class="wu-chart dash-skeleton" id="rob-chart" data-source="robustness"></div>
       </div>
       <div class="wu-card">
         <h3>Every change to the plan</h3>
-        <p class="wu-note">From the project's revisions log. "After seeing results" marks changes made after looking at a result,
-          which is what the hidden-half test protects against.</p>
+        <p class="wu-note">From the project's revisions log. "After seeing results" marks changes made after looking at a result, which is what
+          the hidden-half test protects against.</p>
         <div class="wu-tablewrap wu-scroll">
           <table id="rev-table" data-source="revisions" data-row-key="n">
             <thead><tr><th class="wu-r" data-field="n">#</th><th data-field="date">Date</th><th data-field="change">Change</th>
@@ -239,8 +326,8 @@
 (function () {
   dash.calc('summary', {
     inputs: ['results'],
-    title: 'Measures confirmed',
-    description: 'How many of the 12 measures passed the hidden-half test.',
+    title: 'Measures passed and replicated',
+    description: 'How many of the 12 measures passed the hidden-half test, and how many matched their first-half strength.',
     fn: (results) => [{
       confirmed_text: `${results.filter((r) => r.confirmed === true || r.confirmed === 'true').length} of ${results.length}`,
       replicated_text: `${results.filter((r) => r.size_replicates === true || r.size_replicates === 'true').length} of ${results.length}`,
@@ -255,6 +342,7 @@
   const root = document.getElementById('dash-root') || document.documentElement;
   const css = (n) => getComputedStyle(root).getPropertyValue(n).trim();
   const parseWhere = (s) => s.split('&').map((kv) => kv.split('=').map(decodeURIComponent));
+  const truthy = (v) => v === true || v === 'true';
 
   function fillMarks() {
     document.querySelectorAll('.wu [data-field][data-fmt]').forEach((el) => {
@@ -288,15 +376,17 @@
       show(ev, title, lines) {
         t.replaceChildren();
         const h = document.createElement('div'); h.className = 'wu-k'; h.textContent = title; t.appendChild(h);
-        lines.forEach(([k, v]) => {
+        lines.forEach(([k, v, color]) => {
           const l = document.createElement('div');
+          if (color) { const sw = document.createElement('i'); sw.className = 'wu-sw'; sw.style.background = color; sw.style.marginRight = '6px'; l.appendChild(sw); }
           const a = document.createElement('span'); a.className = 'wu-k'; a.textContent = k + ' ';
           const b = document.createElement('span'); b.className = 'wu-num'; b.textContent = v;
           l.append(a, b); t.appendChild(l);
         });
         t.hidden = false;
         const r = box.getBoundingClientRect();
-        let x = ev.clientX - r.left + 12, y = ev.clientY - r.top + 12;
+        let x = ev.clientX - r.left + 12;
+        const y = ev.clientY - r.top + 12;
         if (x + t.offsetWidth > box.clientWidth) x = Math.max(0, ev.clientX - r.left - t.offsetWidth - 12);
         t.style.left = x + 'px'; t.style.top = y + 'px';
       },
@@ -315,103 +405,218 @@
     const lg = document.getElementById(id); lg.replaceChildren();
     items.forEach(([label, color, kind]) => {
       const s = document.createElement('span');
-      const sw = document.createElement('i'); sw.className = kind === 'dot' ? 'wu-dot' : 'wu-sw';
-      if (kind === 'hollow') { sw.className = 'wu-dot'; sw.style.border = `2px solid ${color}`; sw.style.background = 'transparent'; }
-      else sw.style.background = color;
+      const sw = document.createElement('i');
+      sw.className = kind === 'line' ? 'wu-sw' : 'wu-dot';
+      if (kind === 'hollow') { sw.style.border = `2px solid ${color}`; sw.style.background = 'transparent'; } else sw.style.background = color;
       s.append(sw, document.createTextNode(label)); lg.appendChild(s);
     });
+  }
+
+  function axisStyle(sel, fs) {
+    sel.attr('font-size', null).attr('font-family', null);
+    sel.select('.domain').remove();
+    sel.selectAll('text').attr('fill', css('--color-fg-muted')).style('font-size', fs);
   }
 
   function drawExample() {
     const el = document.getElementById('ex-chart');
     if (!ready(el, ['example'])) return;
     const rows = dash.data('example').data.map((r) => ({ ...r, date: new Date(r.month + '-01T00:00:00Z'),
-      florence: Number(r.florence), peers_median: Number(r.peers_median), peers_p90: Number(r.peers_p90),
-      bet: r.bet_month === true || r.bet_month === 'true' }));
+      florence: Number(r.florence), peers_median: Number(r.peers_median), bet: truthy(r.bet_month) }));
     const colF = dash.colors[0], colP = css('--cds-chart-muted');
     legend('ex-legend', [['Florence + the Machine', colF, 'line'], ['Typical artist with the same audience in July 2008', colP, 'line']]);
-    const width = el.clientWidth, height = 220, m = { t: 10, r: 12, b: 26, l: 40 };
-    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
     const fs = css('--cds-font-size-caption') || '12px';
+    const width = el.clientWidth, height = 240, m = { t: 26, r: 12, b: 28, l: 44 };
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
     const x = d3.scaleUtc(d3.extent(rows, (d) => d.date), [m.l, width - m.r]);
     const y = d3.scaleLinear([0, d3.max(rows, (d) => Math.max(d.florence, d.peers_median))], [height - m.b, m.t]).nice();
     svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1', m.l).attr('x2', width - m.r)
       .attr('y1', (d) => y(d)).attr('y2', (d) => y(d)).attr('stroke', css('--cds-chart-grid'));
-    const ay = svg.append('g').attr('transform', `translate(${m.l - 6},0)`).call(d3.axisLeft(y).ticks(4).tickFormat((d) => d + '%').tickSize(0))
-      .attr('font-size', null).attr('font-family', null);
-    ay.select('.domain').remove(); ay.selectAll('text').attr('fill', css('--color-fg-muted')).style('font-size', fs);
-    const ax = svg.append('g').attr('transform', `translate(0,${height - m.b + 6})`)
-      .call(d3.axisBottom(x).ticks(width < 420 ? 3 : 6).tickFormat(d3.utcFormat('%b %Y')).tickSize(0)).attr('font-size', null).attr('font-family', null);
-    ax.select('.domain').remove(); ax.selectAll('text').attr('fill', css('--color-fg-muted')).style('font-size', fs);
+    axisStyle(svg.append('g').attr('transform', `translate(${m.l - 6},0)`).call(d3.axisLeft(y).ticks(4).tickFormat((d) => d + '%').tickSize(0)), fs);
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`)
+      .call(d3.axisBottom(x).ticks(width < 420 ? 3 : 6).tickFormat(d3.utcFormat('%b %Y')).tickSize(0)), fs);
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs)
+      .text('Share of listeners who played the artist that month');
     const bet = rows.find((d) => d.bet);
     if (bet) {
       svg.append('line').attr('x1', x(bet.date)).attr('x2', x(bet.date)).attr('y1', m.t).attr('y2', height - m.b)
         .attr('stroke', css('--cds-chart-reference')).attr('stroke-dasharray', '4 3');
-      svg.append('text').attr('x', x(bet.date) + 6).attr('y', m.t + 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('The bet');
+      svg.append('text').attr('x', x(bet.date) + 6).attr('y', m.t + 12).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('The bet');
     }
     const line = (key) => d3.line().x((d) => x(d.date)).y((d) => y(d[key]));
-    svg.append('path').datum(rows).attr('d', line('peers_median')).attr('fill', 'none').attr('stroke', colP).attr('stroke-width', 2)
-      .attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round');
-    svg.append('path').datum(rows).attr('d', line('florence')).attr('fill', 'none').attr('stroke', colF).attr('stroke-width', 2)
-      .attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round');
+    [['peers_median', colP], ['florence', colF]].forEach(([k, c]) => svg.append('path').datum(rows).attr('d', line(k))
+      .attr('fill', 'none').attr('stroke', c).attr('stroke-width', 2).attr('stroke-linejoin', 'round').attr('stroke-linecap', 'round'));
     const tip = tooltip(el);
     const fmtM = d3.utcFormat('%B %Y');
-    const hover = svg.append('g');
+    const hover = svg.append('g').style('pointer-events', 'none');
     svg.append('rect').attr('x', m.l).attr('y', m.t).attr('width', width - m.l - m.r).attr('height', height - m.t - m.b)
       .attr('fill', 'transparent')
       .on('mousemove', (ev) => {
         const xm = d3.pointer(ev)[0];
         const d = rows[d3.minIndex(rows, (r) => Math.abs(x(r.date) - xm))];
-        hover.replaceChildren();
+        hover.selectAll('*').remove();
         hover.append('line').attr('x1', x(d.date)).attr('x2', x(d.date)).attr('y1', m.t).attr('y2', height - m.b).attr('stroke', css('--cds-chart-axis'));
         hover.append('circle').attr('cx', x(d.date)).attr('cy', y(d.florence)).attr('r', 4).attr('fill', colF);
         hover.append('circle').attr('cx', x(d.date)).attr('cy', y(d.peers_median)).attr('r', 4).attr('fill', colP);
-        tip.show(ev, fmtM(d.date), [['Florence', d.florence.toFixed(2) + '%'], ['Typical', d.peers_median.toFixed(2) + '%']]);
+        tip.show(ev, fmtM(d.date), [['Florence', d.florence.toFixed(2) + '%', colF], ['Typical artist', d.peers_median.toFixed(2) + '%', colP]]);
       })
-      .on('mouseleave', () => { hover.replaceChildren(); tip.hide(); });
+      .on('mouseleave', () => { hover.selectAll('*').remove(); tip.hide(); });
+  }
+
+  function dotRows(el, groups, opts) {
+    // groups: [[groupLabel, [{label, value, lo, hi, ghost, tip:[...]}, ...]], ...]
+    const fs = css('--cds-font-size-caption') || '12px';
+    const width = el.clientWidth;
+    const svg = d3.select(el).append('svg').attr('width', '100%');
+    const all = groups.flatMap(([, rs]) => rs);
+    const left = Math.min(textWidth(svg, all.map((r) => r.label), fs) + (opts.indent || 0) + 12, width * 0.45);
+    const rowH = 22, headH = opts.heads ? 26 : 0, top = 4, bottom = 26, right = 16;
+    const height = top + groups.length * headH + all.length * rowH + bottom;
+    svg.attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
+    const lo = d3.min(all, (r) => Math.min(r.value, r.lo ?? r.value, r.ghost ?? r.value));
+    const hi = d3.max(all, (r) => Math.max(r.value, r.hi ?? r.value, r.ghost ?? r.value));
+    const x = d3.scaleLinear([Math.min(0, lo), hi * 1.05], [left, width - right]).nice();
+    const nt = Math.max(2, Math.floor((width - left) / 70));
+    svg.append('g').selectAll('line').data(x.ticks(nt)).join('line').attr('x1', (d) => x(d)).attr('x2', (d) => x(d))
+      .attr('y1', top).attr('y2', height - bottom).attr('stroke', (d) => (d === 0 ? css('--cds-chart-axis') : css('--cds-chart-grid')));
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - bottom + 6})`)
+      .call(d3.axisBottom(x).ticks(nt).tickFormat(d3.format('.2f')).tickSize(0)), fs);
+    const tip = tooltip(el);
+    let y = top;
+    groups.forEach(([g, rs]) => {
+      if (opts.heads) {
+        svg.append('text').attr('x', 0).attr('y', y + headH - 8).attr('fill', css('--color-fg')).style('font-size', fs)
+          .style('font-weight', css('--cds-font-weight-medium')).text(g);
+        y += headH;
+      }
+      rs.forEach((r) => {
+        const cy = y + rowH / 2;
+        svg.append('text').attr('x', opts.indent || 0).attr('y', cy).attr('dy', '0.35em').attr('fill', css('--color-fg-muted')).style('font-size', fs).text(r.label);
+        if (r.lo !== undefined) svg.append('line').attr('x1', x(r.lo)).attr('x2', x(r.hi)).attr('y1', cy).attr('y2', cy)
+          .attr('stroke', r.color).attr('stroke-width', 2).attr('stroke-linecap', 'round');
+        if (r.ghost !== undefined) svg.append('circle').attr('cx', x(r.ghost)).attr('cy', cy).attr('r', 5)
+          .attr('fill', css('--color-panel')).attr('stroke', r.color).attr('stroke-width', 1.5).attr('opacity', 0.8);
+        svg.append('circle').attr('cx', x(r.value)).attr('cy', cy).attr('r', r.r || 4.5).attr('fill', r.color);
+        svg.append('rect').attr('x', 0).attr('y', y).attr('width', width).attr('height', rowH).attr('fill', 'transparent')
+          .on('mousemove', (ev) => tip.show(ev, r.tipTitle || r.label, r.tip)).on('mouseleave', () => tip.hide());
+        y += rowH;
+      });
+    });
   }
 
   function drawResults() {
     const el = document.getElementById('res-chart');
     if (!ready(el, ['results'])) return;
-    const rows = dash.data('results').data.map((r) => ({ ...r, sealed: +r.sealed, sealed_lo: +r.sealed_lo, sealed_hi: +r.sealed_hi, explore: +r.explore }));
     const col = dash.colors[0];
-    legend('res-legend', [['Hidden half (the test)', col, 'dot'], ['Explore half', col, 'hollow']]);
-    const groups = d3.groups(rows, (r) => r.model);
+    legend('res-legend', [['Hidden half (the test)', col, 'dot'], ['First half', col, 'hollow']]);
+    const rows = dash.data('results').data;
+    const groups = d3.groups(rows, (r) => r.model).map(([g, rs]) => [g, rs.map((r) => ({
+      label: r.level, value: +r.sealed, lo: +r.sealed_lo, hi: +r.sealed_hi, ghost: +r.explore, color: col,
+      tipTitle: `${r.model}, ${r.level.toLowerCase()}`,
+      tip: [['Hidden half', `${fmt.f2(+r.sealed)} (${fmt.f2(+r.sealed_lo)} to ${fmt.f2(+r.sealed_hi)})`], ['First half', fmt.f2(+r.explore)],
+        ['Top fifth stays top fifth', fmt.pct(+r.repeat_top20)], ['Listeners', fmt.int(+r.people)]],
+    }))]);
+    dotRows(el, groups, { heads: true, indent: 12 });
+  }
+
+  function drawWindows() {
+    const el = document.getElementById('win-chart');
+    if (!ready(el, ['more'])) return;
+    const rows = dash.data('more').data.filter((r) => r.finding === 'window' && r.level !== 'Scenes');
+    const cols = { '6 months': dash.colors[0], '12 months': dash.colors[1], '24 months': dash.colors[2] };
+    legend('win-legend', Object.entries(cols).map(([k, c]) => [k, c, 'dot']));
+    const byModel = d3.groups(rows, (r) => r.model);  // one row per measure, all three windows on it
+    const fs = css('--cds-font-size-caption') || '12px';
     const width = el.clientWidth;
     const svg = d3.select(el).append('svg').attr('width', '100%');
-    const fs = css('--cds-font-size-caption') || '12px';
-    const left = Math.min(textWidth(svg, rows.map((r) => r.level), fs) + 28, width * 0.4);
-    const rowH = 22, headH = 26, top = 4, bottom = 26, right = 16;
-    const height = top + groups.length * headH + rows.length * rowH + bottom;
+    const left = Math.min(textWidth(svg, byModel.map(([m]) => m), fs) + 12, width * 0.5);
+    const rowH = 22, top = 4, bottom = 26, right = 12;
+    const height = top + byModel.length * rowH + bottom;
     svg.attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
-    const x = d3.scaleLinear([Math.min(0, d3.min(rows, (r) => r.sealed_lo)), d3.max(rows, (r) => Math.max(r.sealed_hi, r.explore)) * 1.05], [left, width - right]).nice();
-    const nt = Math.max(2, Math.floor((width - left) / 70));
+    const x = d3.scaleLinear([0, d3.max(rows, (r) => +r.value) * 1.05], [left, width - right]).nice();
+    const nt = Math.max(2, Math.floor((width - left) / 60));
     svg.append('g').selectAll('line').data(x.ticks(nt)).join('line').attr('x1', (d) => x(d)).attr('x2', (d) => x(d))
-      .attr('y1', top).attr('y2', height - bottom).attr('stroke', (d) => (d === 0 ? css('--cds-chart-axis') : css('--cds-chart-grid')));
-    const ax = svg.append('g').attr('transform', `translate(0,${height - bottom + 6})`).call(d3.axisBottom(x).ticks(nt).tickFormat(d3.format('.2f')).tickSize(0))
-      .attr('font-size', null).attr('font-family', null);
-    ax.select('.domain').remove(); ax.selectAll('text').attr('fill', css('--color-fg-muted')).style('font-size', fs);
+      .attr('y1', top).attr('y2', height - bottom).attr('stroke', css('--cds-chart-grid'));
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - bottom + 6})`)
+      .call(d3.axisBottom(x).ticks(nt).tickFormat(d3.format('.2f')).tickSize(0)), fs);
     const tip = tooltip(el);
-    let y = top;
-    groups.forEach(([model, rs]) => {
-      svg.append('text').attr('x', 0).attr('y', y + headH - 8).attr('fill', css('--color-fg')).style('font-size', fs)
-        .style('font-weight', css('--cds-font-weight-medium')).text(model);
-      y += headH;
-      rs.forEach((r) => {
-        const cy = y + rowH / 2;
-        svg.append('text').attr('x', 12).attr('y', cy).attr('dy', '0.35em').attr('fill', css('--color-fg-muted')).style('font-size', fs).text(r.level);
-        svg.append('line').attr('x1', x(r.sealed_lo)).attr('x2', x(r.sealed_hi)).attr('y1', cy).attr('y2', cy).attr('stroke', col).attr('stroke-width', 2).attr('stroke-linecap', 'round');
-        svg.append('circle').attr('cx', x(r.explore)).attr('cy', cy).attr('r', 5).attr('fill', css('--color-panel')).attr('stroke', col).attr('stroke-width', 1.5).attr('opacity', 0.8);
-        svg.append('circle').attr('cx', x(r.sealed)).attr('cy', cy).attr('r', 4.5).attr('fill', col);
-        svg.append('rect').attr('x', 0).attr('y', y).attr('width', width).attr('height', rowH).attr('fill', 'transparent')
-          .on('mousemove', (ev) => tip.show(ev, `${r.model}, ${r.level.toLowerCase()}`, [
-            ['Hidden half', `${fmt.f2(r.sealed)} (${fmt.f2(r.sealed_lo)} to ${fmt.f2(r.sealed_hi)})`],
-            ['Explore half', fmt.f2(r.explore)], ['Top fifth stays top fifth', fmt.pct(+r.repeat_top20)],
-            ['Listeners', fmt.int(+r.people)]]))
-          .on('mouseleave', () => tip.hide());
-        y += rowH;
+    byModel.forEach(([mdl, rs], i) => {
+      const cy = top + i * rowH + rowH / 2;
+      svg.append('text').attr('x', left - 8).attr('y', cy).attr('dy', '0.35em').attr('text-anchor', 'end').attr('fill', css('--color-fg-muted')).style('font-size', fs).text(mdl);
+      const ext = d3.extent(rs, (r) => +r.value);
+      svg.append('line').attr('x1', x(ext[0])).attr('x2', x(ext[1])).attr('y1', cy).attr('y2', cy).attr('stroke', css('--cds-chart-grid')).attr('stroke-width', 2);
+      rs.forEach((r) => svg.append('circle').attr('cx', x(+r.value)).attr('cy', cy).attr('r', 4.5).attr('fill', cols[r.window])
+        .attr('stroke', css('--color-panel')).attr('stroke-width', 2));
+      svg.append('rect').attr('x', 0).attr('y', cy - rowH / 2).attr('width', width).attr('height', rowH).attr('fill', 'transparent')
+        .on('mousemove', (ev) => tip.show(ev, mdl, rs.map((q) => [q.window, fmt.f2(+q.value), cols[q.window]]))).on('mouseleave', () => tip.hide());
+    });
+  }
+
+  function drawOverlap() {
+    const el = document.getElementById('ov-chart');
+    if (!ready(el, ['overlap'])) return;
+    const rows = dash.data('overlap').data.filter((r) => r.level === 'Artists');
+    const names = [...new Set(rows.map((r) => r.a))];
+    const fs = css('--cds-font-size-caption') || '12px';
+    const width = el.clientWidth;
+    const svg = d3.select(el).append('svg').attr('width', '100%');
+    const left = textWidth(svg, names, fs) + 10;
+    const n = names.length, cell = Math.max(34, Math.min(64, (width - left) / n)), top = 24;
+    const height = top + n * cell + 4;
+    svg.attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
+    const tip = tooltip(el);
+    const short = { 'Discernment': 'Disc.', 'Community-leading': 'Comm.', 'Prescience': 'Presc.', 'Durability': 'Dur.' };
+    names.forEach((b, j) => svg.append('text').attr('x', left + j * cell + cell / 2).attr('y', top - 8).attr('text-anchor', 'middle')
+      .attr('fill', css('--color-fg-muted')).style('font-size', fs).text(short[b] || b));
+    names.forEach((a, i) => {
+      svg.append('text').attr('x', left - 8).attr('y', top + i * cell + cell / 2).attr('dy', '0.35em').attr('text-anchor', 'end')
+        .attr('fill', css('--color-fg')).style('font-size', fs).text(a);
+      names.forEach((b, j) => {
+        const r = rows.find((q) => q.a === a && q.b === b);
+        const diag = i === j;
+        svg.append('rect').attr('x', left + j * cell + 1).attr('y', top + i * cell + 1).attr('width', cell - 2).attr('height', cell - 2).attr('rx', 4)
+          .attr('fill', diag ? css('--cds-chart-grid') : dash.colors[0]).attr('fill-opacity', diag ? 1 : Math.min(1, 0.1 + Math.abs(+r.r) * 1.4))
+          .on('mousemove', (ev) => tip.show(ev, `${a} and ${b}`, [['Overlap', fmt.f2(+r.r)]])).on('mouseleave', () => tip.hide());
+        if (!diag) svg.append('text').attr('x', left + j * cell + cell / 2).attr('y', top + i * cell + cell / 2).attr('dy', '0.35em')
+          .attr('text-anchor', 'middle').attr('fill', css('--color-fg')).style('font-size', fs).style('pointer-events', 'none').text(fmt.f2(+r.r));
       });
+    });
+  }
+
+  function drawGrid() {
+    const tbl = document.getElementById('jx-grid');
+    const thead = tbl.querySelector('thead'), tbody = tbl.querySelector('tbody');
+    thead.replaceChildren(); tbody.replaceChildren();
+    const d = dash.data('justx'); if (d.status !== 'ok') return;
+    const COLS = [['With every correction', 'With every correction'], ['Being in a scene that grew', 'A scene that grew'],
+      ['Following trends (credit from the first listen)', 'Following trends'], ['Picking what was already rising', 'Already rising'],
+      ['Following new releases', 'New releases'], ['Hearing about albums before release', 'Album timing'],
+      ['Being early to local acts', 'Local acts'], ['All of the above at once', 'All of the above at once']];
+    const hr = document.createElement('tr');
+    const th0 = document.createElement('th'); th0.textContent = 'Measure'; hr.appendChild(th0);
+    COLS.forEach(([check, label]) => {
+      const th = document.createElement('th'); th.className = 'wu-r'; th.textContent = label;
+      if (check === 'All of the above at once') th.classList.add('wu-strong');
+      hr.appendChild(th);
+    });
+    thead.appendChild(hr);
+    const models = [...new Set(d.data.map((r) => r.model))];
+    models.forEach((mdl) => {
+      const tr = document.createElement('tr');
+      const td0 = document.createElement('td'); td0.textContent = mdl; tr.appendChild(td0);
+      COLS.forEach(([check]) => {
+        const r = d.data.find((q) => q.model === mdl && q.check === check);
+        const td = document.createElement('td');
+        if (r) {
+          td.className = 'wu-r';
+          td.dataset.source = 'justx'; td.dataset.field = 'value';
+          td.dataset.where = `model=${encodeURIComponent(mdl)}&check=${encodeURIComponent(check)}`;
+          td.textContent = fmt.f2(+r.value);
+          if (check === 'All of the above at once') td.classList.add('wu-strong');
+        } else { td.className = 'wu-na'; td.textContent = '–'; }
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
     });
   }
 
@@ -423,8 +628,7 @@
       if (keyField) tr.dataset.key = String(r[keyField]);
       cols.forEach(([field, f, cls]) => {
         const td = document.createElement('td'); if (cls) td.className = cls;
-        const v = r[field];
-        td.textContent = f ? f(v) : String(v);
+        td.textContent = f ? f(r[field]) : String(r[field]);
         tr.appendChild(td);
       });
       tb.appendChild(tr);
@@ -434,11 +638,11 @@
   function drawRobustness() {
     const el = document.getElementById('rob-chart');
     if (!ready(el, ['robustness'])) return;
-    const rows = dash.data('robustness').data.map((r) => ({ ...r, headline: +r.headline, main: r.is_main === true || r.is_main === 'true' }));
+    const rows = dash.data('robustness').data.map((r) => ({ ...r, headline: +r.headline, main: truthy(r.is_main) }));
     const models = [...new Set(rows.map((r) => r.model))];
+    const fs = css('--cds-font-size-caption') || '12px';
     const width = el.clientWidth;
     const svg = d3.select(el).append('svg').attr('width', '100%');
-    const fs = css('--cds-font-size-caption') || '12px';
     const left = Math.min(textWidth(svg, models, fs) + 12, width * 0.45);
     const rowH = 22, top = 4, bottom = 26, right = 12;
     const height = top + models.length * rowH + bottom;
@@ -447,9 +651,8 @@
     const nt = Math.max(2, Math.floor((width - left) / 70));
     svg.append('g').selectAll('line').data(x.ticks(nt)).join('line').attr('x1', (d) => x(d)).attr('x2', (d) => x(d))
       .attr('y1', top).attr('y2', height - bottom).attr('stroke', (d) => (d === 0 ? css('--cds-chart-axis') : css('--cds-chart-grid')));
-    const ax = svg.append('g').attr('transform', `translate(0,${height - bottom + 6})`).call(d3.axisBottom(x).ticks(nt).tickFormat(d3.format('.2f')).tickSize(0))
-      .attr('font-size', null).attr('font-family', null);
-    ax.select('.domain').remove(); ax.selectAll('text').attr('fill', css('--color-fg-muted')).style('font-size', fs);
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - bottom + 6})`)
+      .call(d3.axisBottom(x).ticks(nt).tickFormat(d3.format('.2f')).tickSize(0)), fs);
     const tip = tooltip(el);
     models.forEach((mdl, i) => {
       const cy = top + i * rowH + rowH / 2;
@@ -466,12 +669,14 @@
     fillMarks();
     drawExample();
     drawResults();
-    fillTable('jx-table', 'justx', [['check'], ['model'], ['with_check', fmt.f2, 'wu-r'], ['without_check', fmt.f2, 'wu-r']]);
+    drawWindows();
+    drawOverlap();
+    drawGrid();
     fillTable('res-table', 'results', [['model'], ['level'], ['sealed', fmt.f3, 'wu-r'], ['sealed_lo', fmt.f3, 'wu-r'], ['sealed_hi', fmt.f3, 'wu-r'],
       ['explore', fmt.f3, 'wu-r'], ['repeat_top20', fmt.pct, 'wu-r'], ['stability_3y', fmt.f2, 'wu-r'], ['reliability', fmt.f2, 'wu-r'],
-      ['impostor_share', fmt.pct, 'wu-r'], ['people', fmt.int, 'wu-r'], ['confirmed', (v) => (v === true || v === 'true' ? 'Yes' : 'No')]], 'key');
+      ['impostor_share', fmt.pct, 'wu-r'], ['people', fmt.int, 'wu-r'], ['confirmed', (v) => (truthy(v) ? 'Yes' : 'No')]], 'key');
     drawRobustness();
-    fillTable('rev-table', 'revisions', [['n', String, 'wu-r'], ['date'], ['change'], ['why'], ['after_seeing_results', (v) => (v === 'yes' ? 'Yes' : 'No')]]);
+    fillTable('rev-table', 'revisions', [['n', String, 'wu-r'], ['date'], ['change'], ['why'], ['after_seeing_results', (v) => (v === 'yes' ? 'Yes' : 'No')]], 'n');
   });
 })();
 </script>

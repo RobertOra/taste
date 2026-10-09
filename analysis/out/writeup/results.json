@@ -17,7 +17,9 @@
 "impostor_share": 0.099,
 "people": 31611,
 "confirmed": true,
-"size_replicates": true
+"size_replicates": true,
+"pctl75_lo": 31,
+"pctl75_hi": 92
 },
 {
 "key": "D_artist",
@@ -37,7 +39,9 @@
 "impostor_share": 0.051,
 "people": 239699,
 "confirmed": true,
-"size_replicates": true
+"size_replicates": true,
+"pctl75_lo": 25,
+"pctl75_hi": 92
 },
 {
 "key": "D_scene",
@@ -57,7 +61,9 @@
 "impostor_share": 0.08,
 "people": 177112,
 "confirmed": true,
-"size_replicates": true
+"size_replicates": true,
+"pctl75_lo": 24,
+"pctl75_hi": 93
 },
 {
 "key": "B_song",
@@ -77,7 +83,9 @@
 "impostor_share": 0.166,
 "people": 30883,
 "confirmed": true,
-"size_replicates": true
+"size_replicates": true,
+"pctl75_lo": 47,
+"pctl75_hi": 89
 },
 {
 "key": "B_artist",
@@ -97,7 +105,9 @@
 "impostor_share": 0.115,
 "people": 233311,
 "confirmed": true,
-"size_replicates": true
+"size_replicates": true,
+"pctl75_lo": 45,
+"pctl75_hi": 90
 },
 {
 "key": "B_scene",
@@ -117,7 +127,9 @@
 "impostor_share": 0.077,
 "people": 166602,
 "confirmed": true,
-"size_replicates": false
+"size_replicates": false,
+"pctl75_lo": 20,
+"pctl75_hi": 93
 },
 {
 "key": "A_song",
@@ -137,7 +149,9 @@
 "impostor_share": 0.033,
 "people": 31611,
 "confirmed": true,
-"size_replicates": true
+"size_replicates": true,
+"pctl75_lo": 29,
+"pctl75_hi": 92
 },
 {
 "key": "A_artist",
@@ -157,7 +171,9 @@
 "impostor_share": 0.013,
 "people": 239699,
 "confirmed": true,
-"size_replicates": true
+"size_replicates": true,
+"pctl75_lo": 23,
+"pctl75_hi": 93
 },
 {
 "key": "A_scene",
@@ -177,7 +193,9 @@
 "impostor_share": 0.032,
 "people": 177112,
 "confirmed": true,
-"size_replicates": true
+"size_replicates": true,
+"pctl75_lo": 17,
+"pctl75_hi": 92
 },
 {
 "key": "C_lb_song",
@@ -197,7 +215,9 @@
 "impostor_share": 0.152,
 "people": 31611,
 "confirmed": true,
-"size_replicates": true
+"size_replicates": true,
+"pctl75_lo": 32,
+"pctl75_hi": 92
 },
 {
 "key": "C_lb_artist",
@@ -217,7 +237,9 @@
 "impostor_share": 0.11,
 "people": 239699,
 "confirmed": true,
-"size_replicates": true
+"size_replicates": true,
+"pctl75_lo": 20,
+"pctl75_hi": 93
 },
 {
 "key": "C_lb_scene",
@@ -237,6 +259,8 @@
 "impostor_share": 0.078,
 "people": 177112,
 "confirmed": true,
-"size_replicates": true
+"size_replicates": true,
+"pctl75_lo": 12,
+"pctl75_hi": 92
 }
 ]

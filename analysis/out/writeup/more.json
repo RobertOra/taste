@@ -1,0 +1,314 @@
+[
+{
+"finding": "hits",
+"level": "Artists",
+"label": "Steady outperformance (all bets)",
+"value": 0.144
+},
+{
+"finding": "hits",
+"level": "Artists",
+"label": "Catching big hits only",
+"value": 0.017
+},
+{
+"finding": "hits",
+"level": "Songs",
+"label": "Steady outperformance (all bets)",
+"value": 0.219
+},
+{
+"finding": "hits",
+"level": "Songs",
+"label": "Catching big hits only",
+"value": 0.047
+},
+{
+"finding": "window",
+"level": "Songs",
+"label": "Discernment, songs: 6 months",
+"model": "Discernment, songs",
+"window": "6 months",
+"value": 0.316
+},
+{
+"finding": "window",
+"level": "Songs",
+"label": "Discernment, songs: 12 months",
+"model": "Discernment, songs",
+"window": "12 months",
+"value": 0.241
+},
+{
+"finding": "window",
+"level": "Songs",
+"label": "Discernment, songs: 24 months",
+"model": "Discernment, songs",
+"window": "24 months",
+"value": 0.18
+},
+{
+"finding": "window",
+"level": "Artists",
+"label": "Discernment, artists: 6 months",
+"model": "Discernment, artists",
+"window": "6 months",
+"value": 0.207
+},
+{
+"finding": "window",
+"level": "Artists",
+"label": "Discernment, artists: 12 months",
+"model": "Discernment, artists",
+"window": "12 months",
+"value": 0.161
+},
+{
+"finding": "window",
+"level": "Artists",
+"label": "Discernment, artists: 24 months",
+"model": "Discernment, artists",
+"window": "24 months",
+"value": 0.133
+},
+{
+"finding": "window",
+"level": "Scenes",
+"label": "Discernment, scenes: 6 months",
+"model": "Discernment, scenes",
+"window": "6 months",
+"value": 0.191
+},
+{
+"finding": "window",
+"level": "Scenes",
+"label": "Discernment, scenes: 12 months",
+"model": "Discernment, scenes",
+"window": "12 months",
+"value": 0.11
+},
+{
+"finding": "window",
+"level": "Scenes",
+"label": "Discernment, scenes: 24 months",
+"model": "Discernment, scenes",
+"window": "24 months",
+"value": 0.069
+},
+{
+"finding": "window",
+"level": "Songs",
+"label": "Community-leading, songs: 6 months",
+"model": "Community-leading, songs",
+"window": "6 months",
+"value": 0.319
+},
+{
+"finding": "window",
+"level": "Songs",
+"label": "Community-leading, songs: 12 months",
+"model": "Community-leading, songs",
+"window": "12 months",
+"value": 0.249
+},
+{
+"finding": "window",
+"level": "Songs",
+"label": "Community-leading, songs: 24 months",
+"model": "Community-leading, songs",
+"window": "24 months",
+"value": 0.187
+},
+{
+"finding": "window",
+"level": "Artists",
+"label": "Community-leading, artists: 6 months",
+"model": "Community-leading, artists",
+"window": "6 months",
+"value": 0.278
+},
+{
+"finding": "window",
+"level": "Artists",
+"label": "Community-leading, artists: 12 months",
+"model": "Community-leading, artists",
+"window": "12 months",
+"value": 0.214
+},
+{
+"finding": "window",
+"level": "Artists",
+"label": "Community-leading, artists: 24 months",
+"model": "Community-leading, artists",
+"window": "24 months",
+"value": 0.172
+},
+{
+"finding": "window",
+"level": "Scenes",
+"label": "Community-leading, scenes: 6 months",
+"model": "Community-leading, scenes",
+"window": "6 months",
+"value": 0.086
+},
+{
+"finding": "window",
+"level": "Scenes",
+"label": "Community-leading, scenes: 12 months",
+"model": "Community-leading, scenes",
+"window": "12 months",
+"value": 0.053
+},
+{
+"finding": "window",
+"level": "Scenes",
+"label": "Community-leading, scenes: 24 months",
+"model": "Community-leading, scenes",
+"window": "24 months",
+"value": 0.033
+},
+{
+"finding": "window",
+"level": "Songs",
+"label": "Prescience, songs: 6 months",
+"model": "Prescience, songs",
+"window": "6 months",
+"value": 0.27
+},
+{
+"finding": "window",
+"level": "Songs",
+"label": "Prescience, songs: 12 months",
+"model": "Prescience, songs",
+"window": "12 months",
+"value": 0.219
+},
+{
+"finding": "window",
+"level": "Songs",
+"label": "Prescience, songs: 24 months",
+"model": "Prescience, songs",
+"window": "24 months",
+"value": 0.187
+},
+{
+"finding": "window",
+"level": "Artists",
+"label": "Prescience, artists: 6 months",
+"model": "Prescience, artists",
+"window": "6 months",
+"value": 0.16
+},
+{
+"finding": "window",
+"level": "Artists",
+"label": "Prescience, artists: 12 months",
+"model": "Prescience, artists",
+"window": "12 months",
+"value": 0.144
+},
+{
+"finding": "window",
+"level": "Artists",
+"label": "Prescience, artists: 24 months",
+"model": "Prescience, artists",
+"window": "24 months",
+"value": 0.126
+},
+{
+"finding": "window",
+"level": "Scenes",
+"label": "Prescience, scenes: 6 months",
+"model": "Prescience, scenes",
+"window": "6 months",
+"value": 0.101
+},
+{
+"finding": "window",
+"level": "Scenes",
+"label": "Prescience, scenes: 12 months",
+"model": "Prescience, scenes",
+"window": "12 months",
+"value": 0.061
+},
+{
+"finding": "window",
+"level": "Scenes",
+"label": "Prescience, scenes: 24 months",
+"model": "Prescience, scenes",
+"window": "24 months",
+"value": 0.047
+},
+{
+"finding": "window",
+"level": "Songs",
+"label": "Durability, songs: 6 months",
+"model": "Durability, songs",
+"window": "6 months",
+"value": 0.253
+},
+{
+"finding": "window",
+"level": "Songs",
+"label": "Durability, songs: 12 months",
+"model": "Durability, songs",
+"window": "12 months",
+"value": 0.186
+},
+{
+"finding": "window",
+"level": "Songs",
+"label": "Durability, songs: 24 months",
+"model": "Durability, songs",
+"window": "24 months",
+"value": 0.159
+},
+{
+"finding": "window",
+"level": "Artists",
+"label": "Durability, artists: 6 months",
+"model": "Durability, artists",
+"window": "6 months",
+"value": 0.094
+},
+{
+"finding": "window",
+"level": "Artists",
+"label": "Durability, artists: 12 months",
+"model": "Durability, artists",
+"window": "12 months",
+"value": 0.066
+},
+{
+"finding": "window",
+"level": "Artists",
+"label": "Durability, artists: 24 months",
+"model": "Durability, artists",
+"window": "24 months",
+"value": 0.056
+},
+{
+"finding": "window",
+"level": "Scenes",
+"label": "Durability, scenes: 6 months",
+"model": "Durability, scenes",
+"window": "6 months",
+"value": 0.034
+},
+{
+"finding": "window",
+"level": "Scenes",
+"label": "Durability, scenes: 12 months",
+"model": "Durability, scenes",
+"window": "12 months",
+"value": 0.012
+},
+{
+"finding": "window",
+"level": "Scenes",
+"label": "Durability, scenes: 24 months",
+"model": "Durability, scenes",
+"window": "24 months",
+"value": -0.015
+}
+]
