@@ -174,6 +174,22 @@ Descriptive only: favorites (H1), the all-poor comparison (too few events), and 
 - P3a +2.0% [1.8, 2.1; 1.8]. P3b same scene +1.3% [1.2, 1.4; 1.1].
 Descriptive: favorites ratio 10x 2.11, 4x 1.89 (no sharper than all picks); 3+ good pickers' artists grew +20% vs similar.
 
+## How much taste matters (written 2026-10-09 16:32, before any sealed run of analysis/ladder.py)
+Exploratory on the explore half, tested once on the sealed half with the code committed with this section. Same growth
+definitions and "similar" comparisons as the headline section (scenes not removed). Confirmed = 99% bootstrap lower bound
+above the stated value.
+- P4a. Top 1% of pickers (earlier years): their later picks grow 10x more than twice as often as similar artists (lower
+  bound > 2). Explore: 5.22 [4.65, 5.85].
+- P4b. The ladder is steep: top 1% vs the 90-95% band, ratio of their 10x odds > 1. Explore: 2.91 [2.57, 3.31].
+- P5a. Niche artists (0-2 other rated new fans): 2 good pickers vs none, growth difference > 0. Explore: +12.6% [11.8, 13.5].
+- P5b. Each good picker adds more for niche than for crowded artists (6+ other rated new fans): slope difference > 0.
+  Explore: niche +7.3%, crowded +2.1% per picker.
+- P5c. Each good new fan adds more growth than each ordinary new fan (difference > 0). Explore: good +2.0%, ordinary +0.1%.
+Descriptive only: the fine ladder bands (top 0.5%, 0.2%, 0.1% get wide), the full crowding curves, and count vs share.
+Correction to an earlier exploratory claim (chat only, never on the page): "the count of good pickers matters, not their
+share" came from a quick check that dropped artists with poor pickers and didn't hold other fans fixed; with them held
+fixed, share also matters and the effect depends on crowding.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|
