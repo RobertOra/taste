@@ -1,0 +1,326 @@
+[
+ {
+  "family": "primary (discernment)",
+  "model": "Discernment, songs",
+  "candidate": "D_song",
+  "sealed": 0.22994754958179034,
+  "sealed_ci95": [
+   0.21913911691752155,
+   0.24254204873569118
+  ],
+  "p_one_sided": 0.0,
+  "explore": 0.2408496485595995,
+  "explore_ci95": [
+   0.22917357541894154,
+   0.2537307430455261
+  ],
+  "size_replicates": true,
+  "stability_3y": 0.4554051086595435,
+  "stability_3y_ci95": [
+   0.4192952460214269,
+   0.4862263626251408
+  ],
+  "stable": true,
+  "people": 31611,
+  "holm_threshold": 0.016666666666666666,
+  "passes_holm": true,
+  "confirmed": true
+ },
+ {
+  "family": "primary (discernment)",
+  "model": "Discernment, artists",
+  "candidate": "D_artist",
+  "sealed": 0.1633937291509267,
+  "sealed_ci95": [
+   0.15870761603744338,
+   0.16819343111781598
+  ],
+  "p_one_sided": 0.0,
+  "explore": 0.16092957750427409,
+  "explore_ci95": [
+   0.15663844582584124,
+   0.1655578960333353
+  ],
+  "size_replicates": true,
+  "stability_3y": 0.297162454802222,
+  "stability_3y_ci95": [
+   0.28340872055421956,
+   0.31752817303154046
+  ],
+  "stable": true,
+  "people": 239699,
+  "holm_threshold": 0.025,
+  "passes_holm": true,
+  "confirmed": true
+ },
+ {
+  "family": "primary (discernment)",
+  "model": "Discernment, scenes",
+  "candidate": "D_scene",
+  "sealed": 0.104493402087892,
+  "sealed_ci95": [
+   0.09768852407227263,
+   0.11218702284870002
+  ],
+  "p_one_sided": 0.0,
+  "explore": 0.11004571030347034,
+  "explore_ci95": [
+   0.10279749132421337,
+   0.11806685488255418
+  ],
+  "size_replicates": true,
+  "stability_3y": 0.20311155940343412,
+  "stability_3y_ci95": [
+   0.18353966778525183,
+   0.2250501636025499
+  ],
+  "stable": true,
+  "people": 177112,
+  "holm_threshold": 0.05,
+  "passes_holm": true,
+  "confirmed": true
+ },
+ {
+  "family": "secondary",
+  "model": "Prescience, songs",
+  "candidate": "A_song",
+  "sealed": 0.21113454493554745,
+  "sealed_ci95": [
+   0.19730566483491924,
+   0.22442163184336128
+  ],
+  "p_one_sided": 0.0,
+  "explore": 0.21939327154219254,
+  "explore_ci95": [
+   0.2064865248897599,
+   0.23027908857571044
+  ],
+  "size_replicates": true,
+  "stability_3y": 0.38934197874427695,
+  "stability_3y_ci95": [
+   0.3474418975626526,
+   0.43758638019690016
+  ],
+  "stable": true,
+  "people": 31611,
+  "holm_threshold": 0.005555555555555556,
+  "passes_holm": true,
+  "confirmed": true
+ },
+ {
+  "family": "secondary",
+  "model": "Prescience, artists",
+  "candidate": "A_artist",
+  "sealed": 0.14837397506841293,
+  "sealed_ci95": [
+   0.1442822317027616,
+   0.15425333180359765
+  ],
+  "p_one_sided": 0.0,
+  "explore": 0.1444806161643909,
+  "explore_ci95": [
+   0.14020007617104657,
+   0.15006518765150315
+  ],
+  "size_replicates": true,
+  "stability_3y": 0.2953419679176908,
+  "stability_3y_ci95": [
+   0.28002022249778036,
+   0.31522212421139023
+  ],
+  "stable": true,
+  "people": 239699,
+  "holm_threshold": 0.00625,
+  "passes_holm": true,
+  "confirmed": true
+ },
+ {
+  "family": "secondary",
+  "model": "Prescience, scenes",
+  "candidate": "A_scene",
+  "sealed": 0.06128353293823599,
+  "sealed_ci95": [
+   0.054905543719089935,
+   0.06853492711880145
+  ],
+  "p_one_sided": 0.0,
+  "explore": 0.061240782465681584,
+  "explore_ci95": [
+   0.05450665191032761,
+   0.06924815878037946
+  ],
+  "size_replicates": true,
+  "stability_3y": 0.16086938622750532,
+  "stability_3y_ci95": [
+   0.12331230512421805,
+   0.19892319564603386
+  ],
+  "stable": true,
+  "people": 177112,
+  "holm_threshold": 0.0071428571428571435,
+  "passes_holm": true,
+  "confirmed": true
+ },
+ {
+  "family": "secondary",
+  "model": "Community-leading, songs",
+  "candidate": "B_song",
+  "sealed": 0.2436803008066216,
+  "sealed_ci95": [
+   0.22995133424217198,
+   0.2569202150080543
+  ],
+  "p_one_sided": 0.0,
+  "explore": 0.24880839959093884,
+  "explore_ci95": [
+   0.236290070080106,
+   0.2618647467763758
+  ],
+  "size_replicates": true,
+  "stability_3y": 0.3287722424973622,
+  "stability_3y_ci95": [
+   0.3053032201349804,
+   0.348464520586899
+  ],
+  "stable": true,
+  "people": 30883,
+  "holm_threshold": 0.008333333333333333,
+  "passes_holm": true,
+  "confirmed": true
+ },
+ {
+  "family": "secondary",
+  "model": "Community-leading, artists",
+  "candidate": "B_artist",
+  "sealed": 0.21370839982591053,
+  "sealed_ci95": [
+   0.20882026654725555,
+   0.21851082180152054
+  ],
+  "p_one_sided": 0.0,
+  "explore": 0.21434925592798496,
+  "explore_ci95": [
+   0.20902180166108836,
+   0.21896034790732316
+  ],
+  "size_replicates": true,
+  "stability_3y": 0.2517335492106918,
+  "stability_3y_ci95": [
+   0.24414409311480184,
+   0.2602481127256193
+  ],
+  "stable": true,
+  "people": 233311,
+  "holm_threshold": 0.01,
+  "passes_holm": true,
+  "confirmed": true
+ },
+ {
+  "family": "secondary",
+  "model": "Community-leading, scenes",
+  "candidate": "B_scene",
+  "sealed": 0.03519696195078309,
+  "sealed_ci95": [
+   0.026822845456765134,
+   0.0429291175309109
+  ],
+  "p_one_sided": 0.0,
+  "explore": 0.052537160912969554,
+  "explore_ci95": [
+   0.045518078167510696,
+   0.06131813212227614
+  ],
+  "size_replicates": false,
+  "stability_3y": 0.04286110285318491,
+  "stability_3y_ci95": [
+   0.016448481558936495,
+   0.06752749433682483
+  ],
+  "stable": true,
+  "people": 166602,
+  "holm_threshold": 0.0125,
+  "passes_holm": true,
+  "confirmed": true
+ },
+ {
+  "family": "secondary",
+  "model": "Durability, songs",
+  "candidate": "C_lb_song",
+  "sealed": 0.19052128757995304,
+  "sealed_ci95": [
+   0.1786489174544487,
+   0.20345949668614763
+  ],
+  "p_one_sided": 0.0,
+  "explore": 0.18621370889526903,
+  "explore_ci95": [
+   0.17344290049525732,
+   0.19980362127168305
+  ],
+  "size_replicates": true,
+  "stability_3y": 0.36345262102854664,
+  "stability_3y_ci95": [
+   0.3181677674950545,
+   0.4039773326923599
+  ],
+  "stable": true,
+  "people": 31611,
+  "holm_threshold": 0.016666666666666666,
+  "passes_holm": true,
+  "confirmed": true
+ },
+ {
+  "family": "secondary",
+  "model": "Durability, artists",
+  "candidate": "C_lb_artist",
+  "sealed": 0.06929436247573442,
+  "sealed_ci95": [
+   0.06423850254998927,
+   0.07418562877835708
+  ],
+  "p_one_sided": 0.0,
+  "explore": 0.06625047156539386,
+  "explore_ci95": [
+   0.061731907727646654,
+   0.07108557787654872
+  ],
+  "size_replicates": true,
+  "stability_3y": 0.21551850704774164,
+  "stability_3y_ci95": [
+   0.19700239971729708,
+   0.2371380326467402
+  ],
+  "stable": true,
+  "people": 239699,
+  "holm_threshold": 0.025,
+  "passes_holm": true,
+  "confirmed": true
+ },
+ {
+  "family": "secondary",
+  "model": "Durability, scenes",
+  "candidate": "C_lb_scene",
+  "sealed": 0.005828966116729174,
+  "sealed_ci95": [
+   -0.0007358180768865008,
+   0.01306516629526509
+  ],
+  "p_one_sided": 0.048896745297724364,
+  "explore": 0.011536110649135678,
+  "explore_ci95": [
+   0.0039296262338460175,
+   0.019346954346208985
+  ],
+  "size_replicates": true,
+  "stability_3y": 0.10307887111324843,
+  "stability_3y_ci95": [
+   0.032897258221970725,
+   0.1709622783335169
+  ],
+  "stable": true,
+  "people": 177112,
+  "holm_threshold": 0.05,
+  "passes_holm": true,
+  "confirmed": true
+ }
+]

@@ -89,3 +89,25 @@ Report page: https://claude.ai/artifact/GLyaqWkJrEnJKPJNeG2zPt (source: analysis
 - C (durability, LB 2026) weak after controls (0.09).
 - Agreement: A-D 0.45, A-C 0.25, A-B 0.18, C-D -0.12; first factor 41% (chance 25%).
 Open: community-level momentum for B; music-news/release timing; influence; finer D confounds; ListenBrainz era comparison.
+
+## Sealed-half confirmation (2026-10-09, frozen plan in SPEC.md)
+Run once at 09:19-09:57 (two earlier attempts stopped before producing any sealed result: a too-strict
+reproducibility check, then an out-of-scratch-space failure in the community-popularity step).
+**All 12 candidates confirmed** under the frozen rules (Holm within families, 3-year stability).
+Size replicated (sealed estimate inside the explore 95% interval) for 11 of 12; community-leading/scenes came
+in lower (0.035 vs 0.053). Durability/scenes is borderline (0.006, two-sided 95% interval includes zero; passes
+the frozen one-sided Holm test). Full table: analysis/out/sealed_run.log, analysis/out/confirmation.json.
+| Model | Sealed (95%) | Explore (95%) |
+|---|---|---|
+| Discernment, songs (primary) | 0.230 [0.219, 0.243] | 0.241 [0.229, 0.254] |
+| Discernment, artists (primary) | 0.163 [0.159, 0.168] | 0.161 [0.157, 0.166] |
+| Discernment, scenes (primary) | 0.104 [0.098, 0.112] | 0.110 [0.103, 0.118] |
+| Community-leading, songs | 0.244 [0.230, 0.257] | 0.249 [0.236, 0.262] |
+| Community-leading, artists | 0.214 [0.209, 0.219] | 0.214 [0.209, 0.219] |
+| Prescience, songs | 0.211 [0.197, 0.224] | 0.219 [0.206, 0.230] |
+| Durability, songs | 0.191 [0.179, 0.203] | 0.186 [0.173, 0.200] |
+| Prescience, artists | 0.148 [0.144, 0.154] | 0.144 [0.140, 0.150] |
+| Durability, artists | 0.069 [0.064, 0.074] | 0.066 [0.062, 0.071] |
+| Prescience, scenes | 0.061 [0.055, 0.069] | 0.061 [0.055, 0.069] |
+| Community-leading, scenes | 0.035 [0.027, 0.043] | 0.053 [0.046, 0.061] |
+| Durability, scenes | 0.006 [-0.001, 0.013] | 0.012 [0.004, 0.019] |

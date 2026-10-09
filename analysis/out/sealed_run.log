@@ -1,0 +1,29 @@
+== check: explore rerun reproduces A_artist_main 09:18
+reproduces (diff 3.5e-05, tolerance 1e-3: tie-breaking in popularity bins and parallel sums)
+== sealed community prior 09:19
+done sealed_D_song_main 09:28
+done sealed_D_artist_main 09:33
+done sealed_D_scene_main 09:33
+done sealed_A_song_main 09:34
+done sealed_A_artist_main 09:41
+done sealed_A_scene_main 09:41
+done sealed_B_song_main 09:42
+done sealed_B_artist_main 09:47
+done sealed_B_scene_main 09:48
+done sealed_C_lb_song_main 09:48
+done sealed_C_lb_artist_main 09:56
+done sealed_C_lb_scene_main 09:57
+family                 model                        sealed [95%]           explore [95%]          size?  3y stab  Holm  CONFIRMED
+primary (discernment)  Discernment, songs           0.230 [0.219, 0.243]  0.241 [0.229, 0.254]  yes      0.455  pass  YES
+primary (discernment)  Discernment, artists         0.163 [0.159, 0.168]  0.161 [0.157, 0.166]  yes      0.297  pass  YES
+primary (discernment)  Discernment, scenes          0.104 [0.098, 0.112]  0.110 [0.103, 0.118]  yes      0.203  pass  YES
+secondary              Prescience, songs            0.211 [0.197, 0.224]  0.219 [0.206, 0.230]  yes      0.389  pass  YES
+secondary              Prescience, artists          0.148 [0.144, 0.154]  0.144 [0.140, 0.150]  yes      0.295  pass  YES
+secondary              Prescience, scenes           0.061 [0.055, 0.069]  0.061 [0.055, 0.069]  yes      0.161  pass  YES
+secondary              Community-leading, songs     0.244 [0.230, 0.257]  0.249 [0.236, 0.262]  yes      0.329  pass  YES
+secondary              Community-leading, artists   0.214 [0.209, 0.219]  0.214 [0.209, 0.219]  yes      0.252  pass  YES
+secondary              Community-leading, scenes    0.035 [0.027, 0.043]  0.053 [0.046, 0.061]  no       0.043  pass  YES
+secondary              Durability, songs            0.191 [0.179, 0.203]  0.186 [0.173, 0.200]  yes      0.363  pass  YES
+secondary              Durability, artists          0.069 [0.064, 0.074]  0.066 [0.062, 0.071]  yes      0.216  pass  YES
+secondary              Durability, scenes           0.006 [-0.001, 0.013]  0.012 [0.004, 0.019]  yes      0.103  pass  YES
+SEALED RUN DONE 09:57

@@ -1,0 +1,189 @@
+{
+ "candidate": "sealed_C_lb_artist_main",
+ "meta": {
+  "name": "sealed_C_lb_artist_main",
+  "model": "C_lb",
+  "unit": "artist",
+  "horizon": 12,
+  "half": "sealed",
+  "bets": 36389243,
+  "users_with_bets": 274666,
+  "args": {
+   "model": "C_lb",
+   "half": "sealed",
+   "unit": "artist",
+   "onboarding": 26,
+   "rule": "w4",
+   "window": 26,
+   "date": "commit",
+   "horizon": 12,
+   "smooth": 1.0,
+   "bins": 20,
+   "scene": "yearly200",
+   "age": true,
+   "momentum": 5,
+   "country": true,
+   "release": true,
+   "adjust": "additive",
+   "metric": "log",
+   "weight": 0.0,
+   "user_sample": 1,
+   "min_bets": 20,
+   "perms": 10,
+   "name": null,
+   "mem": "5GB",
+   "threads": 6,
+   "cand": "sealed_C_lb_artist_main"
+  },
+  "cells": {
+   "bets_per_cell": 33248.97862461717,
+   "share_single_item_cells": null,
+   "items_per_cell": 4200.752153074468
+  }
+ },
+ "users_with_bets": 274666,
+ "users_scored": 239699,
+ "coverage": 0.8726926521666315,
+ "not_luck_share": 0.3086528335120202,
+ "not_luck_share_ci": [
+  0.301440065507164,
+  0.3159298969972473
+ ],
+ "reliability": 0.4479159651034825,
+ "reliability_ci": [
+  0.4416645260938425,
+  0.4547825257144708
+ ],
+ "percentile_range_for_observed_75th": [
+  19.940941188894,
+  92.61861741027779
+ ],
+ "impostor_r2": 0.11040216417286042,
+ "impostor_r2_ci": [
+  0.10839305846942271,
+  0.11363874165828491
+ ],
+ "impostor_corr": {
+  "listens": 0.09061489521543128,
+  "history_years": 0.04233511251050218,
+  "join_year": -0.045595483546096036,
+  "listens_per_active_month": 0.07601451568913939,
+  "unmatched_share": -0.03024683392593177,
+  "no_id_share": 0.0062309016848627816,
+  "new_artists_per_year": 0.10419117970332277,
+  "committed_per_year": 0.09472953356510713,
+  "mainstream_share": -0.256006179599771,
+  "commit_rate": -0.038065586521523566,
+  "n_bets": 0.12113384937410036
+ },
+ "impostor_features_past_only": true,
+ "forward": {
+  "rank_corr": 0.11874691896681892,
+  "rank_corr_ci": [
+   0.11397878355041095,
+   0.12390479732489763
+  ],
+  "top_minus_bottom": 0.06527896455403114,
+  "top_minus_bottom_ci": [
+   0.06291268456308227,
+   0.06834340617497893
+  ],
+  "repeat_rate_top20": 0.2909591961891798,
+  "repeat_rate_top20_ci": [
+   0.28644435262816975,
+   0.2965219696478189
+  ],
+  "repeat_rate_chance": 0.2,
+  "impostor_adjusted_rank_corr": 0.06929436247573442,
+  "impostor_adjusted_rank_corr_ci": [
+   0.06423850254998927,
+   0.07418562877835708
+  ],
+  "by_cutoff": [
+   {
+    "cutoff": 2006,
+    "users": 18924,
+    "rank_corr": 0.13150618563218983
+   },
+   {
+    "cutoff": 2007,
+    "users": 47006,
+    "rank_corr": 0.12107631370592446
+   },
+   {
+    "cutoff": 2008,
+    "users": 84071,
+    "rank_corr": 0.12120806114785007
+   },
+   {
+    "cutoff": 2009,
+    "users": 103837,
+    "rank_corr": 0.11337443540331686
+   }
+  ],
+  "gap_years": 2
+ },
+ "stability_curve": [
+  {
+   "lag_years": 1,
+   "raw": 0.11588543848616843,
+   "corrected": 0.4266734380258386,
+   "users": 478597,
+   "overlapping_windows": true
+  },
+  {
+   "lag_years": 2,
+   "raw": 0.07852901041425801,
+   "corrected": 0.2906800092970833,
+   "users": 284164,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 3,
+   "raw": 0.05849480956166001,
+   "corrected": 0.21551850704774164,
+   "users": 151060,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 4,
+   "raw": 0.04729813123189852,
+   "corrected": 0.17398740221817618,
+   "users": 67713,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 5,
+   "raw": 0.0347100234540185,
+   "corrected": 0.1278796155164072,
+   "users": 22245,
+   "overlapping_windows": false
+  }
+ ],
+ "yearly_reliability": {
+  "2005": 0.29469168140526036,
+  "2006": 0.2631921041686393,
+  "2007": 0.2657797790546524,
+  "2008": 0.26757968416854033,
+  "2009": 0.26436766975065307,
+  "2010": 0.27752568000780753,
+  "2011": 0.2782575899462458
+ },
+ "stability_3y_corrected": 0.21551850704774164,
+ "stability_3y_corrected_ci": [
+  0.19700239971729708,
+  0.2371380326467402
+ ],
+ "headline_adjusted_forward": 0.06929436247573442,
+ "headline_adjusted_forward_ci": [
+  0.06423850254998927,
+  0.07418562877835708
+ ],
+ "share_of_prediction_kept_after_impostors": 0.583546613913386,
+ "gates": {
+  "beats_luck": true,
+  "impostor_adjusted_still_predicts": true,
+  "stable_3y": true
+ },
+ "passes_gates": true
+}

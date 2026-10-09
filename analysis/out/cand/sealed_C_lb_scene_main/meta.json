@@ -1,0 +1,41 @@
+{
+ "name": "sealed_C_lb_scene_main",
+ "model": "C_lb",
+ "unit": "scene",
+ "horizon": 12,
+ "half": "sealed",
+ "bets": 8967190,
+ "users_with_bets": 271568,
+ "args": {
+  "model": "C_lb",
+  "half": "sealed",
+  "unit": "scene",
+  "onboarding": 26,
+  "rule": "w4",
+  "window": 26,
+  "date": "commit",
+  "horizon": 12,
+  "smooth": 1.0,
+  "bins": 20,
+  "scene": "yearly200",
+  "age": true,
+  "momentum": 5,
+  "country": true,
+  "release": true,
+  "adjust": "additive",
+  "metric": "log",
+  "weight": 0.0,
+  "user_sample": 1,
+  "min_bets": 20,
+  "perms": 10,
+  "name": null,
+  "mem": "5GB",
+  "threads": 6,
+  "cand": "sealed_C_lb_scene_main"
+ },
+ "cells": {
+  "bets_per_cell": 7584.519991881515,
+  "share_single_item_cells": null,
+  "items_per_cell": 10.953340678629537
+ }
+}
