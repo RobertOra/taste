@@ -6,6 +6,7 @@ Outcome: later picks' 10x takeoffs vs similar artists (same month and size), and
   P10a: (recent top fifth, old bottom fifth) beats (old top fifth, recent bottom fifth): ratio of 10x odds > 1.
   P10b: the recent record separates people more than the old one: average over old fifths of log(odds recent top /
         recent bottom) minus average over recent fifths of log(odds old top / old bottom) > 0.
+- Descriptive: later 10x odds by fifths of the recent record alone and of the old record alone.
 - Going stale: top 10% rated on a single year (2006 or 2007, >= 20 picks), the same people judged on each later year
   (>= 10 picks in every later year through 2011). P10c: odds 2 years later / odds 4 years later > 1 (pooled 2006, 2007).
 Bootstrap over people (1,000 draws).
@@ -99,13 +100,22 @@ def main():
                       "lo": pct(ob, 2.5), "hi": pct(ob, 97.5), "rating_years": sorted(set(x["ry"].to_list()))})
     c_ = lag_boot[2] / lag_boot[4]
     tests["P10c"] = {"est": float(decay[1]["odds"] / decay[3]["odds"]), "lo": pct(c_, 2.5), "hi": pct(c_, 97.5), "lo99": pct(c_, 0.5)}
+    marginal = []
+    for which, col in (("recent", "q2"), ("old", "q1")):
+        for k, (lo, hi) in enumerate(((0, .2), (.2, .4), (.4, .6), (.6, .8), (.8, 1.0001))):
+            sel = ((d[col] > lo) & (d[col] <= hi)).to_numpy()
+            ob = (W[:, sel] @ h[sel]) / (W[:, sel] @ ex[sel])
+            marginal.append({"key": f"{which}:{k + 1}", "record": which, "fifth": k + 1, "people": int(sel.sum()),
+                             "odds": float(h[sel].sum() / ex[sel].sum()), "lo": pct(ob, 2.5), "hi": pct(ob, 97.5)})
     print(f"people in old-vs-recent: {N:,}")
+    for mm in marginal:
+        print(f"  by {mm['record']:6s} record, fifth {mm['fifth']}: {mm['odds']:.2f} [{mm['lo']:.2f}, {mm['hi']:.2f}]")
     for c in cells:
         print(f"  old {c['old']:7s} recent {c['recent']:7s} n {c['people']:>5}  10x odds {c['odds']:.2f} [{c['lo']:.2f}, {c['hi']:.2f}]  growth {c['growth']:+.1%}")
     for dd in decay:
         print(f"  {dd['years_later']} years later: {dd['odds']:.2f} [{dd['lo']:.2f}, {dd['hi']:.2f}] ({dd['people']} people)")
     print(json.dumps(tests, indent=1))
-    (ROOT / "analysis" / "out" / f"recency_{half}.json").write_text(json.dumps({"cells": cells, "decay": decay, "tests": tests}, indent=1))
+    (ROOT / "analysis" / "out" / f"recency_{half}.json").write_text(json.dumps({"cells": cells, "decay": decay, "tests": tests, "marginal": marginal}, indent=1))
 
 
 if __name__ == "__main__":

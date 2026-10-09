@@ -183,8 +183,7 @@ def obsession():
 
 
 def recency():
-    r = json.loads((OUT / "recency_sealed.json").read_text())
-    return r["cells"]
+    return json.loads((OUT / "recency_sealed.json").read_text())["marginal"]
 
 
 def obstaste():

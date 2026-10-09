@@ -123,8 +123,9 @@ def scene_split():
     f = (f.filter(pl.col("period") == "future").join(sc, on=["artist", "year"], how="left").with_columns(pl.col("scene_200").fill_null(-1))
          .join(e1, on=["m", "bin"]).join(e2, on=["m", "bin", "scene_200"]).with_columns(x10=(pl.col("v") >= np.log(10)).cast(pl.Float64)))
     rows = []
-    for lab, lo, hi in (("0–50", 0, .5), ("50–75", .5, .75), ("75–90", .75, .9), ("90–95", .9, .95), ("95–99", .95, .99), ("99–100", .99, 1.0)):
-        per = f.filter(pl.col("band") == lab).group_by("user").agg(h=pl.col("x10").sum(), e=pl.col("s10").sum(), es=pl.col("s10_sc").sum())
+    f = f.with_columns(band2=pl.when(pl.col("q") <= .25).then(pl.lit("0–25")).when(pl.col("q") <= .5).then(pl.lit("25–50")).otherwise(pl.col("band")))
+    for lab, lo, hi in (("0–25", 0, .25), ("25–50", .25, .5), ("50–75", .5, .75), ("75–90", .75, .9), ("90–95", .9, .95), ("95–99", .95, .99), ("99–100", .99, 1.0)):
+        per = f.filter(pl.col("band2") == lab).group_by("user").agg(h=pl.col("x10").sum(), e=pl.col("s10").sum(), es=pl.col("s10_sc").sum())
         h, e, es = (per[c].to_numpy().astype(float) for c in ("h", "e", "es"))
         w = RNG.poisson(1.0, (500, per.height)).astype(float)
         sq, ws = (w @ es) / (w @ e), (w @ h) / (w @ es)

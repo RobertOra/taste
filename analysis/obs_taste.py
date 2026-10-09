@@ -49,19 +49,39 @@ def main():
         lab = pl.when(pl.col("plays_to_commit").is_between(lo, hi)).then(pl.lit(label(lo, hi))).otherwise(lab)
     f = f.with_columns(pb=lab, hooked=(pl.col("plays_to_commit") >= 10), casual=(pl.col("plays_to_commit") <= 4))
     if args.deciles:
-        f = f.with_columns(dec=((pl.col("plays_to_commit").rank("ordinal") - 1) * 10 // pl.len()).cast(pl.Int8))
-        med = f.group_by("dec").agg(pl.col("plays_to_commit").median().alias("med")).sort("dec")
-        meds = dict(zip(med["dec"].to_list(), med["med"].to_list()))
+        # Bins of whole play counts, each close to a tenth of all picks (a single count that holds more than a tenth gets
+        # its own bin), so no two bins share a label.
+        cnt = f.group_by("plays_to_commit").agg(c=pl.len()).sort("plays_to_commit")
+        total, cum, edges, target = cnt["c"].sum(), 0, [], 0.1
+        for v, c in zip(cnt["plays_to_commit"].to_list(), cnt["c"].to_list()):
+            cum += c
+            if cum / total >= target - 0.02 and len(edges) < 9:
+                edges.append(v)
+                target = cum / total + 0.1
+        bounds, lo = [], 1
+        for e_ in edges:
+            bounds.append((lo, e_)); lo = e_ + 1
+        bounds.append((lo, 10**9))
+        expr = pl.lit(None, pl.Int8)
+        for k, (a_, b_) in enumerate(bounds):
+            expr = pl.when(pl.col("plays_to_commit").is_between(a_, b_)).then(pl.lit(k, pl.Int8)).otherwise(expr)
+        f = f.with_columns(dec=expr)
+        lab_ = {k: (f"{a_}" if a_ == b_ else f"{a_}–{b_}" if b_ < 10**9 else f"{a_}+") for k, (a_, b_) in enumerate(bounds)}
+        share = f.group_by("dec").agg(sh=pl.len() / f.height).sort("dec")
+        print("  bins:", [(lab_[k], f"{v:.0%}") for k, v in zip(share["dec"].to_list(), share["sh"].to_list())])
+        meds = {k: 0 for k in lab_}
+        for k in lab_:
+            meds[k] = float(f.filter(pl.col("dec") == k)["plays_to_commit"].median())
         curve = []
         for g in ("bottom", "middle", "top", "top1", "all"):
             d = f if g == "all" else (f.filter(pl.col("q") > 0.99) if g == "top1" else f.filter(pl.col("grp") == g))
-            for k in range(10):
+            for k in range(len(bounds)):
                 x = d.filter(pl.col("dec") == k)
                 per = x.group_by("user").agg(s=pl.col("e").sum(), n=pl.len())
                 sv, nv = per["s"].to_numpy(), per["n"].to_numpy().astype(float)
                 w = RNG.poisson(1.0, (300, per.height)).astype(float)
                 bs = (w @ sv) / (w @ nv)
-                curve.append({"key": f"{g}:{k + 1}", "group": g, "decile": k + 1, "median_plays": float(meds[k]),
+                curve.append({"key": f"{g}:{k + 1}", "group": g, "decile": k + 1, "label": lab_[k], "median_plays": float(meds[k]),
                               "growth": float(np.expm1(sv.sum() / nv.sum())), "lo": float(np.expm1(np.percentile(bs, 2.5))),
                               "hi": float(np.expm1(np.percentile(bs, 97.5))), "picks": int(nv.sum()), "people": per.height})
         for g in ("bottom", "middle", "top", "top1", "all"):
