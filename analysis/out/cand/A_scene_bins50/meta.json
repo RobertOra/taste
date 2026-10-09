@@ -1,0 +1,40 @@
+{
+ "name": "A_scene_bins50",
+ "model": "A",
+ "unit": "scene",
+ "horizon": 12,
+ "half": "explore",
+ "bets": 8970646,
+ "users_with_bets": 271939,
+ "args": {
+  "model": "A",
+  "unit": "scene",
+  "onboarding": 26,
+  "rule": "w4",
+  "window": 26,
+  "date": "commit",
+  "horizon": 12,
+  "smooth": 1.0,
+  "bins": 50,
+  "scene": "yearly200",
+  "age": true,
+  "momentum": 5,
+  "country": true,
+  "release": true,
+  "adjust": "additive",
+  "metric": "log",
+  "weight": 0.0,
+  "user_sample": 1,
+  "min_bets": 20,
+  "perms": 10,
+  "name": null,
+  "mem": "5GB",
+  "threads": 6,
+  "cand": "A_scene_bins50"
+ },
+ "cells": {
+  "bets_per_cell": 3039.2014809189886,
+  "share_single_item_cells": 0.0008516666469728044,
+  "items_per_cell": 4.984597876228758
+ }
+}

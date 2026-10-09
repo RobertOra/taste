@@ -1,3 +1,7 @@
 .venv/
 data/
 __pycache__/
+# Large per-candidate data (rebuildable); scorecards and meta stay tracked
+analysis/out/cand/**/agg.parquet
+analysis/out/**/users.parquet
+analysis/out/cand/*.log

@@ -1,0 +1,40 @@
+{
+ "name": "C_lb_song_nocontrols",
+ "model": "C_lb",
+ "unit": "song",
+ "horizon": 12,
+ "half": "explore",
+ "bets": 7512943,
+ "users_with_bets": 34391,
+ "args": {
+  "model": "C_lb",
+  "unit": "song",
+  "onboarding": 26,
+  "rule": "w4",
+  "window": 26,
+  "date": "commit",
+  "horizon": 12,
+  "smooth": 1.0,
+  "bins": 20,
+  "scene": "none",
+  "age": false,
+  "momentum": 0,
+  "country": false,
+  "release": false,
+  "adjust": "additive",
+  "metric": "log",
+  "weight": 0.0,
+  "user_sample": 1,
+  "min_bets": 20,
+  "perms": 10,
+  "name": null,
+  "mem": "5GB",
+  "threads": 6,
+  "cand": "C_lb_song_nocontrols"
+ },
+ "cells": {
+  "bets_per_cell": 6892.461288073129,
+  "share_single_item_cells": null,
+  "items_per_cell": 2753.253402827627
+ }
+}

@@ -1,0 +1,177 @@
+{
+ "candidate": "A_song_h24",
+ "meta": {
+  "name": "A_song_h24",
+  "model": "A",
+  "unit": "song",
+  "horizon": 24,
+  "half": "explore",
+  "bets": 5414281,
+  "users_with_bets": 28160,
+  "args": {
+   "model": "A",
+   "unit": "song",
+   "onboarding": 26,
+   "rule": "w4",
+   "window": 26,
+   "date": "commit",
+   "horizon": 24,
+   "smooth": 1.0,
+   "bins": 20,
+   "scene": "yearly200",
+   "age": true,
+   "momentum": 5,
+   "country": true,
+   "release": true,
+   "adjust": "additive",
+   "metric": "log",
+   "weight": 0.0,
+   "user_sample": 1,
+   "min_bets": 20,
+   "perms": 10,
+   "name": null,
+   "mem": "5GB",
+   "threads": 6,
+   "cand": "A_song_h24"
+  },
+  "cells": {
+   "bets_per_cell": 6137.448521973647,
+   "share_single_item_cells": null,
+   "items_per_cell": 2543.5919526526236
+  }
+ },
+ "users_with_bets": 28160,
+ "users_scored": 24708,
+ "coverage": 0.8774147727272728,
+ "not_luck_share": 0.6933333996042631,
+ "not_luck_share_ci": [
+  0.6831057976641984,
+  0.7001839405415077
+ ],
+ "reliability": 0.6270516521815791,
+ "reliability_ci": [
+  0.6126965482178444,
+  0.6406981610765184
+ ],
+ "percentile_range_for_observed_75th": [
+  28.25111180908647,
+  92.23819790461566
+ ],
+ "impostor_r2": 0.016431567558574556,
+ "impostor_r2_ci": [
+  0.013802710438867622,
+  0.020387289921758693
+ ],
+ "impostor_corr": {
+  "listens": -0.068896278412024,
+  "history_years": -0.056474908842954315,
+  "join_year": 0.0600396273698485,
+  "listens_per_active_month": -0.05616287330469858,
+  "unmatched_share": -0.03621075157706463,
+  "no_id_share": -0.03478725411579444,
+  "new_artists_per_year": -0.04665737143320329,
+  "committed_per_year": -0.049309150680662654,
+  "mainstream_share": 0.09667245495831113,
+  "commit_rate": -0.007985686126591618,
+  "n_bets": -0.057110076743814096
+ },
+ "impostor_features_past_only": true,
+ "forward": {
+  "rank_corr": 0.18858545317600892,
+  "rank_corr_ci": [
+   0.1610629216662427,
+   0.21455345948178256
+  ],
+  "top_minus_bottom": 0.06964090561932748,
+  "top_minus_bottom_ci": [
+   0.05871839759355969,
+   0.0803497309667324
+  ],
+  "repeat_rate_top20": 0.2613477868112014,
+  "repeat_rate_top20_ci": [
+   0.2393801251663479,
+   0.2804047765725203
+  ],
+  "repeat_rate_chance": 0.2,
+  "impostor_adjusted_rank_corr": 0.18718352606455446,
+  "impostor_adjusted_rank_corr_ci": [
+   0.15944432363470734,
+   0.21406340847794536
+  ],
+  "by_cutoff": [
+   {
+    "cutoff": 2006,
+    "users": 2496,
+    "rank_corr": 0.19270476892295413
+   },
+   {
+    "cutoff": 2007,
+    "users": 5532,
+    "rank_corr": 0.1867268465049358
+   }
+  ],
+  "gap_years": 3
+ },
+ "stability_curve": [
+  {
+   "lag_years": 1,
+   "raw": 0.2975637541826768,
+   "corrected": 0.699761856746146,
+   "users": 39897,
+   "overlapping_windows": true
+  },
+  {
+   "lag_years": 2,
+   "raw": 0.19414206111499044,
+   "corrected": 0.4695072242209371,
+   "users": 21199,
+   "overlapping_windows": true
+  },
+  {
+   "lag_years": 3,
+   "raw": 0.14241814588622387,
+   "corrected": 0.3485882238156021,
+   "users": 9580,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 4,
+   "raw": 0.10884874779776293,
+   "corrected": 0.2740174164469601,
+   "users": 3203,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 5,
+   "raw": 0.11024294496542066,
+   "corrected": 0.25095725794129226,
+   "users": 584,
+   "overlapping_windows": false
+  }
+ ],
+ "yearly_reliability": {
+  "2005": 0.4263498961219708,
+  "2006": 0.34137965663968634,
+  "2007": 0.3792619679555592,
+  "2008": 0.4010356815480855,
+  "2009": 0.4493702872592406,
+  "2010": 0.45262228213894445
+ },
+ "stability_3y_corrected": 0.3485882238156021,
+ "stability_3y_corrected_ci": [
+  0.286766595116443,
+  0.4043423925608747
+ ],
+ "headline_adjusted_forward": 0.18718352606455446,
+ "headline_adjusted_forward_ci": [
+  0.15944432363470734,
+  0.21406340847794536
+ ],
+ "share_of_prediction_kept_after_impostors": 0.9925660909267163,
+ "gates": {
+  "beats_luck": true,
+  "impostor_adjusted_still_predicts": true,
+  "stable_3y": true
+ },
+ "passes_gates": true
+}
