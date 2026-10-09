@@ -1,0 +1,502 @@
+{
+ "rows": [
+  {
+   "key": "size:small:good",
+   "stage_type": "size",
+   "stage": "small",
+   "fan": "good",
+   "artist_months": 546703,
+   "effect": 0.19554624541102747,
+   "lo": 0.17388002450445264,
+   "hi": 0.21746097281012056
+  },
+  {
+   "key": "size:small:ordinary",
+   "stage_type": "size",
+   "stage": "small",
+   "fan": "ordinary",
+   "artist_months": 546703,
+   "effect": 0.0752632543551027,
+   "lo": 0.06694834120623852,
+   "hi": 0.08340584999833467
+  },
+  {
+   "key": "size:small:poor",
+   "stage_type": "size",
+   "stage": "small",
+   "fan": "poor",
+   "artist_months": 546703,
+   "effect": 0.04122134033655704,
+   "lo": 0.03329199099847228,
+   "hi": 0.04924412813935473
+  },
+  {
+   "key": "size:small:unrated",
+   "stage_type": "size",
+   "stage": "small",
+   "fan": "unrated",
+   "artist_months": 546703,
+   "effect": 0.08668703717462108,
+   "lo": 0.08271588851712747,
+   "hi": 0.09058156781316072
+  },
+  {
+   "key": "size:small:share_good",
+   "stage_type": "size",
+   "stage": "small",
+   "fan": "share_good",
+   "artist_months": 546703,
+   "effect": -0.06138062835766253,
+   "lo": -0.08488680540084856,
+   "hi": -0.041562689692776794
+  },
+  {
+   "key": "size:small:good_minus_ordinary",
+   "stage_type": "size",
+   "stage": "small",
+   "fan": "good_minus_ordinary",
+   "artist_months": 546703,
+   "effect": 0.10603767069979024,
+   "lo": 0.08616590825820002,
+   "hi": 0.1272093440955386,
+   "lo99": 0.07727653929711101
+  },
+  {
+   "key": "size:medium:good",
+   "stage_type": "size",
+   "stage": "medium",
+   "fan": "good",
+   "artist_months": 531226,
+   "effect": 0.10232294249926602,
+   "lo": 0.09300405247751159,
+   "hi": 0.1117531066044825
+  },
+  {
+   "key": "size:medium:ordinary",
+   "stage_type": "size",
+   "stage": "medium",
+   "fan": "ordinary",
+   "artist_months": 531226,
+   "effect": 0.02129672786675148,
+   "lo": 0.018488241007885396,
+   "hi": 0.023927513326470095
+  },
+  {
+   "key": "size:medium:poor",
+   "stage_type": "size",
+   "stage": "medium",
+   "fan": "poor",
+   "artist_months": 531226,
+   "effect": -0.010374784505014452,
+   "lo": -0.013838162651024482,
+   "hi": -0.00709970315948345
+  },
+  {
+   "key": "size:medium:unrated",
+   "stage_type": "size",
+   "stage": "medium",
+   "fan": "unrated",
+   "artist_months": 531226,
+   "effect": 0.025049389925834234,
+   "lo": 0.023614480988019115,
+   "hi": 0.02654815186658696
+  },
+  {
+   "key": "size:medium:share_good",
+   "stage_type": "size",
+   "stage": "medium",
+   "fan": "share_good",
+   "artist_months": 531226,
+   "effect": -0.05485962794989957,
+   "lo": -0.06677874448985162,
+   "hi": -0.04455444821889316
+  },
+  {
+   "key": "size:medium:good_minus_ordinary",
+   "stage_type": "size",
+   "stage": "medium",
+   "fan": "good_minus_ordinary",
+   "artist_months": 531226,
+   "effect": 0.07634659736293752,
+   "lo": 0.06687744014444867,
+   "hi": 0.08632917797765839,
+   "lo99": 0.06404837798040983
+  },
+  {
+   "key": "size:big:good",
+   "stage_type": "size",
+   "stage": "big",
+   "fan": "good",
+   "artist_months": 538171,
+   "effect": 0.018016464483755018,
+   "lo": 0.01615351096040384,
+   "hi": 0.019867745896569505
+  },
+  {
+   "key": "size:big:ordinary",
+   "stage_type": "size",
+   "stage": "big",
+   "fan": "ordinary",
+   "artist_months": 538171,
+   "effect": -0.00018234399433324263,
+   "lo": -0.0006836597984703685,
+   "hi": 0.000322802596212811
+  },
+  {
+   "key": "size:big:poor",
+   "stage_type": "size",
+   "stage": "big",
+   "fan": "poor",
+   "artist_months": 538171,
+   "effect": -0.012733795227058298,
+   "lo": -0.013756666308440786,
+   "hi": -0.011718989663641674
+  },
+  {
+   "key": "size:big:unrated",
+   "stage_type": "size",
+   "stage": "big",
+   "fan": "unrated",
+   "artist_months": 538171,
+   "effect": 0.00014539274514473906,
+   "lo": -2.909457619684553e-05,
+   "hi": 0.00032497388326197614
+  },
+  {
+   "key": "size:big:share_good",
+   "stage_type": "size",
+   "stage": "big",
+   "fan": "share_good",
+   "artist_months": 538171,
+   "effect": 0.005955644453981517,
+   "lo": -0.0005882969610543828,
+   "hi": 0.012724925920063863
+  },
+  {
+   "key": "size:big:good_minus_ordinary",
+   "stage_type": "size",
+   "stage": "big",
+   "fan": "good_minus_ordinary",
+   "artist_months": 538171,
+   "effect": 0.018038451981781275,
+   "lo": 0.015879854178530044,
+   "hi": 0.020261228396040762,
+   "lo99": 0.01550674212806808
+  },
+  {
+   "key": "newness:brand new:good",
+   "stage_type": "newness",
+   "stage": "brand new",
+   "fan": "good",
+   "artist_months": 35867,
+   "effect": 0.06481705038069793,
+   "lo": 0.0493427488740024,
+   "hi": 0.08449982032917773
+  },
+  {
+   "key": "newness:brand new:ordinary",
+   "stage_type": "newness",
+   "stage": "brand new",
+   "fan": "ordinary",
+   "artist_months": 35867,
+   "effect": 0.010968376170633084,
+   "lo": 0.0026556727440880676,
+   "hi": 0.020917799278684136
+  },
+  {
+   "key": "newness:brand new:poor",
+   "stage_type": "newness",
+   "stage": "brand new",
+   "fan": "poor",
+   "artist_months": 35867,
+   "effect": -0.06931219228967092,
+   "lo": -0.08202728197136044,
+   "hi": -0.057281834515486275
+  },
+  {
+   "key": "newness:brand new:unrated",
+   "stage_type": "newness",
+   "stage": "brand new",
+   "fan": "unrated",
+   "artist_months": 35867,
+   "effect": 0.01227430333099366,
+   "lo": 0.007812027370526777,
+   "hi": 0.016936159593377857
+  },
+  {
+   "key": "newness:brand new:share_good",
+   "stage_type": "newness",
+   "stage": "brand new",
+   "fan": "share_good",
+   "artist_months": 35867,
+   "effect": 0.09428405450197906,
+   "lo": 0.05165911894010364,
+   "hi": 0.13437551842347498
+  },
+  {
+   "key": "newness:brand new:good_minus_ordinary",
+   "stage_type": "newness",
+   "stage": "brand new",
+   "fan": "good_minus_ordinary",
+   "artist_months": 35867,
+   "effect": 0.05189434092776741,
+   "lo": 0.03042282208917415,
+   "hi": 0.07362437778533612,
+   "lo99": 0.026631873135308834
+  },
+  {
+   "key": "newness:6-24 months:good",
+   "stage_type": "newness",
+   "stage": "6-24 months",
+   "fan": "good",
+   "artist_months": 131586,
+   "effect": 0.030951572001972575,
+   "lo": 0.02342626845385117,
+   "hi": 0.03812861694644247
+  },
+  {
+   "key": "newness:6-24 months:ordinary",
+   "stage_type": "newness",
+   "stage": "6-24 months",
+   "fan": "ordinary",
+   "artist_months": 131586,
+   "effect": 0.0001509519231632209,
+   "lo": -0.0022795207617307815,
+   "hi": 0.003036334682180867
+  },
+  {
+   "key": "newness:6-24 months:poor",
+   "stage_type": "newness",
+   "stage": "6-24 months",
+   "fan": "poor",
+   "artist_months": 131586,
+   "effect": -0.034905421126124804,
+   "lo": -0.04068836747893808,
+   "hi": -0.029250059025481223
+  },
+  {
+   "key": "newness:6-24 months:unrated",
+   "stage_type": "newness",
+   "stage": "6-24 months",
+   "fan": "unrated",
+   "artist_months": 131586,
+   "effect": 0.0053582971948881175,
+   "lo": 0.003966658978483711,
+   "hi": 0.006960456156147271
+  },
+  {
+   "key": "newness:6-24 months:share_good",
+   "stage_type": "newness",
+   "stage": "6-24 months",
+   "fan": "share_good",
+   "artist_months": 131586,
+   "effect": 0.09221764110903284,
+   "lo": 0.07258050882940403,
+   "hi": 0.11162325976633143
+  },
+  {
+   "key": "newness:6-24 months:good_minus_ordinary",
+   "stage_type": "newness",
+   "stage": "6-24 months",
+   "fan": "good_minus_ordinary",
+   "artist_months": 131586,
+   "effect": 0.03033129153048625,
+   "lo": 0.02126285156077203,
+   "hi": 0.03804447522193723,
+   "lo99": 0.018438731035832844
+  },
+  {
+   "key": "newness:2+ years:good",
+   "stage_type": "newness",
+   "stage": "2+ years",
+   "fan": "good",
+   "artist_months": 529021,
+   "effect": 0.023497927866632424,
+   "lo": 0.020599386317745577,
+   "hi": 0.026776437228449298
+  },
+  {
+   "key": "newness:2+ years:ordinary",
+   "stage_type": "newness",
+   "stage": "2+ years",
+   "fan": "ordinary",
+   "artist_months": 529021,
+   "effect": -0.0008001137322364561,
+   "lo": -0.001876831959470928,
+   "hi": 0.00022163437309932537
+  },
+  {
+   "key": "newness:2+ years:poor",
+   "stage_type": "newness",
+   "stage": "2+ years",
+   "fan": "poor",
+   "artist_months": 529021,
+   "effect": -0.02003792251011212,
+   "lo": -0.021919611657187553,
+   "hi": -0.01789010915122502
+  },
+  {
+   "key": "newness:2+ years:unrated",
+   "stage_type": "newness",
+   "stage": "2+ years",
+   "fan": "unrated",
+   "artist_months": 529021,
+   "effect": 0.0018802291479940655,
+   "lo": 0.0012944521563410252,
+   "hi": 0.0024659298864865035
+  },
+  {
+   "key": "newness:2+ years:share_good",
+   "stage_type": "newness",
+   "stage": "2+ years",
+   "fan": "share_good",
+   "artist_months": 529021,
+   "effect": 0.02132570821772699,
+   "lo": 0.014841009795563161,
+   "hi": 0.028392840473572403
+  },
+  {
+   "key": "newness:2+ years:good_minus_ordinary",
+   "stage_type": "newness",
+   "stage": "2+ years",
+   "fan": "good_minus_ordinary",
+   "artist_months": 529021,
+   "effect": 0.024026535554933802,
+   "lo": 0.020583130050230346,
+   "hi": 0.027761881453496586,
+   "lo99": 0.019461062100518036
+  },
+  {
+   "key": "newness:old:good",
+   "stage_type": "newness",
+   "stage": "old",
+   "fan": "good",
+   "artist_months": 919626,
+   "effect": 0.008836691863851031,
+   "lo": 0.007481705141537385,
+   "hi": 0.010163878304699824
+  },
+  {
+   "key": "newness:old:ordinary",
+   "stage_type": "newness",
+   "stage": "old",
+   "fan": "ordinary",
+   "artist_months": 919626,
+   "effect": 0.0023574423888867583,
+   "lo": 0.0017707936815957465,
+   "hi": 0.00294115400873222
+  },
+  {
+   "key": "newness:old:poor",
+   "stage_type": "newness",
+   "stage": "old",
+   "fan": "poor",
+   "artist_months": 919626,
+   "effect": -0.008977468440350697,
+   "lo": -0.009830305477267156,
+   "hi": -0.008160203773672287
+  },
+  {
+   "key": "newness:old:unrated",
+   "stage_type": "newness",
+   "stage": "old",
+   "fan": "unrated",
+   "artist_months": 919626,
+   "effect": -0.00021219193954866614,
+   "lo": -0.0003789446412484299,
+   "hi": -5.205556766366291e-05
+  },
+  {
+   "key": "newness:old:share_good",
+   "stage_type": "newness",
+   "stage": "old",
+   "fan": "share_good",
+   "artist_months": 919626,
+   "effect": 0.01022937149609212,
+   "lo": 0.006818404926816765,
+   "hi": 0.013704468324492845
+  },
+  {
+   "key": "newness:old:good_minus_ordinary",
+   "stage_type": "newness",
+   "stage": "old",
+   "fan": "good_minus_ordinary",
+   "artist_months": 919626,
+   "effect": 0.006443208818155369,
+   "lo": 0.004865791627815967,
+   "hi": 0.008049880509213923,
+   "lo99": 0.00453067159920361
+  },
+  {
+   "key": "all:all:good",
+   "stage_type": "all",
+   "stage": "all",
+   "fan": "good",
+   "artist_months": 1616100,
+   "effect": 0.020369070489390833,
+   "lo": 0.0183280257562603,
+   "hi": 0.022288364748020754
+  },
+  {
+   "key": "all:all:ordinary",
+   "stage_type": "all",
+   "stage": "all",
+   "fan": "ordinary",
+   "artist_months": 1616100,
+   "effect": 0.00021814374769960662,
+   "lo": -0.0002906499318212881,
+   "hi": 0.0007652807531809964
+  },
+  {
+   "key": "all:all:poor",
+   "stage_type": "all",
+   "stage": "all",
+   "fan": "poor",
+   "artist_months": 1616100,
+   "effect": -0.016993188536808514,
+   "lo": -0.01794118730082884,
+   "hi": -0.016016657444097613
+  },
+  {
+   "key": "all:all:unrated",
+   "stage_type": "all",
+   "stage": "all",
+   "fan": "unrated",
+   "artist_months": 1616100,
+   "effect": 0.0007231785692177375,
+   "lo": 0.0005183393321662626,
+   "hi": 0.0009290452845797354
+  },
+  {
+   "key": "all:all:share_good",
+   "stage_type": "all",
+   "stage": "all",
+   "fan": "share_good",
+   "artist_months": 1616100,
+   "effect": 0.024121350410423854,
+   "lo": 0.019489432701702118,
+   "hi": 0.028188960627147035
+  },
+  {
+   "key": "all:all:good_minus_ordinary",
+   "stage_type": "all",
+   "stage": "all",
+   "fan": "good_minus_ordinary",
+   "artist_months": 1616100,
+   "effect": 0.01994627570542845,
+   "lo": 0.017706549625137916,
+   "hi": 0.0221646292676802,
+   "lo99": 0.01697256094849114
+  }
+ ],
+ "tests": {
+  "P6a_small_good_minus_ordinary": {
+   "est": 0.10634526979901557,
+   "lo99": 0.07727653929711101
+  },
+  "P6b_gap_small_minus_big": {
+   "est": 0.08842109021534475,
+   "lo99": 0.058574428326733465
+  }
+ }
+}

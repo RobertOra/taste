@@ -196,6 +196,14 @@ Correction to an earlier exploratory claim (chat only, never on the page): "the 
 share" came from a quick check that dropped artists with poor pickers and didn't hold other fans fixed; with them held
 fixed, share also matters and the effect depends on crowding.
 
+## What a new fan is worth (written 2026-10-09 16:52, before any sealed run of analysis/fan_value.py)
+Exploratory on the explore half; tested once on the sealed half with the committed code. Confirmed = 99% bootstrap lower
+bound above 0 (log-growth units).
+- P6a. For small artists (<= 20 outcome-panel listeners at the time), a good new fan adds more growth than an ordinary new
+  fan. Explore: good +19.6%, ordinary +7.5% (gap +0.106 log, 99% low +0.077).
+- P6b. That gap is larger for small than for big artists (> 100 listeners). Explore: +0.088 (99% low +0.059).
+Descriptive: each fan type by size and by artist age; the share of good fans (inconsistent sign across stages).
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|
