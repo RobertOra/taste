@@ -1,0 +1,156 @@
+{
+ "candidate": "uc_A_song_U50_C50",
+ "meta": {
+  "name": "uc_A_song_U50_C50",
+  "model": "A",
+  "unit": "song",
+  "horizon": 12,
+  "half": "explore",
+  "bets": 4355872,
+  "users_with_bets": 33679
+ },
+ "users_with_bets": 33679,
+ "users_scored": 27887,
+ "coverage": 0.8280233973692805,
+ "not_luck_share": 0.8249372503225689,
+ "not_luck_share_ci": [
+  0.8193630186388228,
+  0.8321593763182514
+ ],
+ "reliability": 0.8292009184139698,
+ "reliability_ci": [
+  0.8214933644225144,
+  0.8373643813817705
+ ],
+ "percentile_range_for_observed_75th": [
+  43.75973458336927,
+  89.89583633033826
+ ],
+ "impostor_r2": 0.006611090112574769,
+ "impostor_r2_ci": [
+  0.005058105858765383,
+  0.008960912641920121
+ ],
+ "impostor_corr": {
+  "listens": 0.009465576646122173,
+  "history_years": 0.03649213264580241,
+  "join_year": -0.03602502251994533,
+  "listens_per_active_month": -0.01769289612842559,
+  "unmatched_share": -0.03294297265430424,
+  "no_id_share": -0.03126704102603523,
+  "new_artists_per_year": -0.03702070373940209,
+  "committed_per_year": -0.025631574877320682,
+  "mainstream_share": 0.05635658220079181,
+  "commit_rate": 0.016013345249028324,
+  "n_bets": 0.006633632421869842
+ },
+ "impostor_features_past_only": true,
+ "forward": {
+  "rank_corr": 0.13371448576766395,
+  "rank_corr_ci": [
+   0.11897176817041079,
+   0.14710749737092557
+  ],
+  "top_minus_bottom": 0.08185577178958142,
+  "top_minus_bottom_ci": [
+   0.07253068174819328,
+   0.09438376843357012
+  ],
+  "repeat_rate_top20": 0.284249933707237,
+  "repeat_rate_top20_ci": [
+   0.27058166663976263,
+   0.2984069228080939
+  ],
+  "repeat_rate_chance": 0.2,
+  "impostor_adjusted_rank_corr": 0.1285245550365695,
+  "impostor_adjusted_rank_corr_ci": [
+   0.11362277245932859,
+   0.14256009953034537
+  ],
+  "by_cutoff": [
+   {
+    "cutoff": 2006,
+    "users": 1950,
+    "rank_corr": 0.09631337140694539
+   },
+   {
+    "cutoff": 2007,
+    "users": 4808,
+    "rank_corr": 0.15498317610904375
+   },
+   {
+    "cutoff": 2008,
+    "users": 8868,
+    "rank_corr": 0.1416014425777421
+   },
+   {
+    "cutoff": 2009,
+    "users": 10716,
+    "rank_corr": 0.12445084045693923
+   }
+  ],
+  "gap_years": 2
+ },
+ "stability_curve": [
+  {
+   "lag_years": 1,
+   "raw": 0.18628171781738692,
+   "corrected": 0.24600928159268542,
+   "users": 50520,
+   "overlapping_windows": true
+  },
+  {
+   "lag_years": 2,
+   "raw": 0.13798009502567485,
+   "corrected": 0.182957777043406,
+   "users": 28810,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 3,
+   "raw": 0.08978433146486972,
+   "corrected": 0.12017859408535556,
+   "users": 14676,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 4,
+   "raw": 0.05272011008023667,
+   "corrected": 0.07441644170675414,
+   "users": 6133,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 5,
+   "raw": 0.0714469281745799,
+   "corrected": 0.10985297302672375,
+   "users": 1729,
+   "overlapping_windows": false
+  }
+ ],
+ "yearly_reliability": {
+  "2006": 0.555920592792758,
+  "2007": 0.7705818820589833,
+  "2008": 0.7639298910087948,
+  "2009": 0.7617929430980783,
+  "2010": 0.7599310784543232,
+  "2011": 0.760905512941223
+ },
+ "stability_3y_corrected": 0.12017859408535556,
+ "stability_3y_corrected_ci": [
+  0.09432863383634217,
+  0.15323644425694988
+ ],
+ "headline_adjusted_forward": 0.1285245550365695,
+ "headline_adjusted_forward_ci": [
+  0.11362277245932859,
+  0.14256009953034537
+ ],
+ "share_of_prediction_kept_after_impostors": 0.9611864735424984,
+ "gates": {
+  "beats_luck": true,
+  "impostor_adjusted_still_predicts": true,
+  "stable_3y": true
+ },
+ "passes_gates": true
+}

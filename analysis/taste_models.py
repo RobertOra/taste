@@ -320,7 +320,7 @@ def main():
                 e - (sum(e) OVER w - e) / nullif(count(*) OVER w - 1, 0) AS e) FROM e WINDOW w AS (PARTITION BY m, {g})""")
             con.execute("DELETE FROM e WHERE e IS NULL")
     if a.bets_out:
-        con.execute(f"COPY (SELECT user, item, artist, m, bin, plays_26w, e FROM e) TO '{a.bets_out}' (FORMAT parquet)")
+        con.execute(f"COPY (SELECT user, item, artist, m, bin, pen0, plays_26w, v, e FROM e) TO '{a.bets_out}' (FORMAT parquet)")
     if a.unit == "song":
         # Songs by the same artist adopted in the same month move together; treating them as independent bets
         # inflates reliability and the luck test. Collapse them into one bet (their weighted mean excess), with

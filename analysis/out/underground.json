@@ -1,0 +1,800 @@
+[
+ {
+  "candidate": "uc_A_artist_U25_C25",
+  "key": "A_artist",
+  "U": 0.25,
+  "C": 0.25,
+  "bets": 2185615,
+  "people_scored": 27963,
+  "adj_forward": 0.1206886712267735,
+  "adj_forward_ci": [
+   0.10337506965913931,
+   0.1419777455084295
+  ],
+  "repeat_top20": 0.28516527270438746,
+  "stability_3y": 0.28185468342003384,
+  "reliability": 0.5107671166403053,
+  "impostor_r2": 0.030210037766583486,
+  "breakout": {
+   "top": {
+    "breakout_rate": 0.033695045575742544,
+    "comparable_rate": 0.018499158044549727,
+    "bets": 80635
+   },
+   "bottom": {
+    "breakout_rate": 0.020907628076889624,
+    "comparable_rate": 0.0188715073874996,
+    "bets": 91976
+   },
+   "middle": {
+    "breakout_rate": 0.020885418129722746,
+    "comparable_rate": 0.01919362233562238,
+    "bets": 284792
+   },
+   "top_over_bottom": 1.611614930771969,
+   "top_over_bottom_ci": [
+    1.4782515664836158,
+    1.7649364316952905
+   ],
+   "people": 21817
+  }
+ },
+ {
+  "candidate": "uc_A_artist_U25_C100",
+  "key": "A_artist",
+  "U": 0.25,
+  "C": 1.0,
+  "bets": 9131499,
+  "people_scored": 117460,
+  "adj_forward": 0.12323091331094825,
+  "adj_forward_ci": [
+   0.11486003846165925,
+   0.13129564906171134
+  ],
+  "repeat_top20": 0.2932257011280766,
+  "stability_3y": 0.2968130741220761,
+  "reliability": 0.5168001798626116,
+  "impostor_r2": 0.015106281996335125,
+  "breakout": {
+   "top": {
+    "breakout_rate": 0.030923637998906413,
+    "comparable_rate": 0.018742143246214284,
+    "bets": 587059
+   },
+   "bottom": {
+    "breakout_rate": 0.019006703943323867,
+    "comparable_rate": 0.01890494082900855,
+    "bets": 683180
+   },
+   "middle": {
+    "breakout_rate": 0.01944257984565094,
+    "comparable_rate": 0.019652802655622404,
+    "bets": 2265903
+   },
+   "top_over_bottom": 1.6269858304268683,
+   "top_over_bottom_ci": [
+    1.557583161573193,
+    1.7162551531009258
+   ],
+   "people": 75924
+  }
+ },
+ {
+  "candidate": "uc_A_artist_U50_C25",
+  "key": "A_artist",
+  "U": 0.5,
+  "C": 0.25,
+  "bets": 4464790,
+  "people_scored": 71500,
+  "adj_forward": 0.13383990907799947,
+  "adj_forward_ci": [
+   0.12164270475962932,
+   0.14590852385337943
+  ],
+  "repeat_top20": 0.296451677297276,
+  "stability_3y": 0.3330898035009708,
+  "reliability": 0.49878270559674753,
+  "impostor_r2": 0.03733468472030499,
+  "breakout": {
+   "top": {
+    "breakout_rate": 0.030872710241465446,
+    "comparable_rate": 0.013956020265058525,
+    "bets": 230592
+   },
+   "bottom": {
+    "breakout_rate": 0.016617256680036427,
+    "comparable_rate": 0.014270003519133153,
+    "bets": 258045
+   },
+   "middle": {
+    "breakout_rate": 0.017530642868327832,
+    "comparable_rate": 0.014501281194838109,
+    "bets": 811037
+   },
+   "top_over_bottom": 1.8578704557506882,
+   "top_over_bottom_ci": [
+    1.755867329384223,
+    1.9666557961813411
+   ],
+   "people": 52299
+  }
+ },
+ {
+  "candidate": "uc_A_artist_U50_C50",
+  "key": "A_artist",
+  "U": 0.5,
+  "C": 0.5,
+  "bets": 9063360,
+  "people_scored": 132179,
+  "adj_forward": 0.14851875901529465,
+  "adj_forward_ci": [
+   0.1416672740204583,
+   0.15652742559564792
+  ],
+  "repeat_top20": 0.31101726163750704,
+  "stability_3y": 0.3585451114582136,
+  "reliability": 0.517860626662798,
+  "impostor_r2": 0.022148569816606622,
+  "breakout": {
+   "top": {
+    "breakout_rate": 0.030935920813573683,
+    "comparable_rate": 0.014071290334031197,
+    "bets": 604346
+   },
+   "bottom": {
+    "breakout_rate": 0.01579429413469197,
+    "comparable_rate": 0.014306055543799745,
+    "bets": 686767
+   },
+   "middle": {
+    "breakout_rate": 0.01709010304204389,
+    "comparable_rate": 0.01465810372549721,
+    "bets": 2161836
+   },
+   "top_over_bottom": 1.958677010175676,
+   "top_over_bottom_ci": [
+    1.8735608488239235,
+    2.046336300073607
+   ],
+   "people": 87408
+  }
+ },
+ {
+  "candidate": "uc_A_artist_U50_C100",
+  "key": "A_artist",
+  "U": 0.5,
+  "C": 1.0,
+  "bets": 18262718,
+  "people_scored": 186830,
+  "adj_forward": 0.1395618748340447,
+  "adj_forward_ci": [
+   0.13379310537577038,
+   0.144849953202877
+  ],
+  "repeat_top20": 0.2993243272794753,
+  "stability_3y": 0.2914130739081251,
+  "reliability": 0.5247818898005485,
+  "impostor_r2": 0.010217037901261605,
+  "breakout": {
+   "top": {
+    "breakout_rate": 0.026671248842004603,
+    "comparable_rate": 0.01450981169366641,
+    "bets": 1405446
+   },
+   "bottom": {
+    "breakout_rate": 0.0149902563333833,
+    "comparable_rate": 0.014532525661931743,
+    "bets": 1561014
+   },
+   "middle": {
+    "breakout_rate": 0.015615068107241626,
+    "comparable_rate": 0.015072042508066229,
+    "bets": 5040580
+   },
+   "top_over_bottom": 1.7792390102501272,
+   "top_over_bottom_ci": [
+    1.715087228865196,
+    1.8474065531583976
+   ],
+   "people": 116389
+  }
+ },
+ {
+  "candidate": "uc_A_artist_U100_C25",
+  "key": "A_artist",
+  "U": 1.0,
+  "C": 0.25,
+  "bets": 9028018,
+  "people_scored": 151766,
+  "adj_forward": 0.12907706922766554,
+  "adj_forward_ci": [
+   0.12247649552531605,
+   0.1357459403478899
+  ],
+  "repeat_top20": 0.2945955307509054,
+  "stability_3y": 0.3529677403396667,
+  "reliability": 0.4399845196128621,
+  "impostor_r2": 0.022405415675105567,
+  "breakout": {
+   "top": {
+    "breakout_rate": 0.01824635955438442,
+    "comparable_rate": 0.008645221041028857,
+    "bets": 623138
+   },
+   "bottom": {
+    "breakout_rate": 0.009836121421592082,
+    "comparable_rate": 0.008463651232535634,
+    "bets": 645783
+   },
+   "middle": {
+    "breakout_rate": 0.010939896326930314,
+    "comparable_rate": 0.00853094742569082,
+    "bets": 1976984
+   },
+   "top_over_bottom": 1.8550360220574678,
+   "top_over_bottom_ci": [
+    1.7675388299240655,
+    1.9446985712317795
+   ],
+   "people": 99039
+  }
+ },
+ {
+  "candidate": "uc_A_artist_U100_C100",
+  "key": "A_artist",
+  "U": 1.0,
+  "C": 1.0,
+  "bets": 36524770,
+  "people_scored": 240203,
+  "adj_forward": 0.14451134464980717,
+  "adj_forward_ci": [
+   0.1402912497538508,
+   0.15004515457906972
+  ],
+  "repeat_top20": 0.29368961711330566,
+  "stability_3y": 0.29134556365525804,
+  "reliability": 0.5269685419192593,
+  "impostor_r2": 0.011505417922855643,
+  "breakout": {
+   "top": {
+    "breakout_rate": 0.016764661531347824,
+    "comparable_rate": 0.00976741602301752,
+    "bets": 3196426
+   },
+   "bottom": {
+    "breakout_rate": 0.009239579001051547,
+    "comparable_rate": 0.009292371573186882,
+    "bets": 3262811
+   },
+   "middle": {
+    "breakout_rate": 0.010255660972838206,
+    "comparable_rate": 0.009489659953908061,
+    "bets": 9985607
+   },
+   "top_over_bottom": 1.8144399792934132,
+   "top_over_bottom_ci": [
+    1.762829945888681,
+    1.8737454049606077
+   ],
+   "people": 145542
+  }
+ },
+ {
+  "candidate": "uc_A_song_U25_C25",
+  "key": "A_song",
+  "U": 0.25,
+  "C": 0.25,
+  "bets": 1078578,
+  "people_scored": 14628,
+  "adj_forward": 0.12010696307821717,
+  "adj_forward_ci": [
+   0.09491451695685434,
+   0.14172072295210655
+  ],
+  "repeat_top20": 0.29057322770865235,
+  "stability_3y": 0.1311909715913441,
+  "reliability": 0.8085055240067314,
+  "impostor_r2": 0.017940363595640108,
+  "breakout": {
+   "top": {
+    "breakout_rate": 0.025978555938063967,
+    "comparable_rate": 0.007528998765073306,
+    "bets": 65939
+   },
+   "bottom": {
+    "breakout_rate": 0.011427083634680476,
+    "comparable_rate": 0.008371997805146834,
+    "bets": 69134
+   },
+   "middle": {
+    "breakout_rate": 0.011048527782611834,
+    "comparable_rate": 0.008190242744034936,
+    "bets": 235597
+   },
+   "top_over_bottom": 2.273419602812803,
+   "top_over_bottom_ci": [
+    1.841511357328628,
+    2.915177727564437
+   ],
+   "people": 8344
+  }
+ },
+ {
+  "candidate": "uc_A_song_U25_C100",
+  "key": "A_song",
+  "U": 0.25,
+  "C": 1.0,
+  "bets": 4364123,
+  "people_scored": 25875,
+  "adj_forward": 0.10322015650723546,
+  "adj_forward_ci": [
+   0.08604750298118413,
+   0.11697576321256217
+  ],
+  "repeat_top20": 0.26481890281412124,
+  "stability_3y": 0.09407950789128082,
+  "reliability": 0.8274028406500807,
+  "impostor_r2": 0.01380191028360822,
+  "breakout": {
+   "top": {
+    "breakout_rate": 0.01437277852398052,
+    "comparable_rate": 0.0076508669294954946,
+    "bets": 328329
+   },
+   "bottom": {
+    "breakout_rate": 0.0077193255454656605,
+    "comparable_rate": 0.008129262435476712,
+    "bets": 359876
+   },
+   "middle": {
+    "breakout_rate": 0.008149869200590737,
+    "comparable_rate": 0.008421427798728445,
+    "bets": 1285174
+   },
+   "top_over_bottom": 1.8619215421511928,
+   "top_over_bottom_ci": [
+    1.5635882944875852,
+    2.2207781217596696
+   ],
+   "people": 14946
+  }
+ },
+ {
+  "candidate": "uc_A_song_U50_C25",
+  "key": "A_song",
+  "U": 0.5,
+  "C": 0.25,
+  "bets": 2169459,
+  "people_scored": 23252,
+  "adj_forward": 0.12757473087032625,
+  "adj_forward_ci": [
+   0.11070003210346863,
+   0.1468897892419346
+  ],
+  "repeat_top20": 0.2920391298336288,
+  "stability_3y": 0.12241450559178149,
+  "reliability": 0.8158075590625466,
+  "impostor_r2": 0.00854101847604083,
+  "breakout": {
+   "top": {
+    "breakout_rate": 0.0180181310580633,
+    "comparable_rate": 0.004966184540463279,
+    "bets": 159395
+   },
+   "bottom": {
+    "breakout_rate": 0.008669288558243738,
+    "comparable_rate": 0.005425837499020905,
+    "bets": 164258
+   },
+   "middle": {
+    "breakout_rate": 0.008149209253504394,
+    "comparable_rate": 0.005326330128458979,
+    "bets": 556373
+   },
+   "top_over_bottom": 2.078386356274833,
+   "top_over_bottom_ci": [
+    1.7182214927399617,
+    2.560627214985852
+   ],
+   "people": 13089
+  }
+ },
+ {
+  "candidate": "uc_A_song_U50_C50",
+  "key": "A_song",
+  "U": 0.5,
+  "C": 0.5,
+  "bets": 4355872,
+  "people_scored": 27887,
+  "adj_forward": 0.1285245550365695,
+  "adj_forward_ci": [
+   0.11362277245932859,
+   0.14256009953034537
+  ],
+  "repeat_top20": 0.284249933707237,
+  "stability_3y": 0.12017859408535556,
+  "reliability": 0.8292009184139698,
+  "impostor_r2": 0.006611090112574769,
+  "breakout": {
+   "top": {
+    "breakout_rate": 0.01387101546775945,
+    "comparable_rate": 0.005058792120863845,
+    "bets": 358229
+   },
+   "bottom": {
+    "breakout_rate": 0.006974391881970993,
+    "comparable_rate": 0.0054890635663400675,
+    "bets": 367774
+   },
+   "middle": {
+    "breakout_rate": 0.006742745238812572,
+    "comparable_rate": 0.005379161653978124,
+    "bets": 1248008
+   },
+   "top_over_bottom": 1.9888494513215456,
+   "top_over_bottom_ci": [
+    1.6964556719748993,
+    2.3252527241056997
+   ],
+   "people": 16048
+  }
+ },
+ {
+  "candidate": "uc_A_song_U50_C100",
+  "key": "A_song",
+  "U": 0.5,
+  "C": 1.0,
+  "bets": 8728795,
+  "people_scored": 30638,
+  "adj_forward": 0.13112811318345463,
+  "adj_forward_ci": [
+   0.1185580107365616,
+   0.14572842215118706
+  ],
+  "repeat_top20": 0.2679515851313092,
+  "stability_3y": 0.10707154970556892,
+  "reliability": 0.8504539642169641,
+  "impostor_r2": 0.005876735252841936,
+  "breakout": {
+   "top": {
+    "breakout_rate": 0.0096296013973239,
+    "comparable_rate": 0.005166377717506926,
+    "bets": 760883
+   },
+   "bottom": {
+    "breakout_rate": 0.005416332665981559,
+    "comparable_rate": 0.005412744829088897,
+    "bets": 769709
+   },
+   "middle": {
+    "breakout_rate": 0.0056106667237221354,
+    "comparable_rate": 0.005587219680263475,
+    "bets": 2617336
+   },
+   "top_over_bottom": 1.7778821928358794,
+   "top_over_bottom_ci": [
+    1.582344182989454,
+    2.0116227084311786
+   ],
+   "people": 17853
+  }
+ },
+ {
+  "candidate": "uc_A_song_U100_C25",
+  "key": "A_song",
+  "U": 1.0,
+  "C": 0.25,
+  "bets": 4351555,
+  "people_scored": 29106,
+  "adj_forward": 0.17958225967240127,
+  "adj_forward_ci": [
+   0.1648750714783565,
+   0.19421433299988
+  ],
+  "repeat_top20": 0.306760353364642,
+  "stability_3y": 0.16375249119918203,
+  "reliability": 0.8428448594123932,
+  "impostor_r2": 0.015415698707465952,
+  "breakout": {
+   "top": {
+    "breakout_rate": 0.00924747728819578,
+    "comparable_rate": 0.0026054309444164957,
+    "bets": 405516
+   },
+   "bottom": {
+    "breakout_rate": 0.004418636992178173,
+    "comparable_rate": 0.002909483822423239,
+    "bets": 381113
+   },
+   "middle": {
+    "breakout_rate": 0.004801956499631668,
+    "comparable_rate": 0.0027694846435640584,
+    "bets": 1209507
+   },
+   "top_over_bottom": 2.0928348050689776,
+   "top_over_bottom_ci": [
+    1.8458555747871166,
+    2.475772307678564
+   ],
+   "people": 16720
+  }
+ },
+ {
+  "candidate": "uc_A_song_U100_C100",
+  "key": "A_song",
+  "U": 1.0,
+  "C": 1.0,
+  "bets": 17457636,
+  "people_scored": 32665,
+  "adj_forward": 0.19521639997790158,
+  "adj_forward_ci": [
+   0.18472173379915835,
+   0.20604360923775986
+  ],
+  "repeat_top20": 0.2883995011348793,
+  "stability_3y": 0.14248136728243005,
+  "reliability": 0.8844461173015599,
+  "impostor_r2": 0.01687926138328799,
+  "breakout": {
+   "top": {
+    "breakout_rate": 0.005031810226852495,
+    "comparable_rate": 0.0029946111081847813,
+    "bets": 1698196
+   },
+   "bottom": {
+    "breakout_rate": 0.0028256768847294196,
+    "comparable_rate": 0.0030874689423438747,
+    "bets": 1702247
+   },
+   "middle": {
+    "breakout_rate": 0.003362361070561462,
+    "comparable_rate": 0.0030530386155038216,
+    "bets": 5257615
+   },
+   "top_over_bottom": 1.7807450859103906,
+   "top_over_bottom_ci": [
+    1.5866687964208455,
+    2.0160999847138403
+   ],
+   "people": 19313
+  }
+ },
+ {
+  "candidate": "uc_D_artist_U25_C25",
+  "key": "D_artist",
+  "U": 0.25,
+  "C": 0.25,
+  "bets": 2185615,
+  "people_scored": 27963,
+  "adj_forward": 0.11941177785288257,
+  "adj_forward_ci": [
+   0.09993209038636239,
+   0.1404726021353334
+  ],
+  "repeat_top20": 0.2775900244255795,
+  "stability_3y": 0.2454717713471104,
+  "reliability": 0.49718085504271115,
+  "impostor_r2": 0.043295507670920164
+ },
+ {
+  "candidate": "uc_D_artist_U25_C100",
+  "key": "D_artist",
+  "U": 0.25,
+  "C": 1.0,
+  "bets": 9131499,
+  "people_scored": 117460,
+  "adj_forward": 0.1429748442054177,
+  "adj_forward_ci": [
+   0.13534780618262182,
+   0.15204854290700967
+  ],
+  "repeat_top20": 0.29853380631934145,
+  "stability_3y": 0.2549665421456252,
+  "reliability": 0.591714537372776,
+  "impostor_r2": 0.04149499476323926
+ },
+ {
+  "candidate": "uc_D_artist_U50_C25",
+  "key": "D_artist",
+  "U": 0.5,
+  "C": 0.25,
+  "bets": 4464790,
+  "people_scored": 71500,
+  "adj_forward": 0.15790621292973028,
+  "adj_forward_ci": [
+   0.1472951009058604,
+   0.16801167638822678
+  ],
+  "repeat_top20": 0.324088397778966,
+  "stability_3y": 0.4057636365067688,
+  "reliability": 0.5378669487678891,
+  "impostor_r2": 0.09041181809869625
+ },
+ {
+  "candidate": "uc_D_artist_U50_C50",
+  "key": "D_artist",
+  "U": 0.5,
+  "C": 0.5,
+  "bets": 9063360,
+  "people_scored": 132179,
+  "adj_forward": 0.16428525126358798,
+  "adj_forward_ci": [
+   0.15633874006099122,
+   0.17178824281410954
+  ],
+  "repeat_top20": 0.3207980470383187,
+  "stability_3y": 0.3782743842465959,
+  "reliability": 0.5551805881444037,
+  "impostor_r2": 0.07519722638285253
+ },
+ {
+  "candidate": "uc_D_artist_U50_C100",
+  "key": "D_artist",
+  "U": 0.5,
+  "C": 1.0,
+  "bets": 18262718,
+  "people_scored": 186830,
+  "adj_forward": 0.1550816874654664,
+  "adj_forward_ci": [
+   0.1495560504014985,
+   0.16059050744076067
+  ],
+  "repeat_top20": 0.3074901002731163,
+  "stability_3y": 0.2962897569470646,
+  "reliability": 0.5775595976194846,
+  "impostor_r2": 0.05124763414036693
+ },
+ {
+  "candidate": "uc_D_artist_U100_C25",
+  "key": "D_artist",
+  "U": 1.0,
+  "C": 0.25,
+  "bets": 9028018,
+  "people_scored": 151766,
+  "adj_forward": 0.14955783035016323,
+  "adj_forward_ci": [
+   0.1430440809495548,
+   0.1569511921134179
+  ],
+  "repeat_top20": 0.30131635697808196,
+  "stability_3y": 0.38945427957996187,
+  "reliability": 0.49594820689165664,
+  "impostor_r2": 0.07685036036386628
+ },
+ {
+  "candidate": "uc_D_artist_U100_C100",
+  "key": "D_artist",
+  "U": 1.0,
+  "C": 1.0,
+  "bets": 36524770,
+  "people_scored": 240203,
+  "adj_forward": 0.1610184371054111,
+  "adj_forward_ci": [
+   0.15676807128128506,
+   0.1656162918618712
+  ],
+  "repeat_top20": 0.2967660359136762,
+  "stability_3y": 0.2809400454735837,
+  "reliability": 0.5751529902423614,
+  "impostor_r2": 0.0481866708399632
+ },
+ {
+  "candidate": "uc_D_song_U25_C25",
+  "key": "D_song",
+  "U": 0.25,
+  "C": 0.25,
+  "bets": 1078578,
+  "people_scored": 14628,
+  "adj_forward": 0.14880948115975293,
+  "adj_forward_ci": [
+   0.12775428448206677,
+   0.17338461040389483
+  ],
+  "repeat_top20": 0.27835464425256756,
+  "stability_3y": 0.15813669656775403,
+  "reliability": 0.7716188551669567,
+  "impostor_r2": 0.04958256656152005
+ },
+ {
+  "candidate": "uc_D_song_U25_C100",
+  "key": "D_song",
+  "U": 0.25,
+  "C": 1.0,
+  "bets": 4364123,
+  "people_scored": 25875,
+  "adj_forward": 0.17808582470714737,
+  "adj_forward_ci": [
+   0.16252056389409497,
+   0.19487114752326232
+  ],
+  "repeat_top20": 0.301755726723332,
+  "stability_3y": 0.1608052301692218,
+  "reliability": 0.8402983712858129,
+  "impostor_r2": 0.06380664852605678
+ },
+ {
+  "candidate": "uc_D_song_U50_C25",
+  "key": "D_song",
+  "U": 0.5,
+  "C": 0.25,
+  "bets": 2169459,
+  "people_scored": 23252,
+  "adj_forward": 0.17649579590853853,
+  "adj_forward_ci": [
+   0.15845067932985027,
+   0.19457513933049905
+  ],
+  "repeat_top20": 0.29162217210427843,
+  "stability_3y": 0.15003786266891703,
+  "reliability": 0.804610191624074,
+  "impostor_r2": 0.05868547184538464
+ },
+ {
+  "candidate": "uc_D_song_U50_C50",
+  "key": "D_song",
+  "U": 0.5,
+  "C": 0.5,
+  "bets": 4355872,
+  "people_scored": 27887,
+  "adj_forward": 0.18828845201831632,
+  "adj_forward_ci": [
+   0.17249896947842733,
+   0.20442160860586303
+  ],
+  "repeat_top20": 0.29983008613716244,
+  "stability_3y": 0.15993498061595932,
+  "reliability": 0.8404231796866198,
+  "impostor_r2": 0.06626139390018881
+ },
+ {
+  "candidate": "uc_D_song_U50_C100",
+  "key": "D_song",
+  "U": 0.5,
+  "C": 1.0,
+  "bets": 8728795,
+  "people_scored": 30638,
+  "adj_forward": 0.21297436649555665,
+  "adj_forward_ci": [
+   0.20077004997114933,
+   0.22511407087591234
+  ],
+  "repeat_top20": 0.3080883169916945,
+  "stability_3y": 0.15538855608486826,
+  "reliability": 0.8714527523240106,
+  "impostor_r2": 0.07223703513290125
+ },
+ {
+  "candidate": "uc_D_song_U100_C25",
+  "key": "D_song",
+  "U": 1.0,
+  "C": 0.25,
+  "bets": 4351555,
+  "people_scored": 29106,
+  "adj_forward": 0.18073331594406955,
+  "adj_forward_ci": [
+   0.16723677632438075,
+   0.19521612857694964
+  ],
+  "repeat_top20": 0.29821424798446156,
+  "stability_3y": 0.1756233172851771,
+  "reliability": 0.8211845280297446,
+  "impostor_r2": 0.05321643406758314
+ },
+ {
+  "candidate": "uc_D_song_U100_C100",
+  "key": "D_song",
+  "U": 1.0,
+  "C": 1.0,
+  "bets": 17457636,
+  "people_scored": 32665,
+  "adj_forward": 0.21302785744214847,
+  "adj_forward_ci": [
+   0.20142293476769593,
+   0.22493498879892004
+  ],
+  "repeat_top20": 0.32318809011921246,
+  "stability_3y": 0.17188025715362085,
+  "reliability": 0.8851720563644067,
+  "impostor_r2": 0.06113134720351532
+ }
+]
