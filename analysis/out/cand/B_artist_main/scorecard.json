@@ -1,0 +1,187 @@
+{
+ "candidate": "B_artist_main",
+ "meta": {
+  "name": "B_artist_main",
+  "model": "B",
+  "unit": "artist",
+  "horizon": 12,
+  "half": "explore",
+  "bets": 34595885,
+  "users_with_bets": 261231,
+  "args": {
+   "model": "B",
+   "unit": "artist",
+   "onboarding": 26,
+   "rule": "w4",
+   "window": 26,
+   "date": "commit",
+   "horizon": 12,
+   "smooth": 1.0,
+   "bins": 20,
+   "scene": "yearly200",
+   "age": true,
+   "momentum": 5,
+   "country": true,
+   "release": true,
+   "adjust": "additive",
+   "metric": "log",
+   "weight": 0.0,
+   "user_sample": 1,
+   "min_bets": 20,
+   "perms": 10,
+   "name": null,
+   "mem": "5GB",
+   "threads": 6,
+   "cand": "B_artist_main"
+  },
+  "cells": {
+   "bets_per_cell": 32203.251059396225,
+   "share_single_item_cells": null,
+   "items_per_cell": 4169.247172488866
+  }
+ },
+ "users_with_bets": 261231,
+ "users_scored": 233824,
+ "coverage": 0.8950851927987107,
+ "not_luck_share": 0.6607582556876108,
+ "not_luck_share_ci": [
+  0.6579851671588297,
+  0.6631897299257605
+ ],
+ "reliability": 0.8439731390374942,
+ "reliability_ci": [
+  0.8424026823192318,
+  0.8453766674422124
+ ],
+ "percentile_range_for_observed_75th": [
+  45.29623801925566,
+  89.55657427862066
+ ],
+ "impostor_r2": 0.11304626809309004,
+ "impostor_r2_ci": [
+  0.11045062227855912,
+  0.11579114905572149
+ ],
+ "impostor_corr": {
+  "listens": 0.07319296596536945,
+  "history_years": 0.061547261811356106,
+  "join_year": -0.06092048590835367,
+  "listens_per_active_month": 0.030870074357565478,
+  "unmatched_share": 0.13583534562855945,
+  "no_id_share": 0.11297899659776942,
+  "new_artists_per_year": -0.07288345057438883,
+  "committed_per_year": -0.05748244782797696,
+  "mainstream_share": -0.2523443275525042,
+  "commit_rate": 0.05257309838033471,
+  "n_bets": -0.012489918134380218
+ },
+ "impostor_features_past_only": false,
+ "forward": {
+  "rank_corr": 0.24012384656790403,
+  "rank_corr_ci": [
+   0.234655980990273,
+   0.2442730879100535
+  ],
+  "top_minus_bottom": 0.18536305399166986,
+  "top_minus_bottom_ci": [
+   0.18097124199424067,
+   0.18953516366979403
+  ],
+  "repeat_rate_top20": 0.34929549273454796,
+  "repeat_rate_top20_ci": [
+   0.34404695463993934,
+   0.35360558195004427
+  ],
+  "repeat_rate_chance": 0.2,
+  "impostor_adjusted_rank_corr": 0.19198081971324463,
+  "impostor_adjusted_rank_corr_ci": [
+   0.18618851732264455,
+   0.19667840267684103
+  ],
+  "by_cutoff": [
+   {
+    "cutoff": 2006,
+    "users": 14843,
+    "rank_corr": 0.2062249869728605
+   },
+   {
+    "cutoff": 2007,
+    "users": 40573,
+    "rank_corr": 0.23190279287631246
+   },
+   {
+    "cutoff": 2008,
+    "users": 75737,
+    "rank_corr": 0.24951581581135474
+   },
+   {
+    "cutoff": 2009,
+    "users": 94479,
+    "rank_corr": 0.24145106224341958
+   }
+  ],
+  "gap_years": 2
+ },
+ "stability_curve": [
+  {
+   "lag_years": 1,
+   "raw": 0.31771334825983066,
+   "corrected": 0.4512928030967358,
+   "users": 421252,
+   "overlapping_windows": true
+  },
+  {
+   "lag_years": 2,
+   "raw": 0.22615110177019757,
+   "corrected": 0.3242557990283557,
+   "users": 241824,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 3,
+   "raw": 0.17675668734554886,
+   "corrected": 0.25681500937769125,
+   "users": 122528,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 4,
+   "raw": 0.14256808213168928,
+   "corrected": 0.2125630974502235,
+   "users": 50299,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 5,
+   "raw": 0.11307995737392496,
+   "corrected": 0.17847465090959921,
+   "users": 13295,
+   "overlapping_windows": false
+  }
+ ],
+ "yearly_reliability": {
+  "2006": 0.5684316311842883,
+  "2007": 0.6559899134713545,
+  "2008": 0.6912967516241731,
+  "2009": 0.7047199321546147,
+  "2010": 0.7247167539376768,
+  "2011": 0.7062199032370727
+ },
+ "stability_3y_corrected": 0.25681500937769125,
+ "stability_3y_corrected_ci": [
+  0.24797230193026024,
+  0.2658152351534179
+ ],
+ "headline_adjusted_forward": 0.19198081971324463,
+ "headline_adjusted_forward_ci": [
+  0.18618851732264455,
+  0.19667840267684103
+ ],
+ "share_of_prediction_kept_after_impostors": 0.7995075143815624,
+ "gates": {
+  "beats_luck": true,
+  "impostor_adjusted_still_predicts": true,
+  "stable_3y": true
+ },
+ "passes_gates": true
+}

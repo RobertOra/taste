@@ -1,0 +1,39 @@
+{
+ "candidate": "D_artist_main",
+ "headline_adjusted_forward": 0.15360108071185857,
+ "headline_adjusted_forward_ci": [
+  0.14933425563032757,
+  0.15793979896910118
+ ],
+ "share_of_prediction_kept_after_impostors": 0.9158150312753804,
+ "users_scored": 240203,
+ "not_luck_share": 0.44787124940807654,
+ "reliability": 0.5795818898600333,
+ "impostor_r2": 0.048186611234790844,
+ "stability_3y_corrected": 0.28250255108537975,
+ "passes_gates": true,
+ "forward": {
+  "rank_corr": 0.16772063731903478,
+  "rank_corr_ci": [
+   0.16325303338997532,
+   0.17238017795148464
+  ],
+  "top_minus_bottom": 0.005344709358626798,
+  "top_minus_bottom_ci": [
+   0.005172928071515664,
+   0.005536835095772917
+  ],
+  "repeat_rate_top20": 0.2968449209478255,
+  "repeat_rate_top20_ci": [
+   0.29163921653724845,
+   0.3021573150663461
+  ],
+  "repeat_rate_chance": 0.2,
+  "impostor_adjusted_rank_corr": 0.15360108071185857,
+  "impostor_adjusted_rank_corr_ci": [
+   0.14933425563032757,
+   0.15793979896910118
+  ],
+  "gap_years": 2
+ }
+}

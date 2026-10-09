@@ -1,0 +1,39 @@
+{
+ "candidate": "A_song_main",
+ "headline_adjusted_forward": 0.19453625410237657,
+ "headline_adjusted_forward_ci": [
+  0.18373765977304948,
+  0.20503843509893765
+ ],
+ "share_of_prediction_kept_after_impostors": 0.9717719676312494,
+ "users_scored": 32665,
+ "not_luck_share": 0.8562399422889905,
+ "reliability": 0.8833661916954495,
+ "impostor_r2": 0.016387906386937212,
+ "stability_3y_corrected": 0.14121435286256317,
+ "passes_gates": true,
+ "forward": {
+  "rank_corr": 0.20018714326218937,
+  "rank_corr_ci": [
+   0.18941946094012196,
+   0.2110315728947026
+  ],
+  "top_minus_bottom": 0.07367357641041661,
+  "top_minus_bottom_ci": [
+   0.06851151245911528,
+   0.07924056022312607
+  ],
+  "repeat_rate_top20": 0.28660869488273244,
+  "repeat_rate_top20_ci": [
+   0.2737956543125216,
+   0.29849392971842353
+  ],
+  "repeat_rate_chance": 0.2,
+  "impostor_adjusted_rank_corr": 0.19453625410237657,
+  "impostor_adjusted_rank_corr_ci": [
+   0.18373765977304948,
+   0.20503843509893765
+  ],
+  "gap_years": 2
+ }
+}

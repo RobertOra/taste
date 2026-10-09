@@ -23,10 +23,10 @@ cand() {  # name, model, unit, extra args...
   fi
 }
 
-# Main candidates (all controls) -------------------------------------------------------------------------
-if [[ $STAGE == main || $STAGE == all ]]; then
 MAIN=( "A artist" "A song" "A scene" "B artist" "B song" "B scene"
        "C_lb artist" "C_lb song" "C_lb scene" "D artist" "D song" "D scene" )
+# Main candidates (all controls) -------------------------------------------------------------------------
+if [[ $STAGE == main || $STAGE == all ]]; then
 for mu in $MAIN; do
   m=${mu% *}; u=${mu#* }
 

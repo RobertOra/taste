@@ -1,0 +1,39 @@
+{
+ "candidate": "A_scene_main",
+ "headline_adjusted_forward": 0.05691225653570945,
+ "headline_adjusted_forward_ci": [
+  0.0497576187050285,
+  0.06431159249942392
+ ],
+ "share_of_prediction_kept_after_impostors": 0.8514367474220643,
+ "users_scored": 177299,
+ "not_luck_share": 0.31339441365590726,
+ "reliability": 0.35304984550174484,
+ "impostor_r2": 0.0332540663543206,
+ "stability_3y_corrected": 0.18226944913921186,
+ "passes_gates": true,
+ "forward": {
+  "rank_corr": 0.06684261245245217,
+  "rank_corr_ci": [
+   0.059834825534845114,
+   0.07436321651787776
+  ],
+  "top_minus_bottom": 0.004134944853313071,
+  "top_minus_bottom_ci": [
+   0.003669392314320647,
+   0.0046346317798405395
+  ],
+  "repeat_rate_top20": 0.22033797539766542,
+  "repeat_rate_top20_ci": [
+   0.21435539298452677,
+   0.22606947251913725
+  ],
+  "repeat_rate_chance": 0.2,
+  "impostor_adjusted_rank_corr": 0.05691225653570945,
+  "impostor_adjusted_rank_corr_ci": [
+   0.0497576187050285,
+   0.06431159249942392
+  ],
+  "gap_years": 2
+ }
+}

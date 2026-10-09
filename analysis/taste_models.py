@@ -307,6 +307,15 @@ def main():
             con.execute(f"""CREATE OR REPLACE TABLE e AS SELECT * REPLACE (
                 e - (sum(e) OVER w - e) / nullif(count(*) OVER w - 1, 0) AS e) FROM e WINDOW w AS (PARTITION BY m, {g})""")
             con.execute("DELETE FROM e WHERE e IS NULL")
+    if a.unit == "song":
+        # Songs by the same artist adopted in the same month move together; treating them as independent bets
+        # inflates reliability and the luck test. Collapse them into one bet (their weighted mean excess), with
+        # the artist as the item for split halves.
+        con.execute("""CREATE OR REPLACE TABLE e AS
+            SELECT user, artist, artist AS item, m, min(bin) AS bin, 0 AS scene, 0 AS age, 0 AS mq, '-' AS ctry,
+                   0 AS cpb, 0 AS cg, 0 AS xb, 0 AS relc, avg(pen0) AS pen0, 1.0 AS wt, avg(v) AS v,
+                   sum(wt * e) / sum(wt) AS e, count(*) AS songs
+            FROM e GROUP BY user, artist, m""")
     diag = con.execute(f"""WITH c AS (SELECT {cell}, count(*) AS n, count(DISTINCT item) AS na FROM e GROUP BY ALL)
         SELECT sum(n * n) / sum(n), sum(n) FILTER (WHERE na = 1) / sum(n), sum(n * na) / sum(n) FROM c""").fetchone()
     n_bets, n_users = con.execute("SELECT count(*), count(DISTINCT user) FROM e").fetchone()
