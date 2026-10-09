@@ -130,8 +130,28 @@ Computed for every user; a taste score that is mostly one of these is reported a
 - Eras (needs ListenBrainz): do individuals lead or follow the crowd in each era; are discoveries becoming
   more alike; do hits rise and fade faster; does measurable taste exist in both eras.
 
-## Confirmation
-(empty until we decide; committing this section freezes it before any `sealed` analysis)
+## Confirmation (FROZEN 2026-10-09, before any `sealed` analysis; see FREEZE_MEMO.md)
+Approved by Robert. Implementation: analysis/taste_models.py, analysis/evaluate.py, analysis/confirm.py,
+run on the sealed half with exactly the settings below. Nothing here changes after seeing sealed results.
+
+**Candidates (12), all at main settings** (EVALUATION.md; all controls: scene yearly-200, artist/song age,
+momentum (artist/scene), country, release timing, additive; onboarding 26 weeks; commitment 4 distinct weeks
+within 26 weeks, dated at commitment; horizon 12 months; equal weights; log-growth/level outcomes; 20 popularity
+bins; min 20 bets; song bets collapsed per artist-month; community-leading with community prior-popularity and
+community-month adjustments; impostor adjustment with past-period features):
+- Primary family: discernment at song, artist, scene level.
+- Secondary family: prescience, community-leading, durability at song, artist, scene level.
+
+**Headline statistic:** impostor-adjusted forward rank correlation (EVALUATION.md §3.1), bootstrap SE from the
+95% interval width.
+
+**Confirmed** if both:
+1. Headline > 0 under Holm-Bonferroni correction within its family at family-wise 5% (one-sided p from the
+   bootstrap z = estimate / SE), and
+2. Corrected 3-year stability's 95% interval excludes zero.
+Also reported for every candidate (not part of the pass/fail): plain 95% intervals, whether the sealed estimate
+falls inside the explore 95% interval (size replicates), all other scorecard numbers.
+Facets reported separately; no combined score in this confirmation.
 
 ## Revisions
 | Date | Change | Why | Prompted by results? |
@@ -160,3 +180,4 @@ Computed for every user; a taste score that is mostly one of these is reported a
 | 2026-10-09 | Song unit: **finer song-age control** (months since first appearance 0 / 1 / 2 / 3-5 / 6-11 / 12-23 / 24+, previously one group for < 3 months) | After collapsing, community-leading for songs still showed implausible reliability (0.91) and luck share (0.93); likely "following new releases": songs gain most listeners right after release, so release-day listeners see many later community adopters without foresight | **yes** |
 | 2026-10-09 | Community-leading for **songs and scenes** now also compared with songs/scenes equally popular *within the bettor's community* beforehand (deciles, additive), as the artist version already was | Omission found in the "is it just X" table: song-level community-leading barely moved when any control was removed (0.31 throughout), consistent with crediting picks already popular among similar people | **yes** |
 | 2026-10-09 | Incident: a git history cleanup (approved by Robert) also deleted the tracked data files from disk; the 12 main candidates' aggregate files were rebuilt (identical except random luck shuffles). Scorecards and all data/ were unaffected | Process error | — |
+| 2026-10-09 | **Freeze**: Confirmation section written and committed before any sealed-half analysis | Robert approved FREEZE_MEMO recommendations, with a primary *family* (discernment at three levels) instead of a single primary model, and Holm correction within families (instead of a flat 99.6%) | no |
