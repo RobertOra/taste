@@ -115,6 +115,12 @@ def headlines():
     rows.append({"key": "P10b_old", "claim": "Old record, once the recent one is known: top vs bottom fifth (descriptive)", "unit": "times as often",
                  "hidden": rs["P10b"]["old_spread"], "lo": None, "hi": None, "lo99": None, "first_half": re_["P10b"]["old_spread"],
                  "rate": None, "rate_compared": None, "confirmed": None})
+    bs_, be_ = (json.loads((OUT / f"bad_taste_{h}.json").read_text())["tests"] for h in ("sealed", "explore"))
+    for key, claim, unit, k, bar in (("P11a", "Bottom-fifth pickers' picks vs middle-fifth pickers': flops", "times as often", "P11a_bottom_flop_vs_middle", 1),
+                                     ("P11c", "Top-fifth pickers' picks vs middle-fifth pickers': flops (bolder bets)", "times as often", "P11c_top_flop_vs_middle", 1),
+                                     ("P11b", "Good taste helps more than bad taste hurts (difference in growth)", "points", "P11b_asymmetry", 0)):
+        rows.append({"key": key, "claim": claim, "unit": unit, "hidden": bs_[k]["est"], "lo": bs_[k]["lo"], "hi": bs_[k]["hi"], "lo99": bs_[k]["lo99"],
+                     "first_half": be_[k]["est"], "rate": None, "rate_compared": None, "confirmed": bs_[k]["lo99"] > bar})
     rows.append({"key": "H2growth", "claim": "3+ good pickers agree: growth vs similar artists (descriptive)", "unit": "more growth",
                  "hidden": hs["H2"]["best"]["growth_vs_similar"], "lo": None, "hi": None, "lo99": None,
                  "first_half": he["H2"]["best"]["growth_vs_similar"], "rate": None, "rate_compared": None, "confirmed": None})
@@ -188,6 +194,15 @@ def recency():
                                   "weight_ratio": r["weights"]["ratio"]}]
 
 
+def badtaste():
+    r = json.loads((OUT / "bad_taste_sealed.json").read_text())
+    rows = [{"kind": "band", **b} for b in r["bands"]]
+    rows.append({"kind": "summary", "key": "persistence", "band": None, "mid": None, "people": None,
+                 "top_stays_top": r["persistence"]["top_stays_top"], "bottom_stays_bottom": r["persistence"]["bottom_stays_bottom"],
+                 "top_above": r["tests"]["P11b_asymmetry"]["top_minus_all"], "bottom_below": -r["tests"]["P11b_asymmetry"]["all_minus_bottom"]})
+    return rows
+
+
 def obstaste():
     return json.loads((OUT / "obs_taste_sealed_deciles.json").read_text())["curve"]
 
@@ -230,7 +245,7 @@ def crowd():
 
 
 if __name__ == "__main__":
-    for name, fn in (("headlines", headlines), ("obsession", obsession), ("obstaste", obstaste), ("recency", recency), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
+    for name, fn in (("headlines", headlines), ("obsession", obsession), ("obstaste", obstaste), ("recency", recency), ("badtaste", badtaste), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
         rows = fn()
         (W / f"{name}.json").write_text(json.dumps(rows, indent=1))
         print(name, json.dumps(rows)[:600])

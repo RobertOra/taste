@@ -267,6 +267,10 @@ that lost at least half their listeners within a year. Confirmed = 99% bootstrap
 Descriptive: the bands; bad-taste persistence (bottom fifth staying bottom) from the frozen songs forward test, already seen on
 the sealed half in an earlier descriptive table (32.6%), so not a test here.
 
+**Sealed results (run once, 2026-10-10): all three confirmed.** P11a 1.22 [1.19, 1.25; 99% low 1.19]. P11c 1.10 [1.08, 1.12;
+99% low 1.08]. P11b 0.009 [0.006, 0.012; 99% low 0.006] (top fifth +3.5 points above all picks, bottom fifth -2.6 below).
+Persistence: bottom fifth stays bottom 32.6%, top fifth stays top 34.0% (chance 20%).
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|

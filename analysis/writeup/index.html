@@ -170,6 +170,9 @@
         takeoff is double or a hundredfold, and judging people on hits alone doesn't work.</li>
       <li><a href="#findings"><b>It shows most in songs, less in artists, and least in scenes,</b></a> and "others stick with your picks" is
         among its clearest forms.</li>
+      <li><a href="#badtaste"><b>Bad taste is real too, but milder.</b></a> The worst pickers' finds flop more often, and they stay bad about as
+        reliably as the best stay good; but they fall <span class="wu-num dash-skeleton" data-source="badtaste" data-field="bottom_below" data-where="key=persistence" data-fmt="spct1">—</span> below average, while the best
+        rise <span class="wu-num" data-source="badtaste" data-field="top_above" data-where="key=persistence" data-fmt="spct1">—</span> above it.</li>
     </ol>
   </section>
 
@@ -360,6 +363,26 @@
     </div>
   </section>
 
+  <section class="wu-section" id="badtaste">
+    <h2>Bad taste is real too, but milder</h2>
+    <p>Poor pickers stay poor about as reliably as good ones stay good: <span class="wu-num dash-skeleton" data-source="badtaste" data-field="bottom_stays_bottom" data-where="key=persistence" data-fmt="pct">—</span> of the bottom
+      fifth at picking songs were still in the bottom fifth years later, against <span class="wu-num" data-source="badtaste" data-field="top_stays_top" data-where="key=persistence" data-fmt="pct">—</span> of the top
+      fifth staying on top (20% by chance). What bad taste looks like is picking things that fizzle: the worst pickers' new artists lost half their
+      listeners within a year <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P11a" data-fmt="times">—</span> as often as middle-ranked pickers' did, with no extra takeoffs to make
+      up for it.</p>
+    <p>But it's the milder of the two. The bottom fifth's new artists grew <span class="wu-num" data-source="badtaste" data-field="bottom_below" data-where="key=persistence" data-fmt="spct1">—</span> relative to all
+      picks; the top fifth's, <span class="wu-num" data-source="badtaste" data-field="top_above" data-where="key=persistence" data-fmt="spct1">—</span>. And the best pickers' finds flop a little more often too
+      (<span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P11c" data-fmt="times">—</span> as often as middle-ranked pickers'): they make bolder bets, and far more of them take off.</p>
+    <div class="wu-card">
+      <h3>Flops and takeoffs, by how people picked before</h3>
+      <p class="wu-note">Hidden half. How often each band's new artists lost at least half their listeners within a year (flops), or grew tenfold
+        (takeoffs), against similar artists. Everyone we can rate picks slightly more volatile artists than average, so even the middle sits a
+        little above 1× for flops. Bars are 95% ranges.</p>
+      <div class="wu-legend" id="bt-legend"></div>
+      <div class="wu-chart dash-skeleton" id="bt-chart" data-source="badtaste"></div>
+    </div>
+  </section>
+
   <section class="wu-section" id="sure">
     <h2>How sure we are</h2>
     <p><b>We hid half the listeners.</b> All the exploring, adjusting, and fixing happened on one half. Before looking at the other half, we
@@ -368,7 +391,7 @@
       strength matched what the first half had shown.</p>
     <p><b>We checked the takeoff and good-picker numbers the same way.</b> They were found afterwards, on the first half. Before touching the hidden half
       again, we wrote down each prediction, exactly how it would be measured, and a stricter bar for passing (99% sure, since there were
-      several), in seven rounds. Then we checked each once. Of twenty-one predictions, nineteen held; the two that didn't, both about how fast
+      several), in eight rounds. Then we checked each once. Of twenty-four predictions, twenty-two held; the two that didn't, both about how fast
       taste drifts, pointed the right way but fell short of the bar, and the page says so where they come up.</p>
     <div class="wu-card">
       <h3>Checks of these findings on the hidden half</h3>
@@ -1056,6 +1079,30 @@
       ['Right artists within them', fmt.times(+d.artists), dash.colors[1]], ['Overall', fmt.times(+d.total)], ['People', fmt.int(+d.people)]]]);
   }
 
+  function drawBadTaste() {
+    const el = document.getElementById('bt-chart');
+    if (!ready(el, ['badtaste'])) return;
+    const series = [['flop', 'Flops (lost half their listeners)', dash.colors[1]], ['takeoff', 'Tenfold takeoffs', dash.colors[0]]];
+    legend('bt-legend', series.map(([, l, c]) => [l, c, 'line']));
+    const rows = dash.data('badtaste').data.filter((r) => r.kind === 'band').map((r) => ({ ...r, mid: +r.mid }));
+    const f = frame(el, 280, { t: 28, r: 16, b: 40, l: 40 });
+    const { svg, fs, width, m } = f;
+    const x = d3.scaleLinear([0, 100], [m.l, width - m.r]);
+    const y = d3.scaleLinear([0, d3.max(rows, (r) => Math.max(+r.flop_hi, +r.takeoff_hi)) * 1.08], [f.height - m.b, m.t]).nice();
+    gridY(f, y, (v) => `${v}×`, 4);
+    svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(1)).attr('y2', y(1)).attr('stroke', css('--cds-chart-reference')).attr('stroke-dasharray', '4 3');
+    svg.append('text').attr('x', m.l + 4).attr('y', y(1) + 14).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Same as similar artists');
+    axisXRank(f, x, "Picker's rank from earlier years (percentile)");
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Times as often as similar artists');
+    series.forEach(([k, label, c]) => {
+      const pts = rows.map((r) => ({ ...r, v: +r[`${k}_odds`], lo: +r[`${k}_lo`], hi: +r[`${k}_hi`] }));
+      svg.append('path').datum(pts).attr('d', d3.line().x((d) => x(d.mid)).y((d) => y(d.v))).attr('fill', 'none').attr('stroke', c).attr('stroke-width', 2);
+      errorDots(svg, pts, (d) => x(d.mid), y, c, false);
+    });
+    bandHover(f, rows, x, (d) => [`Pickers ranked ${d.band}`, [['Flops', `${fmt.times(+d.flop_odds)} (${fmt.pct1(+d.flop_rate)} vs ${fmt.pct1(+d.flop_similar)})`, dash.colors[1]],
+      ['Tenfold takeoffs', fmt.times(+d.takeoff_odds), dash.colors[0]], ['Growth vs similar', fmt.spct1(+d.growth)], ['People', fmt.int(+d.people)]]]);
+  }
+
   function drawFanValue() {
     const el = document.getElementById('fv-chart');
     if (!ready(el, ['fanvalue'])) return;
@@ -1298,6 +1345,7 @@
     drawObsession();
     drawObsTaste();
     drawHabits();
+    drawBadTaste();
     drawSceneSplit();
     drawLadder();
     drawThresholds();
