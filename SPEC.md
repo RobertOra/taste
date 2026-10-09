@@ -237,6 +237,9 @@ Exploratory on the explore half; tested once on the sealed half with the committ
   Explore: top +4.4 points, bottom +2.2, difference +0.022 [0.018, 0.025; 99% low 0.017].
 Descriptive: the curves by plays bin for each group and for all picks.
 
+**Sealed result (run once, 2026-10-10): confirmed.** P9 +0.024 [0.020, 0.028; 99% low 0.019] (top fifth +4.4 points,
+bottom fifth +2.0).
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|

@@ -98,6 +98,10 @@ def headlines():
                  "hidden": float(np.expm1(ob["diff"])), "lo": float(np.expm1(ob["ci"][0])), "hi": float(np.expm1(ob["ci"][1])),
                  "lo99": float(np.expm1(ob["lo99"])), "first_half": float(np.expm1(obe["diff"])), "rate": None, "rate_compared": None,
                  "confirmed": ob["lo99"] > 0})
+    t9, t9e = (json.loads((OUT / f"obs_taste_{h}.json").read_text())["test"] for h in ("sealed", "explore"))
+    rows.append({"key": "P9", "claim": "Getting hooked pays off more for top-fifth than bottom-fifth pickers (difference)", "unit": "points",
+                 "hidden": t9["diff"], "lo": t9["lo"], "hi": t9["hi"], "lo99": t9["lo99"], "first_half": t9e["diff"], "rate": None,
+                 "rate_compared": None, "confirmed": t9["lo99"] > 0})
     rows.append({"key": "H2growth", "claim": "3+ good pickers agree: growth vs similar artists (descriptive)", "unit": "more growth",
                  "hidden": hs["H2"]["best"]["growth_vs_similar"], "lo": None, "hi": None, "lo99": None,
                  "first_half": he["H2"]["best"]["growth_vs_similar"], "rate": None, "rate_compared": None, "confirmed": None})
@@ -165,6 +169,10 @@ def obsession():
     return rows
 
 
+def obstaste():
+    return json.loads((OUT / "obs_taste_sealed.json").read_text())["curve"]
+
+
 def obsdeciles():
     r = json.loads((OUT / "obsession_sealed.json").read_text())["A_artist"]["deciles_plays_ci"]
     return [{"key": str(d["decile"]), "decile": d["decile"], "median_plays": d["median_plays"], "growth": float(np.expm1(d["e"])),
@@ -203,7 +211,7 @@ def crowd():
 
 
 if __name__ == "__main__":
-    for name, fn in (("headlines", headlines), ("obsession", obsession), ("obsdeciles", obsdeciles), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
+    for name, fn in (("headlines", headlines), ("obsession", obsession), ("obstaste", obstaste), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
         rows = fn()
         (W / f"{name}.json").write_text(json.dumps(rows, indent=1))
         print(name, json.dumps(rows)[:600])

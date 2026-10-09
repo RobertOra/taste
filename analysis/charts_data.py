@@ -3,6 +3,8 @@
 thresholds: per band of pickers (ladder.py design, 12 bands), how many of every 1,000 new artists grew 2x..100x within a
   year, vs similar artists (same month and size).
 growth: per band, average growth of their new artists vs similar artists, with 95% intervals (bootstrap over people).
+scatter: one dot per listener (hidden half, prescience for artists, rated on picks through 2008, >= 20 picks): earlier
+  percentile vs how their new artists in 2010-2011 (>= 10 picks) grew compared with similar artists; plus 5% bands.
 repeat: the frozen discernment-for-songs candidate's forward test (evaluate.py design): for each band of earlier rank, the
   average later rank, its middle 50%, and the share in the top fifth later.
 """
@@ -88,8 +90,35 @@ def repeat_data(name="sealed_D_song_main"):
     return out
 
 
+def scatter(cut=2008):
+    b = pl.read_parquet(X / "bet_outcomes" / "A_artist_sealed.parquet", columns=["user", "m", "bin", "v", "e"]).with_columns(year=pl.col("m") // 12)
+    ve = b.group_by("m", "bin").agg(ve=pl.col("v").mean())
+    past = (b.filter(pl.col("year") <= cut).group_by("user").agg(s=pl.col("e").sum() / (pl.len() + 20), n=pl.len())
+            .filter(pl.col("n") >= 20).with_columns(q=pl.col("s").rank("average") / pl.len()))
+    fut = (b.filter(pl.col("year").is_between(cut + 2, cut + 3)).join(ve, on=["m", "bin"])
+           .group_by("user").agg(g=(pl.col("v") - pl.col("ve")).mean(), nf=pl.len()).filter(pl.col("nf") >= 10))
+    d = past.join(fut, on="user").with_columns(x=(pl.col("q") * 100).round(2), y=pl.col("g").exp() - 1).sort("user")
+    dots = [{"x": float(x), "y": round(float(y), 4)} for x, y in zip(d["x"], d["y"])]
+    lines = []
+    for lo in range(0, 100, 5):
+        sel = d.filter((pl.col("x") > lo) & (pl.col("x") <= lo + 5))
+        lines.append({"key": f"b{lo}", "kind": "band", "lo": lo, "mid": lo + 2.5, "people": sel.height, "mean": float(sel["y"].mean()),
+                      "median": float(sel["y"].median()), "above_zero": float((sel["y"] > 0).mean())})
+    for key, lo, hi in (("bottom10", 0, 10), ("top10", 90, 100), ("all", 0, 100)):
+        sel = d.filter((pl.col("x") > lo) & (pl.col("x") <= hi))
+        lines.append({"key": key, "kind": "summary", "lo": lo, "mid": None, "people": sel.height, "mean": float(sel["y"].mean()),
+                      "median": float(sel["y"].median()), "above_zero": float((sel["y"] > 0).mean())})
+    return dots, lines
+
+
 if __name__ == "__main__":
     W = ROOT / "analysis" / "writeup"
+    dots, lines = scatter()
+    (W / "scatter.json").write_text(json.dumps(dots, separators=(",", ":")))
+    (W / "scatterline.json").write_text(json.dumps(lines, indent=1))
+    print("scatter", len(dots), "dots;", [(r["key"], round(r["mean"], 3), round(r["above_zero"], 2)) for r in lines if r["kind"] == "summary"])
+    if "--scatter-only" in sys.argv:
+        raise SystemExit
     thr, gro = ladder_data()
     rep = repeat_data()
     for name, rows in (("thresholds", thr), ("growthband", gro), ("repeat", rep)):
