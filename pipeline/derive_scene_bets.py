@@ -104,11 +104,12 @@ def main():
             SELECT * FROM first WHERE m BETWEEN {y * 12 - 12} AND {m_hi}""")
         # "New to the scene" and "stayed", via rolling sums over each person's own monthly listening (linear;
         # matching every entry against a whole year of listening explodes).
+        # Only the (person, scene) pairs that are entries need rolling sums (a small share of all listening).
         con.execute("""CREATE OR REPLACE TABLE roll AS
             SELECT user, s, month,
                    sum(plays) OVER (PARTITION BY user, s ORDER BY month RANGE BETWEEN 12 PRECEDING AND 1 PRECEDING) AS ps,
                    count(*) OVER (PARTITION BY user, s ORDER BY month RANGE BETWEEN 3 FOLLOWING AND 8 FOLLOWING) AS months_after
-            FROM usm""")
+            FROM usm SEMI JOIN (SELECT DISTINCT user, s FROM allent) pairs USING (user, s)""")
         con.execute("""CREATE OR REPLACE TABLE rollu AS
             SELECT user, month, sum(p) OVER (PARTITION BY user ORDER BY month RANGE BETWEEN 12 PRECEDING AND 1 PRECEDING) AS pt
             FROM (SELECT user, month, sum(plays) AS p FROM usm GROUP BY ALL)""")
@@ -210,6 +211,8 @@ def main():
         con.execute(f"""CREATE TABLE part_{y} AS SELECT user, {y}::SMALLINT AS year, s::SMALLINT AS scene, m, artist,
                         plays_26w, {', '.join(cols)}, mom_g, stayed, tr_prior, kept_prior, lb_scene
                         {", home.g" if home_ok else ""} FROM entries {"LEFT JOIN home USING (user)" if home_ok else ""}""")
+        for t in ("usm", "roll", "rollu", "allent", "entries", "cum", "cumg", "mk"):  # free this year's working tables
+            con.execute(f"DROP TABLE IF EXISTS {t}")
         n, nu = con.execute(f"SELECT count(*), count(DISTINCT user) FROM part_{y}").fetchone()
         print(f"{y}: {n:,} scene entries by {nu:,} users", flush=True)
         parts.append(f"SELECT * FROM part_{y}")
