@@ -18,8 +18,8 @@
 "people": 31611,
 "confirmed": true,
 "size_replicates": true,
-"pctl75_lo": 31,
-"pctl75_hi": 92
+"pctl75_lo": 42,
+"pctl75_hi": 90
 },
 {
 "key": "D_artist",
@@ -40,8 +40,8 @@
 "people": 239699,
 "confirmed": true,
 "size_replicates": true,
-"pctl75_lo": 25,
-"pctl75_hi": 92
+"pctl75_lo": 37,
+"pctl75_hi": 91
 },
 {
 "key": "D_scene",
@@ -62,8 +62,8 @@
 "people": 177112,
 "confirmed": true,
 "size_replicates": true,
-"pctl75_lo": 24,
-"pctl75_hi": 93
+"pctl75_lo": 35,
+"pctl75_hi": 91
 },
 {
 "key": "B_song",
@@ -84,8 +84,8 @@
 "people": 30883,
 "confirmed": true,
 "size_replicates": true,
-"pctl75_lo": 47,
-"pctl75_hi": 89
+"pctl75_lo": 55,
+"pctl75_hi": 87
 },
 {
 "key": "B_artist",
@@ -106,8 +106,8 @@
 "people": 233311,
 "confirmed": true,
 "size_replicates": true,
-"pctl75_lo": 45,
-"pctl75_hi": 90
+"pctl75_lo": 54,
+"pctl75_hi": 87
 },
 {
 "key": "B_scene",
@@ -128,8 +128,8 @@
 "people": 166602,
 "confirmed": true,
 "size_replicates": false,
-"pctl75_lo": 20,
-"pctl75_hi": 93
+"pctl75_lo": 31,
+"pctl75_hi": 92
 },
 {
 "key": "A_song",
@@ -150,8 +150,8 @@
 "people": 31611,
 "confirmed": true,
 "size_replicates": true,
-"pctl75_lo": 29,
-"pctl75_hi": 92
+"pctl75_lo": 40,
+"pctl75_hi": 91
 },
 {
 "key": "A_artist",
@@ -172,8 +172,8 @@
 "people": 239699,
 "confirmed": true,
 "size_replicates": true,
-"pctl75_lo": 23,
-"pctl75_hi": 93
+"pctl75_lo": 35,
+"pctl75_hi": 92
 },
 {
 "key": "A_scene",
@@ -194,7 +194,7 @@
 "people": 177112,
 "confirmed": true,
 "size_replicates": true,
-"pctl75_lo": 17,
+"pctl75_lo": 26,
 "pctl75_hi": 92
 },
 {
@@ -216,8 +216,8 @@
 "people": 31611,
 "confirmed": true,
 "size_replicates": true,
-"pctl75_lo": 32,
-"pctl75_hi": 92
+"pctl75_lo": 43,
+"pctl75_hi": 90
 },
 {
 "key": "C_lb_artist",
@@ -238,8 +238,8 @@
 "people": 239699,
 "confirmed": true,
 "size_replicates": true,
-"pctl75_lo": 20,
-"pctl75_hi": 93
+"pctl75_lo": 31,
+"pctl75_hi": 92
 },
 {
 "key": "C_lb_scene",
@@ -260,7 +260,7 @@
 "people": 177112,
 "confirmed": true,
 "size_replicates": true,
-"pctl75_lo": 12,
-"pctl75_hi": 92
+"pctl75_lo": 19,
+"pctl75_hi": 93
 }
 ]

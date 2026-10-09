@@ -220,6 +220,13 @@ record (4.3%); top 1% chosen by traits alone (explore 1.5x) vs by track record (
 P7b scene quality 2.26 [2.10, 2.41; 2.05]. P7c popularity difference 0.119 [0.112, 0.126; 0.110]. Descriptive: traits
 explain 0.8% of later results vs 4.5% for the track record; top 1% by traits 1.6x vs by track record 4.7x; overlap 1%.
 
+## Trust your obsessions (written 2026-10-09 17:49, before any sealed run of analysis/obsession.py)
+Exploratory on the explore half; tested once on the sealed half (artists only; per-bet song outcomes exist only for the
+explore half). Outcome: each pick's excess growth under the frozen prescience measure (all controls).
+- P8. Within a person, their most-hooked quarter of artist picks (plays before committing) beats their least-hooked
+  quarter: difference > 0 (99% lower bound). Explore +0.0272 [0.0267, 0.0277; 99% low 0.0266].
+Descriptive: deciles of plays before committing across all picks.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|
@@ -250,3 +257,4 @@ explain 0.8% of later results vs 4.5% for the track record; top 1% by traits 1.6
 | 2026-10-09 | **Freeze**: Confirmation section written and committed before any sealed-half analysis | Robert approved FREEZE_MEMO recommendations, with a primary *family* (discernment at three levels) instead of a single primary model, and Holm correction within families (instead of a flat 99.6%) | no |
 | 2026-10-09 | Sealed-run pre-check (explore rerun reproduces the explore result) uses a tolerance of 0.001 instead of exact equality | First attempt stopped on a 1e-5 difference from non-deterministic tie-breaking in popularity bins and parallel floating-point sums; the headline's uncertainty is ~0.005. Implementation check only; frozen plan unchanged | no (no sealed results existed) |
 | 2026-10-09 | Song unit: weight variants now apply to merged song bets (weight from the merged bet's total early plays) | Bug: merging same-artist songs set every bet's weight to 1, so the weight sweeps for songs were no-ops (main settings use equal weights, so frozen results are unaffected) | no |
+| 2026-10-09 | Individual percentile range (descriptive, write-up only) now uses the true-score formula: mean sqrt(reliability) x z, SD sqrt(1 - reliability) | The earlier formula (mean reliability x z, SD sqrt(1 - reliability^2)) gave the range of a fresh sample of picks, not of the true standing: discernment-songs 75th percentile was shown as 31st-92nd, correct is about 42nd-90th. Not part of any confirmation rule | yes |

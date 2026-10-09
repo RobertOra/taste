@@ -55,6 +55,31 @@ ex = con.sql(f"""
 write("example", ex.to_dicts())
 
 # --- results -------------------------------------------------------------------------------------------
+def true_range(rho, observed=0.75):
+    """80% range of the true percentile for someone observed at a given percentile, given reliability rho."""
+    from statistics import NormalDist
+    nd = NormalDist()
+    rho = max(min(rho, 0.999), 0.0)
+    z, sd = nd.inv_cdf(observed) * rho ** 0.5, (1 - rho) ** 0.5
+    return 100 * nd.cdf(z - 1.2816 * sd), 100 * nd.cdf(z + 1.2816 * sd)
+
+
+def fuzzy_rows(name="sealed_D_song_main"):
+    """The same range by how many picks someone has (Spearman-Brown from the typical scored person's reliability)."""
+    rho = card(name)["reliability"]
+    import polars as pl
+    agg = pl.read_parquet(ROOT / "analysis" / "out" / "cand" / name / "agg.parquet")
+    n0 = float(agg.group_by("user").agg(pl.col("n").sum()).filter(pl.col("n") >= 20)["n"].median())
+    r1 = rho / (n0 - (n0 - 1) * rho)  # reliability of a single pick
+    rows = []
+    for n in (50, int(round(n0)), 500, 1500):
+        rn = n * r1 / (1 + (n - 1) * r1)
+        lo, hi = true_range(rn)
+        rows.append({"picks": n, "typical": n == int(round(n0)), "reliability": round(rn, 3), "lo": round(lo), "hi": round(hi)})
+    return rows
+
+
+
 conf = {r["candidate"]: r for r in json.loads((ROOT / "analysis" / "out" / "confirmation.json").read_text())}
 res = []
 for m in ("D", "B", "A", "C_lb"):
@@ -71,10 +96,12 @@ for m in ("D", "B", "A", "C_lb"):
             "stability_3y": round(s["stability_3y_corrected"], 3), "reliability": round(s["reliability"], 3),
             "impostor_share": round(s["impostor_r2"], 3), "people": s["users_scored"],
             "confirmed": c["confirmed"], "size_replicates": c["size_replicates"],
-            # 80% range of the true percentile for someone observed at the 75th percentile (from reliability)
-            "pctl75_lo": round(s["percentile_range_for_observed_75th"][0]), "pctl75_hi": round(s["percentile_range_for_observed_75th"][1]),
+            # 80% range of the true percentile for someone observed at the 75th percentile (from reliability;
+            # computed here with the corrected formula, see evaluate.py)
+            "pctl75_lo": round(true_range(s["reliability"])[0]), "pctl75_hi": round(true_range(s["reliability"])[1]),
         })
 write("results", res)
+write("fuzzy", fuzzy_rows())
 
 # --- is it just X ----------------------------------------------------------------------------------------
 CHECKS = [("no_scene", "Being in a scene that grew"), ("first_listen", "Following trends (credit from the first listen)"),

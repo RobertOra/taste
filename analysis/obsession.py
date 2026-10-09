@@ -48,12 +48,12 @@ def deciles(df, col):
     return g.to_dicts()
 
 
-def main(which):
+def main(which, half="explore"):
     out = {}
     for key in which:
         unit, label = UNITS[key]
-        bets = pl.read_parquet(X / "bet_outcomes" / f"{key}_explore.parquet")
-        obs = pl.read_parquet(X / "obsession" / f"explore_{unit}.parquet")
+        bets = pl.read_parquet(X / "bet_outcomes" / f"{key}_{half}.parquet")
+        obs = pl.read_parquet(X / "obsession" / f"{half}_{unit}.parquet")
         on = ["user", "artist"] if unit == "artist" else ["user", "recording"]
         if unit == "song":
             bets = bets.rename({"item": "recording"})
@@ -64,6 +64,24 @@ def main(which):
         res["within_speed"] = dict(zip(["diff", "ci", "quarter_means", "people"], within(df, "weeks_to_commit", False)))
         res["deciles_plays"] = deciles(df, "plays_to_commit")
         res["deciles_speed"] = deciles(df, "weeks_to_commit")
+        # 99% lower bound for the within-person gap (bootstrap over people, as above)
+        dq = df.with_columns(q=((pl.col("lp").rank("ordinal").over("user") - 1) * 4 / pl.col("lp").count().over("user")).floor().cast(pl.Int8))
+        pq = dq.group_by("user", "q").agg(pl.col("e").mean()).pivot(on="q", index="user", values="e").drop_nulls(["0", "3"])
+        dv = (pq["3"] - pq["0"]).to_numpy()
+        wv = RNG.poisson(1.0, (1000, len(dv)))
+        res["within_plays"]["lo99"] = float(np.percentile((wv * dv).sum(1) / wv.sum(1), 0.5))
+        # deciles with 95% intervals (bootstrap over people)
+        dd = df.with_columns(dec=(pl.col("plays_to_commit").rank("ordinal") * 10 / pl.len()).floor().clip(0, 9).cast(pl.Int8))
+        rows = []
+        for k in range(10):
+            per = dd.filter(pl.col("dec") == k).group_by("user").agg(s=pl.col("e").sum(), n=pl.len(), med=pl.col("plays_to_commit").median())
+            sv, nv = per["s"].to_numpy(), per["n"].to_numpy().astype(float)
+            w = RNG.poisson(1.0, (300, per.height)).astype(float)
+            bs = (w @ sv) / (w @ nv)
+            rows.append({"decile": k + 1, "median_plays": float(dd.filter(pl.col("dec") == k)["plays_to_commit"].median()),
+                         "e": float(sv.sum() / nv.sum()), "lo": float(np.percentile(bs, 2.5)), "hi": float(np.percentile(bs, 97.5)),
+                         "picks": int(nv.sum())})
+        res["deciles_plays_ci"] = rows
         out[key] = res
         wp, ws = res["within_plays"], res["within_speed"]
         unit_note = "excess log growth" if key.startswith("A") else "excess share sticking"
@@ -73,8 +91,12 @@ def main(which):
         print(f"      fastest-committed quarter minus slowest: {ws['diff']:+.4f} [{ws['ci'][0]:+.4f}, {ws['ci'][1]:+.4f}]")
         print("  (b) all bets, by decile of plays before committing: " +
               ", ".join(f"{d['median_value']:.0f}:{d['e']:+.3f}" for d in res["deciles_plays"]))
-    (ROOT / "analysis" / "out" / "obsession.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "analysis" / "out" / ("obsession.json" if half == "explore" else f"obsession_{half}.json")).write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:] or list(UNITS))
+    args = sys.argv[1:]
+    half = "explore"
+    if args and args[0].startswith("--half="):
+        half, args = args[0].split("=", 1)[1], args[1:]
+    main(args or list(UNITS), half)

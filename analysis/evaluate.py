@@ -92,13 +92,15 @@ def main(name):
         rk = wcorr(a, bb, boot[k, hu])
         rels.append(2 * rk / (1 + rk))
     card["reliability_ci"] = ci(rels)
-    # Typical percentile uncertainty for one person: with reliability rho, the true-score SD given the
-    # observed score is sqrt(1 - rho); expressed as the 80% range in percentile points around the median.
+    # Typical percentile uncertainty for one person: with reliability rho, the standardized true score given the
+    # observed score z is normal with mean sqrt(rho) * z and SD sqrt(1 - rho) (classical test theory); expressed as
+    # the 80% range of the true percentile. (Before 2026-10-09 this used mean rho * z and SD sqrt(1 - rho^2), which
+    # is the range of a fresh, equally long sample of picks, not of the true standing.)
     rho = max(card["reliability"], 0.0)
     from statistics import NormalDist
     nd = NormalDist()
-    z = nd.inv_cdf(0.75) * rho  # someone observed at the 75th percentile
-    sd = np.sqrt(max(1 - rho ** 2, 1e-9))
+    z = nd.inv_cdf(0.75) * np.sqrt(rho)  # someone observed at the 75th percentile
+    sd = np.sqrt(max(1 - rho, 1e-9))
     card["percentile_range_for_observed_75th"] = [100 * nd.cdf(z - 1.2816 * sd), 100 * nd.cdf(z + 1.2816 * sd)]
 
     feats = pl.read_parquet(ROOT / "data" / "derived" / "user_features" / f"{half}.parquet")

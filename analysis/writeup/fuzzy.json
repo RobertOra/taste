@@ -1,0 +1,30 @@
+[
+{
+"picks": 50,
+"typical": false,
+"reliability": 0.366,
+"lo": 27,
+"hi": 92
+},
+{
+"picks": 173,
+"typical": true,
+"reliability": 0.667,
+"lo": 42,
+"hi": 90
+},
+{
+"picks": 500,
+"typical": false,
+"reliability": 0.853,
+"lo": 55,
+"hi": 87
+},
+{
+"picks": 1500,
+"typical": false,
+"reliability": 0.945,
+"lo": 64,
+"hi": 83
+}
+]
