@@ -207,6 +207,15 @@ Descriptive: each fan type by size and by artist age; the share of good fans (in
 **Sealed results (run once, 2026-10-09): both confirmed.** P6a gap +0.121 log (99% low +0.094): small artists, good fan
 +20.2%, ordinary +6.5%, poor +2.6%. P6b +0.105 (99% low +0.078): big artists, good +1.7%, ordinary +0.0%, poor -1.4%.
 
+## What makes the best pickers good (written 2026-10-09 17:26, before any sealed run of analysis/top_pickers.py)
+Exploratory on the explore half; tested once on the sealed half with the committed code. Confirmed = 99% bootstrap lower
+bound above the stated value.
+- P7a. The top 1%'s later picks beat artists of the same size in the same scene: 10x odds > 1. Explore 2.15 (99% low 1.94).
+- P7b. The scenes they pick from take off more than size alone predicts: scene quality > 1. Explore 2.43 (99% low 2.21).
+- P7c. Their earlier picks are less popular than the bottom half's (popularity percentile difference > 0). Explore 0.115.
+Descriptive: the style profile by band; variance in later results explained by style traits (explore 0.8%) vs the track
+record (4.3%); top 1% chosen by traits alone (explore 1.5x) vs by track record (5.2x).
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|
