@@ -153,6 +153,21 @@ Also reported for every candidate (not part of the pass/fail): plain 95% interva
 falls inside the explore 95% interval (size replicates), all other scorecard numbers.
 Facets reported separately; no combined score in this confirmation.
 
+## Headline confirmation (written 2026-10-09 12:29, before any sealed run of these analyses)
+Post-freeze, plain-language headlines chosen on the explore half (analysis/headlines.py, analysis/pickers.py). Each is
+tested once on the sealed half with the exact code committed with this section. Growth = fixed-panel listeners over
+12 months, picker excluded. "Similar" = same month and size (and momentum and number of pickers for P2/P3); these
+comparisons do NOT remove scene, so they include being early to rising scenes (the frozen confirmation above covers
+the scene-adjusted question). Confirmed = the 99% bootstrap lower bound is above 1 (ratios) or 0 (differences),
+roughly Bonferroni for six tests at 5% overall.
+- P1a, P1b. Best-fifth pickers' later picks (track record from earlier years, frozen prescience score) grow 10x, and 4x,
+  more often than worst-fifth pickers' (ratio > 1). Explore: 10x 2.17 [2.08, 2.26]; 4x 1.87 [1.83, 1.93].
+- P2a, P2b. Artists newly picked by 3+ rated pickers who are all good grow 4x, and 10x, more often than similar artists
+  (ratio > 1). Explore: 4x 2.59 [1.92, 3.44]; 10x 3.06 [1.67, 5.27].
+- P3a, P3b. Swapping one ordinary picker for a good one adds growth (coefficient > 0), without and with the same-scene
+  comparison. Explore: +2.0% [1.9, 2.1]; same scene +1.2% [1.1, 1.3].
+Descriptive only: favorites (H1), the all-poor comparison (too few events), and growth gaps.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|

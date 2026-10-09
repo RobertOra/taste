@@ -27,7 +27,9 @@ D = ROOT / "data" / "mlhd"
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("half", choices=["explore", "sealed"])
-    half = ap.parse_args().half
+    ap.add_argument("--artists-only", action="store_true")
+    args = ap.parse_args()
+    half = args.half
     out = X / "obsession"
     out.mkdir(parents=True, exist_ok=True)
     tmp = ROOT / "data" / "_tmp" / f"obsession-{os.getpid()}"
@@ -51,6 +53,8 @@ def main():
             GROUP BY b.user, b.artist, b.w4, b.first_week""")
     con.execute(f"COPY oa TO '{out / f'{half}_artist.parquet'}' (FORMAT parquet)")
     print("artists", con.execute("SELECT count(*), median(plays_to_commit), median(weeks_to_commit) FROM oa").fetchone(), flush=True)
+    if args.artists_only:
+        return
 
     con.execute("CREATE TABLE os (user BIGINT, recording BIGINT, plays_to_commit INTEGER, weeks_to_commit INTEGER)")
     for c in "0123456789abcdef":

@@ -30,13 +30,13 @@ ROOT = Path(__file__).resolve().parent.parent
 X = ROOT / "data" / "derived"
 CUTS = (2006, 2007, 2008, 2009)
 RNG = np.random.default_rng(11)
-B = 200
+B = 1000
 LOG2, LOG4 = float(np.log(2)), float(np.log(4))
 
 
-def build(con, rate_by):
+def build(con, rate_by, half="explore"):
     con.execute(f"""CREATE TABLE b AS SELECT user, artist, m, e, (hash(user + 7919) % 2 = 0) AS rater
-                    FROM read_parquet('{X}/bet_outcomes/{rate_by}_artist_explore.parquet')""")
+                    FROM read_parquet('{X}/bet_outcomes/{rate_by}_artist_{half}.parquet')""")
     parts = []
     for c in CUTS:
         parts.append(f"""
@@ -53,9 +53,9 @@ def build(con, rate_by):
     print("target artist-months", con.execute("SELECT count(*), sum(n_good), sum(n_ord), sum(n_poor), sum(n_unrated) FROM tgt").fetchone(), flush=True)
 
     # Outcome-group activity and the fixed panel for each target month.
-    con.execute(f"""CREATE TABLE ou AS SELECT DISTINCT user FROM read_parquet('{X}/user_artist_month/explore/*.parquet')
+    con.execute(f"""CREATE TABLE ou AS SELECT DISTINCT user FROM read_parquet('{X}/user_artist_month/{half}/*.parquet')
                     WHERE hash(user + 7919) % 2 = 1""")
-    con.execute(f"""CREATE TABLE act AS SELECT DISTINCT user, month FROM read_parquet('{X}/user_artist_month/explore/*.parquet')
+    con.execute(f"""CREATE TABLE act AS SELECT DISTINCT user, month FROM read_parquet('{X}/user_artist_month/{half}/*.parquet')
                     WHERE hash(user + 7919) % 2 = 1 AND month >= {(CUTS[0] + 2) * 12 - 3}""")
     con.execute("""CREATE TABLE months AS SELECT DISTINCT m FROM tgt""")
     con.execute("""CREATE TABLE panel AS SELECT a0.user, mo.m FROM months mo
@@ -65,7 +65,7 @@ def build(con, rate_by):
     print("panel user-months", con.execute("SELECT count(*), count(DISTINCT m) FROM panel").fetchone(), flush=True)
     con.execute("CREATE TABLE ta AS SELECT DISTINCT artist, m FROM tgt")
     con.execute("CREATE TABLE cnt (artist BIGINT, m SMALLINT, l_pre INT, l0 INT, l1 INT)")
-    for f in sorted((X / "user_artist_month" / "explore").glob("*.parquet")):
+    for f in sorted((X / "user_artist_month" / half).glob("*.parquet")):
         con.execute(f"""INSERT INTO cnt
             WITH u AS (SELECT user, artist, month FROM read_parquet('{f}') WHERE hash(user + 7919) % 2 = 1),
                  hits AS (SELECT ta.artist, ta.m, u.user, (u.month - ta.m) AS off FROM ta
@@ -129,8 +129,8 @@ def analyze(df, with_scene):
     res = {"artist_months": df.height, "artists": len(ua), "with_scene": with_scene}
     for v in est:
         bs = np.array(boots[v])
-        res[v] = {"good_vs_ordinary": float(est[v][0]), "good_ci": [float(x) for x in np.percentile(bs[:, 0], [2.5, 97.5])],
-                  "poor_vs_ordinary": float(est[v][1]), "poor_ci": [float(x) for x in np.percentile(bs[:, 1], [2.5, 97.5])]}
+        res[v] = {"good_vs_ordinary": float(est[v][0]), "good_ci": [float(x) for x in np.percentile(bs[:, 0], [2.5, 97.5, 0.5])],
+                  "poor_vs_ordinary": float(est[v][1]), "poor_ci": [float(x) for x in np.percentile(bs[:, 1], [2.5, 97.5, 0.5])]}
     res["base_rates"] = {"doubling": float(df["dbl"].mean()), "breakout_4x": float(df["brk"].mean()),
                          "median_l0": float(df["l0"].median())}
     # Plain table: for a fixed number of rated pickers, outcomes by how many of them are good.
@@ -176,6 +176,7 @@ def report(label, r):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--rate-by", choices=["A", "D"], default="A")
+    ap.add_argument("--half", choices=["explore", "sealed"], default="explore")
     a = ap.parse_args()
     tmp = ROOT / "data" / "_tmp" / f"pickers-{os.getpid()}"
     tmp.mkdir(parents=True, exist_ok=True)
@@ -183,12 +184,12 @@ def main():
         con = duckdb.connect()
         con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; "
                     "SET max_temp_directory_size='30GB'")
-        cache = X / "pickers" / f"rate_{a.rate_by}_explore.parquet"
+        cache = X / "pickers" / f"rate_{a.rate_by}_{a.half}.parquet"
         cache.parent.mkdir(exist_ok=True)
         if cache.exists():
             df = pl.read_parquet(cache)
         else:
-            df = build(con, a.rate_by)
+            df = build(con, a.rate_by, a.half)
             df.write_parquet(cache)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
@@ -197,7 +198,7 @@ def main():
         r = analyze(df, with_scene)
         out["scene" if with_scene else "no_scene"] = r
         report(f"rated by {a.rate_by}, {'same scene too' if with_scene else 'month x size x momentum x pickers'}", r)
-    (ROOT / "analysis" / "out" / f"pickers_{a.rate_by}.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "analysis" / "out" / f"pickers_{a.rate_by}{'' if a.half == 'explore' else '_' + a.half}.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":
