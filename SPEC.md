@@ -216,6 +216,10 @@ bound above the stated value.
 Descriptive: the style profile by band; variance in later results explained by style traits (explore 0.8%) vs the track
 record (4.3%); top 1% chosen by traits alone (explore 1.5x) vs by track record (5.2x).
 
+**Sealed results (run once, 2026-10-09): all three confirmed.** P7a within scene 2.08 [1.92, 2.24; 99% low 1.87].
+P7b scene quality 2.26 [2.10, 2.41; 2.05]. P7c popularity difference 0.119 [0.112, 0.126; 0.110]. Descriptive: traits
+explain 0.8% of later results vs 4.5% for the track record; top 1% by traits 1.6x vs by track record 4.7x; overlap 1%.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|

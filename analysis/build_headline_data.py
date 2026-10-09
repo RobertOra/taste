@@ -1,4 +1,4 @@
-"""Data for the write-up's headline section (analysis/writeup/*.json).
+"""Data for the write-up's headline sections (analysis/writeup/*.json; see also analysis/charts_data.py).
 
 headlines.json  P1-P3 as confirmed on the sealed half (SPEC.md, "Headline confirmation"), with explore values.
 takeoff.json    explore half: best vs worst fifth of pickers, chance of growing at least 1.5x ... 40x (descriptive).
@@ -85,6 +85,13 @@ def headlines():
                      "lo": None if lo is None else float(np.expm1(lo)), "hi": None if hi is None else float(np.expm1(hi)),
                      "lo99": float(np.expm1(fv["tests"][t]["lo99"])), "first_half": float(np.expm1(first)), "rate": None,
                      "rate_compared": None, "confirmed": fv["tests"][t]["lo99"] > 0})
+    ts, te = (json.loads((OUT / f"top_pickers_{h}.json").read_text()) for h in ("sealed", "explore"))
+    for key, claim, unit, k in (("P7a", "Top 1%'s artists vs the same size and scene: tenfold takeoffs", "times as often", "top1_within_scene"),
+                                ("P7b", "Top 1%'s scenes vs size alone: tenfold takeoffs", "times as often", "top1_scene_quality"),
+                                ("P7c", "Top 1%'s picks less popular than the bottom half's", "points", "pick_popularity_bottom_minus_top")):
+        est, fe = ts[k], te[k]
+        rows.append({"key": key, "claim": claim, "unit": unit, "hidden": est["est"], "lo": est["lo"], "hi": est["hi"], "lo99": est["lo99"],
+                     "first_half": fe["est"], "rate": None, "rate_compared": None, "confirmed": est["lo99"] > (0 if unit == "points" else 1)})
     rows.append({"key": "H2growth", "claim": "3+ good pickers agree: growth vs similar artists (descriptive)", "unit": "more growth",
                  "hidden": hs["H2"]["best"]["growth_vs_similar"], "lo": None, "hi": None, "lo99": None,
                  "first_half": he["H2"]["best"]["growth_vs_similar"], "rate": None, "rate_compared": None, "confirmed": None})

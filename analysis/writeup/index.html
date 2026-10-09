@@ -46,6 +46,14 @@
 .wu-scroll th { position: sticky; top: 0; background: var(--color-panel); }
 .wu-fail { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 140px; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
 .wu-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+.wu-eq { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: var(--cds-gap-sm); align-items: center; }
+.wu-op { font-family: var(--font-anthropic-serif); font-size: var(--cds-font-size-title); color: var(--color-fg-muted); text-align: center; }
+@media (max-width: 640px) { .wu-eq { grid-template-columns: 1fr; } .wu-op { line-height: 1; } }
+.wu-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: var(--cds-gap-sm); }
+.wu-chip { font: inherit; font-size: var(--cds-font-size-caption); padding: 3px 10px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--color-border-line); background: transparent; color: var(--color-fg-muted); }
+.wu-chip[aria-pressed="true"] { background: var(--color-fg); color: var(--color-bg); border-color: var(--color-fg); }
+.wu-chip:focus-visible { outline: 2px solid var(--color-fg-muted); outline-offset: 2px; }
 [data-dash-source-state=empty] { color: transparent; }
 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
 </style>
@@ -136,8 +144,19 @@
 
   <section class="wu-section" id="findings">
     <h2>The same people keep picking well</h2>
-    <p>The main test: a person's score from earlier years has to predict their later picks, after ruling out luck and a long list of
-      other explanations. All four kinds of taste passed. Each dot is how well earlier taste scores predicted later results for one measure,
+    <p>The simplest way to see it: rank everyone by how well they picked songs in earlier years, then rank them again on completely
+      different songs two or more years later. If taste were luck, everyone would land at the middle on average. Instead, people kept much
+      of their rank: the top 1% landed around the <span class="wu-num dash-skeleton" data-source="repeat" data-field="later_mean" data-where="key=99–100" data-fmt="ord">—</span> percentile on average, and
+      <span class="wu-num" data-source="repeat" data-field="later_top_fifth" data-where="key=99–100" data-fmt="pct">—</span> of them were still in the top fifth.</p>
+    <div class="wu-card">
+      <h3>Where people ranked years later</h3>
+      <p class="wu-note">Hidden half; discernment for songs (other people stick with your picks). The line is the average later rank of each
+        band of earlier rank; the shaded band holds the middle half of people. Turnover is highest in the middle and lowest at the top.</p>
+      <div class="wu-legend" id="rp-legend"></div>
+      <div class="wu-chart dash-skeleton" id="rp-chart" data-source="repeat"></div>
+    </div>
+    <p>The formal test asks the same thing with every correction in place: a person's score from earlier years has to predict their later
+      picks, after ruling out luck and a long list of other explanations. All four kinds of taste passed. Each dot is how well earlier taste scores predicted later results for one measure,
       on the hidden half of listeners. Zero would mean no prediction at all. Bars show the range we're 95% sure of, and hollow dots show what
       the first half had suggested.</p>
     <div class="wu-card">
@@ -220,6 +239,59 @@
       <div class="wu-legend" id="ld-legend"></div>
       <div class="wu-chart dash-skeleton" id="ld-chart" data-source="ladder"></div>
     </div>
+    <div class="wu-card">
+      <h3>The same at every size of takeoff</h3>
+      <p class="wu-note">How many times as often the top pickers' new artists took off as similar artists did, for each size of takeoff.
+        Hover over or click a size to highlight it. The pattern holds from doubling all the way to 100-fold, though the 100-fold line rests
+        on few cases (the top 1% had <span class="wu-num dash-skeleton" data-source="thresholds" data-field="events" data-where="key=100x:99–100" data-fmt="int">—</span>).</p>
+      <div class="wu-chips" id="th-chips" role="group" aria-label="Size of takeoff"></div>
+      <div class="wu-chart dash-skeleton" id="th-chart" data-source="thresholds"></div>
+    </div>
+    <div class="wu-card">
+      <h3>Average growth of their new artists</h3>
+      <p class="wu-note">The typical boost rather than the rare takeoff: how much more their new artists grew over the next year than similar
+        artists (same size, same month). Hidden half; the shaded band is the 95% range.</p>
+      <div class="wu-chart dash-skeleton" id="gb-chart" data-source="growthband"></div>
+    </div>
+  </section>
+
+  <section class="wu-section" id="whygood">
+    <h2>What makes the best pickers good</h2>
+    <p>Not listening more. The top 1% pick about as many new artists a year as everyone else and listen about as much. Their picks are
+      less popular when they find them, and they stay closer to a few scenes. But these habits are small differences, and together they
+      explain little: choosing people by their habits alone finds pickers whose new artists took off
+      <span class="wu-num dash-skeleton" data-source="toppickers" data-field="value" data-where="key=by_traits" data-fmt="times">—</span> as often as similar artists, against
+      <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_record" data-fmt="times">—</span> when choosing by track record.</p>
+    <p>What the best pickers have is two kinds of judgment at once. They're early to scenes that are about to take off, and within those
+      scenes they pick the artists that take off.</p>
+    <div class="wu-eq">
+      <div class="wu-card wu-take"><span class="wu-tt">Right scenes</span>
+        <span class="wu-big dash-skeleton" data-source="toppickers" data-field="value" data-where="key=scene_quality" data-fmt="times">—</span>
+        <span class="wu-cap">Their scenes took off this much more often than artists of the same size elsewhere.</span></div>
+      <span class="wu-op" aria-hidden="true">×</span>
+      <div class="wu-card wu-take"><span class="wu-tt">Right artists</span>
+        <span class="wu-big dash-skeleton" data-source="toppickers" data-field="value" data-where="key=within_scene" data-fmt="times">—</span>
+        <span class="wu-cap">Within those scenes, their artists took off this much more often than others the same size.</span></div>
+      <span class="wu-op" aria-hidden="true">=</span>
+      <div class="wu-card wu-take"><span class="wu-tt">Overall</span>
+        <span class="wu-big dash-skeleton" data-source="toppickers" data-field="value" data-where="key=total" data-fmt="times">—</span>
+        <span class="wu-cap">as often as similar artists, for the top 1% of pickers.</span></div>
+    </div>
+    <div class="wu-card">
+      <h3>The top 1%'s habits, next to everyone else's</h3>
+      <div class="wu-tablewrap">
+        <table id="pf-table" data-source="profile" data-row-key="band">
+          <thead><tr><th data-field="band">Pickers</th><th class="wu-r" data-field="picks_per_year">New artists picked per year</th>
+            <th class="wu-r" data-field="listens_per_month">Listens per month</th><th class="wu-r" data-field="pick_popularity">Popularity of picks (percentile)</th>
+            <th class="wu-r" data-field="top_scene_share">Picks in their main scene</th><th class="wu-r" data-field="mainstream_share">Mainstream listening</th>
+            <th class="wu-r" data-field="plays_before_committing">Plays before committing</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="wu-note">Hidden half; averages over the years used to rank people. Habits like these explain about
+        <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=r2_traits" data-fmt="pct1">—</span> of the differences in how people's later picks did; their track record explains
+        <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=r2_record" data-fmt="pct1">—</span>, small in absolute terms because single picks are so noisy.</p>
+    </div>
   </section>
 
   <section class="wu-section" id="fanvalue">
@@ -264,9 +336,9 @@
       strength matched what the first half had shown.</p>
     <p><b>We checked the takeoff and good-picker numbers the same way.</b> They were found afterwards, on the first half. Before touching the hidden half
       again, we wrote down each prediction, exactly how it would be measured, and a stricter bar for passing (99% sure, since there were
-      several), in three rounds. Then we checked each once. All thirteen held.</p>
+      several), in four rounds. Then we checked each once. All sixteen held.</p>
     <div class="wu-card">
-      <h3>Takeoff and good-picker checks on the hidden half</h3>
+      <h3>Takeoff, good-picker, and best-picker checks on the hidden half</h3>
       <div class="wu-tablewrap">
         <table id="hl-table" data-source="headlines" data-row-key="key">
           <thead><tr><th data-field="claim">Prediction</th><th class="wu-r" data-field="hidden">Hidden half</th>
@@ -432,6 +504,7 @@
     text: (v) => String(v),
     times: (v) => `${d3.format('.1f')(v)}×`, pct0: d3.format('.0%'), pct1: d3.format('.1%'), pct2: d3.format('.2%'),
     spct1: d3.format('+.1%'), spct0: d3.format('+.0%'), k0: (v) => d3.format('.0f')(v * 1000),
+    ord: (v) => { const n = Math.round(v), t = n % 100; return n + ((t >= 11 && t <= 13) ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th')); },
   };
   const root = document.getElementById('dash-root') || document.documentElement;
   const css = (n) => getComputedStyle(root).getPropertyValue(n).trim();
@@ -644,6 +717,143 @@
           ['Similar artists', `${fmt.k0(+d.similar_rate)} per 1,000`, colS], ['As often as similar', fmt.times(d.odds)], ['People', fmt.int(+d.people)]]))
         .on('mouseleave', () => tip.hide());
     });
+  }
+
+  function frame(el, height, m) {
+    const fs = css('--cds-font-size-caption') || '12px';
+    const width = el.clientWidth;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
+    return { svg, fs, width, height, m };
+  }
+
+  function gridY(f, y, fmtTick, ticks) {
+    const { svg, fs, width, m } = f;
+    svg.append('g').selectAll('line').data(y.ticks(ticks)).join('line').attr('x1', m.l).attr('x2', width - m.r)
+      .attr('y1', (d) => y(d)).attr('y2', (d) => y(d)).attr('stroke', css('--cds-chart-grid'));
+    axisStyle(svg.append('g').attr('transform', `translate(${m.l - 6},0)`).call(d3.axisLeft(y).ticks(ticks).tickFormat(fmtTick).tickSize(0)), fs);
+  }
+
+  function axisXRank(f, x, label) {
+    const { svg, fs, width, height, m } = f;
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`).call(d3.axisBottom(x).tickValues([0, 25, 50, 75, 90, 100]).tickSize(0)), fs);
+    svg.append('text').attr('x', (m.l + width - m.r) / 2).attr('y', height - 4).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted'))
+      .style('font-size', fs).text(label);
+  }
+
+  function bandHover(f, rows, x, tipFn) {
+    const { svg, width, height, m } = f;
+    const tip = tooltip(f.svg.node().parentNode);
+    rows.forEach((d, i) => {
+      const x0 = i === 0 ? m.l : x((rows[i - 1].mid + d.mid) / 2), x1 = i === rows.length - 1 ? width - m.r : x((d.mid + rows[i + 1].mid) / 2);
+      svg.append('rect').attr('x', x0).attr('y', m.t).attr('width', Math.max(1, x1 - x0)).attr('height', height - m.t - m.b).attr('fill', 'transparent')
+        .on('mousemove', (ev) => { const [t, lines] = tipFn(d); tip.show(ev, t, lines); }).on('mouseleave', () => tip.hide());
+    });
+  }
+
+  function drawRepeat() {
+    const el = document.getElementById('rp-chart');
+    if (!ready(el, ['repeat'])) return;
+    const col = dash.colors[0], ref = css('--cds-chart-reference');
+    legend('rp-legend', [['Average later rank', col, 'line'], ['Perfect repeat / pure luck', ref, 'line']]);
+    const rows = dash.data('repeat').data.map((r) => ({ ...r, mid: +r.mid, mean: +r.later_mean, p25: +r.later_p25, p75: +r.later_p75 }));
+    const f = frame(el, 300, { t: 28, r: 16, b: 40, l: 36 });
+    const { svg, fs, width, height, m } = f;
+    const x = d3.scaleLinear([0, 100], [m.l, width - m.r]), y = d3.scaleLinear([0, 100], [height - m.b, m.t]);
+    gridY(f, y, (d) => d, 4);
+    axisXRank(f, x, 'Rank in earlier years (percentile)');
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Rank two or more years later');
+    svg.append('path').datum(rows).attr('d', d3.area().x((d) => x(d.mid)).y0((d) => y(d.p25)).y1((d) => y(d.p75)))
+      .attr('fill', col).attr('fill-opacity', 0.14);
+    svg.append('line').attr('x1', x(0)).attr('x2', x(100)).attr('y1', y(0)).attr('y2', y(100)).attr('stroke', ref).attr('stroke-dasharray', '4 3');
+    svg.append('line').attr('x1', x(0)).attr('x2', x(100)).attr('y1', y(50)).attr('y2', y(50)).attr('stroke', ref).attr('stroke-dasharray', '4 3');
+    svg.append('text').attr('x', x(97)).attr('y', y(97) - 2).attr('text-anchor', 'end').attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Perfect repeat');
+    svg.append('text').attr('x', x(3)).attr('y', y(50) - 6).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Pure luck');
+    svg.append('path').datum(rows).attr('d', d3.line().x((d) => x(d.mid)).y((d) => y(d.mean))).attr('fill', 'none').attr('stroke', col)
+      .attr('stroke-width', 2).attr('stroke-linejoin', 'round');
+    svg.append('g').selectAll('circle').data(rows).join('circle').attr('cx', (d) => x(d.mid)).attr('cy', (d) => y(d.mean)).attr('r', 4)
+      .attr('fill', col).attr('stroke', css('--color-panel')).attr('stroke-width', 2);
+    bandHover(f, rows, x, (d) => [`Earlier rank ${d.band}`, [['Average later rank', fmt.ord(d.mean), col],
+      ['Middle half landed', `${fmt.ord(d.p25)} to ${fmt.ord(d.p75)}`], ['Still top fifth', fmt.pct(+d.later_top_fifth)],
+      ['Fell to bottom fifth', fmt.pct(+d.later_bottom_fifth)], ['People', fmt.int(+d.people)]]]);
+  }
+
+  let thSel = 10, thHover = null;
+  function drawThresholds() {
+    const el = document.getElementById('th-chart');
+    const chips = document.getElementById('th-chips');
+    if (!ready(el, ['thresholds'])) { chips.replaceChildren(); return; }
+    const rows = dash.data('thresholds').data.map((r) => ({ ...r, fold: +r.fold, mid: +r.mid, v: +r.times_similar }));
+    const folds = [...new Set(rows.map((r) => r.fold))].sort((a, b) => a - b);
+    const col = dash.colors[0], mute = css('--cds-chart-muted');
+    const f = frame(el, 300, { t: 28, r: 16, b: 40, l: 36 });
+    const { svg, fs, width, height, m } = f;
+    const x = d3.scaleLinear([0, 100], [m.l, width - m.r]);
+    const y = d3.scaleLinear([0, d3.max(rows, (r) => r.v) * 1.1], [height - m.b, m.t]).nice();
+    gridY(f, y, (d) => `${d}×`, 5);
+    svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(1)).attr('y2', y(1)).attr('stroke', css('--cds-chart-axis'));
+    svg.append('text').attr('x', m.l + 4).attr('y', y(1) - 6).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Same as similar artists');
+    axisXRank(f, x, "Picker's rank from earlier years (percentile)");
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Times as often as similar artists');
+    const lines = svg.append('g'), hi = svg.append('g');
+    const tip = tooltip(el);
+    function paint() {
+      const cur = thHover ?? thSel;
+      lines.selectAll('*').remove(); hi.selectAll('*').remove();
+      folds.forEach((k) => {
+        const pts = rows.filter((r) => r.fold === k).sort((a, b) => a.mid - b.mid);
+        const on = k === cur;
+        (on ? hi : lines).append('path').datum(pts).attr('d', d3.line().x((d) => x(d.mid)).y((d) => y(d.v))).attr('fill', 'none')
+          .attr('stroke', on ? col : mute).attr('stroke-width', on ? 2.5 : 1.5).attr('opacity', on ? 1 : 0.55).attr('stroke-linejoin', 'round');
+        lines.append('path').datum(pts).attr('d', d3.line().x((d) => x(d.mid)).y((d) => y(d.v))).attr('fill', 'none')
+          .attr('stroke', 'transparent').attr('stroke-width', 12).style('cursor', 'pointer')
+          .on('mouseenter', () => { thHover = k; paint(); }).on('mouseleave', () => { thHover = null; paint(); })
+          .on('click', () => { thSel = k; thHover = null; paint(); });
+        if (on) {
+          hi.selectAll('circle').data(pts).join('circle').attr('cx', (d) => x(d.mid)).attr('cy', (d) => y(d.v)).attr('r', 4)
+            .attr('fill', col).attr('stroke', css('--color-panel')).attr('stroke-width', 2)
+            .on('mousemove', (ev, d) => tip.show(ev, `Grew ${k}× or more, pickers ranked ${d.band}`, [['Their new artists', `${d3.format('.2~f')(+d.per_1000)} per 1,000`, col],
+              ['Similar artists', `${d3.format('.2~f')(+d.similar_per_1000)} per 1,000`], ['As often as similar', fmt.times(d.v)], ['Cases', fmt.int(+d.events)]]))
+            .on('mouseleave', () => tip.hide());
+          const last = pts[pts.length - 1];
+          hi.append('text').attr('x', x(last.mid) - 8).attr('y', y(last.v) - 10).attr('text-anchor', 'end').attr('fill', css('--color-fg'))
+            .style('font-size', fs).text(`${k}×: top 1% ${d3.format('.2~f')(+last.per_1000)} vs ${d3.format('.2~f')(+last.similar_per_1000)} per 1,000`);
+        }
+      });
+      chips.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.fold === thSel)));
+    }
+    chips.replaceChildren(...folds.map((k) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'wu-chip'; b.dataset.fold = k; b.textContent = `${k}×`;
+      b.addEventListener('click', () => { thSel = k; thHover = null; paint(); });
+      b.addEventListener('mouseenter', () => { thHover = k; paint(); });
+      b.addEventListener('mouseleave', () => { thHover = null; paint(); });
+      b.addEventListener('focus', () => { thHover = k; paint(); });
+      b.addEventListener('blur', () => { thHover = null; paint(); });
+      return b;
+    }));
+    paint();
+  }
+
+  function drawGrowthBand() {
+    const el = document.getElementById('gb-chart');
+    if (!ready(el, ['growthband'])) return;
+    const col = dash.colors[0];
+    const rows = dash.data('growthband').data.map((r) => ({ ...r, mid: +r.mid, v: +r.growth, lo: +r.lo, hi: +r.hi }));
+    const f = frame(el, 260, { t: 28, r: 16, b: 40, l: 44 });
+    const { svg, fs, width, height, m } = f;
+    const x = d3.scaleLinear([0, 100], [m.l, width - m.r]);
+    const y = d3.scaleLinear([Math.min(0, d3.min(rows, (r) => r.lo)), d3.max(rows, (r) => r.hi) * 1.1], [height - m.b, m.t]).nice();
+    gridY(f, y, d3.format('+.0%'), 5);
+    svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', css('--cds-chart-axis'));
+    axisXRank(f, x, "Picker's rank from earlier years (percentile)");
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Extra growth vs similar artists');
+    svg.append('path').datum(rows).attr('d', d3.area().x((d) => x(d.mid)).y0((d) => y(d.lo)).y1((d) => y(d.hi))).attr('fill', col).attr('fill-opacity', 0.16);
+    svg.append('path').datum(rows).attr('d', d3.line().x((d) => x(d.mid)).y((d) => y(d.v))).attr('fill', 'none').attr('stroke', col).attr('stroke-width', 2);
+    svg.append('g').selectAll('circle').data(rows).join('circle').attr('cx', (d) => x(d.mid)).attr('cy', (d) => y(d.v)).attr('r', 4)
+      .attr('fill', col).attr('stroke', css('--color-panel')).attr('stroke-width', 2);
+    const last = rows[rows.length - 1];
+    svg.append('text').attr('x', x(last.mid) - 8).attr('y', y(last.v)).attr('dy', '0.35em').attr('text-anchor', 'end').attr('fill', css('--color-fg'))
+      .style('font-size', fs).text(`Top 1%: ${fmt.spct0(last.v)}`);
+    bandHover(f, rows, x, (d) => [`Pickers ranked ${d.band}`, [['Extra growth', `${fmt.spct1(d.v)} (${fmt.spct1(d.lo)} to ${fmt.spct1(d.hi)})`, col], ['People', fmt.int(+d.people)]]]);
   }
 
   function drawFanValue() {
@@ -883,10 +1093,17 @@
 
   dash.onData(() => {
     fillMarks();
+    drawRepeat();
     drawLadder();
+    drawThresholds();
+    drawGrowthBand();
+    fillTable('pf-table', 'profile', [['band'], ['picks_per_year', d3.format('.0f'), 'wu-r'], ['listens_per_month', fmt.int, 'wu-r'],
+      ['pick_popularity', (v) => fmt.ord(+v), 'wu-r'], ['top_scene_share', fmt.pct, 'wu-r'], ['mainstream_share', fmt.pct, 'wu-r'],
+      ['plays_before_committing', d3.format('.0f'), 'wu-r']], 'band');
     drawFanValue();
     drawCrowd();
-    const hl = (r, f) => (r.unit === 'times as often' ? fmt.times(+r[f]) : fmt.spct1(+r[f]));
+    const hl = (r, f) => (r[f] === null || r[f] === undefined ? '–' : r.unit === 'times as often' ? fmt.times(+r[f])
+      : r.unit === 'points' ? `${d3.format('.1f')(+r[f] * 100)} points` : fmt.spct1(+r[f]));
     (function fillHeadlines() {
       const tb = document.querySelector('#hl-table tbody'); tb.replaceChildren();
       const d = dash.data('headlines'); if (d.status !== 'ok') return;
