@@ -175,8 +175,26 @@ def crowd_log():
     return rows
 
 
+def crowd_steps(rows):
+    """What each additional good picker adds: step k = multiplier at k / multiplier at k-1 (from crowd_log points), with an
+    approximate 95% range from the two points' ranges (independent groups of artist-months)."""
+    out = []
+    for g in ("niche", "middle", "crowded"):
+        pts = sorted([r for r in rows if r["group"] == g and r["kind"] == "point"], key=lambda r: r["good"])
+        for a, b in zip(pts[:-1], pts[1:]):
+            sa = (np.log(a["hi"]) - np.log(a["lo"])) / 3.92
+            sb = (np.log(b["hi"]) - np.log(b["lo"])) / 3.92
+            se, st = float(np.sqrt(sa ** 2 + sb ** 2)), float(np.log(b["mult"]) - np.log(a["mult"]))
+            out.append({"key": f"{g}:{b['good']}", "group": g, "nth": b["good"], "step": float(np.expm1(st)),
+                        "lo": float(np.expm1(st - 1.96 * se)), "hi": float(np.expm1(st + 1.96 * se)), "artist_months": b["artist_months"]})
+    return out
+
+
 if __name__ == "__main__":
     W = ROOT / "analysis" / "writeup"
+    if "--crowd-steps" in sys.argv:
+        (W / "crowdsteps.json").write_text(json.dumps(crowd_steps(json.loads((W / "crowdlog.json").read_text())), indent=1))
+        raise SystemExit
     if "--crowd-log" in sys.argv:
         rows = crowd_log()
         (W / "crowdlog.json").write_text(json.dumps(rows, indent=1))
