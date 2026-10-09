@@ -1,0 +1,93 @@
+[
+ {
+  "key": "P1a",
+  "claim": "Best vs worst pickers' picks: grew 10\u00d7 or more",
+  "unit": "times as often",
+  "hidden": 2.1926025668487448,
+  "lo": 2.096025369487028,
+  "hi": 2.2909800731814256,
+  "lo99": 2.0658686021814057,
+  "first_half": 2.1667446440157874,
+  "rate": 0.004347593645548632,
+  "rate_compared": 0.001982846189857876,
+  "confirmed": true
+ },
+ {
+  "key": "P1b",
+  "claim": "Best vs worst pickers' picks: grew 4\u00d7 or more",
+  "unit": "times as often",
+  "hidden": 1.9165133774224008,
+  "lo": 1.8688413278309084,
+  "hi": 1.968819408685427,
+  "lo99": 1.855750760048646,
+  "first_half": 1.8745184811612707,
+  "rate": 0.01859582209176634,
+  "rate_compared": 0.009702944060206165,
+  "confirmed": true
+ },
+ {
+  "key": "P2a",
+  "claim": "3+ good pickers agree vs similar artists: grew 4\u00d7 or more",
+  "unit": "times as often",
+  "hidden": 2.836284448332193,
+  "lo": 2.1511480876360656,
+  "hi": 3.6600211680359576,
+  "lo99": 1.973085091451536,
+  "first_half": 2.5871524843550944,
+  "rate": 0.055666003976143144,
+  "rate_compared": 0.019626382681354883,
+  "confirmed": true
+ },
+ {
+  "key": "P2b",
+  "claim": "3+ good pickers agree vs similar artists: grew 10\u00d7 or more",
+  "unit": "times as often",
+  "hidden": 2.4759779989352704,
+  "lo": 1.3463967323736241,
+  "hi": 4.225204815150653,
+  "lo99": 1.1125644205138825,
+  "first_half": 3.0617632799181336,
+  "rate": 0.015904572564612324,
+  "rate_compared": 0.006423551651691441,
+  "confirmed": true
+ },
+ {
+  "key": "P3a",
+  "claim": "One ordinary picker swapped for a good one: extra growth",
+  "unit": "more growth",
+  "hidden": 0.01986162813900752,
+  "lo": 0.018626893716283986,
+  "hi": 0.021077889870113366,
+  "lo99": 0.01831871651711044,
+  "first_half": 0.01964262617073701,
+  "rate": null,
+  "rate_compared": null,
+  "confirmed": true
+ },
+ {
+  "key": "P3b",
+  "claim": "The same, compared within the same scene",
+  "unit": "more growth",
+  "hidden": 0.012714447210820514,
+  "lo": 0.011801727190540508,
+  "hi": 0.013835580540413698,
+  "lo99": 0.011513455571539046,
+  "first_half": 0.011994780951556597,
+  "rate": null,
+  "rate_compared": null,
+  "confirmed": true
+ },
+ {
+  "key": "H2growth",
+  "claim": "3+ good pickers agree: growth vs similar artists (descriptive)",
+  "unit": "more growth",
+  "hidden": 0.2022498433900358,
+  "lo": null,
+  "hi": null,
+  "lo99": null,
+  "first_half": 0.16577413943158406,
+  "rate": null,
+  "rate_compared": null,
+  "confirmed": null
+ }
+]

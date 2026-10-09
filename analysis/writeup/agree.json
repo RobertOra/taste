@@ -1,0 +1,83 @@
+[
+ {
+  "key": "1-good",
+  "pickers": "1 person",
+  "kind": "good",
+  "artist_months": 195842,
+  "growth": 0.03281595675187548,
+  "takeoff4": 0.027828555672429815,
+  "takeoff4_similar": 0.02175370087423759
+ },
+ {
+  "key": "1-ordinary",
+  "pickers": "1 person",
+  "kind": "ordinary",
+  "artist_months": 569909,
+  "growth": -0.0016498491532877207,
+  "takeoff4": 0.017727391566021943,
+  "takeoff4_similar": 0.01906791929279968
+ },
+ {
+  "key": "1-poor",
+  "pickers": "1 person",
+  "kind": "poor",
+  "artist_months": 203434,
+  "growth": -0.026111279766386355,
+  "takeoff4": 0.017135778680063312,
+  "takeoff4_similar": 0.01922851095267944
+ },
+ {
+  "key": "2-good",
+  "pickers": "2 people",
+  "kind": "good",
+  "artist_months": 10904,
+  "growth": 0.09600514879898543,
+  "takeoff4": 0.0359501100513573,
+  "takeoff4_similar": 0.01763979424035755
+ },
+ {
+  "key": "2-ordinary",
+  "pickers": "2 people",
+  "kind": "ordinary",
+  "artist_months": 89946,
+  "growth": -0.003487849666602795,
+  "takeoff4": 0.008827518733462299,
+  "takeoff4_similar": 0.010822718228843951
+ },
+ {
+  "key": "2-poor",
+  "pickers": "2 people",
+  "kind": "poor",
+  "artist_months": 11692,
+  "growth": -0.05721599994641204,
+  "takeoff4": 0.008638385220663701,
+  "takeoff4_similar": 0.012941983970859305
+ },
+ {
+  "key": "3-good",
+  "pickers": "3 or more",
+  "kind": "good",
+  "artist_months": 1376,
+  "growth": 0.16577413943158406,
+  "takeoff4": 0.05232558139534884,
+  "takeoff4_similar": 0.020225163268021353
+ },
+ {
+  "key": "3-ordinary",
+  "pickers": "3 or more",
+  "kind": "ordinary",
+  "artist_months": 40378,
+  "growth": -0.003993047376615005,
+  "takeoff4": 0.004606468869186191,
+  "takeoff4_similar": 0.007248940970399039
+ },
+ {
+  "key": "3-poor",
+  "pickers": "3 or more",
+  "kind": "poor",
+  "artist_months": 1371,
+  "growth": -0.09447204465079155,
+  "takeoff4": 0.0036469730123997084,
+  "takeoff4_similar": 0.011723274473563753
+ }
+]
