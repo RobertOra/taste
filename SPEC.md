@@ -240,6 +240,16 @@ Descriptive: the curves by plays bin for each group and for all picks.
 **Sealed result (run once, 2026-10-10): confirmed.** P9 +0.024 [0.020, 0.028; 99% low 0.019] (top fifth +4.4 points,
 bottom fifth +2.0).
 
+## Recent form vs history (written 2026-10-09 18:35, before any sealed run of analysis/recency.py)
+Exploratory on the explore half; tested once on the sealed half with the committed code. Confirmed = 99% bootstrap lower
+bound above the stated value.
+- P10a. Recent top fifth with an old bottom-fifth record beats old top fifth with a recent bottom-fifth record: ratio of
+  later 10x odds > 1. Explore 2.36 [1.48, 3.70; 99% low 1.31].
+- P10b. The recent record separates people more than the old one (log spread difference > 0). Explore: recent 2.51x,
+  old 1.07x, difference 0.85 [0.52, 1.16; 99% low 0.44].
+- P10c. A one-year record goes stale: the same top-10% people's 10x odds 2 years later / 4 years later > 1.
+  Explore 1.24 [1.12, 1.39; 99% low 1.09].
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|
