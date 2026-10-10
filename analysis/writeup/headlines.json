@@ -403,6 +403,45 @@
   "confirmed": true
  },
  {
+  "key": "P12",
+  "claim": "Same people, experience years 3-4 vs 1-2: extra growth of their new artists",
+  "unit": "points",
+  "hidden": 0.003976087152358075,
+  "lo": 0.003502631421131816,
+  "hi": 0.004423955748788488,
+  "lo99": 0.0033313575278963326,
+  "first_half": 0.004441638553189489,
+  "rate": null,
+  "rate_compared": null,
+  "confirmed": true
+ },
+ {
+  "key": "P13a",
+  "claim": "Taste matters more in Indie & alternative than in Jazz, blues & classical (gap difference)",
+  "unit": "points",
+  "hidden": 0.04834028321336227,
+  "lo": 0.043706949260097196,
+  "hi": 0.05323252734034113,
+  "lo99": 0.042560277293945036,
+  "first_half": 0.04747092673088142,
+  "rate": null,
+  "rate_compared": null,
+  "confirmed": true
+ },
+ {
+  "key": "P13b",
+  "claim": "Taste matters more in Indie & alternative than in Rock & punk (gap difference)",
+  "unit": "points",
+  "hidden": 0.035882111594203125,
+  "lo": 0.0313724625579951,
+  "hi": 0.040640882483332606,
+  "lo99": 0.030236711448191206,
+  "first_half": 0.036944036768804894,
+  "rate": null,
+  "rate_compared": null,
+  "confirmed": true
+ },
+ {
   "key": "H2growth",
   "claim": "3+ good pickers agree: growth vs similar artists (descriptive)",
   "unit": "more growth",

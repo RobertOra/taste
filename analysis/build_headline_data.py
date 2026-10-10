@@ -121,6 +121,16 @@ def headlines():
                                      ("P11b", "Good taste helps more than bad taste hurts (difference in growth)", "points", "P11b_asymmetry", 0)):
         rows.append({"key": key, "claim": claim, "unit": unit, "hidden": bs_[k]["est"], "lo": bs_[k]["lo"], "hi": bs_[k]["hi"], "lo99": bs_[k]["lo99"],
                      "first_half": be_[k]["est"], "rate": None, "rate_compared": None, "confirmed": bs_[k]["lo99"] > bar})
+    ls_, le_ = (json.loads((OUT / f"learning_{h}.json").read_text())["years 1-2 vs 3-4"] for h in ("sealed", "explore"))
+    rows.append({"key": "P12", "claim": "Same people, experience years 3-4 vs 1-2: extra growth of their new artists", "unit": "points",
+                 "hidden": ls_["change"], "lo": ls_["lo"], "hi": ls_["hi"], "lo99": ls_["lo99"], "first_half": le_["change"],
+                 "rate": None, "rate_compared": None, "confirmed": ls_["lo99"] > 0})
+    gs_ = json.loads((OUT / "genre_sealed.json").read_text())["tests"]
+    ge_ = {r["family"]: r["gap"] for r in json.loads((OUT / "genre_explore.json").read_text())["families"]}
+    for key, t in zip(("P13a", "P13b"), gs_):
+        rows.append({"key": key, "claim": f"Taste matters more in {t['top']} than in {t['bottom']} (gap difference)", "unit": "points",
+                     "hidden": t["est"], "lo": t["lo"], "hi": t["hi"], "lo99": t["lo99"], "first_half": ge_[t["top"]] - ge_[t["bottom"]],
+                     "rate": None, "rate_compared": None, "confirmed": t["lo99"] > 0})
     rows.append({"key": "H2growth", "claim": "3+ good pickers agree: growth vs similar artists (descriptive)", "unit": "more growth",
                  "hidden": hs["H2"]["best"]["growth_vs_similar"], "lo": None, "hi": None, "lo99": None,
                  "first_half": he["H2"]["best"]["growth_vs_similar"], "rate": None, "rate_compared": None, "confirmed": None})
@@ -212,6 +222,19 @@ def badtaste():
     return rows
 
 
+def learning():
+    r = json.loads((OUT / "learning_sealed.json").read_text())
+    rows = [{"kind": "year", **c} for c in r["curve"]]
+    c = r["years 1-2 vs 3-4"]
+    rows.append({"kind": "summary", "key": "change", "year": None, "growth": c["change"], "lo": c["lo"], "hi": c["hi"], "people": c["people"],
+                 "early": c["early"], "late": c["late"]})
+    return rows
+
+
+def genre():
+    return json.loads((OUT / "genre_sealed.json").read_text())["families"]
+
+
 def obstaste():
     return json.loads((OUT / "obs_taste_sealed_deciles.json").read_text())["curve"]
 
@@ -256,7 +279,7 @@ def crowd():
 
 
 if __name__ == "__main__":
-    for name, fn in (("headlines", headlines), ("obsession", obsession), ("obstaste", obstaste), ("recency", recency), ("badtaste", badtaste), ("fanrel", fanrel), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
+    for name, fn in (("headlines", headlines), ("obsession", obsession), ("obstaste", obstaste), ("recency", recency), ("badtaste", badtaste), ("fanrel", fanrel), ("learning", learning), ("genre", genre), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
         rows = fn()
         (W / f"{name}.json").write_text(json.dumps(rows, indent=1))
         print(name, json.dumps(rows)[:600])

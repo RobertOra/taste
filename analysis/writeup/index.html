@@ -161,10 +161,16 @@
       <li><a href="#recency"><b>Recent form matters more than history, especially for the best pickers.</b></a> Taste drifts: the top 2% of pickers over the last two years found
         tenfold takeoffs <span class="wu-num dash-skeleton" data-source="recency" data-field="odds" data-where="key=top2:recent" data-fmt="times">—</span> as often as similar artists; the top 2% from two years before that,
         <span class="wu-num" data-source="recency" data-field="odds" data-where="key=top2:old" data-fmt="times">—</span>.</li>
+      <li><a href="#learning"><b>Experience helps, a little.</b></a> The same people picked slightly better in their third and fourth years than in
+        their first two (<span class="wu-num dash-skeleton" data-source="learning" data-field="growth" data-where="key=change" data-fmt="spct1">—</span> growth for their new artists), then levelled off: far less than the gap
+        between good and poor pickers.</li>
       <li><a href="#whygood"><b>It's judgment, not habits.</b></a> Choosing the top 1% by listening habits finds pickers at
         <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_traits" data-fmt="times">—</span>; by track record, <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_record" data-fmt="times">—</span>.</li>
       <li><a href="#scenesplit"><b>Good taste is right scenes and right artists.</b></a> For the top 1%, their scenes took off
         <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=scene_quality" data-fmt="times">—</span> as often, and their artists within those scenes <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=within_scene" data-fmt="times">—</span>.</li>
+      <li><a href="#genre"><b>Taste matters most in fast-moving genres.</b></a> The gap between good and poor pickers was largest in electronic, hip hop,
+        and indie (<span class="wu-num dash-skeleton" data-source="genre" data-field="gap" data-where="key=Electronic" data-fmt="spct1">—</span>, <span class="wu-num" data-source="genre" data-field="gap" data-where="key=Hip hop" data-fmt="spct1">—</span>, <span class="wu-num" data-source="genre" data-field="gap" data-where="key=Indie %26 alternative" data-fmt="spct1">—</span>)
+        and smallest in jazz, blues, and classical (<span class="wu-num" data-source="genre" data-field="gap" data-where="key=Jazz, blues %26 classical" data-fmt="spct1">—</span>).</li>
       <li><a href="#obsession"><b>A good picker's obsessions are their best calls.</b></a> People's most-replayed finds beat their
         least-replayed ones, and good pickers' edge lives almost entirely in what they got hooked on.</li>
       <li><a href="#every-size"><b>It's a steady edge, not a nose for hits.</b></a> Good taste raises the odds by about the same multiple whether the
@@ -311,6 +317,20 @@
       pointed the same way but didn't clear our strict bar.</p>
   </section>
 
+  <section class="wu-section" id="learning">
+    <h2>Experience helps, a little</h2>
+    <p>Can taste be learned? We followed the same people through their years on Last.fm. Their new artists grew
+      <span class="wu-num dash-skeleton" data-source="learning" data-field="early" data-where="key=change" data-fmt="spct1">—</span> more than similar artists in their first two years and <span class="wu-num" data-source="learning" data-field="late" data-where="key=change" data-fmt="spct1">—</span> in their
+      third and fourth: a gain of <span class="wu-num" data-source="learning" data-field="growth" data-where="key=change" data-fmt="spct1">—</span>. The improvement comes in the first few years and then levels off. It's
+      real, but small next to the difference between good and poor pickers, so experience sharpens taste without transforming it.</p>
+    <div class="wu-card">
+      <h3>How the same people's picks did, by years of listening</h3>
+      <p class="wu-note">Hidden half. <span class="wu-num" data-source="learning" data-field="people" data-where="key=1" data-fmt="int">—</span> people who picked at least ten new artists in each of their first five years;
+        growth of their new artists against similar artists (same size, same month). Bars are 95% ranges.</p>
+      <div class="wu-chart dash-skeleton" id="ln-chart" data-source="learning"></div>
+    </div>
+  </section>
+
   <section class="wu-section" id="whygood">
     <h2>What makes the best pickers good</h2>
     <p><b>Skill, not habits</b>: not how much they listen, how many new artists they try or commit to, how obscure or mainstream their
@@ -350,6 +370,20 @@
         each band's overall edge. Bars are 95% ranges.</p>
       <div class="wu-legend" id="ss-legend"></div>
       <div class="wu-chart dash-skeleton" id="ss-chart" data-source="scenesplit"></div>
+    </div>
+  </section>
+
+  <section class="wu-section" id="genre">
+    <h2>Taste matters most in fast-moving genres</h2>
+    <p>Where does taste make the biggest difference? Within each genre, we compared the new artists found by the best fifth of pickers with those
+      found by the worst fifth, each against similar artists in the same genre. The gap was largest in electronic, hip hop, and indie, where new acts
+      come and go quickly, and smallest in jazz, blues, and classical and in rock and punk, where much of what people get into is already
+      established.</p>
+    <div class="wu-card">
+      <h3>The gap between the best and worst pickers, by genre</h3>
+      <p class="wu-note">Hidden half. How much more the best fifth's new artists grew than the worst fifth's, compared with similar artists of the same
+        genre, size, and month. Genres come from MusicBrainz tags, grouped into families; untagged artists are left out. Bars are 95% ranges.</p>
+      <div class="wu-chart dash-skeleton" id="gn-chart" data-source="genre"></div>
     </div>
   </section>
 
@@ -411,7 +445,7 @@
       strength matched what the first half had shown.</p>
     <p><b>We checked the takeoff and good-picker numbers the same way.</b> They were found afterwards, on the first half. Before touching the hidden half
       again, we wrote down each prediction, exactly how it would be measured, and a stricter bar for passing (99% sure, since there were
-      several), in eight rounds. Then we checked each once. Of twenty-four predictions, twenty-two held; the two that didn't, both about how fast
+      several), in ten rounds. Then we checked each once. Of twenty-seven predictions, twenty-five held; the two that didn't, both about how fast
       taste drifts, pointed the right way but fell short of the bar, and the page says so where they come up.</p>
     <div class="wu-card">
       <h3>Checks of these findings on the hidden half</h3>
@@ -1169,6 +1203,56 @@
     svg.append('text').attr('x', x(0.2) + 4).attr('y', height - m.b - 4).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Chance: 20%');
   }
 
+  function drawLearning() {
+    const el = document.getElementById('ln-chart');
+    if (!ready(el, ['learning'])) return;
+    const col = dash.colors[0];
+    const rows = dash.data('learning').data.filter((r) => r.kind === 'year').map((r) => ({ ...r, yr: +r.year, v: +r.growth, lo: +r.lo, hi: +r.hi }));
+    const f = frame(el, 240, { t: 28, r: 16, b: 40, l: 44 });
+    const { svg, fs, width, height, m } = f;
+    const x = d3.scalePoint(rows.map((r) => r.yr), [m.l, width - m.r]).padding(0.4);
+    const y = d3.scaleLinear([0, d3.max(rows, (r) => r.hi) * 1.15], [height - m.b, m.t]).nice();
+    gridY(f, y, d3.format('+.1%'), 4);
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`).call(d3.axisBottom(x).tickFormat((k) => `Year ${k}`).tickSize(0)), fs);
+    svg.append('text').attr('x', (m.l + width - m.r) / 2).attr('y', height - 4).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted'))
+      .style('font-size', fs).text('Years since their first listen');
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Growth of their new artists vs similar artists');
+    svg.append('path').datum(rows).attr('d', d3.line().x((d) => x(d.yr)).y((d) => y(d.v))).attr('fill', 'none').attr('stroke', col).attr('stroke-width', 2);
+    errorDots(svg, rows, (d) => x(d.yr), y, col, false);
+    const tip = tooltip(el);
+    rows.forEach((d) => svg.append('circle').attr('cx', x(d.yr)).attr('cy', y(d.v)).attr('r', 12).attr('fill', 'transparent')
+      .on('mousemove', (ev) => tip.show(ev, `Year ${d.yr}`, [['Growth vs similar', `${fmt.spct1(d.v)} (${fmt.spct1(d.lo)} to ${fmt.spct1(d.hi)})`, col], ['People', fmt.int(+d.people)]]))
+      .on('mouseleave', () => tip.hide()));
+  }
+
+  function drawGenre() {
+    const el = document.getElementById('gn-chart');
+    if (!ready(el, ['genre'])) return;
+    const col = dash.colors[0];
+    const rows = dash.data('genre').data.filter((r) => r.family !== 'Other').map((r) => ({ ...r, v: +r.gap, lo: +r.gap_lo, hi: +r.gap_hi })).sort((a, b) => b.v - a.v);
+    const fs = css('--cds-font-size-caption') || '12px';
+    const width = el.clientWidth, rowH = 26, m = { t: 4, r: 56, b: 26 };
+    const height = m.t + rows.length * rowH + m.b;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
+    const left = Math.min(textWidth(svg, rows.map((r) => r.family), fs) + 14, width * 0.45);
+    const x = d3.scaleLinear([0, d3.max(rows, (r) => r.hi) * 1.05], [left, width - m.r]).nice();
+    svg.append('g').selectAll('line').data(x.ticks(5)).join('line').attr('x1', (v) => x(v)).attr('x2', (v) => x(v)).attr('y1', m.t).attr('y2', height - m.b)
+      .attr('stroke', (v) => (v === 0 ? css('--cds-chart-axis') : css('--cds-chart-grid')));
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 6})`).call(d3.axisBottom(x).ticks(5).tickFormat(d3.format('+.0%')).tickSize(0)), fs);
+    const tip = tooltip(el);
+    rows.forEach((r, i) => {
+      const cy = m.t + i * rowH + rowH / 2, h = 14;
+      svg.append('text').attr('x', 0).attr('y', cy).attr('dy', '0.35em').attr('fill', css('--color-fg-muted')).style('font-size', fs).text(r.family);
+      svg.append('path').attr('d', `M${x(0)},${cy - h / 2}H${x(r.v) - 4}Q${x(r.v)},${cy - h / 2} ${x(r.v)},${cy - h / 2 + 4}V${cy + h / 2 - 4}Q${x(r.v)},${cy + h / 2} ${x(r.v) - 4},${cy + h / 2}H${x(0)}Z`).attr('fill', col);
+      svg.append('line').attr('x1', x(r.lo)).attr('x2', x(r.hi)).attr('y1', cy).attr('y2', cy).attr('stroke', css('--color-fg')).attr('stroke-width', 1.5).attr('opacity', 0.6);
+      svg.append('text').attr('x', x(r.hi) + 6).attr('y', cy).attr('dy', '0.35em').attr('fill', css('--color-fg')).style('font-size', fs).text(fmt.spct1(r.v));
+      svg.append('rect').attr('x', 0).attr('y', cy - rowH / 2).attr('width', width).attr('height', rowH).attr('fill', 'transparent')
+        .on('mousemove', (ev) => tip.show(ev, r.family, [['Gap, best vs worst fifth', `${fmt.spct1(r.v)} (${fmt.spct1(r.lo)} to ${fmt.spct1(r.hi)})`, col],
+          ['Best fifth vs similar', fmt.spct1(+r.top_growth)], ['Worst fifth vs similar', fmt.spct1(+r.bottom_growth)], ['Picks', fmt.int(+r.picks)]]))
+        .on('mouseleave', () => tip.hide());
+    });
+  }
+
   function drawFanValue() {
     const el = document.getElementById('fv-chart');
     if (!ready(el, ['fanvalue'])) return;
@@ -1412,6 +1496,8 @@
     drawObsession();
     drawObsTaste();
     drawHabits();
+    drawLearning();
+    drawGenre();
     drawFanRel();
     drawStayBad();
     drawSceneSplit();

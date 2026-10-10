@@ -288,6 +288,10 @@ picks of the top fifth of pickers minus the bottom fifth's. Confirmed = 99% boot
 - P13b. The gap is larger for Indie & alternative than for Rock & punk (neighbouring audiences). Explore +6.5 vs +2.8 points.
 Descriptive: all genre families.
 
+**Sealed results (run once, 2026-10-10): both confirmed.** P13a +4.8 points [4.4, 5.3; 99% low 4.3]. P13b +3.6 points
+[3.1, 4.1; 99% low 3.0]. Gaps on the sealed half: Electronic 6.9, Hip hop 6.8, Indie & alternative 6.5, Pop 6.1, R&B 5.2,
+Metal 4.0, Folk & country 3.0, Rock & punk 2.9, Jazz, blues & classical 1.7.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|
