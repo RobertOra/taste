@@ -140,3 +140,7 @@ Era test passed: taste predicts as well or better in 2019-2023 than 2007-2012. D
 - Decade chart now discernment songs (analysis/lb_decade.py), 1-10 years: top fifth still top 36% -> 19%; bottom fifth
   still bottom 34% -> 23% (bad taste persists a little longer).
 - Careers tenfold: top 1%'s finds 10x bigger vs similar 3.1x at 1y -> 1.6x at 6y (20 vs 12 per 1,000); lead in counts grows.
+- All measures over a decade (analysis/lb_drift_all.py, two-year later windows): songs/artists decay steadily but keep a
+  small real remnant at 9 years (noise-corrected 0.09-0.21; prescience songs most lasting 0.50 -> 0.21); scenes too noisy.
+  The single-year 10-year point (2025, Jan-Aug) understates. Decade chart: prescience songs default, discernment toggle;
+  prescience bottom fifth still 31% bottom at 10 years (top fifth 22%).
