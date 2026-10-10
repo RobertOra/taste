@@ -278,6 +278,16 @@ Exploratory on the explore half; tested once on the sealed half with the committ
 Descriptive: years 1-2 vs 5-6; the year-by-year curve for people active in years 1-5; change by starting third (split-half,
 but odd and even picks share period-level luck, so some regression to the mean may remain).
 
+**Sealed result (run once, 2026-10-10): confirmed.** P12 +0.40 points [0.35, 0.44; 99% low 0.33]. Years 1-2 vs 5-6 +0.41;
+curve 0.78, 0.59, 1.24, 1.30, 1.28% for years 1-5 (27,733 people).
+
+## Where does taste matter most? (written 2026-10-09 20:22, before any sealed run of analysis/genre.py)
+Exploratory on the explore half; tested once on the sealed half with the committed code. Gap = growth vs similar same-genre
+picks of the top fifth of pickers minus the bottom fifth's. Confirmed = 99% bootstrap lower bound of the difference > 0.
+- P13a. The gap is larger for Indie & alternative than for Jazz, blues & classical. Explore +6.5 vs +1.7 points.
+- P13b. The gap is larger for Indie & alternative than for Rock & punk (neighbouring audiences). Explore +6.5 vs +2.8 points.
+Descriptive: all genre families.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|
