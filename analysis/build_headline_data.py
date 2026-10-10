@@ -18,9 +18,9 @@ OUT = ROOT / "analysis" / "out"
 W = ROOT / "analysis" / "writeup"
 
 
-def headlines():
-    hs, he = (json.loads((OUT / f"headlines_{h}.json").read_text()) for h in ("sealed", "explore"))
-    ps, pe = (json.loads((OUT / f"pickers_A{s}.json").read_text()) for s in ("_sealed", ""))
+def headlines(H="sealed"):  # H: the half reported as 'hidden' (sealed, or lb for ListenBrainz)
+    hs, he = (json.loads((OUT / f"headlines_{h}.json").read_text()) for h in (H, "explore"))
+    ps, pe = (json.loads((OUT / f"pickers_A{s}.json").read_text()) for s in (f"_{H}", ""))
     rows = []
     for key, claim, k, t in (("P1a", "Best vs worst pickers' picks: grew 10× or more", "H3", "10x"),
                              ("P1b", "Best vs worst pickers' picks: grew 4× or more", "H3", "4x")):
@@ -42,7 +42,7 @@ def headlines():
                      "lo": float(np.expm1(g["good_ci"][0])), "hi": float(np.expm1(g["good_ci"][1])), "lo99": float(np.expm1(g["good_ci"][2])),
                      "first_half": float(np.expm1(ge["good_vs_ordinary"])), "rate": None, "rate_compared": None,
                      "confirmed": g["good_ci"][2] > 0})
-    ls, le = (json.loads((OUT / f"ladder_{h}.json").read_text()) for h in ("sealed", "explore"))
+    ls, le = (json.loads((OUT / f"ladder_{h}.json").read_text()) for h in (H, "explore"))
     su, se = ls["summary"], le["summary"]
     rows.append({"key": "P4a", "claim": "Top 1% of pickers' picks vs similar artists: grew 10× or more", "unit": "times as often",
                  "hidden": su["top1_odds_10x"], "lo": su["top1_lo"], "hi": su["top1_hi"], "lo99": su["top1_lo99"],
@@ -71,7 +71,7 @@ def headlines():
     for k, lab in (("n_ord", "Each ordinary new fan (descriptive)"), ("n_poor", "Each poor new fan (descriptive)"), ("n_good", "Each good new fan (descriptive)")):
         rows.append({"key": k, "claim": lab, "unit": "more growth", "hidden": gs[k]["effect"], "lo": gs[k]["lo"], "hi": gs[k]["hi"],
                      "lo99": None, "first_half": ge[k]["effect"], "rate": None, "rate_compared": None, "confirmed": None})
-    fv = json.loads((OUT / "fan_value_sealed.json").read_text())
+    fv = json.loads((OUT / f"fan_value_{H}.json").read_text())
     fe = json.loads((OUT / "fan_value_explore.json").read_text())
     pick = lambda d, k: next(r for r in d["rows"] if r["key"] == k)
     for key, claim, k, t in (("P6a", "Small artist: a good new fan vs an ordinary one, extra growth", "size:small:good_minus_ordinary", "P6a_small_good_minus_ordinary"),
@@ -85,24 +85,24 @@ def headlines():
                      "lo": None if lo is None else float(np.expm1(lo)), "hi": None if hi is None else float(np.expm1(hi)),
                      "lo99": float(np.expm1(fv["tests"][t]["lo99"])), "first_half": float(np.expm1(first)), "rate": None,
                      "rate_compared": None, "confirmed": fv["tests"][t]["lo99"] > 0})
-    ts, te = (json.loads((OUT / f"top_pickers_{h}.json").read_text()) for h in ("sealed", "explore"))
+    ts, te = (json.loads((OUT / f"top_pickers_{h}.json").read_text()) for h in (H, "explore"))
     for key, claim, unit, k in (("P7a", "Top 1%'s artists vs the same size and scene: tenfold takeoffs", "times as often", "top1_within_scene"),
                                 ("P7b", "Top 1%'s scenes vs size alone: tenfold takeoffs", "times as often", "top1_scene_quality"),
                                 ("P7c", "Top 1%'s picks less popular than the bottom half's", "points", "pick_popularity_bottom_minus_top")):
         est, fe = ts[k], te[k]
         rows.append({"key": key, "claim": claim, "unit": unit, "hidden": est["est"], "lo": est["lo"], "hi": est["hi"], "lo99": est["lo99"],
                      "first_half": fe["est"], "rate": None, "rate_compared": None, "confirmed": est["lo99"] > (0 if unit == "points" else 1)})
-    ob = json.loads((OUT / "obsession_sealed.json").read_text())["A_artist"]["within_plays"]
+    ob = json.loads((OUT / f"obsession_{H}.json").read_text())["A_artist"]["within_plays"]
     obe = json.loads((OUT / "obsession.json").read_text())["A_artist"]["within_plays"]
     rows.append({"key": "P8", "claim": "Each person's most-hooked quarter of artist picks vs their least-hooked: extra growth", "unit": "more growth",
                  "hidden": float(np.expm1(ob["diff"])), "lo": float(np.expm1(ob["ci"][0])), "hi": float(np.expm1(ob["ci"][1])),
                  "lo99": float(np.expm1(ob["lo99"])), "first_half": float(np.expm1(obe["diff"])), "rate": None, "rate_compared": None,
                  "confirmed": ob["lo99"] > 0})
-    t9, t9e = (json.loads((OUT / f"obs_taste_{h}.json").read_text())["test"] for h in ("sealed", "explore"))
+    t9, t9e = (json.loads((OUT / f"obs_taste_{h}.json").read_text())["test"] for h in (H, "explore"))
     rows.append({"key": "P9", "claim": "Getting hooked pays off more for top-fifth than bottom-fifth pickers (difference)", "unit": "points",
                  "hidden": t9["diff"], "lo": t9["lo"], "hi": t9["hi"], "lo99": t9["lo99"], "first_half": t9e["diff"], "rate": None,
                  "rate_compared": None, "confirmed": t9["lo99"] > 0})
-    rs, re_ = (json.loads((OUT / f"recency_{h}.json").read_text())["tests"] for h in ("sealed", "explore"))
+    rs, re_ = (json.loads((OUT / f"recency_{h}.json").read_text())["tests"] for h in (H, "explore"))
     for key, claim, unit, est, fe, bar in (
             ("P10a", "Recent top fifth with a poor old record vs old top fifth with a poor recent record: tenfold takeoffs", "times as often", rs["P10a"], re_["P10a"], 1),
             ("P10b", "Recent record separates people more than the old one (log spread difference)", "log", rs["P10b"], re_["P10b"], 0),
@@ -115,23 +115,23 @@ def headlines():
     rows.append({"key": "P10b_old", "claim": "Old record, once the recent one is known: top vs bottom fifth (descriptive)", "unit": "times as often",
                  "hidden": rs["P10b"]["old_spread"], "lo": None, "hi": None, "lo99": None, "first_half": re_["P10b"]["old_spread"],
                  "rate": None, "rate_compared": None, "confirmed": None})
-    bs_, be_ = (json.loads((OUT / f"bad_taste_{h}.json").read_text())["tests"] for h in ("sealed", "explore"))
+    bs_, be_ = (json.loads((OUT / f"bad_taste_{h}.json").read_text())["tests"] for h in (H, "explore"))
     for key, claim, unit, k, bar in (("P11a", "Bottom-fifth pickers' picks vs middle-fifth pickers': flops", "times as often", "P11a_bottom_flop_vs_middle", 1),
                                      ("P11c", "Top-fifth pickers' picks vs middle-fifth pickers': flops (bolder bets)", "times as often", "P11c_top_flop_vs_middle", 1),
                                      ("P11b", "Good taste helps more than bad taste hurts (difference in growth)", "points", "P11b_asymmetry", 0)):
         rows.append({"key": key, "claim": claim, "unit": unit, "hidden": bs_[k]["est"], "lo": bs_[k]["lo"], "hi": bs_[k]["hi"], "lo99": bs_[k]["lo99"],
                      "first_half": be_[k]["est"], "rate": None, "rate_compared": None, "confirmed": bs_[k]["lo99"] > bar})
-    ls_, le_ = (json.loads((OUT / f"learning_{h}.json").read_text())["years 1-2 vs 3-4"] for h in ("sealed", "explore"))
+    ls_, le_ = (json.loads((OUT / f"learning_{h}.json").read_text())["years 1-2 vs 3-4"] for h in (H, "explore"))
     rows.append({"key": "P12", "claim": "Same people, experience years 3-4 vs 1-2: extra growth of their new artists", "unit": "points",
                  "hidden": ls_["change"], "lo": ls_["lo"], "hi": ls_["hi"], "lo99": ls_["lo99"], "first_half": le_["change"],
                  "rate": None, "rate_compared": None, "confirmed": ls_["lo99"] > 0})
-    gs_ = json.loads((OUT / "genre_sealed.json").read_text())["tests"]
+    gs_ = json.loads((OUT / f"genre_{H}.json").read_text())["tests"]
     ge_ = {r["family"]: r["gap"] for r in json.loads((OUT / "genre_explore.json").read_text())["families"]}
     for key, t in zip(("P13a", "P13b"), gs_):
         rows.append({"key": key, "claim": f"Taste matters more in {t['top']} than in {t['bottom']} (gap difference)", "unit": "points",
                      "hidden": t["est"], "lo": t["lo"], "hi": t["hi"], "lo99": t["lo99"], "first_half": ge_[t["top"]] - ge_[t["bottom"]],
                      "rate": None, "rate_compared": None, "confirmed": t["lo99"] > 0})
-    g2s, g2e = (json.loads((OUT / f"genre2_{h}.json").read_text()) for h in ("sealed", "explore"))
+    g2s, g2e = (json.loads((OUT / f"genre2_{h}.json").read_text()) for h in (H, "explore"))
     rows.append({"key": "P14a", "claim": "Rated on one genre, people separate on later picks in other genres (average gap)", "unit": "points",
                  "hidden": g2s["general_summary"]["other_avg"], "lo": g2s["general_summary"]["other_lo"], "hi": None,
                  "lo99": g2s["general_summary"]["other_lo99"], "first_half": g2e["general_summary"]["other_avg"], "rate": None,
@@ -143,11 +143,11 @@ def headlines():
     rows.append({"key": "P14c", "claim": "Scaled by each genre's spread, taste matters more in Indie & alternative than in Rock & punk", "unit": "log",
                  "hidden": g2s["spread_test"]["est"], "lo": g2s["spread_test"]["lo"], "hi": g2s["spread_test"]["hi"], "lo99": g2s["spread_test"]["lo99"],
                  "first_half": g2e["spread_test"]["est"], "rate": None, "rate_compared": None, "confirmed": g2s["spread_test"]["lo99"] > 0})
-    g3s, g3e = (json.loads((OUT / f"genre3_{h}.json").read_text())["summary"] for h in ("sealed", "explore"))
+    g3s, g3e = (json.loads((OUT / f"genre3_{h}.json").read_text())["summary"] for h in (H, "explore"))
     rows.append({"key": "P15", "claim": "Within genres, genre specialists don't beat good-in-general pickers by more than 1 point (average difference)",
                  "unit": "points", "hidden": g3s["avg_spec_minus_gen"], "lo": g3s["lo"], "hi": g3s["hi"], "lo99": None,
                  "first_half": g3e["avg_spec_minus_gen"], "rate": None, "rate_compared": None, "confirmed": g3s["hi99"] < 0.01})
-    g4s, g4e = (json.loads((OUT / f"genre4_{h}.json").read_text())["summary"] for h in ("sealed", "explore"))
+    g4s, g4e = (json.loads((OUT / f"genre4_{h}.json").read_text())["summary"] for h in (H, "explore"))
     rows.append({"key": "P16", "claim": "Rated on other genres only, people predict a genre within 1 point of their record in that genre (average)",
                  "unit": "points", "hidden": g4s["avg_this_minus_other"], "lo": g4s["lo"], "hi": g4s["hi"], "lo99": None,
                  "first_half": g4e["avg_this_minus_other"], "rate": None, "rate_compared": None, "confirmed": g4s["hi99"] < 0.01})
@@ -319,8 +319,20 @@ def crowd():
     return rows + [{"kind": "mean", **m} for m in means]
 
 
+def headlines_with_lb():
+    """Hidden-half rows plus the same predictions on ListenBrainz (LB_PREREG.md): lb, lb_lo, lb_hi, lb_held."""
+    rows, lb = headlines("sealed"), {r["key"]: r for r in headlines("lb")}
+    for r in rows:
+        x = lb.get(r["key"])
+        r.update({"lb": x["hidden"], "lb_lo": x["lo"], "lb_hi": x["hi"], "lb_held": x["confirmed"]} if x else
+                 {"lb": None, "lb_lo": None, "lb_hi": None, "lb_held": None})
+    return rows
+
+
 if __name__ == "__main__":
-    for name, fn in (("headlines", headlines), ("obsession", obsession), ("obstaste", obstaste), ("recency", recency), ("badtaste", badtaste), ("fanrel", fanrel), ("genre", genre), ("genrespec", genrespec), ("genregeneral", genregeneral), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
+    for name, fn in (("headlines", headlines_with_lb), ("obsession", obsession), ("obstaste", obstaste), ("recency", recency), ("badtaste", badtaste), ("fanrel", fanrel), ("genre", genre), ("genrespec", genrespec), ("genregeneral", genregeneral), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
         rows = fn()
+        clean = lambda v: None if isinstance(v, float) and v != v else v  # NaN (undefined range) is not valid JSON
+        rows = [{k: clean(v) for k, v in r.items()} if isinstance(r, dict) else r for r in rows]
         (W / f"{name}.json").write_text(json.dumps(rows, indent=1))
         print(name, json.dumps(rows)[:600])

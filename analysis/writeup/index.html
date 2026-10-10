@@ -136,6 +136,10 @@
     </div>
     <p>A person's taste score is how their bets did on average compared with the bets around them. The real test is whether a score built
       from someone's earlier years predicts how their bets do <b>two or more years later</b>, on completely different music.</p>
+    <p>We ran everything twice, on two separate platforms with different people: Last.fm
+      (<span class="wu-num dash-skeleton" data-source="facts" data-field="listeners" data-row="0" data-fmt="int">—</span> listeners, 2005–2013) and ListenBrainz
+      (<span class="wu-num" data-source="facts" data-field="lb_listeners" data-row="0" data-fmt="int">—</span> listeners, 2005–2026). Each time, we wrote down our predictions
+      before looking.</p>
     <p>"Good taste" can mean different things, so we measured four kinds, each for single songs, for artists, and for whole scenes
       (exact definitions are in the appendix):</p>
     <ul>
@@ -153,14 +157,15 @@
         <span class="wu-num dash-skeleton" data-source="repeat" data-field="later_top_fifth" data-where="key=99–100" data-fmt="pct">—</span> were still in the top fifth years later and only
         <span class="wu-num" data-source="repeat" data-field="later_bottom_fifth" data-where="key=99–100" data-fmt="pct">—</span> fell to the bottom fifth, against 20% each by chance. Any one snapshot of
         someone's taste is noisy, which hides a lot of it.</li>
+      <li><a href="#eras"><b>Taste still works in the algorithm era.</b></a> On ListenBrainz, the gap between good and bad pickers' finds grew from
+        <span class="wu-num dash-skeleton" data-source="eras" data-field="gap_growth" data-where="key=2007–2012" data-fmt="pts0">—</span> in 2007–2012 to
+        <span class="wu-num" data-source="eras" data-field="gap_growth" data-where="key=2019–2023" data-fmt="pts0">—</span> in 2019–2023, though the best pickers'
+        edge at the rarest breakouts narrowed.</li>
       <li><a href="#ladder"><b>The best pickers are far better.</b></a> The top 1%'s new artists grew tenfold
         <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P4a" data-fmt="times">—</span> as often as similar artists. The bottom half did no better than chance.</li>
       <li><a href="#fanvalue"><b>Good pickers matter most early.</b></a> One good new fan went with <span class="wu-num" data-source="fanvalue" data-field="effect" data-where="key=small:good" data-fmt="spct0">—</span>
         growth for a small artist, against <span class="wu-num" data-source="fanvalue" data-field="effect" data-where="key=small:ordinary" data-fmt="spct1">—</span> for an ordinary fan. Several good pickers add up;
         poor pickers count against an artist.</li>
-      <li><a href="#recency"><b>Recent form matters more than history, especially for the best pickers.</b></a> Taste drifts: the top 2% of pickers over the last two years found
-        tenfold takeoffs <span class="wu-num dash-skeleton" data-source="recency" data-field="odds" data-where="key=top2:recent" data-fmt="times">—</span> as often as similar artists; the top 2% from two years before that,
-        <span class="wu-num" data-source="recency" data-field="odds" data-where="key=top2:old" data-fmt="times">—</span>.</li>
       <li><a href="#whygood"><b>It's judgment, not habits.</b></a> Choosing the top 1% by listening habits finds pickers at
         <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_traits" data-fmt="times">—</span>; by track record, <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_record" data-fmt="times">—</span>.</li>
       <li><a href="#scenesplit"><b>Good taste is right scenes and right artists.</b></a> For the top 1%, their scenes took off
@@ -174,7 +179,7 @@
         takeoff is double or a hundredfold, and judging people on hits alone doesn't work.</li>
       <li><a href="#findings"><b>It shows most in songs, less in artists, and least in scenes,</b></a> and "others stick with your picks" is
         among its clearest forms.</li>
-      <li><a href="#badtaste"><b>Bad taste is real too, but milder.</b></a> The worst pickers' finds flop more often and take off no more often
+      <li><a href="#badtaste"><b>Bad taste is real too.</b></a> The worst pickers' finds flop more often and take off no more often
         than average, and bad pickers stay bad about as reliably as good ones stay good.</li>
     </ol>
   </section>
@@ -202,6 +207,8 @@
       <div class="wu-legend" id="res-legend"></div>
       <div class="wu-chart dash-skeleton" id="res-chart" data-source="results"></div>
     </div>
+    <p>On ListenBrainz, a separate platform with different listeners, eight of the nine measures we could run there passed the same test, and
+      taste again showed most in songs and least in scenes.</p>
     <ul>
       <li><b>Taste shows most in songs</b>, less in artists, and least in which scenes people move into.</li>
       <li><b>Discernment and community-leading are the strongest kinds.</b> Spotting what others will love, and what your own crowd will
@@ -215,6 +222,35 @@
     </ul>
   </section>
 
+  <section class="wu-section" id="eras">
+    <h2>Taste still works in the algorithm era</h2>
+    <p>Most of the Last.fm data comes from before streaming took over, so we repeated everything on ListenBrainz, whose listening runs to 2026,
+      and split it by when people were rated: 2007–2012, 2013–2018 (streaming and playlists), and 2019–2023 (algorithmic recommendations
+      everywhere).</p>
+    <p>Taste predicted later picks in every era, and the gap between good and bad pickers grew. In 2007–2012, the best fifth's new artists grew
+      <span class="wu-num dash-skeleton" data-source="eras" data-field="best_growth" data-where="key=2007–2012" data-fmt="spct1">—</span> against similar artists and the worst fifth's
+      <span class="wu-num" data-source="eras" data-field="worst_growth" data-where="key=2007–2012" data-fmt="spct1">—</span>, a gap of
+      <span class="wu-num" data-source="eras" data-field="gap_growth" data-where="key=2007–2012" data-fmt="pts0">—</span>. In 2019–2023 it was
+      <span class="wu-num" data-source="eras" data-field="best_growth" data-where="key=2019–2023" data-fmt="spct1">—</span> against
+      <span class="wu-num" data-source="eras" data-field="worst_growth" data-where="key=2019–2023" data-fmt="spct1">—</span>, a gap of
+      <span class="wu-num" data-source="eras" data-field="gap_growth" data-where="key=2019–2023" data-fmt="pts0">—</span>. Most of the widening comes from bad pickers' finds
+      doing worse.</p>
+    <div class="wu-card">
+      <h3>Growth of the best and worst pickers' new artists, by era</h3>
+      <p class="wu-note">ListenBrainz. People rated on their picks up to each year, then their new artists two to three years later, compared with
+        similar artists (same size, same month). Bars are 95% ranges.</p>
+      <div class="wu-legend" id="er-legend"></div>
+      <div class="wu-chart dash-skeleton" id="er-chart" data-source="eras"></div>
+    </div>
+    <p>The best pickers' edge at the rarest breakouts has narrowed, though. Their new artists took off tenfold
+      <span class="wu-num dash-skeleton" data-source="eras" data-field="ratio_10x" data-where="key=2007–2012" data-fmt="times">—</span> as often as the worst fifth's in
+      2007–2012, and <span class="wu-num" data-source="eras" data-field="ratio_10x" data-where="key=2019–2023" data-fmt="times">—</span> as often in 2019–2023.</p>
+    <p>Our formal test, set before looking, asked whether taste scores predicted later picks at least half as well in 2019–2023 as in 2007–2012.
+      They predicted them better: <span class="wu-num dash-skeleton" data-source="eras" data-field="ratio" data-where="key=formal_A" data-fmt="times2">—</span> as well for prescience and
+      <span class="wu-num" data-source="eras" data-field="ratio" data-where="key=formal_D" data-fmt="times2">—</span> for discernment. Most of ListenBrainz's listening before 2014 was
+      imported from people's Last.fm accounts, so the early era is a smaller, keener group.</p>
+  </section>
+
   <section class="wu-section" id="ladder">
     <h2>The best pickers' finds take off far more often</h2>
     <p>So taste is real. How much does it matter? A little for most people, a lot for a few. We ranked listeners by how their picks did
@@ -222,6 +258,7 @@
       middling picker found, about <span class="wu-num dash-skeleton" data-source="ladder" data-field="rate" data-where="key=40–50" data-fmt="k0">—</span> grew tenfold within the next year, the same as for similar
       artists. For pickers ranked 90–95% it was <span class="wu-num" data-source="ladder" data-field="rate" data-where="key=90–95" data-fmt="k0">—</span>, for 95–99% <span class="wu-num" data-source="ladder" data-field="rate" data-where="key=95–99" data-fmt="k0">—</span>,
       and for the top 1% <span class="wu-num" data-source="ladder" data-field="rate" data-where="key=99–100" data-fmt="k0">—</span>: <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P4a" data-fmt="times">—</span> as often as similar
+      artists. On ListenBrainz, the top 1%'s new artists grew tenfold <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=P4a" data-fmt="times">—</span> as often as similar
       artists.</p>
     <div class="wu-card">
       <h3>Tenfold takeoffs per 1,000 new artists found</h3>
@@ -254,7 +291,8 @@
       for one with a poor track record. Any new fan is good news for a small artist, but a good picker is worth far more. Once an artist is
       big, a good fan adds only <span class="wu-num" data-source="fanvalue" data-field="effect" data-where="key=big:good" data-fmt="spct1">—</span>, an ordinary one nothing, and a poor one counts against
       it (<span class="wu-num" data-source="fanvalue" data-field="effect" data-where="key=big:poor" data-fmt="spct1">—</span>). What counts is how many good pickers find an artist early, not what share of its
-      fans they are.</p>
+      fans they are. On ListenBrainz too, a good new fan went with <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=P6a" data-fmt="spct1">—</span> more growth
+      for a small artist than an ordinary one.</p>
     <div class="wu-card">
       <h3>Extra growth over the next year from one new fan, compared with not having that fan</h3>
       <p class="wu-note">Hidden half. Each bar compares artists of the same size and momentum in the same month, holding the other kinds of new
@@ -269,7 +307,9 @@
     <h2>The more good pickers, the bigger the boost</h2>
     <p>Counting good pickers one at a time: for a niche artist, each additional good picker among its new fans added about
       <span class="wu-num dash-skeleton" data-source="headlines" data-field="hidden" data-where="key=slope_niche" data-fmt="spct1">—</span> growth, with no sign of levelling off as more arrived. For an artist
-      already drawing a crowd of new fans, each added about <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=slope_crowded" data-fmt="spct1">—</span>.</p>
+      already drawing a crowd of new fans, each added about <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=slope_crowded" data-fmt="spct1">—</span>.
+      On ListenBrainz, a niche artist found by two good pickers grew <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=P5a" data-fmt="spct1">—</span> more than one found
+      by none.</p>
     <p>There are no diminishing returns. For niche artists, a second good picker adds even more than the first
       (<span class="wu-num dash-skeleton" data-source="crowdsteps" data-field="step" data-where="key=niche:2" data-fmt="spct1">—</span> against <span class="wu-num" data-source="crowdsteps" data-field="step" data-where="key=niche:1" data-fmt="spct1">—</span>): agreement counts for more than a
       lone vote. For middle and crowded artists, each good picker adds about the same as the last, as far as the data reaches.</p>
@@ -283,35 +323,6 @@
       <div class="wu-legend" id="cr-legend"></div>
       <div class="wu-chart dash-skeleton" id="cr-chart" data-source="crowd"></div>
     </div>
-  </section>
-
-  <section class="wu-section" id="recency">
-    <h2>Recent form matters more than history, especially for the best pickers</h2>
-    <p>Taste drifts. We ranked everyone twice, on their 2005–06 picks (old) and on their 2007–08 picks (recent), and looked at how often the new
-      artists they found in 2010–11 grew tenfold. At first glance, the two rankings only part ways at the top: the top fifth on recent form found
-      tenfold takeoffs <span class="wu-num dash-skeleton" data-source="recency" data-field="odds" data-where="key=recent:5" data-fmt="times">—</span> as often as similar artists, the top fifth on old form
-      <span class="wu-num" data-source="recency" data-field="odds" data-where="key=old:5" data-fmt="times">—</span>, and below that the lines run close together.</p>
-    <div class="wu-card">
-      <h3>Ranking people by their recent record, or by their old one</h3>
-      <p class="wu-note">Hidden half. Each point is a fifth of people on one ranking. Bars are 95% ranges.</p>
-      <div class="wu-legend" id="rc-legend"></div>
-      <div class="wu-chart dash-skeleton" id="rc-chart" data-source="recency"></div>
-    </div>
-    <p>Is that real, or a coincidence? If the recent record really is sharper, the gap should keep widening as we look at ever more selective
-      groups at the top, and it should show up in both halves of the data. It does. The top 2% on recent form found tenfold takeoffs
-      <span class="wu-num" data-source="recency" data-field="odds" data-where="key=top2:recent" data-fmt="times">—</span> as often as similar artists; the top 2% on old form, <span class="wu-num" data-source="recency" data-field="odds" data-where="key=top2:old" data-fmt="times">—</span>.
-      The first half of the data shows the same widening gap.</p>
-    <div class="wu-card">
-      <h3>Zooming into the top</h3>
-      <p class="wu-note">Hidden half. Tenfold takeoffs for ever smaller groups at the top of each ranking. The top 1% holds only about 130 people
-        per ranking, so its ranges are wide. Bars are 95% ranges.</p>
-      <div class="wu-legend" id="tz-legend"></div>
-      <div class="wu-chart dash-skeleton" id="tz-chart" data-source="recency"></div>
-    </div>
-    <p>In the middle of the pack, both rankings are mostly noise, so neither sorts people much; the recent record's advantage shows where people
-      really differ, at the top (and, more mildly, at the bottom). To find today's best pickers, look at the last couple of years. Two related
-      predictions (a recent star with a poor history beats an old star with a poor recent record; a one-year record goes stale within four years)
-      pointed the same way but didn't clear our strict bar.</p>
   </section>
 
   <section class="wu-section" id="whygood">
@@ -347,6 +358,9 @@
         <span class="wu-big dash-skeleton" data-source="toppickers" data-field="value" data-where="key=total" data-fmt="times">—</span>
         <span class="wu-cap">as often as similar artists, for the top 1% of pickers.</span></div>
     </div>
+    <p>ListenBrainz shows the same two kinds of judgment: the top 1%'s scenes took off <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=P7b" data-fmt="times">—</span>
+      as often as artists of the same size elsewhere, and their artists within those scenes <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=P7a" data-fmt="times">—</span>
+      as often as others there.</p>
     <div class="wu-card" id="scenesplit">
       <h3>Right scenes and right artists, all the way up the ladder</h3>
       <p class="wu-note">Hidden half. For each band of pickers: how much more often their scenes took off than artists of the same size elsewhere,
@@ -379,9 +393,9 @@
       reaching about <span class="wu-num dash-skeleton" data-source="genregeneral" data-field="share_general" data-where="key=summary" data-fmt="pct">—</span> of the best fifth on the genre's own ranking. Knowing a genre adds a
       small bonus in the fast-moving ones (a point or two in hip hop, electronic, indie, and pop) and none in the established ones. In
       rock, R&amp;B, and jazz, blues, and classical, people's other genres even predicted their picks slightly better than the genre itself did: picks of
-      long-established acts reveal little about someone's ear, so what they pick elsewhere says more (and usually gives us more picks to go on). We had predicted the two
-      rankings would come within one point of each other on average; they came <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P16" data-fmt="pts">—</span> apart, narrowly missing that bar,
-      so "mostly general" is the honest summary. Good pickers' tastes lean only a little: they pick slightly more hip hop and R&amp;B than poor pickers do
+      long-established acts reveal little about someone's ear, so what they pick elsewhere says more (and usually gives us more picks to go on). On ListenBrainz, people's
+      other genres predicted their picks in a genre at least as well as the genre itself did, and the gap between the best and worst pickers was again
+      bigger in indie than in rock or in jazz, blues, and classical. Good pickers' tastes lean only a little: they pick slightly more hip hop and R&amp;B than poor pickers do
       (<span class="wu-num" data-source="genre" data-field="fav_ratio" data-where="key=Hip hop" data-fmt="times1">—</span> the share for hip hop) and less metal (<span class="wu-num" data-source="genre" data-field="fav_ratio" data-where="key=Metal" data-fmt="times1">—</span>).</p>
     <div class="wu-card">
       <h3>Predicting a genre from the genre itself, or from everything else someone picks</h3>
@@ -398,7 +412,8 @@
     <p>Each person's most-replayed quarter of new artists grew
           <span class="wu-num dash-skeleton" data-source="obsession" data-field="most_vs_least" data-where="level=Artists" data-fmt="pct0">—</span> more than their least-replayed quarter (hidden half), and for songs (first half only)
           <span class="wu-num" data-source="obsession" data-field="most_vs_least" data-where="level=Songs" data-fmt="pct0">—</span> more. Plays are counted only until the person was hooked, so there's no
-          hindsight. People bet hardest on their best finds, though the effect is modest.</p>
+          hindsight. People bet hardest on their best finds, though the effect is modest. On ListenBrainz, the most-replayed quarter again beat the
+          least-replayed, by <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=P8" data-fmt="pct1">—</span>, and getting hooked again paid off more for good pickers.</p>
     <div class="wu-card">
       <h3>How hooked someone got, and how the artist did</h3>
       <p class="wu-note">Hidden half, artists. All picks split into ten groups of roughly equal size by how many times the person played the
@@ -417,13 +432,14 @@
   </section>
 
   <section class="wu-section" id="badtaste">
-    <h2>Bad taste is real too, but milder</h2>
+    <h2>Bad taste is real too</h2>
     <p><b>How bad are they for an artist?</b> Compared with an ordinary new fan, a new fan with a poor track record went with
       <span class="wu-num dash-skeleton" data-source="fanrel" data-field="effect" data-where="key=small:poor" data-fmt="spct1">—</span> growth for a small artist over the next year and <span class="wu-num" data-source="fanrel" data-field="effect" data-where="key=big:poor" data-fmt="spct1">—</span>
       for a big one; a good picker, <span class="wu-num" data-source="fanrel" data-field="effect" data-where="key=small:good" data-fmt="spct1">—</span> and <span class="wu-num" data-source="fanrel" data-field="effect" data-where="key=big:good" data-fmt="spct1">—</span>. A poor picker is a real
-      bad sign, but a smaller one than a good picker is a good sign. (For a small artist, even a poor picker is better than no new fan at all, as
+      bad sign. (For a small artist, even a poor picker is better than no new fan at all, as
       the chart in "What one new fan is worth" shows; it's just worse than an ordinary one.) Their own picks fizzle: the worst fifth's new artists lost half their listeners within
-      a year <span class="wu-num" data-source="badtaste" data-field="flop" data-where="key=worst" data-fmt="pct1">—</span> of the time, against <span class="wu-num" data-source="badtaste" data-field="flop_similar" data-where="key=worst" data-fmt="pct1">—</span> for similar artists. We
+      a year <span class="wu-num" data-source="badtaste" data-field="flop" data-where="key=worst" data-fmt="pct1">—</span> of the time, against <span class="wu-num" data-source="badtaste" data-field="flop_similar" data-where="key=worst" data-fmt="pct1">—</span> for similar artists. On
+      ListenBrainz too, the worst fifth's new artists flopped <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=P11a" data-fmt="times">—</span> as often as the middle fifth's. We
       can't tell whether poor pickers actually hurt an artist or just pick ones that were going to fade.</p>
     <div class="wu-card">
       <h3>What one new fan means for an artist, compared with an ordinary new fan instead</h3>
@@ -434,9 +450,7 @@
     </div>
     <p><b>Do bad pickers stay bad?</b> Yes, about as reliably as good pickers stay good:
       <span class="wu-num" data-source="badtaste" data-field="bottom_stays_bottom" data-where="key=persistence" data-fmt="pct">—</span> of the bottom fifth at picking songs were still in the bottom fifth years later,
-      against <span class="wu-num" data-source="badtaste" data-field="top_stays_top" data-where="key=persistence" data-fmt="pct">—</span> of the top fifth staying on top. But bad taste is the milder of the two:
-      the bottom fifth's finds grew <span class="wu-num" data-source="badtaste" data-field="bottom_below" data-where="key=persistence" data-fmt="spct1">—</span> relative to all picks, the top fifth's
-      <span class="wu-num" data-source="badtaste" data-field="top_above" data-where="key=persistence" data-fmt="spct1">—</span>.</p>
+      against <span class="wu-num" data-source="badtaste" data-field="top_stays_top" data-where="key=persistence" data-fmt="pct">—</span> of the top fifth staying on top.</p>
     <div class="wu-card">
       <h3>Kept their place years later</h3>
       <div class="wu-chart dash-skeleton" id="sb-chart" data-source="badtaste"></div>
@@ -451,16 +465,18 @@
       strength matched what the first half had shown.</p>
     <p><b>We checked the takeoff and good-picker numbers the same way.</b> They were found afterwards, on the first half. Before touching the hidden half
       again, we wrote down each prediction, exactly how it would be measured, and a stricter bar for passing (99% sure, since there were
-      several), in thirteen rounds. Then we checked each once. Of thirty-two predictions, twenty-nine held; the three that didn't (two about how fast
-      taste drifts, one about how general taste is across genres) pointed the right way but fell short of the bar, and the page says so where they
-      come up.</p>
+      several), in thirteen rounds. Then we checked each once. Of thirty-two predictions, twenty-nine held.</p>
+    <p><b>Then we checked everything again on a second platform.</b> ListenBrainz is a separate site with different listeners, and nothing had been
+      analysed on it. We wrote down every prediction first, with the same bars, then ran each once. Eight of the nine main measures we could run
+      there passed, and twenty-four of the thirty-two predictions held. The table shows every one.</p>
     <div class="wu-card">
-      <h3>Checks of these findings on the hidden half</h3>
+      <h3>Checks of these findings on the hidden half and on ListenBrainz</h3>
       <div class="wu-tablewrap">
         <table id="hl-table" data-source="headlines" data-row-key="key">
           <thead><tr><th data-field="claim">Prediction</th><th class="wu-r" data-field="hidden">Hidden half</th>
             <th class="wu-r" data-field="lo">95% low</th><th class="wu-r" data-field="hi">95% high</th>
-            <th class="wu-r" data-field="first_half">First half</th><th data-field="confirmed">Held</th></tr></thead>
+            <th class="wu-r" data-field="first_half">First half</th><th data-field="confirmed">Held</th>
+            <th class="wu-r" data-field="lb">ListenBrainz</th><th data-field="lb_held">Held there</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
@@ -499,8 +515,8 @@
         has no friendships, so we can't separate the two.</li>
       <li><b>Who these listeners are.</b> Last.fm users who were still active in 2012–13 lean towards indie and rock, and are keener than
         the average listener.</li>
-      <li><b>The era.</b> This is mostly before algorithmic playlists. Whether taste works the same way when an algorithm suggests your next
-        song is open.</li>
+      <li><b>Who ListenBrainz listeners are.</b> People who chose to track their listening on an open-source site: a smaller, keener group than
+        most listeners. Much of its listening before 2014 was imported from Last.fm.</li>
       <li><b>Two weak results.</b> Community-leading for scenes came in lower on the hidden half than the first half suggested, and durability
         for scenes only barely passed.</li>
     </ul>
@@ -508,9 +524,8 @@
 
   <section class="wu-section" id="next">
     <h2>What's next</h2>
-    <p>Repeating the analysis on ListenBrainz (2015–2026) to see whether taste holds in the streaming-algorithm era, and looking at what
-      predicts good taste. If it holds up, a site that scores someone's own listening history becomes possible, with an honest range rather
-      than a single number.</p>
+    <p>Deciding whether to build a site that scores someone's own listening history, with an honest range rather than a single number.
+      ListenBrainz suggests the method still works on today's listening.</p>
   </section>
 
   <details id="appendix">
@@ -584,6 +599,10 @@
             <span class="wu-num" data-source="facts" data-field="listeners" data-row="0" data-fmt="int">—</span> listeners,
             <span class="wu-num" data-source="facts" data-field="listens_billion" data-row="0" data-fmt="text">—</span> billion listens),
             split at random by listener into an explore half and a hidden (sealed) half.</li>
+          <li>Replication: ListenBrainz (<span class="wu-num" data-source="facts" data-field="lb_listeners" data-row="0" data-fmt="int">—</span> listeners,
+            <span class="wu-num" data-source="facts" data-field="lb_listens_billion" data-row="0" data-fmt="text">—</span> billion listens, 2005–2026), artist and song
+            names linked to MusicBrainz IDs, converted to the same layout and analysed with the same code. Predictions, bars, and the era test were
+            written down before it was analysed; durability isn't measured there, since its outcome is ListenBrainz's own 2026 listening.</li>
           <li>Every comparison is with other listeners' bets in the same month and popularity group, adjusted for scene, item age, prior
             growth, country, and release timing.</li>
           <li>Prediction strength: rank correlation between a listener's score up to a cutoff year and their score from bets made two or more
@@ -653,7 +672,8 @@
     times: (v) => `${d3.format('.1f')(v)}×`, pct0: d3.format('.0%'), pct1: d3.format('.1%'), pct2: d3.format('.2%'),
     spct1: d3.format('+.1%'), spct0: d3.format('+.0%'), k0: (v) => d3.format('.0f')(v * 1000),
     times1: (v) => `${d3.format('.1f')(v)}×`,
-    pts: (v) => `${d3.format('+.1f')(v * 100)} points`,
+    pts: (v) => `${d3.format('+.1f')(v * 100)} points`, pts0: (v) => `${d3.format('.1f')(v * 100)} points`,
+    times2: (v) => `${d3.format('.2f')(v)}×`,
     ord: (v) => { const n = Math.round(v), t = n % 100; return n + ((t >= 11 && t <= 13) ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th')); },
   };
   const root = document.getElementById('dash-root') || document.documentElement;
@@ -1066,45 +1086,37 @@
     });
   }
 
-  function drawRecency() {
-    const el = document.getElementById('rc-chart');
-    if (!ready(el, ['recency'])) return;
-    const series = [['recent', 'Ranked by recent record (2007–08)', dash.colors[0]], ['old', 'Ranked by old record (2005–06)', css('--cds-chart-muted')]];
-    legend('rc-legend', series.map(([, l, c]) => [l, c, 'line']));
-    const rows = dash.data('recency').data.filter((r) => r.kind === 'fifth').map((r) => ({ ...r, k: +r.fifth, v: +r.odds, lo: +r.lo, hi: +r.hi }));
-    const names = ['Bottom fifth', 'Second', 'Middle', 'Fourth', 'Top fifth'];
-    lineChart(el, rows, series, (r) => r.k, [1, 2, 3, 4, 5], (k) => names[k - 1], 'Tenfold takeoffs, times as often as similar artists', names);
-  }
-
-  function drawTopZoom() {
-    const el = document.getElementById('tz-chart');
-    if (!ready(el, ['recency'])) return;
-    const series = [['recent', 'Top on recent record', dash.colors[0]], ['old', 'Top on old record', css('--cds-chart-muted')]];
-    legend('tz-legend', series.map(([, l, c]) => [l, c, 'line']));
-    const order = [0.2, 0.1, 0.05, 0.02, 0.01];
-    const rows = dash.data('recency').data.filter((r) => r.kind === 'top').map((r) => ({ ...r, k: order.indexOf(+r.share) + 1, v: +r.odds, lo: +r.lo, hi: +r.hi }));
-    const names = order.map((v) => `Top ${d3.format('~%')(v)}`);
-    lineChart(el, rows, series, (r) => r.k, [1, 2, 3, 4, 5], (k) => names[k - 1], 'Tenfold takeoffs, times as often as similar artists', names);
-  }
-
-  function lineChart(el, rows, series, kx, domain, tickFmt, ylabel, names) {
-    const f = frame(el, 270, { t: 28, r: 16, b: 30, l: 40 });
+  function drawEras() {
+    const el = document.getElementById('er-chart');
+    if (!ready(el, ['eras'])) return;
+    const grp = [['best', 'Best fifth of pickers', dash.colors[0]], ['worst', 'Worst fifth of pickers', dash.colors[1]]];
+    legend('er-legend', grp.map(([, l, c]) => [l, c, 'dot']));
+    const eras = dash.data('eras').data.filter((r) => !String(r.key).startsWith('formal'));
+    const rows = eras.flatMap((e) => grp.map(([g]) => ({ era: e.key, g, v: +e[`${g}_growth`], lo: +e[`${g}_lo`], hi: +e[`${g}_hi`], gap: +e.gap_growth })));
+    const f = frame(el, 270, { t: 28, r: 8, b: 30, l: 44 });
     const { svg, fs, width, height, m } = f;
-    const x = d3.scalePoint(domain, [m.l, width - m.r]).padding(0.4);
-    const y = d3.scaleLinear([0, d3.max(rows, (r) => r.hi) * 1.08], [height - m.b, m.t]).nice();
-    gridY(f, y, (v) => `${v}×`, 4);
-    svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(1)).attr('y2', y(1)).attr('stroke', css('--cds-chart-reference')).attr('stroke-dasharray', '4 3');
-    svg.append('text').attr('x', m.l + 4).attr('y', y(1) - 5).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Same as similar artists');
-    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`).call(d3.axisBottom(x).tickFormat(tickFmt).tickSize(0)), fs);
-    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text(ylabel);
+    const x0 = d3.scaleBand(eras.map((e) => e.key), [m.l, width - m.r]).paddingInner(0.3).paddingOuter(0.1);
+    const x1 = d3.scaleBand(grp.map((d) => d[0]), [0, x0.bandwidth()]).padding(0.15);
+    const y = d3.scaleLinear([d3.min(rows, (r) => r.lo) * 1.25, d3.max(rows, (r) => r.hi) * 1.6], [height - m.b, m.t]).nice();
+    gridY(f, y, d3.format('+.0%'), 5);
+    svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', css('--cds-chart-axis'));
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`).call(d3.axisBottom(x0).tickSize(0)), fs);
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Growth over the next year, compared with similar artists');
     const tip = tooltip(el);
-    series.forEach(([k, label, c]) => {
-      const pts = rows.filter((r) => r.record === k).sort((a, b) => kx(a) - kx(b));
-      svg.append('path').datum(pts).attr('d', d3.line().x((d) => x(kx(d))).y((d) => y(d.v))).attr('fill', 'none').attr('stroke', c).attr('stroke-width', 2);
-      errorDots(svg, pts, (d) => x(kx(d)), y, c, false);
-      pts.forEach((d) => svg.append('circle').attr('cx', x(kx(d))).attr('cy', y(d.v)).attr('r', 10).attr('fill', 'transparent')
-        .on('mousemove', (ev) => tip.show(ev, `${label}: ${names[kx(d) - 1].toLowerCase()}`, [['Tenfold takeoffs', `${fmt.times(d.v)} (${fmt.times(d.lo)} to ${fmt.times(d.hi)})`, c],
-          ['People', fmt.int(+d.people)]])).on('mouseleave', () => tip.hide()));
+    rows.forEach((r) => {
+      const gn = grp.find((q) => q[0] === r.g); const bx = x0(r.era) + x1(r.g), bw = x1.bandwidth();
+      const top = y(Math.max(0, r.v)), bot = y(Math.min(0, r.v)), rad = Math.min(4, bw / 2, Math.max(1, bot - top));
+      const path = r.v >= 0
+        ? `M${bx},${bot}V${top + rad}Q${bx},${top} ${bx + rad},${top}H${bx + bw - rad}Q${bx + bw},${top} ${bx + bw},${top + rad}V${bot}Z`
+        : `M${bx},${top}V${bot - rad}Q${bx},${bot} ${bx + rad},${bot}H${bx + bw - rad}Q${bx + bw},${bot} ${bx + bw},${bot - rad}V${top}Z`;
+      svg.append('path').attr('d', path).attr('fill', gn[2]);
+      svg.append('line').attr('x1', bx + bw / 2).attr('x2', bx + bw / 2).attr('y1', y(r.lo)).attr('y2', y(r.hi)).attr('stroke', css('--color-fg-muted')).attr('stroke-width', 1.5);
+      svg.append('text').attr('x', bx + bw / 2).attr('y', r.v >= 0 ? y(r.hi) - 5 : y(r.lo) + 12).attr('text-anchor', 'middle').attr('fill', css('--color-fg'))
+        .style('font-size', fs).text(fmt.spct1(r.v));
+      svg.append('rect').attr('x', bx).attr('y', m.t).attr('width', bw).attr('height', height - m.t - m.b).attr('fill', 'transparent')
+        .on('mousemove', (ev) => tip.show(ev, `${r.era}: ${gn[1].toLowerCase()}`,
+          [['Growth vs similar', `${fmt.spct1(r.v)} (${fmt.spct1(r.lo)} to ${fmt.spct1(r.hi)})`, gn[2]], ['Gap, best vs worst', fmt.pts0(r.gap)]]))
+        .on('mouseleave', () => tip.hide());
     });
   }
 
@@ -1508,8 +1520,7 @@
   dash.onData(() => {
     fillMarks();
     drawRepeat();
-    drawRecency();
-    drawTopZoom();
+    drawEras();
     drawObsession();
     drawObsTaste();
     drawHabits();
@@ -1531,7 +1542,8 @@
       d.data.filter((r) => r.confirmed !== null && r.confirmed !== undefined && r.confirmed !== '').forEach((r) => {
         const tr = document.createElement('tr'); tr.dataset.key = String(r.key);
         [[r.claim], [hl(r, 'hidden'), 'wu-r'], [hl(r, 'lo'), 'wu-r'], [hl(r, 'hi'), 'wu-r'], [hl(r, 'first_half'), 'wu-r'],
-          [truthy(r.confirmed) ? 'Yes' : 'No']].forEach(([v, cls]) => {
+          [truthy(r.confirmed) ? 'Yes' : 'No'], [hl(r, 'lb'), 'wu-r'],
+          [r.lb_held === null || r.lb_held === undefined ? '–' : truthy(r.lb_held) ? 'Yes' : 'No']].forEach(([v, cls]) => {
           const td = document.createElement('td'); if (cls) td.className = cls; td.textContent = v; tr.appendChild(td);
         });
         tb.appendChild(tr);

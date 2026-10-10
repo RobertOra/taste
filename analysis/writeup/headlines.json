@@ -10,7 +10,11 @@
   "first_half": 2.1667446440157874,
   "rate": 0.004347593645548632,
   "rate_compared": 0.001982846189857876,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 1.9419976421698109,
+  "lb_lo": 1.8087756902188916,
+  "lb_hi": 2.0773626241486096,
+  "lb_held": true
  },
  {
   "key": "P1b",
@@ -23,7 +27,11 @@
   "first_half": 1.8745184811612707,
   "rate": 0.01859582209176634,
   "rate_compared": 0.009702944060206165,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 1.5263351021507139,
+  "lb_lo": 1.489084157928674,
+  "lb_hi": 1.5671138385408538,
+  "lb_held": true
  },
  {
   "key": "P2a",
@@ -36,7 +44,11 @@
   "first_half": 2.5871524843550944,
   "rate": 0.055666003976143144,
   "rate_compared": 0.019626382681354883,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 1.1480778795362752,
+  "lb_lo": 0.44555375165634553,
+  "lb_hi": 2.3456325786547354,
+  "lb_held": false
  },
  {
   "key": "P2b",
@@ -49,7 +61,11 @@
   "first_half": 3.0617632799181336,
   "rate": 0.015904572564612324,
   "rate_compared": 0.006423551651691441,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 2.5714285714285716,
+  "lb_lo": null,
+  "lb_hi": null,
+  "lb_held": false
  },
  {
   "key": "P3a",
@@ -62,7 +78,11 @@
   "first_half": 0.01964262617073701,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.020136237343097815,
+  "lb_lo": 0.01871231018029958,
+  "lb_hi": 0.021706977131673702,
+  "lb_held": true
  },
  {
   "key": "P3b",
@@ -75,7 +95,11 @@
   "first_half": 0.011994780951556597,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.014369594405476005,
+  "lb_lo": 0.01253436962385826,
+  "lb_hi": 0.016138603265586183,
+  "lb_held": true
  },
  {
   "key": "P4a",
@@ -88,7 +112,11 @@
   "first_half": 5.222431409929947,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 2.6302533931363863,
+  "lb_lo": 1.8574922821205095,
+  "lb_hi": 3.525065477075119,
+  "lb_held": false
  },
  {
   "key": "P4b",
@@ -101,7 +129,11 @@
   "first_half": 2.906802951571353,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 1.944935904490499,
+  "lb_lo": 1.3301678659278922,
+  "lb_hi": 2.7106132684411506,
+  "lb_held": true
  },
  {
   "key": "P5a",
@@ -114,7 +146,11 @@
   "first_half": 0.12590051962537238,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.05701639469065437,
+  "lb_lo": 0.049699461057363115,
+  "lb_hi": 0.06446278118881134,
+  "lb_held": true
  },
  {
   "key": "slope_niche",
@@ -127,7 +163,11 @@
   "first_half": 0.07313859169962901,
   "rate": null,
   "rate_compared": null,
-  "confirmed": null
+  "confirmed": null,
+  "lb": 0.03532190893124445,
+  "lb_lo": 0.032811672136766154,
+  "lb_hi": 0.03771767743485998,
+  "lb_held": null
  },
  {
   "key": "slope_crowded",
@@ -140,7 +180,11 @@
   "first_half": 0.020636038010621846,
   "rate": null,
   "rate_compared": null,
-  "confirmed": null
+  "confirmed": null,
+  "lb": -0.008233009448597053,
+  "lb_lo": -0.029287388979829323,
+  "lb_hi": 0.013347127426120717,
+  "lb_held": null
  },
  {
   "key": "P5b",
@@ -153,7 +197,11 @@
   "first_half": 0.051441014949210294,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.04391648320098435,
+  "lb_lo": 0.021719022004836552,
+  "lb_hi": 0.0666909159872788,
+  "lb_held": true
  },
  {
   "key": "P5c",
@@ -166,7 +214,11 @@
   "first_half": 0.01845920607631298,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.030685693509037267,
+  "lb_lo": 0.026829107081212132,
+  "lb_hi": 0.03474558754934453,
+  "lb_held": true
  },
  {
   "key": "n_ord",
@@ -179,7 +231,11 @@
   "first_half": 0.0010954340014827193,
   "rate": null,
   "rate_compared": null,
-  "confirmed": null
+  "confirmed": null,
+  "lb": -0.002947192872493983,
+  "lb_lo": -0.004351371490887546,
+  "lb_hi": -0.0018021124849832658,
+  "lb_held": null
  },
  {
   "key": "n_poor",
@@ -192,7 +248,11 @@
   "first_half": -0.016378982640409816,
   "rate": null,
   "rate_compared": null,
-  "confirmed": null
+  "confirmed": null,
+  "lb": -0.03939099681403016,
+  "lb_lo": -0.041165136186072815,
+  "lb_hi": -0.03772760672279795,
+  "lb_held": null
  },
  {
   "key": "n_good",
@@ -205,7 +265,11 @@
   "first_half": 0.01974647300926036,
   "rate": null,
   "rate_compared": null,
-  "confirmed": null
+  "confirmed": null,
+  "lb": 0.02812232085375149,
+  "lb_lo": 0.024754001886157243,
+  "lb_hi": 0.03151789807950176,
+  "lb_held": null
  },
  {
   "key": "P6a",
@@ -218,7 +282,11 @@
   "first_half": 0.11186376040355384,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.07614660247792342,
+  "lb_lo": 0.06369843645819633,
+  "lb_hi": 0.08783443963160095,
+  "lb_held": true
  },
  {
   "key": "P6b",
@@ -231,7 +299,11 @@
   "first_half": 0.09244804436925903,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.05747390688372615,
+  "lb_lo": null,
+  "lb_hi": null,
+  "lb_held": true
  },
  {
   "key": "P7a",
@@ -244,7 +316,11 @@
   "first_half": 2.1534343265676563,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 1.5291499362854952,
+  "lb_lo": 1.179590873356102,
+  "lb_hi": 1.8571720548291624,
+  "lb_held": true
  },
  {
   "key": "P7b",
@@ -257,7 +333,11 @@
   "first_half": 2.425164002216842,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 1.7200755339437905,
+  "lb_lo": 1.4872925043508747,
+  "lb_hi": 1.9880092442527142,
+  "lb_held": true
  },
  {
   "key": "P7c",
@@ -270,7 +350,11 @@
   "first_half": 0.11494277890288945,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.09720787266069919,
+  "lb_lo": 0.08576913253990114,
+  "lb_hi": 0.10755502581382241,
+  "lb_held": true
  },
  {
   "key": "P8",
@@ -283,7 +367,11 @@
   "first_half": 0.027528821607753995,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.02054997766608077,
+  "lb_lo": 0.01893673736413028,
+  "lb_hi": 0.022068640128136186,
+  "lb_held": true
  },
  {
   "key": "P9",
@@ -296,7 +384,11 @@
   "first_half": 0.021957968360044523,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.015049692083611184,
+  "lb_lo": 0.008069896508825709,
+  "lb_hi": 0.02155662916524415,
+  "lb_held": true
  },
  {
   "key": "P10a",
@@ -309,7 +401,11 @@
   "first_half": 2.355591764456323,
   "rate": null,
   "rate_compared": null,
-  "confirmed": false
+  "confirmed": false,
+  "lb": 1.013180838153357,
+  "lb_lo": 0.7726889407028207,
+  "lb_hi": 1.323179583217804,
+  "lb_held": false
  },
  {
   "key": "P10b",
@@ -322,7 +418,11 @@
   "first_half": 0.8511781388916709,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.07611141504619212,
+  "lb_lo": -0.12748564893563458,
+  "lb_hi": 0.26192839935093704,
+  "lb_held": false
  },
  {
   "key": "P10c",
@@ -335,7 +435,11 @@
   "first_half": 1.243834159426512,
   "rate": null,
   "rate_compared": null,
-  "confirmed": false
+  "confirmed": false,
+  "lb": 1.1070748816946303,
+  "lb_lo": 0.6284883028734676,
+  "lb_hi": 1.7059103993360403,
+  "lb_held": false
  },
  {
   "key": "P10b_recent",
@@ -348,7 +452,11 @@
   "first_half": 2.5072773507354427,
   "rate": null,
   "rate_compared": null,
-  "confirmed": null
+  "confirmed": null,
+  "lb": 1.5893945806370782,
+  "lb_lo": null,
+  "lb_hi": null,
+  "lb_held": null
  },
  {
   "key": "P10b_old",
@@ -361,7 +469,11 @@
   "first_half": 1.070385971753053,
   "rate": null,
   "rate_compared": null,
-  "confirmed": null
+  "confirmed": null,
+  "lb": 1.4729125421909703,
+  "lb_lo": null,
+  "lb_hi": null,
+  "lb_held": null
  },
  {
   "key": "P11a",
@@ -374,7 +486,11 @@
   "first_half": 1.2072093676528457,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 1.201038147956166,
+  "lb_lo": 1.1686408957451244,
+  "lb_hi": 1.232738461916859,
+  "lb_held": true
  },
  {
   "key": "P11c",
@@ -387,7 +503,11 @@
   "first_half": 1.1087808439132274,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.9932755203862362,
+  "lb_lo": 0.9728067915152154,
+  "lb_hi": 1.0128212448088683,
+  "lb_held": false
  },
  {
   "key": "P11b",
@@ -400,7 +520,11 @@
   "first_half": 0.010618315249273563,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": -0.01980445966109548,
+  "lb_lo": -0.02910357777986381,
+  "lb_hi": -0.00941310516754797,
+  "lb_held": false
  },
  {
   "key": "P12",
@@ -413,7 +537,11 @@
   "first_half": 0.004441638553189489,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.0068553971629436005,
+  "lb_lo": 0.005259779982312455,
+  "lb_hi": 0.008414731324202656,
+  "lb_held": true
  },
  {
   "key": "P13a",
@@ -426,7 +554,11 @@
   "first_half": 0.04747092673088142,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.019506389062393367,
+  "lb_lo": 0.007243492816413076,
+  "lb_hi": 0.03200338147307815,
+  "lb_held": true
  },
  {
   "key": "P13b",
@@ -439,7 +571,11 @@
   "first_half": 0.036944036768804894,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.022292465574278306,
+  "lb_lo": 0.013538241215348093,
+  "lb_hi": 0.030827257244623995,
+  "lb_held": true
  },
  {
   "key": "P14a",
@@ -452,7 +588,11 @@
   "first_half": 0.040219644419919306,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.019401325397174946,
+  "lb_lo": 0.017808377009007375,
+  "lb_hi": null,
+  "lb_held": true
  },
  {
   "key": "P14b",
@@ -465,7 +605,11 @@
   "first_half": 0.025886104607264496,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.017480391986051825,
+  "lb_lo": 0.014062254212108756,
+  "lb_hi": 0.02119502270144647,
+  "lb_held": true
  },
  {
   "key": "P14c",
@@ -478,7 +622,11 @@
   "first_half": 0.06223110886920909,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": 0.045244740519452986,
+  "lb_lo": 0.024662540771342348,
+  "lb_hi": 0.06509438449261594,
+  "lb_held": true
  },
  {
   "key": "P15",
@@ -491,7 +639,11 @@
   "first_half": -0.00505755161266929,
   "rate": null,
   "rate_compared": null,
-  "confirmed": true
+  "confirmed": true,
+  "lb": -0.012152948195086428,
+  "lb_lo": -0.01531635270785633,
+  "lb_hi": -0.008980431425283186,
+  "lb_held": true
  },
  {
   "key": "P16",
@@ -504,7 +656,11 @@
   "first_half": 0.003419154320978073,
   "rate": null,
   "rate_compared": null,
-  "confirmed": false
+  "confirmed": false,
+  "lb": -0.009210827236820547,
+  "lb_lo": -0.012259199219008964,
+  "lb_hi": -0.005828677448068022,
+  "lb_held": true
  },
  {
   "key": "H2growth",
@@ -517,6 +673,10 @@
   "first_half": 0.16577413943158406,
   "rate": null,
   "rate_compared": null,
-  "confirmed": null
+  "confirmed": null,
+  "lb": 0.15391571717613445,
+  "lb_lo": null,
+  "lb_hi": null,
+  "lb_held": null
  }
 ]
