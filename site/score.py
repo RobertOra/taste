@@ -81,13 +81,14 @@ def read_history(paths):
                 a, t, ms = d.get("master_metadata_album_artist_name"), d.get("master_metadata_track_name"), d.get("ms_played") or 0
                 if a and t and ms >= MIN_PLAY_MS:
                     ts = datetime.fromisoformat(d["ts"].replace("Z", "+00:00")).timestamp()
-                    rows.append((ts, a, t))
+                    rows.append((ts, a, t, "extended"))
             elif "endTime" in d and "artistName" in d:                          # standard (last year only)
                 kinds.add("standard")
                 if (d.get("msPlayed") or 0) >= MIN_PLAY_MS:
                     ts = datetime.strptime(d["endTime"], "%Y-%m-%d %H:%M").replace(tzinfo=timezone.utc).timestamp()
-                    rows.append((ts, d["artistName"], d.get("trackName") or ""))
+                    rows.append((ts, d["artistName"], d.get("trackName") or "", "standard"))
     kind = "extended" if "extended" in kinds else ("standard" if kinds else None)
+    rows = [r[:3] for r in rows if r[3] == kind]   # with both exports present, only the extended history counts
     df = pl.DataFrame(rows, schema=["ts", "artist", "track"], orient="row") if rows else pl.DataFrame(schema={"ts": pl.Float64, "artist": pl.String, "track": pl.String})
     return df, kind
 

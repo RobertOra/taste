@@ -71,21 +71,23 @@ details summary { cursor: pointer; font-weight: 600; }
       <li><b>Get your Spotify history.</b> In Spotify, go to <a href="https://www.spotify.com/account/privacy/" target="_blank" rel="noopener">Account → Privacy</a>,
         tick <b>Extended streaming history</b> and request it. Spotify emails it to you (it can take a few days, sometimes a few weeks).
         <span class="small">The quicker one-year export won't work: each find needs a year to see what happened next.</span></li>
-      <li><b>Drop the files here.</b> The .zip Spotify sends, or the .json files inside it.</li>
-      <li><b>See your score.</b> Takes about half a minute.</li>
+      <li><b>Drop the files here.</b> The .zip Spotify sends, the folder inside it, or the .json files.</li>
+      <li><b>See your score.</b> Takes a few seconds. Everything runs in your browser; your files never leave your computer.</li>
     </ol>
     <label class="drop" id="drop">
       <input type="file" id="file" multiple accept=".zip,.json">
       <div id="dropText"><b>Choose files</b> or drag them here</div>
+      <div class="small" style="margin-top:6px"><a href="#" id="folderLink">or choose the whole folder</a></div>
       <div class="small" id="fileList"></div>
     </label>
     <p style="margin-top:14px"><button class="btn" id="go" disabled>Score my taste</button></p>
-    <p class="small">You need at least two years of history and a hundred or so artists or songs you really got into.</p>
+    <input type="file" id="folder" webkitdirectory multiple class="hidden">
+    <p class="small">You need at least two years of history and a hundred or so artists you really got into.</p>
   </section>
 
   <section id="loading" class="card hidden" style="text-align:center">
     <div class="spinner"></div>
-    <p>Going through your listening…</p>
+    <p id="loadText">Going through your listening…</p>
     <p class="small">Finding the music you got into, then checking how each one did over the following year.</p>
   </section>
 
@@ -128,9 +130,8 @@ details summary { cursor: pointer; font-weight: 600; }
     </div>
 
     <div class="card">
-      <h3>Songs and artists</h3>
-      <table><thead><tr><th></th><th class="r">Finds judged</th><th class="r">Better than</th><th class="r">Likely range</th></tr></thead><tbody id="units"></tbody></table>
-      <p class="small" id="historyText" style="margin-top:10px"></p>
+      <h3>Your listening</h3>
+      <p class="small" id="historyText" style="margin-top:6px"></p>
     </div>
 
     <div class="card">
@@ -140,7 +141,8 @@ details summary { cursor: pointer; font-weight: 600; }
           We skip your first six months of history, when everything is new.</p>
         <p>For each find, we check how many new listeners it gained over the next year on ListenBrainz, compared with artists that were
           exactly as popular when you found them, the same month, in the same corner of music. Your score is how your finds did on average,
-          over your last five years of judged finds, ranked against about 15,000 ListenBrainz listeners scored the same way.</p>
+          over your last five years of judged finds, ranked against about 15,000 ListenBrainz listeners scored the same way. Artists
+          that almost nobody on ListenBrainz has played can't be judged and are left out.</p>
         <p><b>Why a range?</b> Any one find is mostly luck, so a score built from a few hundred of them is fuzzy. The range is where your true
           rank most likely sits (80% sure). More history narrows it.</p>
         <p class="small">Based on a study of whether good taste is real, using 600,000 Last.fm listeners and checked again on ListenBrainz:
@@ -151,63 +153,75 @@ details summary { cursor: pointer; font-weight: 600; }
   </section>
 </main>
 
-<script>
+<script type="module">
+import { scoreHistory } from './engine.js';
 const $ = (id) => document.getElementById(id);
-let chosen = [];
+let chosen = [], meta = null;
 const ord = (n) => { const t = n % 100; return n + ((t >= 11 && t <= 13) ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th')); };
 function setFiles(list) {
   chosen = [...list].filter((f) => /\.(zip|json)$/i.test(f.name));
-  $('fileList').textContent = chosen.length ? chosen.map((f) => f.name).join(', ') : '';
+  $('fileList').textContent = chosen.length ? (chosen.length > 4 ? `${chosen.length} files` : chosen.map((f) => f.name).join(', ')) : '';
   $('go').disabled = !chosen.length;
 }
 $('file').addEventListener('change', (e) => setFiles(e.target.files));
+$('folder').addEventListener('change', (e) => setFiles(e.target.files));
+$('folderLink').addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); $('folder').click(); });
 ['dragenter', 'dragover'].forEach((ev) => $('drop').addEventListener(ev, (e) => { e.preventDefault(); $('drop').classList.add('over'); }));
 ['dragleave', 'drop'].forEach((ev) => $('drop').addEventListener(ev, (e) => { e.preventDefault(); $('drop').classList.remove('over'); }));
-$('drop').addEventListener('drop', (e) => setFiles(e.dataTransfer.files));
+$('drop').addEventListener('drop', async (e) => {
+  const items = [...(e.dataTransfer.items || [])].map((it) => it.webkitGetAsEntry && it.webkitGetAsEntry()).filter(Boolean);
+  if (items.some((en) => en.isDirectory)) {   // a dropped folder
+    const out = [];
+    const walk = (en) => new Promise((res) => {
+      if (en.isFile) en.file((f) => { out.push(f); res(); }, () => res());
+      else { const r = en.createReader(); const all = []; const next = () => r.readEntries(async (es) => { if (!es.length) { await Promise.all(all.map(walk)); res(); } else { all.push(...es); next(); } }); next(); }
+    });
+    await Promise.all(items.map(walk)); setFiles(out);
+  } else setFiles(e.dataTransfer.files);
+});
 function show(id) { ['start', 'loading', 'fail', 'result'].forEach((s) => $(s).classList.toggle('hidden', s !== id)); window.scrollTo(0, 0); }
-function resetPage() { chosen = []; $('file').value = ''; setFiles([]); show('start'); }
+window.resetPage = function () { chosen = []; $('file').value = ''; $('folder').value = ''; setFiles([]); show('start'); };
 function checkRow(c) {
   const kind = c.ok ? (c.warn ? 'warn' : 'ok') : 'bad';
   const d = document.createElement('div'); d.className = 'check';
   d.innerHTML = `<span class="i ${kind}">${kind === 'bad' ? '!' : kind === 'warn' ? '~' : '✓'}</span><span></span>`;
   d.lastChild.textContent = c.text; return d;
 }
-function tier(p) {
-  if (p >= 90) return 'Trendsetter';
-  if (p >= 75) return 'Ahead of the curve';
-  if (p >= 50) return 'Good ear';
-  if (p >= 25) return 'In the mix';
-  return 'Following the crowd';
+function tier(p) { return p >= 90 ? 'Trendsetter' : p >= 75 ? 'Ahead of the curve' : p >= 50 ? 'Good ear' : p >= 25 ? 'In the mix' : 'Following the crowd'; }
+async function fetchShard(i) {
+  const r = await fetch(`data/s/${i.toString(16).padStart(4, '0')}.bin`);
+  return r.ok ? await r.arrayBuffer() : null;
 }
 $('go').addEventListener('click', async () => {
-  show('loading');
-  const fd = new FormData(); chosen.forEach((f) => fd.append('files', f));
+  show('loading'); $('loadText').textContent = 'Going through your listening…';
   let r;
-  try { r = await (await fetch('api/score', { method: 'POST', body: fd })).json(); }
-  catch (e) { r = { ok: false, checks: [{ ok: false, text: 'We couldn\'t reach the server. Please try again.' }] }; }
+  try {
+    if (!meta) meta = await (await fetch('data/meta.json')).json();
+    const files = await Promise.all(chosen.map(async (f) => ({ name: f.name, bytes: new Uint8Array(await f.arrayBuffer()) })));
+    r = await scoreHistory(files, meta, fetchShard, (x) => { $('loadText').textContent = `Checking how your finds did… ${Math.round(x * 100)}%`; });
+  } catch (e) {
+    console.error(e);
+    r = { ok: false, checks: [{ ok: false, text: `Something went wrong reading those files (${e.message || e}).` }] };
+  }
   render(r);
 });
+window.__render = (r) => render(r);   // used by local page tests
 function render(r) {
-  if (!r.ok) {
-    $('failChecks').replaceChildren(...(r.checks || []).map(checkRow));
-    show('fail'); return;
-  }
-  const u = r.units[r.headline_unit];
-  const what = r.headline_unit === 'song' ? 'songs' : 'artists';
+  if (!r.ok) { $('failChecks').replaceChildren(...(r.checks || []).map(checkRow)); show('fail'); return; }
+  const u = r.units.artist;
   $('tier').textContent = tier(u.percentile);
   $('headline').textContent = `Better than ${u.percentile}% of listeners`;
-  $('headlineText').textContent = `at finding ${what} before they take off.`;
+  $('headlineText').textContent = 'at finding artists before they take off.';
   $('rangeBar').style.left = `${u.range[0]}%`; $('rangeBar').style.width = `${u.range[1] - u.range[0]}%`;
   $('dot').style.left = `${u.percentile}%`;
-  $('rangeText').textContent = `Your true rank is most likely between the ${ord(u.range[0])} and ${ord(u.range[1])} percentile, based on ${u.picks} ${what} you got into (${u.window}).`;
+  $('rangeText').textContent = `Your true rank is most likely between the ${ord(u.range[0])} and ${ord(u.range[1])} percentile, based on ${u.picks} artists you got into (${u.window}).`;
   $('warnChecks').replaceChildren(...(r.checks || []).filter((c) => c.warn).map(checkRow));
   $('calls').replaceChildren(...(r.best_calls || []).map((c) => {
     const tr = document.createElement('tr');
     [[c.artist], [c.found]].forEach(([v]) => { const td = document.createElement('td'); td.textContent = v; tr.appendChild(td); });
     const td = document.createElement('td'); td.className = 'r';
-    td.innerHTML = `<b></b><div class="small"></div>`; td.firstChild.textContent = `${c.grew}× as many`; td.lastChild.textContent = `similar artists: ${c.similar_grew}×`;
-    tr.appendChild(td);
-    return tr;
+    td.innerHTML = '<b></b><div class="small"></div>'; td.firstChild.textContent = `${c.grew}× as many`; td.lastChild.textContent = `similar artists: ${c.similar_grew}×`;
+    tr.appendChild(td); return tr;
   }));
   const t = r.took_off;
   $('tenStat').textContent = `${t.yours} of ${t.picks}`;
@@ -219,17 +233,9 @@ function render(r) {
     $('obsText').textContent = d >= 0 ? `The artists you played most when you first found them did ${d.toFixed(0)} points better than the ones you barely played. Trust your obsessions.`
       : `The artists you played most when you first found them did ${(-d).toFixed(0)} points worse than the ones you barely played.`;
   }
-  const rows = [['song', 'Songs'], ['artist', 'Artists']].map(([k, label]) => {
-    const x = r.units[k]; const tr = document.createElement('tr');
-    const cells = [label, x.picks, x.enough ? `${x.percentile}%` : 'not enough yet', x.enough ? `${ord(x.range[0])}–${ord(x.range[1])}` : '–'];
-    cells.forEach((v, i) => { const td = document.createElement('td'); td.textContent = v; if (i) td.className = 'r'; tr.appendChild(td); });
-    return tr;
-  });
-  $('units').replaceChildren(...rows);
   const h = r.history;
-  const recent = (r.units.artist.too_recent || 0);
-  $('historyText').textContent = `Your history: ${h.plays.toLocaleString()} plays, ${h.from} to ${h.to}; we recognised ${(h.matched_share * 100).toFixed(0)}% of it.`
-    + (recent ? ` ${recent} newer artists are too recent to judge yet.` : '');
+  $('historyText').textContent = `${h.plays.toLocaleString()} plays, ${h.from} to ${h.to}. We recognised ${Math.round(h.matched_share * 100)}% of the artists you got into.`
+    + (u.too_recent ? ` ${u.too_recent} newer finds are too recent to judge yet.` : '');
   show('result');
 }
 </script>
