@@ -131,6 +131,18 @@ def headlines():
         rows.append({"key": key, "claim": f"Taste matters more in {t['top']} than in {t['bottom']} (gap difference)", "unit": "points",
                      "hidden": t["est"], "lo": t["lo"], "hi": t["hi"], "lo99": t["lo99"], "first_half": ge_[t["top"]] - ge_[t["bottom"]],
                      "rate": None, "rate_compared": None, "confirmed": t["lo99"] > 0})
+    g2s, g2e = (json.loads((OUT / f"genre2_{h}.json").read_text()) for h in ("sealed", "explore"))
+    rows.append({"key": "P14a", "claim": "Rated on one genre, people separate on later picks in other genres (average gap)", "unit": "points",
+                 "hidden": g2s["general_summary"]["other_avg"], "lo": g2s["general_summary"]["other_lo"], "hi": None,
+                 "lo99": g2s["general_summary"]["other_lo99"], "first_half": g2e["general_summary"]["other_avg"], "rate": None,
+                 "rate_compared": None, "confirmed": g2s["general_summary"]["other_lo99"] > 0})
+    rows.append({"key": "P14b", "claim": "The same-genre gap exceeds the other-genre gap (average)", "unit": "points",
+                 "hidden": g2s["general_summary"]["same_minus_other"], "lo": g2s["general_summary"]["smo_lo"], "hi": g2s["general_summary"]["smo_hi"],
+                 "lo99": g2s["general_summary"]["smo_lo99"], "first_half": g2e["general_summary"]["same_minus_other"], "rate": None,
+                 "rate_compared": None, "confirmed": g2s["general_summary"]["smo_lo99"] > 0})
+    rows.append({"key": "P14c", "claim": "Scaled by each genre's spread, taste matters more in Indie & alternative than in Rock & punk", "unit": "log",
+                 "hidden": g2s["spread_test"]["est"], "lo": g2s["spread_test"]["lo"], "hi": g2s["spread_test"]["hi"], "lo99": g2s["spread_test"]["lo99"],
+                 "first_half": g2e["spread_test"]["est"], "rate": None, "rate_compared": None, "confirmed": g2s["spread_test"]["lo99"] > 0})
     rows.append({"key": "H2growth", "claim": "3+ good pickers agree: growth vs similar artists (descriptive)", "unit": "more growth",
                  "hidden": hs["H2"]["best"]["growth_vs_similar"], "lo": None, "hi": None, "lo99": None,
                  "first_half": he["H2"]["best"]["growth_vs_similar"], "rate": None, "rate_compared": None, "confirmed": None})
@@ -232,7 +244,19 @@ def learning():
 
 
 def genre():
-    return json.loads((OUT / "genre_sealed.json").read_text())["families"]
+    rows = json.loads((OUT / "genre_sealed.json").read_text())["families"]
+    g2 = json.loads((OUT / "genre2_sealed.json").read_text())
+    sd = {r["family"]: r for r in g2["spread"]}
+    fav = {r["family"]: r for r in g2["favourites"]}
+    gen = {r["family"]: r for r in g2["general"]}
+    for r in rows:
+        if r["family"] in sd:
+            r.update(gap_in_sd=sd[r["family"]]["gap_in_sd"], fav_ratio=fav[r["family"]]["ratio"],
+                     gap_same=gen[r["family"]]["gap_same"], gap_same_lo=gen[r["family"]]["gap_same_lo"], gap_same_hi=gen[r["family"]]["gap_same_hi"],
+                     gap_other=gen[r["family"]]["gap_other"], gap_other_lo=gen[r["family"]]["gap_other_lo"], gap_other_hi=gen[r["family"]]["gap_other_hi"])
+    gs = g2["general_summary"]
+    rows.append({"key": "summary", "family": None, "same_avg": gs["same_avg"], "other_avg": gs["other_avg"], "carryover": gs["carryover"]})
+    return rows
 
 
 def obstaste():

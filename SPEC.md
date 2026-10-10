@@ -301,6 +301,12 @@ Exploratory on the explore half; tested once on the sealed half with the committ
   Explore +0.062 SD (99% low 0.047).
 Descriptive: per-genre carry-over, genre favourites of good pickers, all spread-scaled gaps.
 
+**Sealed results (2026-10-10): all three confirmed.** P14a other-genre gap +4.2 points (99% low 4.0); carry-over 67%.
+P14b same minus other +2.1 points (99% low 1.6). P14c +0.058 SD (99% low 0.042). Note: the sealed run was executed twice
+by mistake (the first run's printed output was cut off by a display filter); point estimates were identical and both runs
+passed; bootstrap ranges differed in the third decimal because row order in group-by is not fixed. Reported values are
+from the second run, whose output file was kept.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|

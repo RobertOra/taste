@@ -442,6 +442,45 @@
   "confirmed": true
  },
  {
+  "key": "P14a",
+  "claim": "Rated on one genre, people separate on later picks in other genres (average gap)",
+  "unit": "points",
+  "hidden": 0.04205305629607515,
+  "lo": 0.04008099137303232,
+  "hi": null,
+  "lo99": 0.039615571476192844,
+  "first_half": 0.040219644419919306,
+  "rate": null,
+  "rate_compared": null,
+  "confirmed": true
+ },
+ {
+  "key": "P14b",
+  "claim": "The same-genre gap exceeds the other-genre gap (average)",
+  "unit": "points",
+  "hidden": 0.02106347034210212,
+  "lo": 0.017393505031411533,
+  "hi": 0.024635681742695908,
+  "lo99": 0.01643694630024406,
+  "first_half": 0.025886104607264496,
+  "rate": null,
+  "rate_compared": null,
+  "confirmed": true
+ },
+ {
+  "key": "P14c",
+  "claim": "Scaled by each genre's spread, taste matters more in Indie & alternative than in Rock & punk",
+  "unit": "log",
+  "hidden": 0.05843615906625148,
+  "lo": 0.04639337421493567,
+  "hi": 0.07285402015400409,
+  "lo99": 0.04235894282713081,
+  "first_half": 0.06223110886920909,
+  "rate": null,
+  "rate_compared": null,
+  "confirmed": true
+ },
+ {
   "key": "H2growth",
   "claim": "3+ good pickers agree: growth vs similar artists (descriptive)",
   "unit": "more growth",
