@@ -1,0 +1,10 @@
+  Metal                    this genre -1.2%  other genres only -2.1%  everyone -3.8%  established 53%
+  Hip hop                  this genre +1.5%  other genres only +1.7%  everyone -2.0%  established 29%
+  Electronic               this genre +0.7%  other genres only +1.8%  everyone -0.7%  established 31%
+  Indie & alternative      this genre -0.2%  other genres only +1.4%  everyone -1.9%  established 41%
+  Pop                      this genre -0.3%  other genres only +0.6%  everyone -2.0%  established 38%
+  Rock & punk              this genre -1.4%  other genres only -0.2%  everyone -1.7%  established 68%
+  Folk & country           this genre -1.2%  other genres only +0.3%  everyone -2.1%  established 47%
+  R&B, soul & funk         this genre +0.6%  other genres only +2.1%  everyone -0.6%  established 56%
+  Jazz, blues & classical  this genre -3.0%  other genres only -1.8%  everyone -2.7%  established 61%
+  summary: {'avg_this_minus_other': -0.009210827236820547, 'avg_this': -0.005003075638959427, 'avg_other': 0.00420775159786112, 'lo': -0.01266260361471949, 'hi': -0.006081956893144629, 'hi99': -0.005444985980430893, 'share_general': -0.8410329768142935}

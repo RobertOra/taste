@@ -1,14 +1,43 @@
-Traceback (most recent call last):
-  File "/Users/robert/Projects/taste/analysis/evaluate.py", line 288, in <module>
-    main(sys.argv[1])
-    ~~~~^^^^^^^^^^^^^
-  File "/Users/robert/Projects/taste/analysis/evaluate.py", line 50, in main
-    meta = json.loads((out / "meta.json").read_text())
-                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
-  File "/Users/robert/.local/share/uv/python/cpython-3.14.8-macos-aarch64-none/lib/python3.14/pathlib/__init__.py", line 787, in read_text
-    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
-         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/Users/robert/.local/share/uv/python/cpython-3.14.8-macos-aarch64-none/lib/python3.14/pathlib/__init__.py", line 771, in open
-    return io.open(self, mode, buffering, encoding, errors, newline)
-           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: '/Users/robert/Projects/taste/analysis/out/cand/lb_D_artist_main/meta.json'
+/Users/robert/Projects/taste/.venv/lib/python3.14/site-packages/numpy/lib/_function_base_impl.py:3036: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/Users/robert/Projects/taste/.venv/lib/python3.14/site-packages/numpy/lib/_function_base_impl.py:3037: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+{
+ "candidate": "lb_D_artist_main",
+ "headline_adjusted_forward": 0.13461021657678662,
+ "headline_adjusted_forward_ci": [
+  0.12597527094633373,
+  0.1443485254457855
+ ],
+ "share_of_prediction_kept_after_impostors": 0.9296777962026579,
+ "users_scored": 26404,
+ "not_luck_share": 0.7651148282723452,
+ "reliability": 0.7395528930233927,
+ "impostor_r2": 0.08153519549411359,
+ "stability_3y_corrected": 0.2582322277719874,
+ "passes_gates": true,
+ "forward": {
+  "rank_corr": 0.14479233249047427,
+  "rank_corr_ci": [
+   0.13597685665766518,
+   0.15381894679695285
+  ],
+  "top_minus_bottom": 0.00474203789052401,
+  "top_minus_bottom_ci": [
+   0.004370631452423554,
+   0.005109336476682511
+  ],
+  "repeat_rate_top20": 0.2843226083547257,
+  "repeat_rate_top20_ci": [
+   0.27726298932406224,
+   0.29156464706277513
+  ],
+  "repeat_rate_chance": 0.2,
+  "impostor_adjusted_rank_corr": 0.13461021657678662,
+  "impostor_adjusted_rank_corr_ci": [
+   0.12597527094633373,
+   0.1443485254457855
+  ],
+  "gap_years": 2
+ }
+}

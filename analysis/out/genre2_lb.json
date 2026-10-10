@@ -1,0 +1,286 @@
+{
+ "general": [
+  {
+   "key": "Metal",
+   "family": "Metal",
+   "gap_same": 0.08960939328459172,
+   "gap_same_lo": 0.07820517147287813,
+   "gap_same_hi": 0.10276461995207004,
+   "people_same": 9703,
+   "gap_other": 0.019151341065036256,
+   "gap_other_lo": 0.013770594926885541,
+   "gap_other_hi": 0.024070099438854155,
+   "people_other": 12258
+  },
+  {
+   "key": "Hip hop",
+   "family": "Hip hop",
+   "gap_same": 0.05203790501517087,
+   "gap_same_lo": 0.0442808358274137,
+   "gap_same_hi": 0.060245950907688105,
+   "people_same": 12168,
+   "gap_other": 0.020786525832494015,
+   "gap_other_lo": 0.016928663481837997,
+   "gap_other_hi": 0.025280370677518215,
+   "people_other": 15179
+  },
+  {
+   "key": "Electronic",
+   "family": "Electronic",
+   "gap_same": 0.027588166484087587,
+   "gap_same_lo": 0.02287804634095754,
+   "gap_same_hi": 0.03233078112857556,
+   "people_same": 25333,
+   "gap_other": 0.015034841080680436,
+   "gap_other_lo": 0.011944125932089674,
+   "gap_other_hi": 0.0181059193412172,
+   "people_other": 28430
+  },
+  {
+   "key": "Indie & alternative",
+   "family": "Indie & alternative",
+   "gap_same": 0.042793987559569875,
+   "gap_same_lo": 0.037449061379567876,
+   "gap_same_hi": 0.047505554635175265,
+   "people_same": 24483,
+   "gap_other": 0.0315386784778929,
+   "gap_other_lo": 0.028391792736579078,
+   "gap_other_hi": 0.034532290668705105,
+   "people_other": 29090
+  },
+  {
+   "key": "Pop",
+   "family": "Pop",
+   "gap_same": 0.033724704242577216,
+   "gap_same_lo": 0.02760502804827052,
+   "gap_same_hi": 0.04017182048947357,
+   "people_same": 16998,
+   "gap_other": 0.017747076661400074,
+   "gap_other_lo": 0.013833901946844335,
+   "gap_other_hi": 0.02124398202790006,
+   "people_other": 20627
+  },
+  {
+   "key": "Rock & punk",
+   "family": "Rock & punk",
+   "gap_same": 0.01878541595170046,
+   "gap_same_lo": 0.013369131778976655,
+   "gap_same_hi": 0.02403579003689505,
+   "people_same": 21623,
+   "gap_other": 0.018884045986466414,
+   "gap_other_lo": 0.01584545705392577,
+   "gap_other_hi": 0.021971918802058895,
+   "people_other": 27316
+  },
+  {
+   "key": "Folk & country",
+   "family": "Folk & country",
+   "gap_same": 0.02244771173230537,
+   "gap_same_lo": 0.00793799925377825,
+   "gap_same_hi": 0.036242477999913585,
+   "people_same": 4486,
+   "gap_other": 0.02554244780463986,
+   "gap_other_lo": 0.018223562739165543,
+   "gap_other_hi": 0.03345934616742518,
+   "people_other": 6637
+  },
+  {
+   "key": "R&B, soul & funk",
+   "family": "R&B, soul & funk",
+   "gap_same": 0.023521109717150906,
+   "gap_same_lo": 0.008851460716794077,
+   "gap_same_hi": 0.03689157345912134,
+   "people_same": 4463,
+   "gap_other": 0.017196040905041333,
+   "gap_other_lo": 0.010866424981644375,
+   "gap_other_hi": 0.024005701847938883,
+   "people_other": 6878
+  },
+  {
+   "key": "Jazz, blues & classical",
+   "family": "Jazz, blues & classical",
+   "gap_same": 0.021427062461886918,
+   "gap_same_lo": 0.00887726171429252,
+   "gap_same_hi": 0.034775450247639374,
+   "people_same": 6633,
+   "gap_other": 0.008730930760923235,
+   "gap_other_lo": 0.0032535727193032608,
+   "gap_other_hi": 0.01378757969553004,
+   "people_other": 9927
+  }
+ ],
+ "general_summary": {
+  "same_avg": 0.03688171738322677,
+  "other_avg": 0.019401325397174946,
+  "carryover": 0.5260418107861313,
+  "other_lo": 0.01758720275678203,
+  "other_lo99": 0.017140626383896268,
+  "same_minus_other": 0.017480391986051825,
+  "smo_lo": 0.013339734564746639,
+  "smo_hi": 0.021444253196140524,
+  "smo_lo99": 0.011943060585378435
+ },
+ "favourites": [
+  {
+   "key": "R&B, soul & funk",
+   "family": "R&B, soul & funk",
+   "share_top": 0.04650439622802858,
+   "share_bottom": 0.042580980004357095,
+   "share_all": 0.04448009474191195,
+   "ratio": 1.0921401109901656
+  },
+  {
+   "key": "Electronic",
+   "family": "Electronic",
+   "share_top": 0.24327155551063878,
+   "share_bottom": 0.22606695400703114,
+   "share_all": 0.23304908383371772,
+   "ratio": 1.076104009005547
+  },
+  {
+   "key": "Hip hop",
+   "family": "Hip hop",
+   "share_top": 0.11489955921108891,
+   "share_bottom": 0.10928509489493851,
+   "share_all": 0.10375564537790352,
+   "ratio": 1.0513744744564468
+  },
+  {
+   "key": "Jazz, blues & classical",
+   "family": "Jazz, blues & classical",
+   "share_top": 0.05824710610807491,
+   "share_bottom": 0.05667105223813653,
+   "share_all": 0.061516403179003795,
+   "ratio": 1.0278105630245873
+  },
+  {
+   "key": "Indie & alternative",
+   "family": "Indie & alternative",
+   "share_top": 0.1761212130635218,
+   "share_bottom": 0.17366222271583634,
+   "share_all": 0.17391485766801623,
+   "ratio": 1.0141596157715262
+  },
+  {
+   "key": "Folk & country",
+   "family": "Folk & country",
+   "share_top": 0.040462012080881266,
+   "share_bottom": 0.04290349037381301,
+   "share_all": 0.04305426922563207,
+   "ratio": 0.9430937140158193
+  },
+  {
+   "key": "Pop",
+   "family": "Pop",
+   "share_top": 0.1310161467119635,
+   "share_bottom": 0.1389816788480186,
+   "share_all": 0.12976060599261885,
+   "ratio": 0.9426864590924556
+  },
+  {
+   "key": "Rock & punk",
+   "family": "Rock & punk",
+   "share_top": 0.11667495899186056,
+   "share_bottom": 0.12623290801833398,
+   "share_all": 0.12759775449255603,
+   "ratio": 0.9242832223663482
+  },
+  {
+   "key": "Metal",
+   "family": "Metal",
+   "share_top": 0.07280305209394168,
+   "share_bottom": 0.08361561889953481,
+   "share_all": 0.08287128548863984,
+   "ratio": 0.8706872358550074
+  }
+ ],
+ "spread_test": {
+  "est": 0.045244740519452986,
+  "lo": 0.024590338033636465,
+  "hi": 0.06762322006483348,
+  "lo99": 0.019022468996053192
+ },
+ "spread": [
+  {
+   "key": "Metal",
+   "family": "Metal",
+   "gap": 0.0643421028010488,
+   "spread_sd": 0.46881484972357457,
+   "gap_in_sd": 0.13724416545036186,
+   "gap_in_sd_lo": 0.10864641717914722,
+   "gap_in_sd_hi": 0.173888894424185
+  },
+  {
+   "key": "Indie & alternative",
+   "family": "Indie & alternative",
+   "gap": 0.04836428163519546,
+   "spread_sd": 0.42529727602131445,
+   "gap_in_sd": 0.11371876652408093,
+   "gap_in_sd_lo": 0.09814628953847639,
+   "gap_in_sd_hi": 0.12912902444870092
+  },
+  {
+   "key": "Hip hop",
+   "family": "Hip hop",
+   "gap": 0.050335185152030254,
+   "spread_sd": 0.46978391746289544,
+   "gap_in_sd": 0.10714539872686434,
+   "gap_in_sd_lo": 0.09106063619610107,
+   "gap_in_sd_hi": 0.12290837281682676
+  },
+  {
+   "key": "Pop",
+   "family": "Pop",
+   "gap": 0.042406946558524304,
+   "spread_sd": 0.4215728996460796,
+   "gap_in_sd": 0.10059220266323082,
+   "gap_in_sd_lo": 0.08694906200171869,
+   "gap_in_sd_hi": 0.11669343980372926
+  },
+  {
+   "key": "Electronic",
+   "family": "Electronic",
+   "gap": 0.04143342180292017,
+   "spread_sd": 0.4373246847554186,
+   "gap_in_sd": 0.09474292956065934,
+   "gap_in_sd_lo": 0.08291806483198458,
+   "gap_in_sd_hi": 0.10771318368009986
+  },
+  {
+   "key": "Folk & country",
+   "family": "Folk & country",
+   "gap": 0.032599240990710585,
+   "spread_sd": 0.41880026474352605,
+   "gap_in_sd": 0.07783959021772446,
+   "gap_in_sd_lo": 0.05642097648642225,
+   "gap_in_sd_hi": 0.10119741450058245
+  },
+  {
+   "key": "R&B, soul & funk",
+   "family": "R&B, soul & funk",
+   "gap": 0.029036193660551768,
+   "spread_sd": 0.3869791107589177,
+   "gap_in_sd": 0.07503297426987186,
+   "gap_in_sd_lo": 0.05235457391977465,
+   "gap_in_sd_hi": 0.09420851213955798
+  },
+  {
+   "key": "Rock & punk",
+   "family": "Rock & punk",
+   "gap": 0.026071816060917165,
+   "spread_sd": 0.38075482897931334,
+   "gap_in_sd": 0.06847402600462794,
+   "gap_in_sd_lo": 0.05388125945028674,
+   "gap_in_sd_hi": 0.08390222631839064
+  },
+  {
+   "key": "Jazz, blues & classical",
+   "family": "Jazz, blues & classical",
+   "gap": 0.028857892572802107,
+   "spread_sd": 0.4276086239727892,
+   "gap_in_sd": 0.06748669450277148,
+   "gap_in_sd_lo": 0.04409156153312418,
+   "gap_in_sd_hi": 0.09188569437607323
+  }
+ ]
+}

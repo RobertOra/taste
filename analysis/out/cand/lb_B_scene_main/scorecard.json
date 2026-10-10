@@ -1,0 +1,328 @@
+{
+ "candidate": "lb_B_scene_main",
+ "meta": {
+  "name": "lb_B_scene_main",
+  "model": "B",
+  "unit": "scene",
+  "horizon": 12,
+  "half": "lb",
+  "bets": 1354790,
+  "users_with_bets": 29288,
+  "args": {
+   "model": "B",
+   "half": "lb",
+   "unit": "scene",
+   "onboarding": 26,
+   "rule": "w4",
+   "window": 26,
+   "date": "commit",
+   "horizon": 12,
+   "smooth": 1.0,
+   "bins": 20,
+   "scene": "yearly200",
+   "age": true,
+   "momentum": 5,
+   "country": true,
+   "release": true,
+   "adjust": "additive",
+   "metric": "log",
+   "weight": 0.0,
+   "user_sample": 1,
+   "min_bets": 20,
+   "perms": 10,
+   "name": null,
+   "mem": "5GB",
+   "bets_out": null,
+   "threads": 6,
+   "cand": "lb_B_scene_main"
+  },
+  "cells": {
+   "bets_per_cell": 345.1137253744123,
+   "share_single_item_cells": null,
+   "items_per_cell": 10.937850146517173
+  }
+ },
+ "users_with_bets": 29288,
+ "users_scored": 20353,
+ "coverage": 0.6949262496585632,
+ "not_luck_share": 0.07665869028065286,
+ "not_luck_share_ci": [
+  0.0486747293437798,
+  0.1067069722263547
+ ],
+ "reliability": 0.10554605548249248,
+ "reliability_ci": [
+  0.0675554051841994,
+  0.14222612469411494
+ ],
+ "percentile_range_for_observed_75th": [
+  16.0366347241128,
+  92.38146667412323
+ ],
+ "impostor_r2": 0.04142338640918597,
+ "impostor_r2_ci": [
+  0.03642434818917913,
+  0.048694269607779145
+ ],
+ "impostor_corr": {
+  "listens": 0.09258020215480318,
+  "history_years": 0.1252437578659925,
+  "join_year": -0.12571467569233222,
+  "listens_per_active_month": -0.013600043839684148,
+  "unmatched_share": 0.018458870315940058,
+  "no_id_share": NaN,
+  "new_artists_per_year": -0.0533194222633455,
+  "committed_per_year": -0.060420171165918336,
+  "mainstream_share": -0.01607903731401587,
+  "commit_rate": -0.002633210299521703,
+  "n_bets": -0.009865998215198847
+ },
+ "impostor_features_past_only": true,
+ "forward": {
+  "rank_corr": 0.006735959730129761,
+  "rank_corr_ci": [
+   -0.008185459753715577,
+   0.02038457270009226
+  ],
+  "top_minus_bottom": 0.0039295928756810355,
+  "top_minus_bottom_ci": [
+   -0.003726348628416458,
+   0.012225227162763771
+  ],
+  "repeat_rate_top20": 0.19452814643844585,
+  "repeat_rate_top20_ci": [
+   0.18463058255614892,
+   0.20621065601660596
+  ],
+  "repeat_rate_chance": 0.2,
+  "impostor_adjusted_rank_corr": 0.0010316946701846277,
+  "impostor_adjusted_rank_corr_ci": [
+   -0.013544704133551235,
+   0.01396157929200666
+  ],
+  "by_cutoff": [
+   {
+    "cutoff": 2007,
+    "users": 965,
+    "rank_corr": -0.02589391634013866
+   },
+   {
+    "cutoff": 2008,
+    "users": 1267,
+    "rank_corr": -0.021368210998821576
+   },
+   {
+    "cutoff": 2009,
+    "users": 1497,
+    "rank_corr": 0.0062724672944441525
+   },
+   {
+    "cutoff": 2010,
+    "users": 1655,
+    "rank_corr": 0.03786313089546436
+   },
+   {
+    "cutoff": 2011,
+    "users": 1619,
+    "rank_corr": 0.06621385369588464
+   },
+   {
+    "cutoff": 2012,
+    "users": 1686,
+    "rank_corr": 0.06662159786962289
+   },
+   {
+    "cutoff": 2013,
+    "users": 1662,
+    "rank_corr": 0.015881454671115482
+   },
+   {
+    "cutoff": 2014,
+    "users": 1857,
+    "rank_corr": 0.003990122111119405
+   },
+   {
+    "cutoff": 2015,
+    "users": 2079,
+    "rank_corr": -0.005348817861317948
+   },
+   {
+    "cutoff": 2016,
+    "users": 2369,
+    "rank_corr": 0.026313511133832113
+   },
+   {
+    "cutoff": 2017,
+    "users": 2661,
+    "rank_corr": -0.009961191684167607
+   },
+   {
+    "cutoff": 2018,
+    "users": 3081,
+    "rank_corr": -0.015273447517229841
+   },
+   {
+    "cutoff": 2019,
+    "users": 3413,
+    "rank_corr": 0.002974755821986487
+   },
+   {
+    "cutoff": 2020,
+    "users": 3573,
+    "rank_corr": 0.01446288927259291
+   },
+   {
+    "cutoff": 2021,
+    "users": 3764,
+    "rank_corr": -0.001995441689833466
+   },
+   {
+    "cutoff": 2022,
+    "users": 3066,
+    "rank_corr": -0.006115778318775814
+   },
+   {
+    "cutoff": 2023,
+    "users": 864,
+    "rank_corr": -0.042574530180064935
+   }
+  ],
+  "gap_years": 2
+ },
+ "eras": {
+  "2007-2012": {
+   "adjusted_forward": 0.022016930219607607,
+   "ci": [
+    -0.0022051259586644617,
+    0.043551215937807815
+   ],
+   "lo99": -0.010715701913217584,
+   "person_cutoffs": 8689,
+   "cutoffs": [
+    2007,
+    2008,
+    2009,
+    2010,
+    2011,
+    2012
+   ]
+  },
+  "2013-2018": {
+   "adjusted_forward": -0.003067080898768446,
+   "ci": [
+    -0.022860164329650223,
+    0.01610154556859384
+   ],
+   "lo99": -0.026452467657636425,
+   "person_cutoffs": 13709,
+   "cutoffs": [
+    2013,
+    2014,
+    2015,
+    2016,
+    2017,
+    2018
+   ]
+  },
+  "2019-2023": {
+   "adjusted_forward": -0.00756167027628394,
+   "ci": [
+    -0.026681285508721137,
+    0.012565306335066036
+   ],
+   "lo99": -0.03058868206720459,
+   "person_cutoffs": 14680,
+   "cutoffs": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+   ]
+  },
+  "ratio_late_to_early": {
+   "est": -0.34344798302307133,
+   "ci": [
+    -3.534633207584261,
+    1.469581421741209
+   ],
+   "lo99": -6.334812727692231
+  }
+ },
+ "stability_curve": [
+  {
+   "lag_years": 1,
+   "raw": 0.04097079795756664,
+   "corrected": 5.251434038158578,
+   "users": 46512,
+   "overlapping_windows": true
+  },
+  {
+   "lag_years": 2,
+   "raw": 0.005390646973795486,
+   "corrected": 1.83023427011348,
+   "users": 31753,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 3,
+   "raw": 0.017815725173221383,
+   "corrected": 0.7420105436812924,
+   "users": 22519,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 4,
+   "raw": 0.01629053763403508,
+   "corrected": 5.762885384040008,
+   "users": 16624,
+   "overlapping_windows": false
+  },
+  {
+   "lag_years": 5,
+   "raw": 0.0012682735111317405,
+   "corrected": 0.4240289060384178,
+   "users": 12483,
+   "overlapping_windows": false
+  }
+ ],
+ "yearly_reliability": {
+  "2006": 0.0723679092024834,
+  "2007": 0.001,
+  "2008": 0.001,
+  "2009": 0.001,
+  "2010": 0.001,
+  "2011": 0.10550499320755216,
+  "2012": 0.07512931886700142,
+  "2013": 0.001,
+  "2014": 0.017609306689816195,
+  "2015": 0.001,
+  "2016": 0.001,
+  "2017": 0.001,
+  "2018": 0.10210844886263008,
+  "2019": 0.05303535905213032,
+  "2020": 0.07236577121343435,
+  "2021": 0.10500402634124348,
+  "2022": 0.1489810988620679,
+  "2023": 0.09599509316600464,
+  "2024": 0.03922159335739922,
+  "2025": 0.12539186060614
+ },
+ "stability_3y_corrected": 0.7420105436812924,
+ "stability_3y_corrected_ci": [
+  -3.5310380233091423,
+  5.695001614691844
+ ],
+ "headline_adjusted_forward": 0.0010316946701846277,
+ "headline_adjusted_forward_ci": [
+  -0.013544704133551235,
+  0.01396157929200666
+ ],
+ "share_of_prediction_kept_after_impostors": 0.15316223842162924,
+ "gates": {
+  "beats_luck": true,
+  "impostor_adjusted_still_predicts": false,
+  "stable_3y": false
+ },
+ "passes_gates": false
+}

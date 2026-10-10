@@ -1,0 +1,10 @@
+  Metal                    specialists -1.2% [-2.0%,-0.4%]  good in general -0.3% [-1.0%,+0.5%]  everyone -3.7%  (overlap 48%, 23,698 person-periods)
+  Hip hop                  specialists +1.5% [+0.8%,+2.1%]  good in general +2.1% [+1.4%,+2.7%]  everyone -2.0%  (overlap 49%, 29,405 person-periods)
+  Electronic               specialists +0.7% [+0.3%,+1.0%]  good in general +2.0% [+1.7%,+2.3%]  everyone -0.7%  (overlap 47%, 62,449 person-periods)
+  Indie & alternative      specialists -0.2% [-0.5%,+0.2%]  good in general +1.5% [+1.2%,+1.9%]  everyone -1.9%  (overlap 49%, 59,197 person-periods)
+  Pop                      specialists -0.3% [-0.7%,+0.1%]  good in general +0.8% [+0.4%,+1.3%]  everyone -2.0%  (overlap 46%, 41,894 person-periods)
+  Rock & punk              specialists -1.4% [-1.8%,-1.0%]  good in general -0.2% [-0.5%,+0.1%]  everyone -1.7%  (overlap 39%, 53,579 person-periods)
+  Folk & country           specialists -1.2% [-2.2%,-0.2%]  good in general +0.3% [-0.6%,+1.3%]  everyone -2.1%  (overlap 37%, 11,095 person-periods)
+  R&B, soul & funk         specialists +0.6% [-0.4%,+1.7%]  good in general +1.9% [+1.0%,+2.9%]  everyone -0.6%  (overlap 38%, 11,284 person-periods)
+  Jazz, blues & classical  specialists -2.8% [-3.8%,-2.0%]  good in general -1.6% [-2.5%,-0.6%]  everyone -2.7%  (overlap 36%, 16,754 person-periods)
+  average specialist minus general: {'avg_spec_minus_gen': -0.012152948195086428, 'lo': -0.015635344893897615, 'hi': -0.00926808648788023, 'hi99': -0.007808095757910645}

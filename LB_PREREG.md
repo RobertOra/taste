@@ -55,3 +55,26 @@ The adapted code is checked to reproduce the MLHD+ results it already produced (
 - The first launch (09:27) failed on its first two steps before producing any result: one LB release group is dated 3036,
   which overflows the month field. Release dates from year 2700 on are now ignored (MLHD+ has none, so its results are
   unchanged); the run was stopped and relaunched from the start.
+- headlines.py stopped with a division by zero: on LB, artists picked only by 3+ poor pickers had no tenfold takeoffs, so the
+  descriptive all-good / all-poor ratio is undefined. It is now recorded as undefined (not a pre-registered test; P2a/b
+  compare with similar artists). MLHD+ unaffected. The step was rerun after the main run finished.
+
+## Results (one-time run, 2026-10-10 09:29-09:46; headlines step rerun after the fix above). Full table: analysis/out/lb_report.txt / lb_report.json
+**Part 1: 8 of 9 measures confirmed** (Holm within families + 3-year stability). Not confirmed: community-leading, scenes
+(0.001, 95% low -0.014; MLHD+ sealed 0.035, its weakest). Sizes vs MLHD+ sealed: discernment songs 0.198 (0.230), artists
+0.135 (0.163), scenes 0.042 (0.104); prescience songs 0.234 (0.211), artists 0.142 (0.148), scenes 0.042 (0.061);
+community-leading songs 0.228 (0.244), artists 0.148 (0.214). Scenes are weaker on LB across the board.
+**Part 2: 24 of 32 held** (MLHD+ sealed: 29 of 32). Not held:
+- P2a/P2b (3+ all-good pickers vs similar): only ~1,190 such artist-months on LB (one tenfold event); 4x 1.15 (99% low 0.34),
+  10x 2.57 (bound undefined). Too few cases to test.
+- P4a top 1% tenfold 2.63x (99% low 1.73; bar > 2). Same direction; misses the stricter bar. Correction to the plan: LB's top 1%
+  is 614 person-cutoffs, not ~2,500 as stated above (my estimate was wrong). P4b (top 1% vs 90-95% band) held: 1.94.
+- P10a 1.01 (99% low 0.70), P10b recent spread 1.59x vs old 1.47x, difference 0.08 (99% low -0.20), P10c 1.11 (99% low 0.51):
+  recency does not replicate. (MLHD+: P10b held, P10a and P10c missed.)
+- P11b reversed: on LB bad taste hurts more than good taste helps (top fifth +2.7 points above all picks, bottom fifth -4.7
+  below; difference -0.020, 95% [-0.029, -0.009]). MLHD+: +3.5 / -2.6.
+- P11c top-fifth picks do not flop more (0.99; MLHD+ 1.10).
+Newly held: P16 (other genres predict a genre within 1 point: -0.9 points, 99% high -0.5), which missed narrowly on MLHD+.
+**Part 3: era test passed.** E1 all six era checks hold. E2: the algorithm era is stronger, not weaker: 2019-2023 / 2007-2012 =
+1.25 for prescience (99% low 1.07) and 1.13 for discernment (99% low 0.93); bar 0.5. Prescience by era 0.121 / 0.143 / 0.152;
+discernment 0.130 / 0.124 / 0.146 (23k / 43k / 53k person-cutoffs).

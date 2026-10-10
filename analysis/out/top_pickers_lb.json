@@ -1,0 +1,103 @@
+{
+ "top1_total": {
+  "est": 2.6302533931363863,
+  "lo": 1.8245138159050622,
+  "hi": 3.643627746164407
+ },
+ "top1_within_scene": {
+  "est": 1.5291499362854952,
+  "lo": 1.179590873356102,
+  "hi": 1.8571720548291624,
+  "lo99": 1.126727693067485
+ },
+ "top1_scene_quality": {
+  "est": 1.7200755339437905,
+  "lo": 1.4872925043508747,
+  "hi": 1.9880092442527142,
+  "lo99": 1.4512938256120027
+ },
+ "profile": {
+  "0\u201350": {
+   "people": 91701,
+   "pick_popularity": 0.5665957836183264,
+   "top_scene_share": 0.141520593582948,
+   "scenes": 73.03319483975093,
+   "plays_to_commit": 2.588899225201727,
+   "picks_per_year": 40.63979317398778,
+   "listens_per_month": 878.419102005405,
+   "mainstream_share": 0.9064330427847372,
+   "commit_rate": 0.1497889847543967
+  },
+  "50\u201375": {
+   "people": 45853,
+   "pick_popularity": 0.5433409473594538,
+   "top_scene_share": 0.1310682710896881,
+   "scenes": 80.45809434497198,
+   "plays_to_commit": 2.6217428616031637,
+   "picks_per_year": 43.94083583512664,
+   "listens_per_month": 937.7780228314864,
+   "mainstream_share": 0.9092405349651281,
+   "commit_rate": 0.15975508303189875
+  },
+  "75\u201390": {
+   "people": 27510,
+   "pick_popularity": 0.5242582176493608,
+   "top_scene_share": 0.13729625995212205,
+   "scenes": 76.00501635768812,
+   "plays_to_commit": 2.665751866311408,
+   "picks_per_year": 44.330681103987885,
+   "listens_per_month": 941.3364492878359,
+   "mainstream_share": 0.9046476545023613,
+   "commit_rate": 0.15383120390131053
+  },
+  "90\u201395": {
+   "people": 9171,
+   "pick_popularity": 0.5070306748356582,
+   "top_scene_share": 0.14808270385711184,
+   "scenes": 72.575509759023,
+   "plays_to_commit": 2.68026405830826,
+   "picks_per_year": 44.79904435495029,
+   "listens_per_month": 926.7927625510606,
+   "mainstream_share": 0.8979368073533689,
+   "commit_rate": 0.15546387331263015
+  },
+  "95\u201399": {
+   "people": 7336,
+   "pick_popularity": 0.48847349594578415,
+   "top_scene_share": 0.1614793170925053,
+   "scenes": 68.1354961832061,
+   "plays_to_commit": 2.688186820925485,
+   "picks_per_year": 45.669498463919645,
+   "listens_per_month": 963.0075504359021,
+   "mainstream_share": 0.8905308462947362,
+   "commit_rate": 0.15825205443030776
+  },
+  "99\u2013100": {
+   "people": 1843,
+   "pick_popularity": 0.4693879109576272,
+   "top_scene_share": 0.20395779863874156,
+   "scenes": 57.508410200759634,
+   "plays_to_commit": 2.6811523684517167,
+   "picks_per_year": 46.990360206588605,
+   "listens_per_month": 1079.248380534582,
+   "mainstream_share": 0.8830160406397691,
+   "commit_rate": 0.16537388841630346
+  }
+ },
+ "profile_note": "means; plays_to_commit is the mean of log(1 + plays)",
+ "pick_popularity_bottom_minus_top": {
+  "est": 0.09720787266069919,
+  "lo": 0.08576913253990114,
+  "hi": 0.10755502581382241,
+  "lo99": 0.08374397015198057
+ },
+ "variance_explained": {
+  "traits": 0.03366393282534774,
+  "track_record": 0.025481392444955397,
+  "both": 0.055887318161552235,
+  "people": 113768
+ },
+ "top1_by_traits_odds_10x": 1.1106155952217045,
+ "top1_by_record_odds_10x_same_people": 2.641857580147655,
+ "overlap_top1_traits_record": 0.02279874213836478
+}

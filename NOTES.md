@@ -115,3 +115,8 @@ the frozen one-sided Holm test). Full table: analysis/out/sealed_run.log, analys
 Write-up for a general reader: https://claude.ai/artifact/GLyaqWkJrEnJKPJNeG2zPt (source: analysis/writeup/; data built by analysis/build_writeup_data.py).
 
 - 2026-10-10: freed 22.4 GB before the ListenBrainz ingest: deleted agg.parquet for 200 variant/sweep candidates and analysis/out/cand/_superseded. Kept every scorecard.json/meta.json and the full folders of the 12 main and 12 sealed candidates. Any deleted agg can be rebuilt with analysis/taste_models.py using the settings in its meta.json.
+
+## ListenBrainz replication (2026-10-10, plan frozen in LB_PREREG.md before the run)
+8 of 9 main measures confirmed (community-leading/scenes not). 24 of 32 plain-language findings held (MLHD+ 29): misses
+P2a/b (too few cases), P4a (2.6x, bar 2x), P10a/b/c (recency), P11b (reversed: bad taste hurts more on LB), P11c. P16 held.
+Era test passed: taste predicts as well or better in 2019-2023 than 2007-2012. Details: LB_PREREG.md, analysis/out/lb_report.txt.

@@ -70,9 +70,9 @@ def summarize(d):
                   "rate_10x": float(x["x10"].mean()), "rate_10x_similar": float(x["x10_exp"].mean()),
                   "rate_4x": float(x["x4"].mean()), "rate_4x_similar": float(x["x4_exp"].mean()),
                   "growth_vs_similar": float(np.expm1(x["gx"].mean()))}
-    res["ratio_10x"] = res["best"]["rate_10x"] / res["worst"]["rate_10x"]
+    res["ratio_10x"] = res["best"]["rate_10x"] / res["worst"]["rate_10x"] if res["worst"]["rate_10x"] > 0 else None  # undefined with no events
     res["ratio_10x_ci"] = boot_ratio(d, "x10")
-    res["ratio_4x"] = res["best"]["rate_4x"] / res["worst"]["rate_4x"]
+    res["ratio_4x"] = res["best"]["rate_4x"] / res["worst"]["rate_4x"] if res["worst"]["rate_4x"] > 0 else None  # undefined with no events
     res["ratio_4x_ci"] = boot_ratio(d, "x4")
     gd = boot_diff(d, "gx")
     res["growth_gap"] = float(np.expm1(d.filter(pl.col("grp") == "best")["gx"].mean() - d.filter(pl.col("grp") == "worst")["gx"].mean()))
@@ -136,6 +136,7 @@ def h2(half):
 
 def show(label, r):
     b, w = r["best"], r["worst"]
+    r = {**r, **{k: float("nan") for k in ("ratio_10x", "ratio_4x") if r[k] is None}}  # undefined ratios print as nan
     print(f"\n== {label}")
     print(f"  best: {b['picks']:,} picks ({b['people']:,} people/artists)   worst: {w['picks']:,} picks ({w['people']:,})")
     print(f"  10x: best {b['rate_10x']:.2%} (similar {b['rate_10x_similar']:.2%})  worst {w['rate_10x']:.2%} (similar {w['rate_10x_similar']:.2%})"

@@ -1,0 +1,49 @@
+main_D_song        HELD      est    0.1981  bound    0.1893  (Holm p <= family threshold and 3-year stability 95% low > 0)  Discernment, songs (primary (discernment))
+main_D_artist      HELD      est    0.1346  bound     0.126  (Holm p <= family threshold and 3-year stability 95% low > 0)  Discernment, artists (primary (discernment))
+main_D_scene       HELD      est   0.04221  bound   0.03055  (Holm p <= family threshold and 3-year stability 95% low > 0)  Discernment, scenes (primary (discernment))
+main_A_song        HELD      est    0.2338  bound    0.2247  (Holm p <= family threshold and 3-year stability 95% low > 0)  Prescience, songs (secondary)
+main_A_artist      HELD      est    0.1421  bound     0.134  (Holm p <= family threshold and 3-year stability 95% low > 0)  Prescience, artists (secondary)
+main_A_scene       HELD      est   0.04244  bound   0.03238  (Holm p <= family threshold and 3-year stability 95% low > 0)  Prescience, scenes (secondary)
+main_B_song        HELD      est    0.2278  bound    0.2192  (Holm p <= family threshold and 3-year stability 95% low > 0)  Community-leading, songs (secondary)
+main_B_artist      HELD      est    0.1478  bound    0.1387  (Holm p <= family threshold and 3-year stability 95% low > 0)  Community-leading, artists (secondary)
+main_B_scene       not held  est  0.001032  bound  -0.01354  (Holm p <= family threshold and 3-year stability 95% low > 0)  Community-leading, scenes (secondary)
+P1a                HELD      est     1.942  bound     1.775  (99% low > 1)  Best vs worst fifth: tenfold takeoffs
+P1b                HELD      est     1.526  bound     1.476  (99% low > 1)  Best vs worst fifth: fourfold takeoffs
+P2a                not held  est     1.148  bound     0.342  (99% low > 1)  3+ good pickers vs similar: fourfold
+P2b                not held  est     2.571  bound       nan  (99% low > 1)  3+ good pickers vs similar: tenfold
+P3a                HELD      est   0.01994  bound   0.01798  (99% low > 0)  One ordinary picker swapped for a good one
+P3b                HELD      est   0.01427  bound   0.01212  (99% low > 0)  The same, within the same scene
+P4a                not held  est      2.63  bound     1.734  (99% low > 2)  Top 1% vs similar: tenfold
+P4b                HELD      est     1.945  bound     1.235  (99% low > 1)  Top 1% vs 90-95% band: tenfold
+P5a                HELD      est   0.05702  bound   0.04749  (99% low > 0)  Niche: 2 good pickers vs none
+P5b                HELD      est   0.04298  bound   0.01485  (99% low > 0)  Each good picker adds more for niche than crowded
+P5c                HELD      est   0.03069  bound   0.02499  (99% low > 0)  Good new fan vs ordinary new fan
+P6a                HELD      est   0.07315  bound   0.05853  (99% low > 0)  Small artist: good vs ordinary new fan
+P6b                HELD      est   0.05588  bound   0.03843  (99% low > 0)  That gap larger for small than big artists
+P7a                HELD      est     1.529  bound     1.127  (99% low > 1)  Top 1%: beat same-scene, same-size artists
+P7b                HELD      est      1.72  bound     1.451  (99% low > 1)  Top 1%: their scenes take off more
+P7c                HELD      est   0.09721  bound   0.08374  (99% low > 0)  Top 1%'s picks less popular than bottom half's
+P8                 HELD      est   0.02034  bound   0.01841  (99% low > 0)  Most- vs least-replayed quarter, within person
+P9                 HELD      est   0.01505  bound  0.006256  (99% low > 0)  Hooked pays off more for top- than bottom-fifth
+P10a               not held  est     1.013  bound    0.6955  (99% low > 1)  Recent star, poor history beats old star, poor recent
+P10b               not held  est   0.07611  bound    -0.197  (99% low > 0)  Recent record separates more than old
+P10c               not held  est     1.107  bound    0.5068  (99% low > 1)  One-year record goes stale (2 vs 4 years)
+P11a               HELD      est     1.201  bound     1.158  (99% low > 1)  Bottom-fifth picks flop more than middle-fifth
+P11b               not held  est   -0.0198  bound  -0.03207  (99% low > 0)  Good taste helps more than bad taste hurts
+P11c               not held  est    0.9933  bound    0.9655  (99% low > 1)  Top-fifth picks also flop more (bolder bets)
+P12                HELD      est  0.006855  bound  0.004647  (99% low > 0)  Same people, years 3-4 vs 1-2
+P13a               HELD      est   0.01951  bound  0.001851  (99% low > 0)  Gap larger in Indie than Jazz, blues & classical
+P13b               HELD      est   0.02229  bound   0.01137  (99% low > 0)  Gap larger in Indie than Rock & punk
+P14a               HELD      est    0.0194  bound   0.01714  (99% low > 0)  Rated on one genre, separate on others
+P14b               HELD      est   0.01748  bound   0.01194  (99% low > 0)  Same-genre gap exceeds other-genre gap
+P14c               HELD      est   0.04524  bound   0.01902  (99% low > 0)  Scaled by spread: Indie above Rock & punk
+P15                HELD      est  -0.01215  bound -0.007808  (99% high < 0.01)  Genre specialists don't beat good-in-general by > 1 point
+P16                HELD      est -0.009211  bound -0.005445  (99% high < 0.01)  Other genres predict a genre within 1 point
+E1_A_2007-2012     HELD      est    0.1211  bound    0.1045  (95% low > 0)  Prescience, artists, era 2007-2012: predicts
+E1_A_2013-2018     HELD      est    0.1425  bound    0.1298  (95% low > 0)  Prescience, artists, era 2013-2018: predicts
+E1_A_2019-2023     HELD      est    0.1519  bound    0.1416  (95% low > 0)  Prescience, artists, era 2019-2023: predicts
+E2_A               HELD      est     1.255  bound     1.072  (99% low of ratio > 0.5)  Prescience, artists: 2019-2023 at least half as strong as 2007-2012
+E1_D_2007-2012     HELD      est    0.1299  bound    0.1119  (95% low > 0)  Discernment, artists, era 2007-2012: predicts
+E1_D_2013-2018     HELD      est    0.1236  bound    0.1103  (95% low > 0)  Discernment, artists, era 2013-2018: predicts
+E1_D_2019-2023     HELD      est    0.1463  bound    0.1333  (95% low > 0)  Discernment, artists, era 2019-2023: predicts
+E2_D               HELD      est     1.126  bound    0.9347  (99% low of ratio > 0.5)  Discernment, artists: 2019-2023 at least half as strong as 2007-2012

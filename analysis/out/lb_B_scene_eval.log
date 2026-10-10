@@ -1,0 +1,43 @@
+/Users/robert/Projects/taste/.venv/lib/python3.14/site-packages/numpy/lib/_function_base_impl.py:3036: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[:, None]
+/Users/robert/Projects/taste/.venv/lib/python3.14/site-packages/numpy/lib/_function_base_impl.py:3037: RuntimeWarning: invalid value encountered in divide
+  c /= stddev[None, :]
+{
+ "candidate": "lb_B_scene_main",
+ "headline_adjusted_forward": 0.0010316946701846277,
+ "headline_adjusted_forward_ci": [
+  -0.013544704133551235,
+  0.01396157929200666
+ ],
+ "share_of_prediction_kept_after_impostors": 0.15316223842162924,
+ "users_scored": 20353,
+ "not_luck_share": 0.07665869028065286,
+ "reliability": 0.10554605548249248,
+ "impostor_r2": 0.04142338640918597,
+ "stability_3y_corrected": 0.7420105436812924,
+ "passes_gates": false,
+ "forward": {
+  "rank_corr": 0.006735959730129761,
+  "rank_corr_ci": [
+   -0.008185459753715577,
+   0.02038457270009226
+  ],
+  "top_minus_bottom": 0.0039295928756810355,
+  "top_minus_bottom_ci": [
+   -0.003726348628416458,
+   0.012225227162763771
+  ],
+  "repeat_rate_top20": 0.19452814643844585,
+  "repeat_rate_top20_ci": [
+   0.18463058255614892,
+   0.20621065601660596
+  ],
+  "repeat_rate_chance": 0.2,
+  "impostor_adjusted_rank_corr": 0.0010316946701846277,
+  "impostor_adjusted_rank_corr_ci": [
+   -0.013544704133551235,
+   0.01396157929200666
+  ],
+  "gap_years": 2
+ }
+}

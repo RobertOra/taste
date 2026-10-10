@@ -1,0 +1,42 @@
+{
+ "name": "lb_A_scene_main",
+ "model": "A",
+ "unit": "scene",
+ "horizon": 12,
+ "half": "lb",
+ "bets": 1461901,
+ "users_with_bets": 30231,
+ "args": {
+  "model": "A",
+  "half": "lb",
+  "unit": "scene",
+  "onboarding": 26,
+  "rule": "w4",
+  "window": 26,
+  "date": "commit",
+  "horizon": 12,
+  "smooth": 1.0,
+  "bins": 20,
+  "scene": "yearly200",
+  "age": true,
+  "momentum": 5,
+  "country": true,
+  "release": true,
+  "adjust": "additive",
+  "metric": "log",
+  "weight": 0.0,
+  "user_sample": 1,
+  "min_bets": 20,
+  "perms": 10,
+  "name": null,
+  "mem": "5GB",
+  "bets_out": null,
+  "threads": 6,
+  "cand": "lb_A_scene_main"
+ },
+ "cells": {
+  "bets_per_cell": 372.0783644036087,
+  "share_single_item_cells": null,
+  "items_per_cell": 10.93703746012897
+ }
+}

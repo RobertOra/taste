@@ -1,0 +1,56 @@
+LADDER [lb]
+         0–10% people  4,433 10x events    994  10x odds 0.81 [0.73, 0.89]  4x 0.89  growth -7.8%
+        10–20% people  5,410 10x events    893  10x odds 0.81 [0.73, 0.89]  4x 0.88  growth -3.4%
+        20–30% people  5,937 10x events    995  10x odds 0.85 [0.77, 0.93]  4x 0.88  growth -2.2%
+        30–40% people  6,267 10x events  1,075  10x odds 0.87 [0.80, 0.95]  4x 0.91  growth -1.5%
+        40–50% people  6,324 10x events  1,155  10x odds 0.91 [0.83, 1.00]  4x 0.93  growth -0.9%
+        50–60% people  6,304 10x events  1,141  10x odds 0.92 [0.85, 1.02]  4x 0.95  growth -0.3%
+        60–70% people  6,150 10x events  1,222  10x odds 1.00 [0.92, 1.10]  4x 1.01  growth -0.3%
+        70–80% people  5,954 10x events  1,306  10x odds 1.04 [0.96, 1.12]  4x 1.07  growth +0.2%
+        80–85% people  3,751 10x events    833  10x odds 1.24 [1.13, 1.37]  4x 1.14  growth +1.5%
+        85–90% people  3,383 10x events    889  10x odds 1.38 [1.21, 1.56]  4x 1.21  growth +1.1%
+        90–93% people  2,287 10x events    572  10x odds 1.28 [1.03, 1.53]  4x 1.20  growth +0.7%
+        93–95% people  1,625 10x events    420  10x odds 1.47 [1.27, 1.70]  4x 1.30  growth +0.7%
+        95–97% people  1,498 10x events    462  10x odds 1.49 [1.29, 1.69]  4x 1.32  growth +1.3%
+        97–98% people    836 10x events    269  10x odds 1.82 [1.52, 2.11]  4x 1.41  growth +1.7%
+        98–99% people    792 10x events    320  10x odds 2.14 [1.79, 2.52]  4x 1.56  growth +2.8%
+      99–99.5% people    434 10x events    148  10x odds 1.87 [1.46, 2.39]  4x 1.59  growth +1.4%
+    99.5–99.8% people    252 10x events     86  10x odds 1.91 [1.41, 2.44]  4x 1.69  growth +4.6%
+    99.8–99.9% people     92 10x events     51  10x odds 3.19 [2.16, 4.27]  4x 1.78  growth +3.6%
+     99.9–100% people     74 10x events    159  10x odds 5.53 [2.14, 7.29]  4x 2.78  growth +1.9%
+  top 1%: 2.63 [1.86, 3.53; 99% low 1.73]  vs 90-95% band: 1.94 [1.33, 2.71; 99% low 1.24]
+
+GOOD-PICKER CURVE [lb] (vs similar artists with the same ordinary/poor/unrated new fans)
+    0 good: n 2,870,584  growth -0.2% [-0.3%, -0.1%]  grew 4x 1.3% (similar 1.3%)
+    1 good: n   626,984  growth +0.7% [+0.5%, +0.8%]  grew 4x 1.6% (similar 1.5%)
+    2 good: n    32,652  growth +4.9% [+4.1%, +5.6%]  grew 4x 1.1% (similar 0.5%)
+    3 good: n     4,401  growth +8.4% [+6.6%, +10.4%]  grew 4x 0.7% (similar 0.2%)
+    4 good: n       922  growth +7.7% [+3.8%, +11.7%]  grew 4x 0.8% (similar 0.1%)
+   5+ good: n       606  growth +2.7% [-2.0%, +8.2%]  grew 4x 0.2% (similar 0.0%)
+
+COUNT VS SHARE [lb]
+  n_good               +2.81% [+2.48%, +3.15%; 99% low +2.31%]
+  n_ord                -0.29% [-0.44%, -0.18%; 99% low -0.49%]
+  n_poor               -3.94% [-4.12%, -3.77%; 99% low -4.16%]
+  share                -1.12% [-1.57%, -0.69%; 99% low -1.69%]
+  good_minus_ordinary  +3.07% [+2.68%, +3.47%; 99% low +2.50%]
+
+CROWDING CURVE [lb] (exact ordinary and poor new fans held fixed)
+  niche      0 good: n 2,474,314  growth -0.2% [-0.3%, -0.1%]
+  niche      1 good: n   510,052  growth +0.8% [+0.6%, +1.0%]
+  niche      2 good: n    29,115  growth +5.4% [+4.7%, +6.2%]
+  niche      3 good: n     3,229  growth +10.4% [+8.1%, +13.0%]
+  niche      4 good: n       484  growth +14.7% [+8.8%, +21.0%]
+  niche     5+ good: n       119  growth +19.4% [+7.4%, +33.1%]
+  middle     0 good: n    17,916  growth -0.5% [-1.2%, +0.3%]
+  middle     1 good: n     9,619  growth +0.5% [-0.6%, +1.7%]
+  middle     2 good: n     2,876  growth +0.4% [-1.6%, +2.4%]
+  middle     3 good: n       832  growth +1.7% [-2.1%, +5.3%]
+  middle    4+ good: n       325  growth +3.5% [-2.3%, +9.8%]
+  crowded    0 good: n       199  growth -1.6% [-8.6%, +5.8%]
+  crowded   1+ good: n       467  growth +0.7% [-4.3%, +5.7%]
+  per good picker, niche   : +3.53% [+3.28%, +3.77%]
+  per good picker, middle  : +0.62% [+0.07%, +1.19%]
+  per good picker, crowded : -0.82% [-2.93%, +1.33%]
+  niche, 2 good vs none: +5.7% [+5.0%, +6.4%; 99% low +4.7%]
+  slope niche minus crowded: +0.0430 [+0.0215, +0.0646; 99% low +0.0148]

@@ -1,0 +1,41 @@
+{
+ "top1_total": {
+  "est": 2.6302533931363863,
+  "lo": 1.8245138159050622,
+  "hi": 3.643627746164407
+ },
+ "top1_within_scene": {
+  "est": 1.5291499362854952,
+  "lo": 1.179590873356102,
+  "hi": 1.8571720548291624,
+  "lo99": 1.126727693067485
+ },
+ "top1_scene_quality": {
+  "est": 1.7200755339437905,
+  "lo": 1.4872925043508747,
+  "hi": 1.9880092442527142,
+  "lo99": 1.4512938256120027
+ },
+ "profile_note": "means; plays_to_commit is the mean of log(1 + plays)",
+ "pick_popularity_bottom_minus_top": {
+  "est": 0.09720787266069919,
+  "lo": 0.08576913253990114,
+  "hi": 0.10755502581382241,
+  "lo99": 0.08374397015198057
+ },
+ "variance_explained": {
+  "traits": 0.03366393282534774,
+  "track_record": 0.025481392444955397,
+  "both": 0.055887318161552235,
+  "people": 113768
+ },
+ "top1_by_traits_odds_10x": 1.1106155952217045,
+ "top1_by_record_odds_10x_same_people": 2.641857580147655,
+ "overlap_top1_traits_record": 0.02279874213836478
+}
+     0–50 people 9.17e+04  pick_popularity 0.567  top_scene_share 0.142  scenes 73  plays_to_commit 2.59  picks_per_year 40.6  listens_per_month 878  mainstream_share 0.906  commit_rate 0.15
+    50–75 people 4.59e+04  pick_popularity 0.543  top_scene_share 0.131  scenes 80.5  plays_to_commit 2.62  picks_per_year 43.9  listens_per_month 938  mainstream_share 0.909  commit_rate 0.16
+    75–90 people 2.75e+04  pick_popularity 0.524  top_scene_share 0.137  scenes 76  plays_to_commit 2.67  picks_per_year 44.3  listens_per_month 941  mainstream_share 0.905  commit_rate 0.154
+    90–95 people 9.17e+03  pick_popularity 0.507  top_scene_share 0.148  scenes 72.6  plays_to_commit 2.68  picks_per_year 44.8  listens_per_month 927  mainstream_share 0.898  commit_rate 0.155
+    95–99 people 7.34e+03  pick_popularity 0.488  top_scene_share 0.161  scenes 68.1  plays_to_commit 2.69  picks_per_year 45.7  listens_per_month 963  mainstream_share 0.891  commit_rate 0.158
+   99–100 people 1.84e+03  pick_popularity 0.469  top_scene_share 0.204  scenes 57.5  plays_to_commit 2.68  picks_per_year 47  listens_per_month 1.08e+03  mainstream_share 0.883  commit_rate 0.165

@@ -1,0 +1,54 @@
+target artist-months (3609685, 758046, 1880037, 637435, 1844719)
+panel user-months (933978, 213)
+
+== rated by A, month x size x momentum x pickers: 2,531,604 artist-months, 753,537 artists; base doubling 9.7%, 4x breakout 1.3%
+  swap one ordinary picker for a GOOD one: growth +2.0% [+1.9%, +2.2%]; doubling +1.10 pts [+1.02, +1.17]; breakout +0.33 pts [+0.30, +0.36]
+  swap one ordinary picker for a POOR one: growth -3.8% [-3.9%, -3.6%]; doubling -0.54 pts
+    1 pickers, 0 good: n 1,662,415  excess growth  -0.7%  doubling 10.2% (expected 10.5%)  breakout 1.34% (expected 1.44%)
+    1 pickers, 1 good: n  503,104  excess growth  +2.2%  doubling 11.7% (expected 10.7%)  breakout 1.82% (expected 1.50%)
+    2 pickers, 0 good: n  152,373  excess growth  -1.3%  doubling 5.3% (expected 5.8%)  breakout 0.77% (expected 0.88%)
+    2 pickers, 1 good: n   86,341  excess growth  +1.4%  doubling 6.3% (expected 5.8%)  breakout 0.99% (expected 0.89%)
+    2 pickers, 2 good: n   15,512  excess growth  +5.3%  doubling 8.3% (expected 6.8%)  breakout 1.56% (expected 1.09%)
+    3 pickers, 0 good: n   31,529  excess growth  -1.9%  doubling 2.9% (expected 3.3%)  breakout 0.34% (expected 0.37%)
+    3 pickers, 1 good: n   26,602  excess growth  +0.6%  doubling 3.7% (expected 3.6%)  breakout 0.35% (expected 0.39%)
+    3 pickers, 2 good: n    8,510  excess growth  +3.9%  doubling 5.1% (expected 4.3%)  breakout 0.71% (expected 0.47%)
+    3 pickers, 3 good: n    1,070  excess growth +11.8%  doubling 6.4% (expected 5.0%)  breakout 0.84% (expected 0.75%)
+    4 pickers, 0 good: n    8,245  excess growth  -2.2%  doubling 2.1% (expected 2.5%)  breakout 0.19% (expected 0.28%)
+    4 pickers, 1 good: n    9,227  excess growth  +0.5%  doubling 2.8% (expected 2.7%)  breakout 0.27% (expected 0.22%)
+    4 pickers, 2 good: n    4,255  excess growth  +1.9%  doubling 3.7% (expected 3.4%)  breakout 0.33% (expected 0.32%)
+    4 pickers, 3 good: n    1,018  excess growth  +4.2%  doubling 4.6% (expected 4.4%)  breakout 0.79% (expected 0.54%)
+    5 pickers, 0 good: n    2,849  excess growth  -2.2%  doubling 1.9% (expected 2.4%)  breakout 0.21% (expected 0.21%)
+    5 pickers, 1 good: n    3,687  excess growth  -0.9%  doubling 2.3% (expected 2.7%)  breakout 0.22% (expected 0.27%)
+    5 pickers, 2 good: n    2,121  excess growth  +3.7%  doubling 4.0% (expected 3.1%)  breakout 0.24% (expected 0.24%)
+    5 pickers, 3 good: n      813  excess growth  +5.4%  doubling 5.2% (expected 4.0%)  breakout 0.37% (expected 0.19%)
+  5+ rated pickers, by good pickers among them:
+    0  good: n   4,788  excess growth  -2.0%  doubling 2.0% (expected 2.4%)  breakout 0.21% (expected 0.20%)
+    1  good: n   7,203  excess growth  -1.1%  doubling 2.1% (expected 2.3%)  breakout 0.19% (expected 0.23%)
+    2  good: n   5,134  excess growth  +1.0%  doubling 2.8% (expected 2.6%)  breakout 0.18% (expected 0.22%)
+    3  good: n   2,548  excess growth  +3.0%  doubling 3.6% (expected 3.0%)  breakout 0.31% (expected 0.16%)
+    4+ good: n   1,626  excess growth  +3.1%  doubling 3.1% (expected 2.4%)  breakout 0.31% (expected 0.24%)
+
+== rated by A, same scene too: 1,898,240 artist-months, 729,252 artists; base doubling 10.2%, 4x breakout 1.4%
+  swap one ordinary picker for a GOOD one: growth +1.4% [+1.3%, +1.6%]; doubling +0.68 pts [+0.57, +0.78]; breakout +0.22 pts [+0.18, +0.26]
+  swap one ordinary picker for a POOR one: growth -1.8% [-2.0%, -1.6%]; doubling -0.32 pts
+    1 pickers, 0 good: n 1,355,462  excess growth  -0.3%  doubling 10.3% (expected 10.5%)  breakout 1.33% (expected 1.37%)
+    1 pickers, 1 good: n  417,319  excess growth  +1.0%  doubling 11.9% (expected 11.4%)  breakout 1.80% (expected 1.66%)
+    2 pickers, 0 good: n   59,601  excess growth  -0.4%  doubling 3.8% (expected 3.9%)  breakout 0.51% (expected 0.51%)
+    2 pickers, 1 good: n   34,530  excess growth  +0.3%  doubling 4.7% (expected 4.6%)  breakout 0.76% (expected 0.72%)
+    2 pickers, 2 good: n    6,281  excess growth  +2.0%  doubling 6.3% (expected 5.9%)  breakout 0.86% (expected 1.03%)
+    3 pickers, 0 good: n    7,990  excess growth  -0.5%  doubling 2.1% (expected 2.2%)  breakout 0.14% (expected 0.18%)
+    3 pickers, 1 good: n    6,758  excess growth  +0.0%  doubling 2.8% (expected 2.7%)  breakout 0.24% (expected 0.20%)
+    3 pickers, 2 good: n    2,072  excess growth  +1.1%  doubling 4.1% (expected 4.0%)  breakout 0.43% (expected 0.37%)
+    3 pickers, 3 good: n      258  excess growth  +6.3%  doubling 3.5% (expected 4.3%)  breakout 0.39% (expected 0.39%)
+    4 pickers, 0 good: n    1,424  excess growth  -0.6%  doubling 1.3% (expected 1.5%)  breakout 0.07% (expected 0.07%)
+    4 pickers, 1 good: n    1,747  excess growth  +0.5%  doubling 2.1% (expected 2.0%)  breakout 0.17% (expected 0.20%)
+    4 pickers, 2 good: n      744  excess growth  +0.2%  doubling 2.7% (expected 2.9%)  breakout 0.27% (expected 0.20%)
+    5 pickers, 0 good: n      500  excess growth  -0.4%  doubling 1.6% (expected 1.9%)  breakout 0.00% (expected 0.10%)
+    5 pickers, 1 good: n      618  excess growth  -0.8%  doubling 0.8% (expected 0.9%)  breakout 0.16% (expected 0.08%)
+    5 pickers, 2 good: n      354  excess growth  +2.5%  doubling 4.0% (expected 3.4%)  breakout 0.28% (expected 0.14%)
+  5+ rated pickers, by good pickers among them:
+    0  good: n     836  excess growth  -0.9%  doubling 1.6% (expected 1.6%)  breakout 0.00% (expected 0.06%)
+    1  good: n   1,267  excess growth  -0.6%  doubling 1.0% (expected 1.2%)  breakout 0.08% (expected 0.12%)
+    2  good: n     955  excess growth  +0.7%  doubling 2.2% (expected 2.3%)  breakout 0.10% (expected 0.10%)
+    3  good: n     467  excess growth  +2.4%  doubling 4.1% (expected 3.5%)  breakout 0.43% (expected 0.32%)
+    4+ good: n     309  excess growth  -0.5%  doubling 2.9% (expected 2.5%)  breakout 0.32% (expected 0.16%)
