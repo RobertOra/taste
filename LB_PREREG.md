@@ -1,5 +1,8 @@
 # ListenBrainz: what we expect, written before looking
 
+**FROZEN 2026-10-10 09:27**, before any ListenBrainz analysis. Reproducibility check passed: the adapted code reproduces every
+MLHD+ explore result it was compared against (analysis/check_repro.py).
+
 ListenBrainz (LB) is our only dataset that has never been analysed: different platform, different people, 2005-2026.
 Nothing below has been run on LB. This file and the adapted code are committed before the one-time run
 (analysis/run_lb.sh); the bars are applied by analysis/lb_report.py. Robert approved the scope on 2026-10-10 ("run
