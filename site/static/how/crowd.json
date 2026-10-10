@@ -1,0 +1,295 @@
+[
+ {
+  "key": "niche:0",
+  "kind": "point",
+  "crowd": "niche",
+  "good": 0,
+  "label": "0",
+  "artist_months": 2184022,
+  "growth": -0.007088768669922523,
+  "growth_lo": -0.008324975909140376,
+  "growth_hi": -0.005841655993319885
+ },
+ {
+  "key": "niche:1",
+  "kind": "point",
+  "crowd": "niche",
+  "good": 1,
+  "label": "1",
+  "artist_months": 287449,
+  "growth": 0.03815171416835012,
+  "growth_lo": 0.03516329398785639,
+  "growth_hi": 0.04093412236613779
+ },
+ {
+  "key": "niche:2",
+  "kind": "point",
+  "crowd": "niche",
+  "good": 2,
+  "label": "2",
+  "artist_months": 31142,
+  "growth": 0.1152397301640076,
+  "growth_lo": 0.10758316197148331,
+  "growth_hi": 0.12440043466214101
+ },
+ {
+  "key": "niche:3",
+  "kind": "point",
+  "crowd": "niche",
+  "good": 3,
+  "label": "3",
+  "artist_months": 5388,
+  "growth": 0.19191054427251977,
+  "growth_lo": 0.1679440183470724,
+  "growth_hi": 0.2130562701476864
+ },
+ {
+  "key": "niche:4",
+  "kind": "point",
+  "crowd": "niche",
+  "good": 4,
+  "label": "4",
+  "artist_months": 1157,
+  "growth": 0.26608060003187056,
+  "growth_lo": 0.22012077293954957,
+  "growth_hi": 0.3180992777659388
+ },
+ {
+  "key": "niche:5+",
+  "kind": "point",
+  "crowd": "niche",
+  "good": 5,
+  "label": "5+",
+  "artist_months": 405,
+  "growth": 0.4808371071111562,
+  "growth_lo": 0.36262416216569077,
+  "growth_hi": 0.6112341454778192
+ },
+ {
+  "key": "middle:0",
+  "kind": "point",
+  "crowd": "middle",
+  "good": 0,
+  "label": "0",
+  "artist_months": 92578,
+  "growth": -0.022678423812233537,
+  "growth_lo": -0.025754666266406007,
+  "growth_hi": -0.01972560934625876
+ },
+ {
+  "key": "middle:1",
+  "kind": "point",
+  "crowd": "middle",
+  "good": 1,
+  "label": "1",
+  "artist_months": 48863,
+  "growth": 0.009880328395482479,
+  "growth_lo": 0.005415865740338765,
+  "growth_hi": 0.01424792122326565
+ },
+ {
+  "key": "middle:2",
+  "kind": "point",
+  "crowd": "middle",
+  "good": 2,
+  "label": "2",
+  "artist_months": 18443,
+  "growth": 0.03620420531637742,
+  "growth_lo": 0.02895533853496568,
+  "growth_hi": 0.044416706064492335
+ },
+ {
+  "key": "middle:3",
+  "kind": "point",
+  "crowd": "middle",
+  "good": 3,
+  "label": "3",
+  "artist_months": 6315,
+  "growth": 0.07652338506576055,
+  "growth_lo": 0.06262015803816662,
+  "growth_hi": 0.09086132259845998
+ },
+ {
+  "key": "middle:4",
+  "kind": "point",
+  "crowd": "middle",
+  "good": 4,
+  "label": "4",
+  "artist_months": 2087,
+  "growth": 0.1170636588129629,
+  "growth_lo": 0.08860386988834454,
+  "growth_hi": 0.1448710189538323
+ },
+ {
+  "key": "middle:5",
+  "kind": "point",
+  "crowd": "middle",
+  "good": 5,
+  "label": "5",
+  "artist_months": 713,
+  "growth": 0.24416075929159745,
+  "growth_lo": 0.17894332211673514,
+  "growth_hi": 0.3116241558586816
+ },
+ {
+  "key": "middle:6+",
+  "kind": "point",
+  "crowd": "middle",
+  "good": 6,
+  "label": "6+",
+  "artist_months": 430,
+  "growth": 0.368581912948685,
+  "growth_lo": 0.2564367504716443,
+  "growth_hi": 0.5026309554548875
+ },
+ {
+  "key": "crowded:0",
+  "kind": "point",
+  "crowd": "crowded",
+  "good": 0,
+  "label": "0",
+  "artist_months": 20080,
+  "growth": -0.029841420442962494,
+  "growth_lo": -0.03550308153813758,
+  "growth_hi": -0.024801311806074162
+ },
+ {
+  "key": "crowded:1",
+  "kind": "point",
+  "crowd": "crowded",
+  "good": 1,
+  "label": "1",
+  "artist_months": 23396,
+  "growth": -0.012783142263918747,
+  "growth_lo": -0.018460144505705867,
+  "growth_hi": -0.00739529697053055
+ },
+ {
+  "key": "crowded:2",
+  "kind": "point",
+  "crowd": "crowded",
+  "good": 2,
+  "label": "2",
+  "artist_months": 17797,
+  "growth": -0.0026662005861982146,
+  "growth_lo": -0.008809573195818956,
+  "growth_hi": 0.0034388636885846536
+ },
+ {
+  "key": "crowded:3",
+  "kind": "point",
+  "crowd": "crowded",
+  "good": 3,
+  "label": "3",
+  "artist_months": 11796,
+  "growth": 0.011585511796445366,
+  "growth_lo": 0.0037435724597014047,
+  "growth_hi": 0.01939943143947485
+ },
+ {
+  "key": "crowded:4",
+  "kind": "point",
+  "crowd": "crowded",
+  "good": 4,
+  "label": "4",
+  "artist_months": 7206,
+  "growth": 0.03018495240564079,
+  "growth_lo": 0.019368563509280973,
+  "growth_hi": 0.04152632554728015
+ },
+ {
+  "key": "crowded:5",
+  "kind": "point",
+  "crowd": "crowded",
+  "good": 5,
+  "label": "5",
+  "artist_months": 4120,
+  "growth": 0.042945851768366565,
+  "growth_lo": 0.02856328812230756,
+  "growth_hi": 0.058294336341698706
+ },
+ {
+  "key": "crowded:6",
+  "kind": "point",
+  "crowd": "crowded",
+  "good": 6,
+  "label": "6",
+  "artist_months": 2353,
+  "growth": 0.05058904017687526,
+  "growth_lo": 0.027337063084828,
+  "growth_hi": 0.07350696332184797
+ },
+ {
+  "key": "crowded:7",
+  "kind": "point",
+  "crowd": "crowded",
+  "good": 7,
+  "label": "7",
+  "artist_months": 1448,
+  "growth": 0.0700069596907584,
+  "growth_lo": 0.04284094789034987,
+  "growth_hi": 0.09826011535643851
+ },
+ {
+  "key": "crowded:8",
+  "kind": "point",
+  "crowd": "crowded",
+  "good": 8,
+  "label": "8",
+  "artist_months": 886,
+  "growth": 0.0959825734560825,
+  "growth_lo": 0.059424249442084486,
+  "growth_hi": 0.1358421319291459
+ },
+ {
+  "key": "crowded:9",
+  "kind": "point",
+  "crowd": "crowded",
+  "good": 9,
+  "label": "9",
+  "artist_months": 549,
+  "growth": 0.09390157216231651,
+  "growth_lo": 0.04896582971218202,
+  "growth_hi": 0.14304144039447073
+ },
+ {
+  "key": "crowded:10",
+  "kind": "point",
+  "crowd": "crowded",
+  "good": 10,
+  "label": "10",
+  "artist_months": 373,
+  "growth": 0.07770084581951808,
+  "growth_lo": 0.009118661193176659,
+  "growth_hi": 0.14862978002660981
+ },
+ {
+  "key": "crowded:11+",
+  "kind": "point",
+  "crowd": "crowded",
+  "good": 11,
+  "label": "11+",
+  "artist_months": 668,
+  "growth": 0.09553486863980096,
+  "growth_lo": 0.04153250046350568,
+  "growth_hi": 0.14761049811539662
+ },
+ {
+  "kind": "mean",
+  "key": "niche:mean",
+  "crowd": "niche",
+  "mean_good": 0.1485166939423318
+ },
+ {
+  "kind": "mean",
+  "key": "middle:mean",
+  "crowd": "middle",
+  "mean_good": 0.7052688736875034
+ },
+ {
+  "kind": "mean",
+  "key": "crowded:mean",
+  "crowd": "crowded",
+  "mean_good": 2.12572789835892
+ }
+]

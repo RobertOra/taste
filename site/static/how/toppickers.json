@@ -1,0 +1,51 @@
+[
+ {
+  "key": "total",
+  "label": "Top 1%: tenfold takeoffs vs similar artists",
+  "value": 4.6991626908861726,
+  "lo": 4.177867416467728,
+  "hi": 5.273377286447044
+ },
+ {
+  "key": "scene_quality",
+  "label": "Their scenes vs size alone",
+  "value": 2.261920214328203,
+  "lo": 2.0977393907290622,
+  "hi": 2.4127928100517826
+ },
+ {
+  "key": "within_scene",
+  "label": "Their artists vs the same scene",
+  "value": 2.0775103653608924,
+  "lo": 1.916992977270285,
+  "hi": 2.2398645902430405
+ },
+ {
+  "key": "by_traits",
+  "label": "Top 1% chosen by habits alone",
+  "value": 1.595119674568759,
+  "lo": null,
+  "hi": null
+ },
+ {
+  "key": "by_record",
+  "label": "Top 1% chosen by track record",
+  "value": 4.715456769956653,
+  "lo": null,
+  "hi": null
+ },
+ {
+  "key": "r2_traits",
+  "label": "Share of later results explained by habits",
+  "value": 0.008135288371007965,
+  "lo": null,
+  "hi": null
+ },
+ {
+  "key": "r2_record",
+  "label": "Share explained by track record",
+  "value": 0.04504011342628178,
+  "lo": null,
+  "hi": null
+ }
+]

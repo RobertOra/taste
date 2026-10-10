@@ -91,21 +91,23 @@ export async function readHistory(files) {   // files: [{name, bytes}] -> {plays
     if (!Array.isArray(data)) continue;
     for (const d of data) {
       if (!d || typeof d !== 'object') continue;
-      let ts, artist;
+      let ts, artist, how = 'other', track = '';
       if ('ts' in d && 'master_metadata_album_artist_name' in d) {
         kinds.add('extended');
-        artist = d.master_metadata_album_artist_name;
+        artist = d.master_metadata_album_artist_name; track = d.master_metadata_track_name || '';
+        const rs = d.reason_start;
+        how = rs === 'clickrow' || rs === 'playbtn' ? 'chose' : rs === 'trackdone' ? (d.shuffle ? 'shuffle' : 'next') : rs === 'fwdbtn' || rs === 'backbtn' ? 'skip' : 'other';
         if (!artist || !d.master_metadata_track_name || (d.ms_played || 0) < RULES.minPlayMs) continue;
         ts = Date.parse(d.ts) / 1000;
       } else if ('endTime' in d && 'artistName' in d) {
         kinds.add('standard');
         if ((d.msPlayed || 0) < RULES.minPlayMs) continue;
-        artist = d.artistName; ts = Date.parse(d.endTime.replace(' ', 'T') + ':00Z') / 1000;
+        artist = d.artistName; track = d.trackName || ''; ts = Date.parse(d.endTime.replace(' ', 'T') + ':00Z') / 1000;
       } else continue;
       if (!Number.isFinite(ts)) continue;
       const an = artist.trim().toLowerCase();
       if (EXCLUDE.has(an)) continue;
-      got['ts' in d ? 'extended' : 'standard'].push({ week: Math.floor(ts / WEEK), an, name: artist, ts });
+      got['ts' in d ? 'extended' : 'standard'].push({ week: Math.floor(ts / WEEK), an, name: artist, ts, how, track });
     }
   }
   const kind = kinds.has('extended') ? 'extended' : (kinds.size ? 'standard' : null);
@@ -115,21 +117,23 @@ export async function readHistory(files) {   // files: [{name, bytes}] -> {plays
 }
 
 // ---------- picks (by artist name as Spotify gives it)
-export function findPicks(plays) {
+export function findPicks(plays, notPicked = null) {
   let start = Infinity; for (const p of plays) if (p.week < start) start = p.week;
   const by = new Map();
   for (const p of plays) {
-    let a = by.get(p.an); if (!a) { a = { an: p.an, name: p.name, weeks: new Map() }; by.set(p.an, a); }
-    a.weeks.set(p.week, (a.weeks.get(p.week) || 0) + 1);
+    let a = by.get(p.an); if (!a) { a = { an: p.an, name: p.name, weeks: new Map(), first: p, total: 0 }; by.set(p.an, a); }
+    a.weeks.set(p.week, (a.weeks.get(p.week) || 0) + 1); a.total++;
+    if (p.ts !== undefined && p.ts < a.first.ts) a.first = p;
   }
   const picks = [];
   for (const a of by.values()) {
     const ws = [...a.weeks.keys()].sort((x, y) => x - y);
-    if (ws.length < RULES.minWeeks) continue;
-    const fw = ws[0], w4 = ws[RULES.minWeeks - 1];
-    if (w4 - fw >= RULES.windowWeeks || fw < start + RULES.onboardWeeks) continue;
+    const fw = ws[0];
+    if (fw < start + RULES.onboardWeeks) { if (notPicked) notPicked.warmup.push(a.name); continue; }
+    if (ws.length < RULES.minWeeks || ws[RULES.minWeeks - 1] - fw >= RULES.windowWeeks) { if (notPicked) notPicked.tried.push(a.name); continue; }
+    const w4 = ws[RULES.minWeeks - 1];
     let plays26 = 0; for (const [w, n] of a.weeks) if (w < fw + RULES.windowWeeks) plays26 += n;
-    picks.push({ an: a.an, name: a.name, firstWeek: fw, w4, m: monthOfWeek(w4), plays26 });
+    picks.push({ an: a.an, name: a.name, firstWeek: fw, w4, m: monthOfWeek(w4), plays26, total: a.total, how: a.first.how, firstTrack: a.first.track });
   }
   return picks;
 }
@@ -183,9 +187,10 @@ export function excess(meta, f, m) {
   const b = base.get(m * 16 + bin);
   if (!b) return null;
   const year = Math.floor(m / 12);
-  const e = (eff.mo.get(String(mo)) || 0) + (eff.year_scene.get(`${year}|${f.scene}`) || 0) + (eff.age.get(String(f.age)) || 0)
+  const sceneEff = eff.year_scene.get(`${year}|${f.scene}`) || 0;
+  const e = (eff.mo.get(String(mo)) || 0) + sceneEff + (eff.age.get(String(f.age)) || 0)
     + (eff.relc.get(String(f.relc)) || 0) + (eff.country.get(f.country) || 0);
-  return { g, gMean: b.g, tenRate: b.ten, up3Rate: b.up3, excess: g - b.g - e, ten: g >= Math.log(10), up3: g >= Math.log(3) };
+  return { g, gMean: b.g, tenRate: b.ten, up3Rate: b.up3, excess: g - b.g - e, sceneEff, ten: g >= Math.log(10), up3: g >= Math.log(3) };
 }
 
 const NORM = { cdf: (x) => 0.5 * (1 + erf(x / Math.SQRT2)), inv: (p) => { let lo = -10, hi = 10; for (let i = 0; i < 200; i++) { const mid = (lo + hi) / 2; if (NORM.cdf(mid) < p) lo = mid; else hi = mid; } return (lo + hi) / 2; } };
@@ -218,7 +223,8 @@ export async function scoreHistory(files, meta, fetchShard, onProgress = () => {
   if (out.checks.some((c) => !c.ok)) return out;
 
   const lastJudgeable = meta.last_month - 12;
-  const picks = findPicks(plays);
+  const notPicked = { warmup: [], tried: [] };
+  const picks = findPicks(plays, notPicked);
   const judged = picks.filter((p) => p.m <= lastJudgeable && p.m >= meta.y0);
   const tooRecent = picks.filter((p) => p.m > lastJudgeable).length;
   // look up names, newest judged finds first (enough to fill the five-year window; a second pass if matches run short)
@@ -279,6 +285,64 @@ export async function scoreHistory(files, meta, fetchShard, onProgress = () => {
   const q = Math.floor(n / 4);
   const meanEx = (arr) => arr.length ? Math.expm1(arr.reduce((t, p) => t + p.excess, 0) / arr.length) : null;
   out.obsessions = { most_hooked: meanEx(byHook.slice(n - q)), least_hooked: meanEx(byHook.slice(0, q)) };
+  out.report = await buildReport({ meta, plays, picks, judged, looked, matched, scored, win, u, notPicked, lastJudgeable, lookup, wMin, wMax });
   out.ok = true;
   return out;
+}
+
+// ---------- personal report (descriptive; the score above doesn't depend on it)
+const mean = (a) => a.length ? a.reduce((t, x) => t + x, 0) / a.length : null;
+async function buildReport({ meta, plays, picks, judged, looked, matched, scored, win, u, notPicked, lastJudgeable, lookup, wMin, wMax }) {
+  const R = {};
+  const n = win.length, denom = n + meta.shrink;
+  const yearsSpan = (wMax - wMin) / 52.18;
+  R.facts = { plays: plays.length, artists: new Set(plays.map((p) => p.an)).size, finds: picks.length, years: Math.round(yearsSpan * 10) / 10,
+    findsPerYear: Math.round(picks.length / Math.max(yearsSpan - 0.5, 1)) };
+  R.avgGrowth = Math.expm1(mean(win.map((p) => p.excess)));
+  const qs = (pct) => meta.scores[Math.min(meta.scores.length - 1, Math.max(0, Math.round(pct / 100 * (meta.scores.length - 1))))];
+  R.rangeScores = [qs(u.range[0]), qs(u.range[1])];
+  // how far ahead of the crowd: share of each artist's ListenBrainz fans (since 2010) who arrived after you
+  const ahead = [];
+  for (const p of win) {
+    if (p.art.fm < (meta.y0 - 12)) continue;
+    let tot = 0, after = 0;
+    for (const [t, c] of p.art.adopt) { if (t > meta.last_month) continue; tot += c; if (t > p.m) after += c; }
+    if (tot >= 5) ahead.push({ name: p.name, m: p.m, share: after / tot, fans: tot });
+  }
+  R.ahead = { share: mean(ahead.map((a) => a.share)), artists: ahead.length,
+    best: ahead.filter((a) => a.fans >= 30).sort((a, b) => b.share - a.share || b.fans - a.fans).slice(0, 3) };
+  // where the edge comes from: being in scenes that grew vs picking well within them
+  R.edge = { scenes: Math.expm1(mean(win.map((p) => p.sceneEff))), within: Math.expm1(mean(win.map((p) => p.excess))) };
+  // year by year (every judged year, not only the scored window)
+  const byY = new Map();
+  for (const p of scored) { const y = Math.floor(p.m / 12); if (!byY.has(y)) byY.set(y, []); byY.get(y).push(p.excess); }
+  R.byYear = [...byY.entries()].sort((a, b) => a[0] - b[0]).map(([y, xs]) => ({ year: y, finds: xs.length, growth: Math.expm1(mean(xs)), inScore: y * 12 + 11 > Math.max(...win.map((p) => p.m)) - 12 * meta.window_years }));
+  // conviction: plays in the first six months
+  const bins = [[4, 9, 'Tried a few times'], [10, 24, 'Kept coming back'], [25, 59, 'Hooked'], [60, Infinity, 'Obsessed']];
+  R.conviction = bins.map(([lo, hi, label]) => { const xs = win.filter((p) => p.plays26 >= lo && p.plays26 <= hi); return { label, lo, hi, finds: xs.length, growth: xs.length ? Math.expm1(mean(xs.map((p) => p.excess))) : null }; });
+  // how you found them (how the first play started; Spotify's reason_start)
+  const HOW = { chose: 'You chose it (clicked or pressed play)', next: 'Came up next (album, playlist or queue)', shuffle: 'Came up on shuffle', skip: 'You skipped to it', other: 'Other (app opened, another device…)' };
+  R.how = Object.entries(HOW).map(([k, label]) => { const xs = win.filter((p) => p.how === k); return { key: k, label, finds: xs.length, growth: xs.length ? Math.expm1(mean(xs.map((p) => p.excess))) : null }; }).filter((h) => h.finds);
+  // every scored find
+  R.finds = win.map((p) => ({ name: p.name, m: p.m, found: monthLabel(p.m), a0: p.a0, a1: p.a1, vs: Math.expm1(p.excess), excess: p.excess,
+    impact: p.excess / denom, plays26: p.plays26, track: p.firstTrack, how: p.how, extra: (p.a1 + 1) - (p.a0 + 1) * Math.exp(p.gMean) }));
+  // open bets: the newest finds, too recent to judge; how they're doing so far
+  const recent = picks.filter((p) => p.m > lastJudgeable).sort((a, b) => b.plays26 - a.plays26).slice(0, 15);
+  if (recent.length) await lookup(recent);
+  R.open = recent.filter((p) => p.art).map((p) => {
+    const sum = (lo, hi) => { let s = 0; for (let t = lo; t <= hi; t++) s += p.art.adopt.get(t) || 0; return s; };
+    const then = sum(p.m - 5, p.m), now = p.m <= meta.last_month - 6 ? sum(meta.last_month - 5, meta.last_month) : null;
+    return { name: p.name, found: monthLabel(p.m), plays26: p.plays26, then, now };
+  });
+  // not counted
+  const scoredSet = new Set(win), lookedSet = new Set(looked);
+  R.notCounted = {
+    tried: notPicked.tried, warmup: notPicked.warmup,
+    unrecognised: looked.filter((p) => !p.art).map((p) => p.name),
+    tooRecent: picks.filter((p) => p.m > lastJudgeable).map((p) => p.name),
+    older: [...judged.filter((p) => !lookedSet.has(p)), ...scored.filter((p) => !scoredSet.has(p))].map((p) => p.name),
+    early: picks.filter((p) => p.m < meta.y0).map((p) => p.name),
+  };
+  R.reliability = u.reliability; R.matchedShare = looked.length ? looked.filter((p) => p.art).length / looked.length : 0;
+  return R;
 }

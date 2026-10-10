@@ -4,240 +4,49 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Taste Test</title>
-<style>
-:root {
-  --bg: #faf9f7; --panel: #ffffff; --fg: #1d1c1a; --muted: #6b6862; --line: #e6e3de;
-  --accent: #2f6fde; --accent-soft: #dce8fb; --warm: #d9622b; --good: #2e8b57; --warn: #b7791f; --bad: #c0392b;
-  --radius: 14px; --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; --serif: Georgia, "Times New Roman", serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { --bg: #161615; --panel: #201f1d; --fg: #f1efea; --muted: #a29e96; --line: #34322f; --accent: #6b9cf0; --accent-soft: #263552; }
-}
-:root[data-theme="dark"] { --bg: #161615; --panel: #201f1d; --fg: #f1efea; --muted: #a29e96; --line: #34322f; --accent: #6b9cf0; --accent-soft: #263552; }
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--font); }
-main { max-width: 44rem; margin: 0 auto; padding: 40px 16px 80px; }
-h1 { font: 400 2.4rem/1.15 var(--serif); margin: 0 0 12px; }
-h2 { font: 400 1.5rem/1.25 var(--serif); margin: 0 0 10px; }
-h3 { font-size: 1rem; margin: 0 0 6px; }
-p { margin: 0 0 12px; }
-.lede { font-size: 1.15rem; color: var(--muted); }
-.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; margin: 18px 0; }
-.steps { counter-reset: s; list-style: none; padding: 0; margin: 0; }
-.steps li { counter-increment: s; position: relative; padding-left: 40px; margin: 0 0 14px; }
-.steps li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 50%; background: var(--accent-soft);
-  color: var(--accent); font-weight: 600; display: grid; place-items: center; font-size: .9rem; }
-a { color: var(--accent); }
-.drop { display: block; border: 2px dashed var(--line); border-radius: var(--radius); padding: 28px 16px; text-align: center; cursor: pointer; transition: border-color .2s, background .2s; }
-.drop:hover, .drop.over { border-color: var(--accent); background: var(--accent-soft); }
-.drop input { display: none; }
-.btn { font: inherit; font-weight: 600; background: var(--accent); color: #fff; border: 0; border-radius: 999px; padding: 10px 22px; cursor: pointer; }
-.btn:disabled { opacity: .5; cursor: default; }
-.small { font-size: .88rem; color: var(--muted); }
-.hidden { display: none; }
-.big { font: 400 3.2rem/1 var(--serif); margin: 6px 0; }
-.tier { display: inline-block; font-weight: 600; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 12px; font-size: .9rem; }
-.scale { position: relative; height: 54px; margin: 18px 0 6px; }
-.scale .track { position: absolute; left: 0; right: 0; top: 18px; height: 10px; border-radius: 5px; background: var(--line); }
-.scale .range { position: absolute; top: 18px; height: 10px; border-radius: 5px; background: var(--accent); opacity: .35; }
-.scale .dot { position: absolute; top: 12px; width: 22px; height: 22px; margin-left: -11px; border-radius: 50%; background: var(--accent); border: 3px solid var(--panel); }
-.scale .ticks { position: absolute; left: 0; right: 0; top: 34px; display: flex; justify-content: space-between; font-size: .78rem; color: var(--muted); }
-.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-@media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } .big { font-size: 2.6rem; } h1 { font-size: 2rem; } }
-table { width: 100%; border-collapse: collapse; font-size: .95rem; }
-td, th { text-align: left; padding: 7px 4px; border-bottom: 1px solid var(--line); overflow-wrap: break-word; }
-th { font-weight: 600; color: var(--muted); font-size: .85rem; }
-td.r, th.r { text-align: right; font-variant-numeric: tabular-nums; }
-.check { display: flex; gap: 10px; align-items: flex-start; margin: 8px 0; }
-.check .i { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: .8rem; color: #fff; font-weight: 700; }
-.i.bad { background: var(--bad); } .i.warn { background: var(--warn); } .i.ok { background: var(--good); }
-.spinner { width: 34px; height: 34px; border: 4px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 12px; }
-@keyframes spin { to { transform: rotate(360deg); } }
-details summary { cursor: pointer; font-weight: 600; }
-.stat { font: 400 2rem/1.1 var(--serif); }
-</style>
+<meta name="description" content="Do the artists you discover go on to blow up? Score your Spotify history against thousands of other listeners.">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
+<header class="top">
+  <a class="brand" href="./">Taste Test</a>
+  <a class="nav" href="how.html">How it works →</a>
+</header>
+
 <main>
-  <header>
+  <section id="intro">
     <h1>How good is your music taste?</h1>
-    <p class="lede">Do the artists you discover go on to blow up? We compare the music you got into with what happened to it next,
-      against thousands of other listeners.</p>
-  </header>
+    <p class="lede">Every new artist you get into is a small bet. This checks how your bets did: did the artists you got into gain more new listeners
+      over the next year than similar artists people got into at the same time? Ranked against about 15,000 music enthusiasts.</p>
 
-  <section id="start" class="card">
-    <h2>Try it</h2>
-    <ol class="steps">
-      <li><b>Get your Spotify history.</b> In Spotify, go to <a href="https://www.spotify.com/account/privacy/" target="_blank" rel="noopener">Account → Privacy</a>,
-        tick <b>Extended streaming history</b> and request it. Spotify emails it to you (it can take a few days, sometimes a few weeks).
-        <span class="small">The quicker one-year export won't work: each find needs a year to see what happened next.</span></li>
-      <li><b>Drop the files here.</b> The .zip Spotify sends, the folder inside it, or the .json files.</li>
-      <li><b>See your score.</b> Takes a few seconds. Everything runs in your browser; your files never leave your computer.</li>
-    </ol>
-    <label class="drop" id="drop">
-      <input type="file" id="file" multiple accept=".zip,.json">
-      <div id="dropText"><b>Choose files</b> or drag them here</div>
-      <div class="small" style="margin-top:6px"><a href="#" id="folderLink">or choose the whole folder</a></div>
-      <div class="small" id="fileList"></div>
-    </label>
-    <p style="margin-top:14px"><button class="btn" id="go" disabled>Score my taste</button></p>
-    <input type="file" id="folder" webkitdirectory multiple class="hidden">
-    <p class="small">You need at least two years of history and a hundred or so artists you really got into.</p>
-  </section>
-
-  <section id="loading" class="card hidden" style="text-align:center">
-    <div class="spinner"></div>
-    <p id="loadText">Going through your listening…</p>
-    <p class="small">Finding the music you got into, then checking how each one did over the following year.</p>
-  </section>
-
-  <section id="fail" class="card hidden">
-    <h2>We can't score this yet</h2>
-    <div id="failChecks"></div>
-    <p><button class="btn" onclick="resetPage()">Try other files</button></p>
-  </section>
-
-  <section id="result" class="hidden">
-    <div class="card">
-      <span class="tier" id="tier"></span>
-      <p class="big" id="headline"></p>
-      <p id="headlineText"></p>
-      <div class="scale" aria-hidden="true">
-        <div class="track"></div><div class="range" id="rangeBar"></div><div class="dot" id="dot"></div>
-        <div class="ticks"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
-      </div>
-      <p class="small" id="rangeText"></p>
-      <div id="warnChecks"></div>
-    </div>
-
-    <div class="card">
-      <h2>Your best calls</h2>
-      <p class="small">Artists you got into that grew the most compared with similar artists at the time.</p>
-      <table><thead><tr><th>Artist</th><th>You got into them</th><th class="r">New listeners a year later</th></tr></thead><tbody id="calls"></tbody></table>
-    </div>
-
-    <div class="grid2">
-      <div class="card">
-        <h3>Finds that took off</h3>
-        <p class="stat" id="tenStat"></p>
-        <p class="small" id="tenText"></p>
-      </div>
-      <div class="card">
-        <h3>Your obsessions</h3>
-        <p class="stat" id="obsStat"></p>
-        <p class="small" id="obsText"></p>
+    <div id="drop" class="drop" tabindex="0">
+      <div class="drop-title">Drop your Spotify data here</div>
+      <div class="drop-sub">The zip, the folder, or the JSON files</div>
+      <div class="drop-buttons">
+        <label class="btn">Choose zip or files<input id="pick-files" type="file" multiple accept=".zip,.json" hidden></label>
+        <label class="btn ghost">Choose folder<input id="pick-folder" type="file" webkitdirectory hidden></label>
       </div>
     </div>
+    <p class="privacy">Everything runs in this browser. Your files never leave your computer.</p>
 
-    <div class="card">
-      <h3>Your listening</h3>
-      <p class="small" id="historyText" style="margin-top:6px"></p>
-    </div>
-
-    <div class="card">
-      <details>
-        <summary>How this works</summary>
-        <p style="margin-top:10px">A <b>find</b> is an artist (or song) you played in at least four separate weeks within six months of first hearing it.
-          We skip your first six months of history, when everything is new.</p>
-        <p>For each find, we check how many new listeners it gained over the next year on ListenBrainz, compared with artists that were
-          exactly as popular when you found them, the same month, in the same corner of music. Your score is how your finds did on average,
-          over your last five years of judged finds, ranked against about 15,000 ListenBrainz listeners scored the same way. Artists
-          that almost nobody on ListenBrainz has played can't be judged and are left out.</p>
-        <p><b>Why a range?</b> Any one find is mostly luck, so a score built from a few hundred of them is fuzzy. The range is where your true
-          rank most likely sits (80% sure). More history narrows it.</p>
-        <p class="small">Based on a study of whether good taste is real, using 600,000 Last.fm listeners and checked again on ListenBrainz:
-          the same people keep picking well, and it still works on today's listening. Taste also drifts, so we look at your recent years.</p>
-      </details>
-      <p style="margin-top:14px"><button class="btn" onclick="resetPage()">Score another history</button></p>
-    </div>
+    <details class="howto">
+      <summary>How to get your Spotify data</summary>
+      <ol>
+        <li>Open <a href="https://www.spotify.com/account/privacy/" target="_blank" rel="noopener">spotify.com → Account → Privacy settings</a>.</li>
+        <li>Under <b>Download your data</b>, tick <b>Extended streaming history</b> and request it.</li>
+        <li>Spotify emails a link within a few days (sometimes up to 30). Download the zip and drop it above.</li>
+      </ol>
+      <p>The extended history covers your whole account. The basic "Account data" covers only the last year, which is too recent to score:
+        each new artist needs a year to see how it did. You need at least two years of history and about a hundred artists you really got into.</p>
+    </details>
+    <div id="status" class="status" hidden></div>
   </section>
+
+  <section id="report" hidden></section>
 </main>
 
-<script type="module">
-import { scoreHistory } from './engine.js';
-const $ = (id) => document.getElementById(id);
-let chosen = [], meta = null;
-const ord = (n) => { const t = n % 100; return n + ((t >= 11 && t <= 13) ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th')); };
-function setFiles(list) {
-  chosen = [...list].filter((f) => /\.(zip|json)$/i.test(f.name));
-  $('fileList').textContent = chosen.length ? (chosen.length > 4 ? `${chosen.length} files` : chosen.map((f) => f.name).join(', ')) : '';
-  $('go').disabled = !chosen.length;
-}
-$('file').addEventListener('change', (e) => setFiles(e.target.files));
-$('folder').addEventListener('change', (e) => setFiles(e.target.files));
-$('folderLink').addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); $('folder').click(); });
-['dragenter', 'dragover'].forEach((ev) => $('drop').addEventListener(ev, (e) => { e.preventDefault(); $('drop').classList.add('over'); }));
-['dragleave', 'drop'].forEach((ev) => $('drop').addEventListener(ev, (e) => { e.preventDefault(); $('drop').classList.remove('over'); }));
-$('drop').addEventListener('drop', async (e) => {
-  const items = [...(e.dataTransfer.items || [])].map((it) => it.webkitGetAsEntry && it.webkitGetAsEntry()).filter(Boolean);
-  if (items.some((en) => en.isDirectory)) {   // a dropped folder
-    const out = [];
-    const walk = (en) => new Promise((res) => {
-      if (en.isFile) en.file((f) => { out.push(f); res(); }, () => res());
-      else { const r = en.createReader(); const all = []; const next = () => r.readEntries(async (es) => { if (!es.length) { await Promise.all(all.map(walk)); res(); } else { all.push(...es); next(); } }); next(); }
-    });
-    await Promise.all(items.map(walk)); setFiles(out);
-  } else setFiles(e.dataTransfer.files);
-});
-function show(id) { ['start', 'loading', 'fail', 'result'].forEach((s) => $(s).classList.toggle('hidden', s !== id)); window.scrollTo(0, 0); }
-window.resetPage = function () { chosen = []; $('file').value = ''; $('folder').value = ''; setFiles([]); show('start'); };
-function checkRow(c) {
-  const kind = c.ok ? (c.warn ? 'warn' : 'ok') : 'bad';
-  const d = document.createElement('div'); d.className = 'check';
-  d.innerHTML = `<span class="i ${kind}">${kind === 'bad' ? '!' : kind === 'warn' ? '~' : '✓'}</span><span></span>`;
-  d.lastChild.textContent = c.text; return d;
-}
-function tier(p) { return p >= 90 ? 'Trendsetter' : p >= 75 ? 'Ahead of the curve' : p >= 50 ? 'Good ear' : p >= 25 ? 'In the mix' : 'Following the crowd'; }
-async function fetchShard(i) {
-  const r = await fetch(`data/s/${i.toString(16).padStart(4, '0')}.bin`);
-  return r.ok ? await r.arrayBuffer() : null;
-}
-$('go').addEventListener('click', async () => {
-  show('loading'); $('loadText').textContent = 'Going through your listening…';
-  let r;
-  try {
-    if (!meta) meta = await (await fetch('data/meta.json')).json();
-    const files = await Promise.all(chosen.map(async (f) => ({ name: f.name, bytes: new Uint8Array(await f.arrayBuffer()) })));
-    r = await scoreHistory(files, meta, fetchShard, (x) => { $('loadText').textContent = `Checking how your finds did… ${Math.round(x * 100)}%`; });
-  } catch (e) {
-    console.error(e);
-    r = { ok: false, checks: [{ ok: false, text: `Something went wrong reading those files (${e.message || e}).` }] };
-  }
-  render(r);
-});
-window.__render = (r) => render(r);   // used by local page tests
-function render(r) {
-  if (!r.ok) { $('failChecks').replaceChildren(...(r.checks || []).map(checkRow)); show('fail'); return; }
-  const u = r.units.artist;
-  $('tier').textContent = tier(u.percentile);
-  $('headline').textContent = `Better than ${u.percentile}% of listeners`;
-  $('headlineText').textContent = 'at finding artists before they take off.';
-  $('rangeBar').style.left = `${u.range[0]}%`; $('rangeBar').style.width = `${u.range[1] - u.range[0]}%`;
-  $('dot').style.left = `${u.percentile}%`;
-  $('rangeText').textContent = `Your true rank is most likely between the ${ord(u.range[0])} and ${ord(u.range[1])} percentile, based on ${u.picks} artists you got into (${u.window}).`;
-  $('warnChecks').replaceChildren(...(r.checks || []).filter((c) => c.warn).map(checkRow));
-  $('calls').replaceChildren(...(r.best_calls || []).map((c) => {
-    const tr = document.createElement('tr');
-    [[c.artist], [c.found]].forEach(([v]) => { const td = document.createElement('td'); td.textContent = v; tr.appendChild(td); });
-    const td = document.createElement('td'); td.className = 'r';
-    td.innerHTML = '<b></b><div class="small"></div>'; td.firstChild.textContent = `${c.grew}× as many`; td.lastChild.textContent = `similar artists: ${c.similar_grew}×`;
-    tr.appendChild(td); return tr;
-  }));
-  const t = r.took_off;
-  $('tenStat').textContent = `${t.yours} of ${t.picks}`;
-  $('tenText').textContent = `of your finds took off: three times as many new listeners a year later. For artists like the ones you picked, about ${t.expected} would.`;
-  const o = r.obsessions;
-  if (o && o.most_hooked !== null && o.least_hooked !== null) {
-    const d = (o.most_hooked - o.least_hooked) * 100;
-    $('obsStat').textContent = d >= 0 ? `+${d.toFixed(0)} points` : `${d.toFixed(0)} points`;
-    $('obsText').textContent = d >= 0 ? `The artists you played most when you first found them did ${d.toFixed(0)} points better than the ones you barely played. Trust your obsessions.`
-      : `The artists you played most when you first found them did ${(-d).toFixed(0)} points worse than the ones you barely played.`;
-  }
-  const h = r.history;
-  $('historyText').textContent = `${h.plays.toLocaleString()} plays, ${h.from} to ${h.to}. We recognised ${Math.round(h.matched_share * 100)}% of the artists you got into.`
-    + (u.too_recent ? ` ${u.too_recent} newer finds are too recent to judge yet.` : '');
-  show('result');
-}
-</script>
+<footer class="foot">Reference data: <a href="https://listenbrainz.org" target="_blank" rel="noopener">ListenBrainz</a> listening (CC0), 2005–2026.
+  Scores compare you with ListenBrainz listeners, who are keen music fans, not with Spotify's whole audience. <a href="how.html">How it works</a>.</footer>
+<script type="module" src="app.js"></script>
 </body>
 </html>
