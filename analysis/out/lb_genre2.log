@@ -1,13 +1,13 @@
-  rated on Metal                   : later picks in the same genre gap +9.0% [+7.8%, +10.3%]   in other genres +1.9% [+1.4%, +2.4%]
-  rated on Hip hop                 : later picks in the same genre gap +5.2% [+4.4%, +6.0%]   in other genres +2.1% [+1.7%, +2.5%]
+  rated on Metal                   : later picks in the same genre gap +9.0% [+7.7%, +10.2%]   in other genres +1.9% [+1.4%, +2.4%]
+  rated on Hip hop                 : later picks in the same genre gap +5.2% [+4.5%, +6.1%]   in other genres +2.1% [+1.6%, +2.5%]
   rated on Electronic              : later picks in the same genre gap +2.8% [+2.3%, +3.2%]   in other genres +1.5% [+1.2%, +1.8%]
-  rated on Indie & alternative     : later picks in the same genre gap +4.3% [+3.7%, +4.8%]   in other genres +3.2% [+2.8%, +3.5%]
+  rated on Indie & alternative     : later picks in the same genre gap +4.3% [+3.8%, +4.8%]   in other genres +3.2% [+2.8%, +3.5%]
   rated on Pop                     : later picks in the same genre gap +3.4% [+2.8%, +4.0%]   in other genres +1.8% [+1.4%, +2.1%]
   rated on Rock & punk             : later picks in the same genre gap +1.9% [+1.3%, +2.4%]   in other genres +1.9% [+1.6%, +2.2%]
-  rated on Folk & country          : later picks in the same genre gap +2.2% [+0.8%, +3.6%]   in other genres +2.6% [+1.8%, +3.3%]
-  rated on R&B, soul & funk        : later picks in the same genre gap +2.4% [+0.9%, +3.7%]   in other genres +1.7% [+1.1%, +2.4%]
-  rated on Jazz, blues & classical : later picks in the same genre gap +2.1% [+0.9%, +3.5%]   in other genres +0.9% [+0.3%, +1.4%]
-  tests: {'same_avg': 0.03688171738322677, 'other_avg': 0.019401325397174946, 'carryover': 0.5260418107861313, 'other_lo': 0.01758720275678203, 'other_lo99': 0.017140626383896268, 'same_minus_other': 0.017480391986051825, 'smo_lo': 0.013339734564746639, 'smo_hi': 0.021444253196140524, 'smo_lo99': 0.011943060585378435}
+  rated on Folk & country          : later picks in the same genre gap +2.2% [+0.8%, +3.5%]   in other genres +2.6% [+1.8%, +3.4%]
+  rated on R&B, soul & funk        : later picks in the same genre gap +2.4% [+1.0%, +3.7%]   in other genres +1.7% [+1.1%, +2.3%]
+  rated on Jazz, blues & classical : later picks in the same genre gap +2.1% [+0.8%, +3.4%]   in other genres +0.9% [+0.4%, +1.4%]
+  tests: {'same_avg': 0.03688171738322677, 'other_avg': 0.019401325397174946, 'carryover': 0.5260418107861313, 'other_lo': 0.017808377009007375, 'other_lo99': 0.01738462023049717, 'same_minus_other': 0.017480391986051825, 'smo_lo': 0.014062254212108756, 'smo_hi': 0.02119502270144647, 'smo_lo99': 0.012947766709017807}
   average: same genre +3.69%, other genres +1.94%  -> 53% carries over
 
   favourites (share of later picks, top fifth vs bottom fifth):
@@ -20,7 +20,7 @@
     Pop                      top 13.1%  bottom 13.9%  ratio 0.94
     Rock & punk              top 11.7%  bottom 12.6%  ratio 0.92
     Metal                    top  7.3%  bottom  8.4%  ratio 0.87
-  spread test (indie minus rock, in SDs): {'est': 0.045244740519452986, 'lo': 0.024590338033636465, 'hi': 0.06762322006483348, 'lo99': 0.019022468996053192}
+  spread test (indie minus rock, in SDs): {'est': 0.045244740519452986, 'lo': 0.024662540771342348, 'hi': 0.06509438449261594, 'lo99': 0.017860747664100323}
 
   gap scaled by each genre's spread of outcomes:
     Metal                    gap +6.4%  spread (SD) 0.47  gap in SDs 0.137

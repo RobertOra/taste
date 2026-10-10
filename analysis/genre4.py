@@ -59,7 +59,7 @@ def main():
             ppl = pg.join(po, on="user").filter((pl.col("ng") >= 15) & (pl.col("no") >= 20))
             ppl = ppl.with_columns(qg=pl.col("sg").rank("average") / pl.len(), qo=pl.col("so").rank("average") / pl.len())
             parts.append(tagged.filter(pl.col("year").is_between(c + 2, c + 3) & (pl.col("fam") == fam)).join(ppl.select("user", "qg", "qo"), on="user")
-                         .with_columns(u=pl.col("user") * 10 + (c - 2000)))
+                         .with_columns(u=pl.col("user") * 100 + (c - 2000)))
         f = pl.concat(parts)
         x_all = tagged.filter(pl.col("fam") == fam)
         res = {"key": fam, "family": fam, "established": float(x_all["established"].mean()), "popularity_pct": float(x_all["pq"].median() * 100)}

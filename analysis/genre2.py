@@ -56,7 +56,7 @@ def main():
         for c in cuts(half):
             past = (bg.filter((pl.col("year") <= c) & (pl.col("fam") == fam)).group_by("user").agg(s=pl.col("e").sum() / (pl.len() + 20), n=pl.len())
                     .filter(pl.col("n") >= 15).with_columns(q=pl.col("s").rank("average") / pl.len()))
-            fut = bg.filter(pl.col("year").is_between(c + 2, c + 3)).join(past.select("user", "q"), on="user").with_columns(u=pl.col("user") * 10 + (c - 2000))
+            fut = bg.filter(pl.col("year").is_between(c + 2, c + 3)).join(past.select("user", "q"), on="user").with_columns(u=pl.col("user") * 100 + (c - 2000))
             parts_same.append(fut.filter(pl.col("fam") == fam)); parts_other.append(fut.filter(pl.col("fam") != fam))
         res = {"key": fam, "family": fam}
         for lab, dd in (("same", pl.concat(parts_same)), ("other", pl.concat(parts_other))):

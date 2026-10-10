@@ -94,7 +94,7 @@ def h1_h3(half):
         past = past.with_columns(grp=pl.when(pl.col("q") > 0.8).then(pl.lit("best")).when(pl.col("q") <= 0.2)
                                  .then(pl.lit("worst")).otherwise(pl.lit("middle"))).select("user", "grp")
         fut = b.filter(pl.col("year").is_between(c + 2, c + 3)).join(past, on="user").with_columns(cut=pl.lit(c))
-        fut = fut.with_columns(user=pl.col("user") * 10 + (c - 2000))  # a person at several cutoffs counts once per cutoff
+        fut = fut.with_columns(user=pl.col("user") * 100 + (c - 2000))  # a person at several cutoffs counts once per cutoff
         allp.append(fut)
         f = fut.with_columns(tie=pl.struct("artist", "m").hash(c),
                              nf=pl.len().over("user")).filter(pl.col("nf") >= 10)

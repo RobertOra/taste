@@ -54,7 +54,7 @@ def main():
             ppl = past_all.join(past_g, on="user").filter((pl.col("na") >= 20) & (pl.col("ng") >= 15))
             ppl = ppl.with_columns(qa=pl.col("sa").rank("average") / pl.len(), qg=pl.col("sg").rank("average") / pl.len())
             fut = tagged.filter(pl.col("year").is_between(c + 2, c + 3) & (pl.col("fam") == fam)).join(ppl.select("user", "qa", "qg"), on="user")
-            parts.append(fut.with_columns(u=pl.col("user") * 10 + (c - 2000)))
+            parts.append(fut.with_columns(u=pl.col("user") * 100 + (c - 2000)))
         f = pl.concat(parts)
         res = {"key": fam, "family": fam}
         boots = {}

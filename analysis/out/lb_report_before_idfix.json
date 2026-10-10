@@ -1,0 +1,394 @@
+[
+ {
+  "key": "main_D_song",
+  "label": "Discernment, songs (primary (discernment))",
+  "est": 0.1980692389140366,
+  "bound": 0.18928975137918777,
+  "bar": "Holm p <= family threshold and 3-year stability 95% low > 0",
+  "held": true
+ },
+ {
+  "key": "main_D_artist",
+  "label": "Discernment, artists (primary (discernment))",
+  "est": 0.13461021657678662,
+  "bound": 0.12597527094633373,
+  "bar": "Holm p <= family threshold and 3-year stability 95% low > 0",
+  "held": true
+ },
+ {
+  "key": "main_D_scene",
+  "label": "Discernment, scenes (primary (discernment))",
+  "est": 0.042211667152150203,
+  "bound": 0.030551599748568043,
+  "bar": "Holm p <= family threshold and 3-year stability 95% low > 0",
+  "held": true
+ },
+ {
+  "key": "main_A_song",
+  "label": "Prescience, songs (secondary)",
+  "est": 0.23383288664448074,
+  "bound": 0.22469587651334724,
+  "bar": "Holm p <= family threshold and 3-year stability 95% low > 0",
+  "held": true
+ },
+ {
+  "key": "main_A_artist",
+  "label": "Prescience, artists (secondary)",
+  "est": 0.14212912267215674,
+  "bound": 0.1340399580359197,
+  "bar": "Holm p <= family threshold and 3-year stability 95% low > 0",
+  "held": true
+ },
+ {
+  "key": "main_A_scene",
+  "label": "Prescience, scenes (secondary)",
+  "est": 0.04244345143053212,
+  "bound": 0.03237830926169058,
+  "bar": "Holm p <= family threshold and 3-year stability 95% low > 0",
+  "held": true
+ },
+ {
+  "key": "main_B_song",
+  "label": "Community-leading, songs (secondary)",
+  "est": 0.22784220948531209,
+  "bound": 0.21922955409696013,
+  "bar": "Holm p <= family threshold and 3-year stability 95% low > 0",
+  "held": true
+ },
+ {
+  "key": "main_B_artist",
+  "label": "Community-leading, artists (secondary)",
+  "est": 0.1478167751752655,
+  "bound": 0.13867196321250752,
+  "bar": "Holm p <= family threshold and 3-year stability 95% low > 0",
+  "held": true
+ },
+ {
+  "key": "main_B_scene",
+  "label": "Community-leading, scenes (secondary)",
+  "est": 0.0010316946701846277,
+  "bound": -0.013544704133551235,
+  "bar": "Holm p <= family threshold and 3-year stability 95% low > 0",
+  "held": false
+ },
+ {
+  "key": "P1a",
+  "label": "Best vs worst fifth: tenfold takeoffs",
+  "est": 1.9419976421698109,
+  "bound": 1.7751205296582604,
+  "bar": "99% low > 1",
+  "held": true
+ },
+ {
+  "key": "P1b",
+  "label": "Best vs worst fifth: fourfold takeoffs",
+  "est": 1.5263351021507139,
+  "bound": 1.4756342660313395,
+  "bar": "99% low > 1",
+  "held": true
+ },
+ {
+  "key": "P2a",
+  "label": "3+ good pickers vs similar: fourfold",
+  "est": 1.1480778795362752,
+  "bound": 0.34202441290437785,
+  "bar": "99% low > 1",
+  "held": false
+ },
+ {
+  "key": "P2b",
+  "label": "3+ good pickers vs similar: tenfold",
+  "est": 2.5714285714285716,
+  "bound": NaN,
+  "bar": "99% low > 1",
+  "held": false
+ },
+ {
+  "key": "P3a",
+  "label": "One ordinary picker swapped for a good one",
+  "est": 0.019936184399677617,
+  "bound": 0.017982219701470764,
+  "bar": "99% low > 0",
+  "held": true
+ },
+ {
+  "key": "P3b",
+  "label": "The same, within the same scene",
+  "est": 0.014267330282230891,
+  "bound": 0.01211760327908282,
+  "bar": "99% low > 0",
+  "held": true
+ },
+ {
+  "key": "P4a",
+  "label": "Top 1% vs similar: tenfold",
+  "est": 2.6302533931363863,
+  "bound": 1.7336454048338192,
+  "bar": "99% low > 2",
+  "held": false
+ },
+ {
+  "key": "P4b",
+  "label": "Top 1% vs 90-95% band: tenfold",
+  "est": 1.944935904490499,
+  "bound": 1.2352508074021706,
+  "bar": "99% low > 1",
+  "held": true
+ },
+ {
+  "key": "P5a",
+  "label": "Niche: 2 good pickers vs none",
+  "est": 0.05701639469065437,
+  "bound": 0.047493919247623057,
+  "bar": "99% low > 0",
+  "held": true
+ },
+ {
+  "key": "P5b",
+  "label": "Each good picker adds more for niche than crowded",
+  "est": 0.04297948932659857,
+  "bound": 0.014845919253121469,
+  "bar": "99% low > 0",
+  "held": true
+ },
+ {
+  "key": "P5c",
+  "label": "Good new fan vs ordinary new fan",
+  "est": 0.030685693509037267,
+  "bound": 0.02498567384655252,
+  "bar": "99% low > 0",
+  "held": true
+ },
+ {
+  "key": "P6a",
+  "label": "Small artist: good vs ordinary new fan",
+  "est": 0.07315248687788324,
+  "bound": 0.05852513783215601,
+  "bar": "99% low > 0",
+  "held": true
+ },
+ {
+  "key": "P6b",
+  "label": "That gap larger for small than big artists",
+  "est": 0.05588295729224929,
+  "bound": 0.03843123974749579,
+  "bar": "99% low > 0",
+  "held": true
+ },
+ {
+  "key": "P7a",
+  "label": "Top 1%: beat same-scene, same-size artists",
+  "est": 1.5291499362854952,
+  "bound": 1.126727693067485,
+  "bar": "99% low > 1",
+  "held": true
+ },
+ {
+  "key": "P7b",
+  "label": "Top 1%: their scenes take off more",
+  "est": 1.7200755339437905,
+  "bound": 1.4512938256120027,
+  "bar": "99% low > 1",
+  "held": true
+ },
+ {
+  "key": "P7c",
+  "label": "Top 1%'s picks less popular than bottom half's",
+  "est": 0.09720787266069919,
+  "bound": 0.08374397015198057,
+  "bar": "99% low > 0",
+  "held": true
+ },
+ {
+  "key": "P8",
+  "label": "Most- vs least-replayed quarter, within person",
+  "est": 0.02034167577371538,
+  "bound": 0.01840802986034287,
+  "bar": "99% low > 0",
+  "held": true
+ },
+ {
+  "key": "P9",
+  "label": "Hooked pays off more for top- than bottom-fifth",
+  "est": 0.015049692083611184,
+  "bound": 0.006256433034048331,
+  "bar": "99% low > 0",
+  "held": true
+ },
+ {
+  "key": "P10a",
+  "label": "Recent star, poor history beats old star, poor recent",
+  "est": 1.013180838153357,
+  "bound": 0.6955094743134896,
+  "bar": "99% low > 1",
+  "held": false
+ },
+ {
+  "key": "P10b",
+  "label": "Recent record separates more than old",
+  "est": 0.07611141504619212,
+  "bound": -0.19697639736814876,
+  "bar": "99% low > 0",
+  "held": false
+ },
+ {
+  "key": "P10c",
+  "label": "One-year record goes stale (2 vs 4 years)",
+  "est": 1.1070748816946303,
+  "bound": 0.5067730542392269,
+  "bar": "99% low > 1",
+  "held": false
+ },
+ {
+  "key": "P11a",
+  "label": "Bottom-fifth picks flop more than middle-fifth",
+  "est": 1.201038147956166,
+  "bound": 1.15849799750872,
+  "bar": "99% low > 1",
+  "held": true
+ },
+ {
+  "key": "P11b",
+  "label": "Good taste helps more than bad taste hurts",
+  "est": -0.01980445966109548,
+  "bound": -0.03207149123282995,
+  "bar": "99% low > 0",
+  "held": false
+ },
+ {
+  "key": "P11c",
+  "label": "Top-fifth picks also flop more (bolder bets)",
+  "est": 0.9932755203862362,
+  "bound": 0.9655297314195844,
+  "bar": "99% low > 1",
+  "held": false
+ },
+ {
+  "key": "P12",
+  "label": "Same people, years 3-4 vs 1-2",
+  "est": 0.0068553971629436005,
+  "bound": 0.004647261301507303,
+  "bar": "99% low > 0",
+  "held": true
+ },
+ {
+  "key": "P13a",
+  "label": "Gap larger in Indie than Jazz, blues & classical",
+  "est": 0.019506389062393367,
+  "bound": 0.0018514488774215724,
+  "bar": "99% low > 0",
+  "held": true
+ },
+ {
+  "key": "P13b",
+  "label": "Gap larger in Indie than Rock & punk",
+  "est": 0.022292465574278306,
+  "bound": 0.011369487685436788,
+  "bar": "99% low > 0",
+  "held": true
+ },
+ {
+  "key": "P14a",
+  "label": "Rated on one genre, separate on others",
+  "est": 0.019401325397174946,
+  "bound": 0.017140626383896268,
+  "bar": "99% low > 0",
+  "held": true
+ },
+ {
+  "key": "P14b",
+  "label": "Same-genre gap exceeds other-genre gap",
+  "est": 0.017480391986051825,
+  "bound": 0.011943060585378435,
+  "bar": "99% low > 0",
+  "held": true
+ },
+ {
+  "key": "P14c",
+  "label": "Scaled by spread: Indie above Rock & punk",
+  "est": 0.045244740519452986,
+  "bound": 0.019022468996053192,
+  "bar": "99% low > 0",
+  "held": true
+ },
+ {
+  "key": "P15",
+  "label": "Genre specialists don't beat good-in-general by > 1 point",
+  "est": -0.012152948195086428,
+  "bound": -0.007808095757910645,
+  "bar": "99% high < 0.01",
+  "held": true
+ },
+ {
+  "key": "P16",
+  "label": "Other genres predict a genre within 1 point",
+  "est": -0.009210827236820547,
+  "bound": -0.005444985980430893,
+  "bar": "99% high < 0.01",
+  "held": true
+ },
+ {
+  "key": "E1_A_2007-2012",
+  "label": "Prescience, artists, era 2007-2012: predicts",
+  "est": 0.12105498390008504,
+  "bound": 0.10448601824328821,
+  "bar": "95% low > 0",
+  "held": true
+ },
+ {
+  "key": "E1_A_2013-2018",
+  "label": "Prescience, artists, era 2013-2018: predicts",
+  "est": 0.14250062004032313,
+  "bound": 0.1298470988077339,
+  "bar": "95% low > 0",
+  "held": true
+ },
+ {
+  "key": "E1_A_2019-2023",
+  "label": "Prescience, artists, era 2019-2023: predicts",
+  "est": 0.1519010962793221,
+  "bound": 0.1416376925339348,
+  "bar": "95% low > 0",
+  "held": true
+ },
+ {
+  "key": "E2_A",
+  "label": "Prescience, artists: 2019-2023 at least half as strong as 2007-2012",
+  "est": 1.2548107594206652,
+  "bound": 1.0716326653698378,
+  "bar": "99% low of ratio > 0.5",
+  "held": true
+ },
+ {
+  "key": "E1_D_2007-2012",
+  "label": "Discernment, artists, era 2007-2012: predicts",
+  "est": 0.1299427285224158,
+  "bound": 0.11185561297479389,
+  "bar": "95% low > 0",
+  "held": true
+ },
+ {
+  "key": "E1_D_2013-2018",
+  "label": "Discernment, artists, era 2013-2018: predicts",
+  "est": 0.1236115510882029,
+  "bound": 0.11031641597021358,
+  "bar": "95% low > 0",
+  "held": true
+ },
+ {
+  "key": "E1_D_2019-2023",
+  "label": "Discernment, artists, era 2019-2023: predicts",
+  "est": 0.14634136626648522,
+  "bound": 0.13334155132540043,
+  "bar": "95% low > 0",
+  "held": true
+ },
+ {
+  "key": "E2_D",
+  "label": "Discernment, artists: 2019-2023 at least half as strong as 2007-2012",
+  "est": 1.1261989641939876,
+  "bound": 0.934743180582773,
+  "bar": "99% low of ratio > 0.5",
+  "held": true
+ }
+]

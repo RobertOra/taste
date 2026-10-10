@@ -78,3 +78,6 @@ Newly held: P16 (other genres predict a genre within 1 point: -0.9 points, 99% h
 **Part 3: era test passed.** E1 all six era checks hold. E2: the algorithm era is stronger, not weaker: 2019-2023 / 2007-2012 =
 1.25 for prescience (99% low 1.07) and 1.13 for discernment (99% low 0.93); bar 0.5. Prescience by era 0.121 / 0.143 / 0.152;
 discernment 0.130 / 0.124 / 0.146 (23k / 43k / 53k person-cutoffs).
+- After the results: four scripts (headlines, genre2, genre3, genre4) built bootstrap ids as user*10 + (cutoff-2000), which on LB's
+  cutoffs up to 2023 can merge two people into one bootstrap unit. Fixed (user*100; MLHD+ unchanged) and rerun once: point
+  estimates identical, intervals moved in the third digit, no verdict changed (before: analysis/out/lb_report_before_idfix.json).

@@ -7,9 +7,9 @@ main_A_scene       HELD      est   0.04244  bound   0.03238  (Holm p <= family t
 main_B_song        HELD      est    0.2278  bound    0.2192  (Holm p <= family threshold and 3-year stability 95% low > 0)  Community-leading, songs (secondary)
 main_B_artist      HELD      est    0.1478  bound    0.1387  (Holm p <= family threshold and 3-year stability 95% low > 0)  Community-leading, artists (secondary)
 main_B_scene       not held  est  0.001032  bound  -0.01354  (Holm p <= family threshold and 3-year stability 95% low > 0)  Community-leading, scenes (secondary)
-P1a                HELD      est     1.942  bound     1.775  (99% low > 1)  Best vs worst fifth: tenfold takeoffs
+P1a                HELD      est     1.942  bound      1.77  (99% low > 1)  Best vs worst fifth: tenfold takeoffs
 P1b                HELD      est     1.526  bound     1.476  (99% low > 1)  Best vs worst fifth: fourfold takeoffs
-P2a                not held  est     1.148  bound     0.342  (99% low > 1)  3+ good pickers vs similar: fourfold
+P2a                not held  est     1.148  bound    0.3075  (99% low > 1)  3+ good pickers vs similar: fourfold
 P2b                not held  est     2.571  bound       nan  (99% low > 1)  3+ good pickers vs similar: tenfold
 P3a                HELD      est   0.01994  bound   0.01798  (99% low > 0)  One ordinary picker swapped for a good one
 P3b                HELD      est   0.01427  bound   0.01212  (99% low > 0)  The same, within the same scene
@@ -34,11 +34,11 @@ P11c               not held  est    0.9933  bound    0.9655  (99% low > 1)  Top-
 P12                HELD      est  0.006855  bound  0.004647  (99% low > 0)  Same people, years 3-4 vs 1-2
 P13a               HELD      est   0.01951  bound  0.001851  (99% low > 0)  Gap larger in Indie than Jazz, blues & classical
 P13b               HELD      est   0.02229  bound   0.01137  (99% low > 0)  Gap larger in Indie than Rock & punk
-P14a               HELD      est    0.0194  bound   0.01714  (99% low > 0)  Rated on one genre, separate on others
-P14b               HELD      est   0.01748  bound   0.01194  (99% low > 0)  Same-genre gap exceeds other-genre gap
-P14c               HELD      est   0.04524  bound   0.01902  (99% low > 0)  Scaled by spread: Indie above Rock & punk
-P15                HELD      est  -0.01215  bound -0.007808  (99% high < 0.01)  Genre specialists don't beat good-in-general by > 1 point
-P16                HELD      est -0.009211  bound -0.005445  (99% high < 0.01)  Other genres predict a genre within 1 point
+P14a               HELD      est    0.0194  bound   0.01738  (99% low > 0)  Rated on one genre, separate on others
+P14b               HELD      est   0.01748  bound   0.01295  (99% low > 0)  Same-genre gap exceeds other-genre gap
+P14c               HELD      est   0.04524  bound   0.01786  (99% low > 0)  Scaled by spread: Indie above Rock & punk
+P15                HELD      est  -0.01215  bound -0.007911  (99% high < 0.01)  Genre specialists don't beat good-in-general by > 1 point
+P16                HELD      est -0.009211  bound -0.004574  (99% high < 0.01)  Other genres predict a genre within 1 point
 E1_A_2007-2012     HELD      est    0.1211  bound    0.1045  (95% low > 0)  Prescience, artists, era 2007-2012: predicts
 E1_A_2013-2018     HELD      est    0.1425  bound    0.1298  (95% low > 0)  Prescience, artists, era 2013-2018: predicts
 E1_A_2019-2023     HELD      est    0.1519  bound    0.1416  (95% low > 0)  Prescience, artists, era 2019-2023: predicts

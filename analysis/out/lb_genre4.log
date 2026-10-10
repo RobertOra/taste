@@ -7,4 +7,4 @@
   Folk & country           this genre -1.2%  other genres only +0.3%  everyone -2.1%  established 47%
   R&B, soul & funk         this genre +0.6%  other genres only +2.1%  everyone -0.6%  established 56%
   Jazz, blues & classical  this genre -3.0%  other genres only -1.8%  everyone -2.7%  established 61%
-  summary: {'avg_this_minus_other': -0.009210827236820547, 'avg_this': -0.005003075638959427, 'avg_other': 0.00420775159786112, 'lo': -0.01266260361471949, 'hi': -0.006081956893144629, 'hi99': -0.005444985980430893, 'share_general': -0.8410329768142935}
+  summary: {'avg_this_minus_other': -0.009210827236820547, 'avg_this': -0.005003075638959428, 'avg_other': 0.004207751597861119, 'lo': -0.012259199219008964, 'hi': -0.005828677448068022, 'hi99': -0.004574346037346029, 'share_general': -0.8410329768142931}

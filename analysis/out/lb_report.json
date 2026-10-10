@@ -75,7 +75,7 @@
   "key": "P1a",
   "label": "Best vs worst fifth: tenfold takeoffs",
   "est": 1.9419976421698109,
-  "bound": 1.7751205296582604,
+  "bound": 1.7699824126198214,
   "bar": "99% low > 1",
   "held": true
  },
@@ -83,7 +83,7 @@
   "key": "P1b",
   "label": "Best vs worst fifth: fourfold takeoffs",
   "est": 1.5263351021507139,
-  "bound": 1.4756342660313395,
+  "bound": 1.4758594766657294,
   "bar": "99% low > 1",
   "held": true
  },
@@ -91,7 +91,7 @@
   "key": "P2a",
   "label": "3+ good pickers vs similar: fourfold",
   "est": 1.1480778795362752,
-  "bound": 0.34202441290437785,
+  "bound": 0.30746585335853305,
   "bar": "99% low > 1",
   "held": false
  },
@@ -291,7 +291,7 @@
   "key": "P14a",
   "label": "Rated on one genre, separate on others",
   "est": 0.019401325397174946,
-  "bound": 0.017140626383896268,
+  "bound": 0.01738462023049717,
   "bar": "99% low > 0",
   "held": true
  },
@@ -299,7 +299,7 @@
   "key": "P14b",
   "label": "Same-genre gap exceeds other-genre gap",
   "est": 0.017480391986051825,
-  "bound": 0.011943060585378435,
+  "bound": 0.012947766709017807,
   "bar": "99% low > 0",
   "held": true
  },
@@ -307,7 +307,7 @@
   "key": "P14c",
   "label": "Scaled by spread: Indie above Rock & punk",
   "est": 0.045244740519452986,
-  "bound": 0.019022468996053192,
+  "bound": 0.017860747664100323,
   "bar": "99% low > 0",
   "held": true
  },
@@ -315,7 +315,7 @@
   "key": "P15",
   "label": "Genre specialists don't beat good-in-general by > 1 point",
   "est": -0.012152948195086428,
-  "bound": -0.007808095757910645,
+  "bound": -0.00791109710693048,
   "bar": "99% high < 0.01",
   "held": true
  },
@@ -323,7 +323,7 @@
   "key": "P16",
   "label": "Other genres predict a genre within 1 point",
   "est": -0.009210827236820547,
-  "bound": -0.005444985980430893,
+  "bound": -0.004574346037346029,
   "bar": "99% high < 0.01",
   "held": true
  },
