@@ -46,7 +46,7 @@ def main():
             WHERE w.user % 16 = {i} AND w.week BETWEEN {int(1104537600 // 604800)} AND {int(1790812800 // 604800)}""")
         con.execute(f"""COPY (SELECT user, artist, week, sum(plays)::INT AS plays FROM w GROUP BY ALL ORDER BY user, artist, week)
                        TO '{D}/user_artist_week/lb/mlhdplus-complete-{c}.parquet' (FORMAT parquet, COMPRESSION zstd)""")
-        con.execute(f"""COPY (SELECT * FROM w WHERE false) TO '{D}/user_artist_week_partial/lb/mlhdplus-partial-{c}.parquet' (FORMAT parquet)""")
+        con.execute(f"""COPY (SELECT user, artist, week, plays FROM w WHERE false) TO '{D}/user_artist_week_partial/lb/mlhdplus-partial-{c}.parquet' (FORMAT parquet)""")
         con.execute(f"""COPY (SELECT user, NULL::VARCHAR AS mbid, false AS raw_sample, sum(plays) FILTER (WHERE linked)::BIGINT AS n_listens,
                                     0::BIGINT AS n_bad, min(week)::BIGINT * 604800 AS first_ts, (max(week)::BIGINT + 1) * 604800 - 1 AS last_ts,
                                     0::UINTEGER AS n_recordings, count(DISTINCT artist)::INT AS n_artists

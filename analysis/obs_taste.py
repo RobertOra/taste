@@ -36,7 +36,7 @@ def label(lo, hi):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--half", choices=["explore", "sealed"], required=True)
+    ap.add_argument("--half", choices=["explore", "sealed", "lb"], required=True)
     ap.add_argument("--deciles", action="store_true")
     args = ap.parse_args()
     half = args.half

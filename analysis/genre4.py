@@ -18,6 +18,9 @@ from pathlib import Path
 import duckdb
 import numpy as np
 import polars as pl
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cutoffs import cuts, picker_cuts, genre_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "analysis"))
@@ -35,9 +38,9 @@ def pct(x, q):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--half", choices=["explore", "sealed"], required=True)
+    ap.add_argument("--half", choices=["explore", "sealed", "lb"], required=True)
     half = ap.parse_args().half
-    g = pl.read_parquet(X / "scenes_genre" / "all.parquet", columns=["artist", "top_genre"]).with_columns(fam=family_expr())
+    g = pl.read_parquet(genre_path(half), columns=["artist", "top_genre"]).with_columns(fam=family_expr())
     b = pl.read_parquet(X / "bet_outcomes" / f"A_artist_{half}.parquet", columns=["user", "artist", "m", "bin", "v", "e", "pen0"]).with_columns(year=pl.col("m") // 12)
     b = b.join(g.select("artist", "fam"), on="artist", how="left").with_columns(pl.col("fam").fill_null("Untagged"))
     con = duckdb.connect(); con.execute("SET memory_limit='5GB'; SET threads=6")
@@ -50,7 +53,7 @@ def main():
     rows, diffs = [], []
     for fam in MAIN:
         parts = []
-        for c in (2007, 2008, 2009):
+        for c in cuts(half):
             pg = b.filter((pl.col("year") <= c) & (pl.col("fam") == fam)).group_by("user").agg(sg=pl.col("e").sum() / (pl.len() + 20), ng=pl.len())
             po = b.filter((pl.col("year") <= c) & (pl.col("fam") != fam)).group_by("user").agg(so=pl.col("e").sum() / (pl.len() + 20), no=pl.len())
             ppl = pg.join(po, on="user").filter((pl.col("ng") >= 15) & (pl.col("no") >= 20))

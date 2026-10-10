@@ -57,7 +57,7 @@ def fit(d):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--half", choices=["explore", "sealed"], required=True)
+    ap.add_argument("--half", choices=["explore", "sealed", "lb"], required=True)
     half = ap.parse_args().half
     df = load(half)
     rows, boots = [], {}

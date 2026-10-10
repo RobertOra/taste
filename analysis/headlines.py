@@ -24,6 +24,9 @@ from pathlib import Path
 
 import numpy as np
 import polars as pl
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cutoffs import cuts, picker_cuts, genre_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 X = ROOT / "data" / "derived"
@@ -85,7 +88,7 @@ def h1_h3(half):
     exp = b.group_by("m", "bin").agg(v_exp=pl.col("v").mean(), x4_exp=pl.col("x4").mean(), x10_exp=pl.col("x10").mean())
     b = b.join(exp, on=["m", "bin"]).with_columns(gx=pl.col("v") - pl.col("v_exp"))
     fav, allp = [], []
-    for c in (2007, 2008, 2009):
+    for c in cuts(half):
         past = (b.filter(pl.col("year") <= c).group_by("user").agg(s=pl.col("e").sum() / (pl.len() + 20), n=pl.len())
                 .filter(pl.col("n") >= 20).with_columns(q=pl.col("s").rank("average") / pl.len()))
         past = past.with_columns(grp=pl.when(pl.col("q") > 0.8).then(pl.lit("best")).when(pl.col("q") <= 0.2)
@@ -148,7 +151,7 @@ def show(label, r):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--half", choices=["explore", "sealed"], required=True)
+    ap.add_argument("--half", choices=["explore", "sealed", "lb"], required=True)
     half = ap.parse_args().half
     fav, allp = h1_h3(half)
     show(f"H1 [{half}] best vs worst pickers' 10 favorite finds", fav)

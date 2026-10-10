@@ -13,6 +13,9 @@ from pathlib import Path
 
 import numpy as np
 import polars as pl
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cutoffs import cuts, picker_cuts, genre_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 X = ROOT / "data" / "derived"
@@ -42,11 +45,11 @@ def transitions(name):
     return (M / M.sum(1, keepdims=True)).tolist(), M.sum(1).tolist()
 
 
-def bets_with_bands(half, extra_cols=()):
+def bets_with_bands(half, extra_cols=()):  # cutoffs per half: analysis/cutoffs.py
     b = pl.read_parquet(X / "bet_outcomes" / f"A_artist_{half}.parquet", columns=["user", "artist", "m", "bin", "v", "e", "pen0", *extra_cols])
     b = b.with_columns(year=pl.col("m") // 12)
     parts = []
-    for c in (2007, 2008, 2009):
+    for c in cuts(half):
         past = (b.filter(pl.col("year") <= c).group_by("user").agg(s=pl.col("e").sum() / (pl.len() + 20), n=pl.len())
                 .filter(pl.col("n") >= 20).with_columns(q=pl.col("s").rank("average") / pl.len()))
         band = pl.lit(None, pl.String)

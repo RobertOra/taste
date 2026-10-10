@@ -23,6 +23,9 @@ from pathlib import Path
 
 import numpy as np
 import polars as pl
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cutoffs import cuts, picker_cuts, genre_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 X = ROOT / "data" / "derived"
@@ -41,7 +44,7 @@ def ladder(half):
                        x4=(pl.col("v") >= np.log(4)).cast(pl.Float64))
     exp = b.group_by("m", "bin").agg(ve=pl.col("v").mean(), s10=pl.col("x10").mean(), s4=pl.col("x4").mean())
     parts = []
-    for c in (2007, 2008, 2009):
+    for c in cuts(half):
         past = (b.filter(pl.col("year") <= c).group_by("user").agg(s=pl.col("e").sum() / (pl.len() + 20), n=pl.len())
                 .filter(pl.col("n") >= 20).with_columns(q=pl.col("s").rank("average") / pl.len()))
         parts.append(b.filter(pl.col("year").is_between(c + 2, c + 3)).join(past.select("user", "q"), on="user").with_columns(cut=pl.lit(c)))
@@ -199,7 +202,7 @@ def crowd_curve(half):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--half", choices=["explore", "sealed"], required=True)
+    ap.add_argument("--half", choices=["explore", "sealed", "lb"], required=True)
     half = ap.parse_args().half
     rows, summ = ladder(half)
     print(f"LADDER [{half}]")

@@ -25,16 +25,19 @@ from pathlib import Path
 import duckdb
 import numpy as np
 import polars as pl
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cutoffs import cuts, picker_cuts, genre_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 X = ROOT / "data" / "derived"
-CUTS = (2006, 2007, 2008, 2009)
 RNG = np.random.default_rng(11)
 B = 1000
 LOG2, LOG4 = float(np.log(2)), float(np.log(4))
 
 
 def build(con, rate_by, half="explore"):
+    CUTS = picker_cuts(half)
     con.execute(f"""CREATE TABLE b AS SELECT user, artist, m, e, (hash(user + 7919) % 2 = 0) AS rater
                     FROM read_parquet('{X}/bet_outcomes/{rate_by}_artist_{half}.parquet')""")
     parts = []
@@ -79,7 +82,7 @@ def build(con, rate_by, half="explore"):
         SELECT t.*, coalesce(o.l_pre, 0) AS l_pre, coalesce(o.l0, 0) AS l0, coalesce(o.l1, 0) AS l1,
                coalesce(sc.scene_200, -1) AS scene
         FROM tgt t LEFT JOIN outc o USING (artist, m)
-        LEFT JOIN read_parquet('{X}/scenes_yearly/explore.parquet') sc ON sc.artist = t.artist AND sc.year = t.m // 12
+        LEFT JOIN read_parquet('{X}/scenes_yearly/{'lb' if half == 'lb' else 'explore'}.parquet') sc ON sc.artist = t.artist AND sc.year = t.m // 12
         """).pl()
 
 
@@ -176,7 +179,7 @@ def report(label, r):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--rate-by", choices=["A", "D"], default="A")
-    ap.add_argument("--half", choices=["explore", "sealed"], default="explore")
+    ap.add_argument("--half", choices=["explore", "sealed", "lb"], default="explore")
     a = ap.parse_args()
     tmp = ROOT / "data" / "_tmp" / f"pickers-{os.getpid()}"
     tmp.mkdir(parents=True, exist_ok=True)

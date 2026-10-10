@@ -195,6 +195,25 @@ def main(name):
                            "rank_corr": float(np.corrcoef(d["rp"], d["rf"])[0, 1])} for d in fwd],
             "gap_years": gap,
         }
+        if half == "lb":
+            # Era test (LB_PREREG): forward prediction (impostor-adjusted) within eras of rating cutoffs, same bootstrap
+            # draws, so the late/early ratio's range comes from the same resampling.
+            ERAS = {"2007-2012": (2007, 2012), "2013-2018": (2013, 2018), "2019-2023": (2019, 2023)}
+            draws, eras = {}, {}
+            for nm, (lo, hi) in ERAS.items():
+                sub = [d for d in fwd if lo <= d["cutoff"] <= hi]
+                if not sub:
+                    continue
+                wts = [d["users"] for d in sub]
+                draws[nm] = np.array([np.average([wcorr(d["res_rp"], d["res_rf"], boot[k, d["res_ui"]]) for d in sub], weights=wts) for k in range(B)])
+                eras[nm] = {"adjusted_forward": float(np.average([d["resid_corr"] for d in sub], weights=wts)),
+                            "ci": ci(draws[nm]), "lo99": float(np.nanpercentile(draws[nm], 0.5)),
+                            "person_cutoffs": int(sum(wts)), "cutoffs": [d["cutoff"] for d in sub]}
+            if "2007-2012" in draws and "2019-2023" in draws:
+                ratio = draws["2019-2023"] / draws["2007-2012"]
+                eras["ratio_late_to_early"] = {"est": eras["2019-2023"]["adjusted_forward"] / eras["2007-2012"]["adjusted_forward"],
+                                               "ci": ci(ratio), "lo99": float(np.nanpercentile(ratio, 0.5))}
+            card["eras"] = eras
 
     # --- stability curve -------------------------------------------------------------------------------
     yr = agg.group_by("ui", "year").agg(pl.col("n").sum(), pl.col("sw").sum(), pl.col("swe").sum()).filter(

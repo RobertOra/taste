@@ -39,7 +39,7 @@ def boot_mean(v):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--half", choices=["explore", "sealed"], required=True)
+    ap.add_argument("--half", choices=["explore", "sealed", "lb"], required=True)
     half = ap.parse_args().half
     b = pl.read_parquet(X / "bet_outcomes" / f"A_artist_{half}.parquet", columns=["user", "m", "e"])
     uf = pl.read_parquet(X / "user_features" / f"{half}.parquet", columns=["user", "start_week"])

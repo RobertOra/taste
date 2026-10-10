@@ -20,6 +20,9 @@ from pathlib import Path
 
 import numpy as np
 import polars as pl
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cutoffs import cuts, picker_cuts, genre_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 X = ROOT / "data" / "derived"
@@ -36,13 +39,13 @@ def pct(x, q):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--half", choices=["explore", "sealed"], required=True)
+    ap.add_argument("--half", choices=["explore", "sealed", "lb"], required=True)
     half = ap.parse_args().half
     b = pl.read_parquet(X / "bet_outcomes" / f"A_artist_{half}.parquet", columns=["user", "m", "bin", "v", "e"]).with_columns(year=pl.col("m") // 12)
     b = b.with_columns(flop=(pl.col("v") <= np.log(0.5)).cast(pl.Float64), x10=(pl.col("v") >= np.log(10)).cast(pl.Float64))
     exp = b.group_by("m", "bin").agg(ve=pl.col("v").mean(), sf=pl.col("flop").mean(), s10=pl.col("x10").mean())
     parts = []
-    for c in (2007, 2008, 2009):
+    for c in cuts(half):
         past = (b.filter(pl.col("year") <= c).group_by("user").agg(s=pl.col("e").sum() / (pl.len() + 20), n=pl.len())
                 .filter(pl.col("n") >= 20).with_columns(q=pl.col("s").rank("average") / pl.len()))
         parts.append(b.filter(pl.col("year").is_between(c + 2, c + 3)).join(past.select("user", "q"), on="user"))
@@ -93,7 +96,7 @@ def main():
                        "double_lo": pct(dr, 2.5), "double_hi": pct(dr, 97.5), "double_similar": float(A["ed"].sum() / A["n"].sum())})
 
     # persistence (frozen discernment-for-songs candidate of this half)
-    name = ("sealed_" if half == "sealed" else "") + "D_song_main"
+    name = {"sealed": "sealed_D_song_main", "explore": "D_song_main", "lb": "lb_D_artist_main"}[half]  # lb: no songs
     agg = pl.read_parquet(CAND / name / "agg.parquet")
     years = sorted(agg["year"].unique().to_list())
     per = lambda dd: dd.group_by("user").agg(pl.col("n").sum(), pl.col("sw").sum(), pl.col("swe").sum())

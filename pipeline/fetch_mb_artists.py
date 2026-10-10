@@ -59,7 +59,7 @@ def main():
         artist=pl.col("mbid").str.replace_all("-", "", literal=True).str.slice(-15).str.to_integer(base=16))
     OUT.parent.mkdir(parents=True, exist_ok=True)
     df.write_parquet(OUT)
-    print(f"dump {latest}: {seen:,} artists read; kept {df.height:,} of {len(wanted):,} MLHD+ artists; "
+    print(f"dump {latest}: {seen:,} artists read; kept {df.height:,} of {len(wanted_ids) if LB else len(wanted):,} wanted artists; "
           f"with genres {df.filter(pl.col('genres').list.len() > 0).height:,}; "
           f"with tags {df.filter(pl.col('tags').list.len() > 0).height:,}", flush=True)
 

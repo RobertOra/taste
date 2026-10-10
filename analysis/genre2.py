@@ -20,6 +20,9 @@ from pathlib import Path
 
 import numpy as np
 import polars as pl
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cutoffs import cuts, picker_cuts, genre_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "analysis"))
@@ -37,9 +40,9 @@ def pct(x, q):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--half", choices=["explore", "sealed"], required=True)
+    ap.add_argument("--half", choices=["explore", "sealed", "lb"], required=True)
     half = ap.parse_args().half
-    g = pl.read_parquet(X / "scenes_genre" / "all.parquet", columns=["artist", "top_genre"]).with_columns(fam=family_expr())
+    g = pl.read_parquet(genre_path(half), columns=["artist", "top_genre"]).with_columns(fam=family_expr())
     b = pl.read_parquet(X / "bet_outcomes" / f"A_artist_{half}.parquet", columns=["user", "artist", "m", "bin", "v", "e"]).with_columns(year=pl.col("m") // 12)
     bg = b.join(g.select("artist", "fam"), on="artist", how="inner").filter(pl.col("fam") != "Other")
     exp = bg.group_by("m", "bin", "fam").agg(ve=pl.col("v").mean())
@@ -50,7 +53,7 @@ def main():
     rows, gboot = [], {"same": [], "other": []}
     for fam in MAIN:
         parts_same, parts_other = [], []
-        for c in (2007, 2008, 2009):
+        for c in cuts(half):
             past = (bg.filter((pl.col("year") <= c) & (pl.col("fam") == fam)).group_by("user").agg(s=pl.col("e").sum() / (pl.len() + 20), n=pl.len())
                     .filter(pl.col("n") >= 15).with_columns(q=pl.col("s").rank("average") / pl.len()))
             fut = bg.filter(pl.col("year").is_between(c + 2, c + 3)).join(past.select("user", "q"), on="user").with_columns(u=pl.col("user") * 10 + (c - 2000))
@@ -80,7 +83,7 @@ def main():
 
     # 2. favourites (overall ranking)
     parts = []
-    for c in (2007, 2008, 2009):
+    for c in cuts(half):
         past = (b.filter(pl.col("year") <= c).group_by("user").agg(s=pl.col("e").sum() / (pl.len() + 20), n=pl.len())
                 .filter(pl.col("n") >= 20).with_columns(q=pl.col("s").rank("average") / pl.len()))
         parts.append(bg.filter(pl.col("year").is_between(c + 2, c + 3)).join(past.select("user", "q"), on="user"))

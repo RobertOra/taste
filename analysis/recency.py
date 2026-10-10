@@ -36,7 +36,7 @@ def pct(x, q):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--half", choices=["explore", "sealed"], required=True)
+    ap.add_argument("--half", choices=["explore", "sealed", "lb"], required=True)
     half = ap.parse_args().half
     b = pl.read_parquet(X / "bet_outcomes" / f"A_artist_{half}.parquet", columns=["user", "m", "bin", "v", "e"]).with_columns(year=pl.col("m") // 12)
     b = b.with_columns(x10=(pl.col("v") >= np.log(10)).cast(pl.Float64))
@@ -48,11 +48,18 @@ def main():
     def rate(lo, hi):
         return (yr.filter(pl.col("year").is_between(lo, hi)).group_by("user")
                 .agg(s=pl.col("s").sum() / (pl.col("n").sum() + 20), n=pl.col("n").sum()).filter(pl.col("n") >= 20))
-    fut = (yr.filter(pl.col("year").is_between(2010, 2011)).group_by("user")
-           .agg(h=pl.col("h").sum(), ex=pl.col("ex").sum(), g=pl.col("g").sum(), n=pl.col("n").sum()).filter(pl.col("n") >= 10))
-    d = rate(2005, 2006).rename({"s": "s1", "n": "n1"}).join(rate(2007, 2008).rename({"s": "s2", "n": "n2"}), on="user").join(fut, on="user")
+    # Windows around a cutoff C: old = C-3..C-2, recent = C-1..C, judged on C+2..C+3. MLHD+: C = 2008 only (2005-06,
+    # 2007-08, 2010-11). ListenBrainz: every C from 2008 to 2023, pooled as person-cutoffs (ranks within each cutoff).
+    parts = []
+    for C in ((2008,) if half != "lb" else tuple(range(2008, 2024))):
+        fut = (yr.filter(pl.col("year").is_between(C + 2, C + 3)).group_by("user")
+               .agg(h=pl.col("h").sum(), ex=pl.col("ex").sum(), g=pl.col("g").sum(), n=pl.col("n").sum()).filter(pl.col("n") >= 10))
+        dc = rate(C - 3, C - 2).rename({"s": "s1", "n": "n1"}).join(rate(C - 1, C).rename({"s": "s2", "n": "n2"}), on="user").join(fut, on="user")
+        if dc.height == 0:
+            continue
+        parts.append(dc.with_columns(q1=pl.col("s1").rank("average") / dc.height, q2=pl.col("s2").rank("average") / dc.height, cut=pl.lit(C)))
+    d = pl.concat(parts)
     N = d.height
-    d = d.with_columns(q1=pl.col("s1").rank("average") / N, q2=pl.col("s2").rank("average") / N)
     lab = lambda c: pl.when(pl.col(c) > 0.8).then(pl.lit("top")).when(pl.col(c) <= 0.2).then(pl.lit("bottom")).otherwise(pl.lit("middle"))
     d = d.with_columns(old=lab("q1"), new=lab("q2"))
     W = RNG.poisson(1.0, (B, N)).astype(float)
@@ -79,7 +86,7 @@ def main():
 
     # --- going stale
     decay, lag_parts = [], {}
-    for ry in (2006, 2007):
+    for ry in ((2006, 2007) if half != "lb" else ()):  # going-stale test not run on lb (not pre-registered there)
         r = yr.filter((pl.col("year") == ry) & (pl.col("n") >= 20)).with_columns(sc=pl.col("s") / (pl.col("n") + 20))
         later = yr.filter(pl.col("year").is_between(ry + 1, 2011) & (pl.col("n") >= 10))
         keep = later.group_by("user").agg(k=pl.len()).filter(pl.col("k") == 2011 - ry)
@@ -100,8 +107,11 @@ def main():
         lag_boot[L] = ob
         decay.append({"key": str(L), "years_later": L, "people": int(x["user"].n_unique()), "odds": float(hh.sum() / ee.sum()),
                       "lo": pct(ob, 2.5), "hi": pct(ob, 97.5), "rating_years": sorted(set(x["ry"].to_list()))})
-    c_ = lag_boot[2] / lag_boot[4]
-    tests["P10c"] = {"est": float(decay[1]["odds"] / decay[3]["odds"]), "lo": pct(c_, 2.5), "hi": pct(c_, 97.5), "lo99": pct(c_, 0.5)}
+    if not decay:
+        tests["P10c"] = None
+    else:
+      c_ = lag_boot[2] / lag_boot[4]
+      tests["P10c"] = {"est": float(decay[1]["odds"] / decay[3]["odds"]), "lo": pct(c_, 2.5), "hi": pct(c_, 97.5), "lo99": pct(c_, 0.5)}
     marginal = []
     for which, col in (("recent", "q2"), ("old", "q1")):
         for k, (lo, hi) in enumerate(((0, .2), (.2, .4), (.4, .6), (.6, .8), (.8, 1.0001))):

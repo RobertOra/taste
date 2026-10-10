@@ -50,8 +50,8 @@ RULES = {"w2": "w2", "w4": "w4", "w8": "w8", "p10": "w_p10", "all": "first_week"
 def parse():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", choices=["A", "B", "C_lb", "D"], default="A")
-    ap.add_argument("--half", choices=["explore", "sealed"], default="explore",
-                    help="which half's bets and tables to use (scenes are always built from explore listening)")
+    ap.add_argument("--half", choices=["explore", "sealed", "lb"], default="explore",
+                    help="which half's bets and tables to use (MLHD+ scenes are built from explore listening; lb uses its own)")
     ap.add_argument("--unit", choices=["artist", "song", "scene"], default="artist",
                     help="artist: bets from data/derived/bets; song: raw-sample users' song bets (song_bets); "
                          "scene: scene entries (scene_bets). Song/scene bets use the primary bet rule only.")
@@ -94,6 +94,10 @@ def variant_name(a):
 
 def main():
     a = parse()
+    global LAST
+    LAST = 2026 * 12 + 8 if a.half == "lb" else 2012 * 12 + 11  # see pipeline/periods.py
+    if a.half == "lb" and a.model == "C_lb":
+        raise SystemExit("durability (C_lb) is circular on ListenBrainz data; not run for half=lb")
     name = variant_name(a)
     out = ROOT / "analysis" / "out" / f"model_{a.model}" / name
     out.mkdir(parents=True, exist_ok=True)
@@ -155,7 +159,7 @@ def main():
     elif a.scene.startswith("yearly"):
         k = a.scene.removeprefix("yearly")
         scene_sql = f"coalesce(sc.scene_{k}, -1)"
-        scene_join = (f"LEFT JOIN read_parquet('{X}/scenes_yearly/explore.parquet') sc "
+        scene_join = (f"LEFT JOIN read_parquet('{X}/scenes_yearly/{'lb' if a.half == 'lb' else 'explore'}.parquet') sc "
                       f"ON sc.artist = r.artist AND sc.year = r.m // 12")
     elif a.scene == "allyears200":
         scene_sql, scene_join = "sc.scene_200", f"LEFT JOIN read_parquet('{X}/scenes/explore.parquet') sc USING (artist)"
@@ -205,7 +209,7 @@ def main():
     if a.release and a.unit != "scene":
         con.execute(f"""CREATE TABLE relm AS
             SELECT DISTINCT artist, (substr(first_release_date, 1, 4)::INT * 12 + substr(first_release_date, 6, 2)::INT - 1)::SMALLINT AS rm
-            FROM read_parquet('{X}/mb_release_groups.parquet')
+            FROM read_parquet('{X}/mb_release_groups{"_lb" if a.half == "lb" else ""}.parquet')
             WHERE regexp_matches(first_release_date, '^[0-9]{{4}}-[0-9]{{2}}')
               AND primary_type IN ('Album', 'EP', 'Single') AND secondary_types NOT LIKE '%Compilation%'""")
         con.execute("""CREATE TABLE rel AS
@@ -284,7 +288,7 @@ def main():
                  "ntile(5) OVER (PARTITION BY r.m ORDER BY cmt.c_mom)" if a.model == "B" else
                  "ntile(5) OVER (PARTITION BY r.m ORDER BY dd.conv_prior)" if a.model == "D" else "0")} AS xb
         FROM r {scene_join} LEFT JOIN first_seen fs ON fs.artist = r.artist {mom_join} {outcome_join} {rel_join}
-        {f"LEFT JOIN read_parquet('{X}/mb_artists.parquet') mb ON mb.artist = r.artist" if a.country and a.unit != "scene" else ""}""")
+        {f"LEFT JOIN read_parquet('{X}/mb_artists{'_lb' if a.half == 'lb' else ''}.parquet') mb ON mb.artist = r.artist" if a.country and a.unit != "scene" else ""}""")
     for t in ("r", "first_seen", "mom", "selfl", "dd", "trials", "cum", "rel", "relm"):
         con.execute(f"DROP TABLE IF EXISTS {t}")
     cell = "m, bin, scene, age, mq, ctry, cpb, cg, xb, relc" if a.adjust == "cells" else "m, bin"

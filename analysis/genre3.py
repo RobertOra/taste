@@ -16,6 +16,9 @@ from pathlib import Path
 
 import numpy as np
 import polars as pl
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cutoffs import cuts, picker_cuts, genre_path  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "analysis"))
@@ -33,9 +36,9 @@ def pct(x, q):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--half", choices=["explore", "sealed"], required=True)
+    ap.add_argument("--half", choices=["explore", "sealed", "lb"], required=True)
     half = ap.parse_args().half
-    g = pl.read_parquet(X / "scenes_genre" / "all.parquet", columns=["artist", "top_genre"]).with_columns(fam=family_expr())
+    g = pl.read_parquet(genre_path(half), columns=["artist", "top_genre"]).with_columns(fam=family_expr())
     b = pl.read_parquet(X / "bet_outcomes" / f"A_artist_{half}.parquet", columns=["user", "artist", "m", "bin", "v", "e"]).with_columns(year=pl.col("m") // 12)
     b = b.join(g.select("artist", "fam"), on="artist", how="left").with_columns(pl.col("fam").fill_null("Untagged"))
     tagged = b.filter(~pl.col("fam").is_in(["Untagged", "Other"]))
@@ -45,7 +48,7 @@ def main():
     test = "--test" in __import__("sys").argv
     for fam in MAIN:
         parts = []
-        for c in (2007, 2008, 2009):
+        for c in cuts(half):
             past_all = b.filter(pl.col("year") <= c).group_by("user").agg(sa=pl.col("e").sum() / (pl.len() + 20), na=pl.len())
             past_g = b.filter((pl.col("year") <= c) & (pl.col("fam") == fam)).group_by("user").agg(sg=pl.col("e").sum() / (pl.len() + 20), ng=pl.len())
             ppl = past_all.join(past_g, on="user").filter((pl.col("na") >= 20) & (pl.col("ng") >= 15))
