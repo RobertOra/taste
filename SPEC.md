@@ -307,6 +307,13 @@ by mistake (the first run's printed output was cut off by a display filter); poi
 passed; bootstrap ranges differed in the third decimal because row order in group-by is not fixed. Reported values are
 from the second run, whose output file was kept.
 
+## Genre specialists vs good-in-general pickers (written 2026-10-09 20:53, before any sealed run of analysis/genre3.py)
+Exploratory on the explore half; tested once on the sealed half with the committed code (one run).
+- P15. Within genres, people rated on that genre alone do not beat people rated on all their picks by more than 1 point:
+  averaged over genres, the 99% upper bound of (specialists - good in general) later growth vs similar < +1 point.
+  Explore average -0.5 points. (A pre-registered bound rather than a no-difference claim; the overall ranking uses more picks.)
+Descriptive: per-genre values, the average picker in each group, overlap of the two top fifths.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|
