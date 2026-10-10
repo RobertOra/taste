@@ -1,0 +1,680 @@
+[
+{
+"model": "Discernment, songs",
+"setting": "Main settings",
+"headline": 0.241,
+"is_main": true
+},
+{
+"model": "Discernment, songs",
+"setting": "6-month window",
+"headline": 0.316,
+"is_main": false
+},
+{
+"model": "Discernment, songs",
+"setting": "24-month window",
+"headline": 0.18,
+"is_main": false
+},
+{
+"model": "Discernment, songs",
+"setting": "Square-root weights",
+"headline": 0.241,
+"is_main": false
+},
+{
+"model": "Discernment, songs",
+"setting": "Weighted by plays",
+"headline": 0.242,
+"is_main": false
+},
+{
+"model": "Discernment, songs",
+"setting": "Ranked outcomes",
+"headline": 0.109,
+"is_main": false
+},
+{
+"model": "Discernment, songs",
+"setting": "10 popularity groups",
+"headline": 0.239,
+"is_main": false
+},
+{
+"model": "Discernment, songs",
+"setting": "50 popularity groups",
+"headline": 0.242,
+"is_main": false
+},
+{
+"model": "Discernment, artists",
+"setting": "Main settings",
+"headline": 0.161,
+"is_main": true
+},
+{
+"model": "Discernment, artists",
+"setting": "6-month window",
+"headline": 0.207,
+"is_main": false
+},
+{
+"model": "Discernment, artists",
+"setting": "24-month window",
+"headline": 0.133,
+"is_main": false
+},
+{
+"model": "Discernment, artists",
+"setting": "Square-root weights",
+"headline": 0.168,
+"is_main": false
+},
+{
+"model": "Discernment, artists",
+"setting": "Weighted by plays",
+"headline": 0.141,
+"is_main": false
+},
+{
+"model": "Discernment, artists",
+"setting": "Ranked outcomes",
+"headline": 0.024,
+"is_main": false
+},
+{
+"model": "Discernment, artists",
+"setting": "10 popularity groups",
+"headline": 0.161,
+"is_main": false
+},
+{
+"model": "Discernment, artists",
+"setting": "50 popularity groups",
+"headline": 0.161,
+"is_main": false
+},
+{
+"model": "Discernment, artists",
+"setting": "13-week onboarding",
+"headline": 0.161,
+"is_main": false
+},
+{
+"model": "Discernment, artists",
+"setting": "52-week onboarding",
+"headline": 0.162,
+"is_main": false
+},
+{
+"model": "Discernment, artists",
+"setting": "8 weeks to commit",
+"headline": 0.136,
+"is_main": false
+},
+{
+"model": "Discernment, artists",
+"setting": "10 plays to commit",
+"headline": 0.162,
+"is_main": false
+},
+{
+"model": "Discernment, artists",
+"setting": "2 weeks to commit",
+"headline": 0.197,
+"is_main": false
+},
+{
+"model": "Discernment, scenes",
+"setting": "Main settings",
+"headline": 0.11,
+"is_main": true
+},
+{
+"model": "Discernment, scenes",
+"setting": "6-month window",
+"headline": 0.191,
+"is_main": false
+},
+{
+"model": "Discernment, scenes",
+"setting": "24-month window",
+"headline": 0.069,
+"is_main": false
+},
+{
+"model": "Discernment, scenes",
+"setting": "Square-root weights",
+"headline": 0.104,
+"is_main": false
+},
+{
+"model": "Discernment, scenes",
+"setting": "Weighted by plays",
+"headline": 0.073,
+"is_main": false
+},
+{
+"model": "Discernment, scenes",
+"setting": "Ranked outcomes",
+"headline": -0.01,
+"is_main": false
+},
+{
+"model": "Discernment, scenes",
+"setting": "10 popularity groups",
+"headline": 0.104,
+"is_main": false
+},
+{
+"model": "Discernment, scenes",
+"setting": "50 popularity groups",
+"headline": 0.111,
+"is_main": false
+},
+{
+"model": "Community-leading, songs",
+"setting": "Main settings",
+"headline": 0.249,
+"is_main": true
+},
+{
+"model": "Community-leading, songs",
+"setting": "6-month window",
+"headline": 0.319,
+"is_main": false
+},
+{
+"model": "Community-leading, songs",
+"setting": "24-month window",
+"headline": 0.187,
+"is_main": false
+},
+{
+"model": "Community-leading, songs",
+"setting": "Square-root weights",
+"headline": 0.249,
+"is_main": false
+},
+{
+"model": "Community-leading, songs",
+"setting": "Weighted by plays",
+"headline": 0.249,
+"is_main": false
+},
+{
+"model": "Community-leading, songs",
+"setting": "Ranked outcomes",
+"headline": 0.215,
+"is_main": false
+},
+{
+"model": "Community-leading, songs",
+"setting": "10 popularity groups",
+"headline": 0.247,
+"is_main": false
+},
+{
+"model": "Community-leading, songs",
+"setting": "50 popularity groups",
+"headline": 0.249,
+"is_main": false
+},
+{
+"model": "Community-leading, artists",
+"setting": "Main settings",
+"headline": 0.214,
+"is_main": true
+},
+{
+"model": "Community-leading, artists",
+"setting": "6-month window",
+"headline": 0.278,
+"is_main": false
+},
+{
+"model": "Community-leading, artists",
+"setting": "24-month window",
+"headline": 0.172,
+"is_main": false
+},
+{
+"model": "Community-leading, artists",
+"setting": "Square-root weights",
+"headline": 0.237,
+"is_main": false
+},
+{
+"model": "Community-leading, artists",
+"setting": "Weighted by plays",
+"headline": 0.225,
+"is_main": false
+},
+{
+"model": "Community-leading, artists",
+"setting": "Ranked outcomes",
+"headline": 0.022,
+"is_main": false
+},
+{
+"model": "Community-leading, artists",
+"setting": "10 popularity groups",
+"headline": 0.214,
+"is_main": false
+},
+{
+"model": "Community-leading, artists",
+"setting": "50 popularity groups",
+"headline": 0.214,
+"is_main": false
+},
+{
+"model": "Community-leading, artists",
+"setting": "13-week onboarding",
+"headline": 0.214,
+"is_main": false
+},
+{
+"model": "Community-leading, artists",
+"setting": "52-week onboarding",
+"headline": 0.218,
+"is_main": false
+},
+{
+"model": "Community-leading, scenes",
+"setting": "Main settings",
+"headline": 0.053,
+"is_main": true
+},
+{
+"model": "Community-leading, scenes",
+"setting": "6-month window",
+"headline": 0.086,
+"is_main": false
+},
+{
+"model": "Community-leading, scenes",
+"setting": "24-month window",
+"headline": 0.033,
+"is_main": false
+},
+{
+"model": "Community-leading, scenes",
+"setting": "Square-root weights",
+"headline": 0.053,
+"is_main": false
+},
+{
+"model": "Community-leading, scenes",
+"setting": "Weighted by plays",
+"headline": 0.043,
+"is_main": false
+},
+{
+"model": "Community-leading, scenes",
+"setting": "Ranked outcomes",
+"headline": 0.002,
+"is_main": false
+},
+{
+"model": "Community-leading, scenes",
+"setting": "10 popularity groups",
+"headline": 0.051,
+"is_main": false
+},
+{
+"model": "Community-leading, scenes",
+"setting": "50 popularity groups",
+"headline": 0.054,
+"is_main": false
+},
+{
+"model": "Prescience, songs",
+"setting": "Main settings",
+"headline": 0.219,
+"is_main": true
+},
+{
+"model": "Prescience, songs",
+"setting": "6-month window",
+"headline": 0.27,
+"is_main": false
+},
+{
+"model": "Prescience, songs",
+"setting": "24-month window",
+"headline": 0.187,
+"is_main": false
+},
+{
+"model": "Prescience, songs",
+"setting": "Square-root weights",
+"headline": 0.22,
+"is_main": false
+},
+{
+"model": "Prescience, songs",
+"setting": "Weighted by plays",
+"headline": 0.22,
+"is_main": false
+},
+{
+"model": "Prescience, songs",
+"setting": "Ranked outcomes",
+"headline": 0.145,
+"is_main": false
+},
+{
+"model": "Prescience, songs",
+"setting": "10 popularity groups",
+"headline": 0.218,
+"is_main": false
+},
+{
+"model": "Prescience, songs",
+"setting": "50 popularity groups",
+"headline": 0.22,
+"is_main": false
+},
+{
+"model": "Prescience, artists",
+"setting": "Main settings",
+"headline": 0.144,
+"is_main": true
+},
+{
+"model": "Prescience, artists",
+"setting": "6-month window",
+"headline": 0.16,
+"is_main": false
+},
+{
+"model": "Prescience, artists",
+"setting": "24-month window",
+"headline": 0.126,
+"is_main": false
+},
+{
+"model": "Prescience, artists",
+"setting": "Square-root weights",
+"headline": 0.155,
+"is_main": false
+},
+{
+"model": "Prescience, artists",
+"setting": "Weighted by plays",
+"headline": 0.135,
+"is_main": false
+},
+{
+"model": "Prescience, artists",
+"setting": "Ranked outcomes",
+"headline": 0.13,
+"is_main": false
+},
+{
+"model": "Prescience, artists",
+"setting": "10 popularity groups",
+"headline": 0.145,
+"is_main": false
+},
+{
+"model": "Prescience, artists",
+"setting": "50 popularity groups",
+"headline": 0.144,
+"is_main": false
+},
+{
+"model": "Prescience, artists",
+"setting": "13-week onboarding",
+"headline": 0.146,
+"is_main": false
+},
+{
+"model": "Prescience, artists",
+"setting": "52-week onboarding",
+"headline": 0.144,
+"is_main": false
+},
+{
+"model": "Prescience, artists",
+"setting": "8 weeks to commit",
+"headline": 0.122,
+"is_main": false
+},
+{
+"model": "Prescience, artists",
+"setting": "10 plays to commit",
+"headline": 0.16,
+"is_main": false
+},
+{
+"model": "Prescience, artists",
+"setting": "2 weeks to commit",
+"headline": 0.163,
+"is_main": false
+},
+{
+"model": "Prescience, scenes",
+"setting": "Main settings",
+"headline": 0.061,
+"is_main": true
+},
+{
+"model": "Prescience, scenes",
+"setting": "6-month window",
+"headline": 0.101,
+"is_main": false
+},
+{
+"model": "Prescience, scenes",
+"setting": "24-month window",
+"headline": 0.047,
+"is_main": false
+},
+{
+"model": "Prescience, scenes",
+"setting": "Square-root weights",
+"headline": 0.064,
+"is_main": false
+},
+{
+"model": "Prescience, scenes",
+"setting": "Weighted by plays",
+"headline": 0.052,
+"is_main": false
+},
+{
+"model": "Prescience, scenes",
+"setting": "Ranked outcomes",
+"headline": 0.082,
+"is_main": false
+},
+{
+"model": "Prescience, scenes",
+"setting": "10 popularity groups",
+"headline": 0.055,
+"is_main": false
+},
+{
+"model": "Prescience, scenes",
+"setting": "50 popularity groups",
+"headline": 0.061,
+"is_main": false
+},
+{
+"model": "Durability, songs",
+"setting": "Main settings",
+"headline": 0.186,
+"is_main": true
+},
+{
+"model": "Durability, songs",
+"setting": "6-month window",
+"headline": 0.253,
+"is_main": false
+},
+{
+"model": "Durability, songs",
+"setting": "24-month window",
+"headline": 0.159,
+"is_main": false
+},
+{
+"model": "Durability, songs",
+"setting": "Square-root weights",
+"headline": 0.187,
+"is_main": false
+},
+{
+"model": "Durability, songs",
+"setting": "Weighted by plays",
+"headline": 0.186,
+"is_main": false
+},
+{
+"model": "Durability, songs",
+"setting": "Ranked outcomes",
+"headline": 0.112,
+"is_main": false
+},
+{
+"model": "Durability, songs",
+"setting": "10 popularity groups",
+"headline": 0.179,
+"is_main": false
+},
+{
+"model": "Durability, songs",
+"setting": "50 popularity groups",
+"headline": 0.192,
+"is_main": false
+},
+{
+"model": "Durability, artists",
+"setting": "Main settings",
+"headline": 0.066,
+"is_main": true
+},
+{
+"model": "Durability, artists",
+"setting": "6-month window",
+"headline": 0.094,
+"is_main": false
+},
+{
+"model": "Durability, artists",
+"setting": "24-month window",
+"headline": 0.056,
+"is_main": false
+},
+{
+"model": "Durability, artists",
+"setting": "Square-root weights",
+"headline": 0.067,
+"is_main": false
+},
+{
+"model": "Durability, artists",
+"setting": "Weighted by plays",
+"headline": 0.064,
+"is_main": false
+},
+{
+"model": "Durability, artists",
+"setting": "Ranked outcomes",
+"headline": 0.043,
+"is_main": false
+},
+{
+"model": "Durability, artists",
+"setting": "10 popularity groups",
+"headline": 0.064,
+"is_main": false
+},
+{
+"model": "Durability, artists",
+"setting": "50 popularity groups",
+"headline": 0.067,
+"is_main": false
+},
+{
+"model": "Durability, artists",
+"setting": "13-week onboarding",
+"headline": 0.066,
+"is_main": false
+},
+{
+"model": "Durability, artists",
+"setting": "52-week onboarding",
+"headline": 0.066,
+"is_main": false
+},
+{
+"model": "Durability, artists",
+"setting": "8 weeks to commit",
+"headline": 0.063,
+"is_main": false
+},
+{
+"model": "Durability, artists",
+"setting": "10 plays to commit",
+"headline": 0.078,
+"is_main": false
+},
+{
+"model": "Durability, artists",
+"setting": "2 weeks to commit",
+"headline": 0.085,
+"is_main": false
+},
+{
+"model": "Durability, scenes",
+"setting": "Main settings",
+"headline": 0.012,
+"is_main": true
+},
+{
+"model": "Durability, scenes",
+"setting": "6-month window",
+"headline": 0.034,
+"is_main": false
+},
+{
+"model": "Durability, scenes",
+"setting": "24-month window",
+"headline": -0.015,
+"is_main": false
+},
+{
+"model": "Durability, scenes",
+"setting": "Square-root weights",
+"headline": 0.018,
+"is_main": false
+},
+{
+"model": "Durability, scenes",
+"setting": "Weighted by plays",
+"headline": 0.021,
+"is_main": false
+},
+{
+"model": "Durability, scenes",
+"setting": "Ranked outcomes",
+"headline": 0.008,
+"is_main": false
+},
+{
+"model": "Durability, scenes",
+"setting": "10 popularity groups",
+"headline": 0.003,
+"is_main": false
+},
+{
+"model": "Durability, scenes",
+"setting": "50 popularity groups",
+"headline": 0.011,
+"is_main": false
+}
+]

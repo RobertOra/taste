@@ -105,3 +105,10 @@ td.muted, .muted { color: var(--ink-3); }
 .legend i { display: inline-block; width: 12px; height: 3px; border-radius: 2px; margin-right: 6px; vertical-align: 3px; }
 .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 16px 0 6px; }
 @media (max-width: 640px) { .big { font-size: 42px; } .card { padding: 16px; } .impact .track { width: 70px; } td.artist { max-width: 130px; } .hide-sm { display: none; } }
+/* all four measures, genre mix */
+.mtable td { vertical-align: middle; } .mtable tr.hl td { background: var(--accent-bg); } .mtable tr.hl td:first-child { border-radius: 8px 0 0 8px; } .mtable tr.hl td:last-child { border-radius: 0 8px 8px 0; }
+.rbar { position: relative; height: 10px; border-radius: 5px; background: var(--line-2); margin: 4px 0 2px; }
+.rbar i { position: absolute; top: 0; height: 10px; border-radius: 5px; background: var(--band); }
+.rbar b { position: absolute; top: -3px; width: 4px; height: 16px; margin-left: -2px; border-radius: 2px; background: var(--accent); }
+.mix { position: relative; height: 16px; }
+.mix i { position: absolute; left: 0; border-radius: 3px; } .mix i.you { top: 0; height: 9px; background: var(--accent); } .mix i.typ { top: 11px; height: 4px; background: var(--ink-3); opacity: .6; }

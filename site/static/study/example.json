@@ -1,0 +1,194 @@
+[
+{
+"month": "2008-01",
+"florence": 0.066,
+"peers_median": 0.399,
+"peers_p90": 0.505,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2008-02",
+"florence": 0.065,
+"peers_median": 0.404,
+"peers_p90": 0.507,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2008-03",
+"florence": 0.228,
+"peers_median": 0.458,
+"peers_p90": 0.564,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2008-04",
+"florence": 0.229,
+"peers_median": 0.393,
+"peers_p90": 0.474,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2008-05",
+"florence": 0.228,
+"peers_median": 0.395,
+"peers_p90": 0.465,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2008-06",
+"florence": 0.335,
+"peers_median": 0.447,
+"peers_p90": 0.51,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2008-07",
+"florence": 0.398,
+"peers_median": 0.395,
+"peers_p90": 0.429,
+"n_peers": 869,
+"bet_month": true
+},
+{
+"month": "2008-08",
+"florence": 0.568,
+"peers_median": 0.446,
+"peers_p90": 0.505,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2008-09",
+"florence": 0.453,
+"peers_median": 0.412,
+"peers_p90": 0.487,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2008-10",
+"florence": 0.449,
+"peers_median": 0.412,
+"peers_p90": 0.507,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2008-11",
+"florence": 0.702,
+"peers_median": 0.478,
+"peers_p90": 0.606,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2008-12",
+"florence": 0.848,
+"peers_median": 0.405,
+"peers_p90": 0.545,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2009-01",
+"florence": 1.172,
+"peers_median": 0.422,
+"peers_p90": 0.553,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2009-02",
+"florence": 1.246,
+"peers_median": 0.427,
+"peers_p90": 0.552,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2009-03",
+"florence": 1.6,
+"peers_median": 0.471,
+"peers_p90": 0.635,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2009-04",
+"florence": 1.476,
+"peers_median": 0.399,
+"peers_p90": 0.546,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2009-05",
+"florence": 1.821,
+"peers_median": 0.433,
+"peers_p90": 0.578,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2009-06",
+"florence": 2.327,
+"peers_median": 0.367,
+"peers_p90": 0.502,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2009-07",
+"florence": 4.938,
+"peers_median": 0.354,
+"peers_p90": 0.477,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2009-08",
+"florence": 6.554,
+"peers_median": 0.408,
+"peers_p90": 0.556,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2009-09",
+"florence": 6.186,
+"peers_median": 0.355,
+"peers_p90": 0.493,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2009-10",
+"florence": 6.881,
+"peers_median": 0.353,
+"peers_p90": 0.494,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2009-11",
+"florence": 8.28,
+"peers_median": 0.402,
+"peers_p90": 0.585,
+"n_peers": 869,
+"bet_month": false
+},
+{
+"month": "2009-12",
+"florence": 8.447,
+"peers_median": 0.339,
+"peers_p90": 0.518,
+"n_peers": 869,
+"bet_month": false
+}
+]

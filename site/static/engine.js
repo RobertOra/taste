@@ -1,7 +1,7 @@
-// Taste Test scoring engine (runs in the browser, and in Node for tests). Mirrors site/score_static.py exactly.
-// Prescience for artists: do the artists you got into go on to gain new listeners, compared with similar picks the same
-// month (same size), with the project's corrections (momentum, scene, artist age, release timing, country).
-// Reference data: data/meta.json and data/s/XXXX.bin (site/build_static.py).
+// Taste Test scoring engine (runs in the browser, and in Node for tests). Mirrored by site/score_pack.py.
+// Four measures from the study, for songs and artists: prescience (do your finds gain new listeners, compared with similar
+// finds the same month) and discernment (do people who try your finds stick with them), with the study's corrections.
+// Reference data: data/meta.json, data/index.bin and data/p/NN.bin, read by byte range (site/build_pack_*.py).
 
 const WEEK = 604800;
 export const RULES = { minPlayMs: 30000, onboardWeeks: 26, windowWeeks: 26, minWeeks: 4, minHistoryWeeks: 104, minMatch: 0.4, warnMatch: 0.6 };
@@ -107,7 +107,7 @@ export async function readHistory(files) {   // files: [{name, bytes}] -> {plays
       if (!Number.isFinite(ts)) continue;
       const an = artist.trim().toLowerCase();
       if (EXCLUDE.has(an)) continue;
-      got['ts' in d ? 'extended' : 'standard'].push({ week: Math.floor(ts / WEEK), an, name: artist, ts, how, track });
+      got['ts' in d ? 'extended' : 'standard'].push({ week: Math.floor(ts / WEEK), an, name: artist, ts, how, track, tn: track.trim().toLowerCase() });
     }
   }
   const kind = kinds.has('extended') ? 'extended' : (kinds.size ? 'standard' : null);
@@ -116,89 +116,172 @@ export async function readHistory(files) {   // files: [{name, bytes}] -> {plays
   return { plays, kind, tsMin, tsMax };
 }
 
-// ---------- picks (by artist name as Spotify gives it)
-export function findPicks(plays, notPicked = null) {
+// ---------- picks: artists by name, songs by "artist\ttrack" (as Spotify gives them)
+export function findPicks(plays, keyOf, notPicked = null) {
   let start = Infinity; for (const p of plays) if (p.week < start) start = p.week;
   const by = new Map();
   for (const p of plays) {
-    let a = by.get(p.an); if (!a) { a = { an: p.an, name: p.name, weeks: new Map(), first: p, total: 0 }; by.set(p.an, a); }
+    const key = keyOf(p);
+    let a = by.get(key); if (!a) { a = { key, p, weeks: new Map(), first: p, total: 0 }; by.set(key, a); }
     a.weeks.set(p.week, (a.weeks.get(p.week) || 0) + 1); a.total++;
-    if (p.ts !== undefined && p.ts < a.first.ts) a.first = p;
+    if (p.ts < a.first.ts) a.first = p;
   }
   const picks = [];
   for (const a of by.values()) {
     const ws = [...a.weeks.keys()].sort((x, y) => x - y);
     const fw = ws[0];
-    if (fw < start + RULES.onboardWeeks) { if (notPicked) notPicked.warmup.push(a.name); continue; }
-    if (ws.length < RULES.minWeeks || ws[RULES.minWeeks - 1] - fw >= RULES.windowWeeks) { if (notPicked) notPicked.tried.push(a.name); continue; }
+    if (fw < start + RULES.onboardWeeks) { if (notPicked) notPicked.warmup.push(a.p.name); continue; }
+    if (ws.length < RULES.minWeeks || ws[RULES.minWeeks - 1] - fw >= RULES.windowWeeks) { if (notPicked) notPicked.tried.push(a.p.name); continue; }
     const w4 = ws[RULES.minWeeks - 1];
     let plays26 = 0; for (const [w, n] of a.weeks) if (w < fw + RULES.windowWeeks) plays26 += n;
-    picks.push({ an: a.an, name: a.name, firstWeek: fw, w4, m: monthOfWeek(w4), plays26, total: a.total, how: a.first.how, firstTrack: a.first.track });
+    picks.push({ key: a.key, an: a.p.an, name: a.p.name, track: a.p.track, firstWeek: fw, m: monthOfWeek(w4), plays26, total: a.total, how: a.first.how, firstTrack: a.first.track });
   }
   return picks;
 }
 
-// ---------- reference data
+// ---------- packed reference data, read by byte range
 function readVarint(b, o) { let x = 0, s = 0, c; do { c = b[o.p++]; x += (c & 0x7f) * 2 ** s; s += 7; } while (c & 0x80); return x; }
-export function decodeShard(buf, meta) {
-  const b = new Uint8Array(buf), dv = new DataView(b.buffer, b.byteOffset, b.byteLength);
-  const nNames = dv.getUint16(0, true), nArts = dv.getUint16(2, true);
-  const names = new Map(); let p = 4;
-  for (let i = 0; i < nNames; i++) { names.set(dv.getBigInt64(p, true), dv.getUint16(p + 8, true)); p += 10; }
-  const arts = []; const o = { p };
-  for (let i = 0; i < nArts; i++) {
-    const id = dv.getUint32(o.p, true), country = meta.countries[dv.getUint16(o.p + 4, true)], fm = dv.getUint16(o.p + 6, true) - 1000 + 2000 * 12; o.p += 8;
-    const adopt = new Map(); let k = readVarint(b, o), prev = meta.y0 - 12;
-    for (let j = 0; j < k; j++) { prev += readVarint(b, o); adopt.set(prev, readVarint(b, o)); }
-    const scene = new Map(); k = readVarint(b, o);
-    for (let j = 0; j < k; j++) { const y = b[o.p++] + 2000, s = b[o.p++]; scene.set(y, s === 255 ? -1 : s); }
-    const anyRel = b[o.p++] === 1; const rel = []; k = readVarint(b, o); prev = meta.y0 - 12;
-    for (let j = 0; j < k; j++) { prev += readVarint(b, o); rel.push(prev); }
-    arts.push({ id, country, fm, adopt, scene, anyRel, rel });
+function readRows(b, o, m0) {
+  const n = readVarint(b, o), month = new Int32Array(n), a = new Int32Array(n), t = new Int32Array(n), k = new Int32Array(n);
+  let prev = m0 - 1;
+  for (let i = 0; i < n; i++) {
+    const v = readVarint(b, o), code = v & 3; prev += Math.floor(v / 4); month[i] = prev;
+    if (code === 0) { a[i] = 1; } else if (code === 1) { a[i] = 1; t[i] = 1; } else if (code === 2) { a[i] = 1; t[i] = 1; k[i] = 1; }
+    else { a[i] = readVarint(b, o); t[i] = readVarint(b, o); k[i] = readVarint(b, o); }
   }
-  return { names, arts };
+  return { month, a, t, k };
+}
+export function decodeShard(buf, meta) {
+  const b = buf instanceof Uint8Array ? buf : new Uint8Array(buf), dv = new DataView(b.buffer, b.byteOffset, b.byteLength);
+  const nAN = dv.getUint16(0, true), nAR = dv.getUint16(2, true), nSN = dv.getUint16(4, true), nSR = dv.getUint16(6, true);
+  let p = 8; const artistNames = new Map(), songNames = new Map();
+  for (let i = 0; i < nAN; i++) { artistNames.set(dv.getBigInt64(p, true), dv.getUint16(p + 8, true)); p += 10; }
+  const o = { p }; const artists = [];
+  for (let i = 0; i < nAR; i++) {
+    const id = dv.getUint32(o.p, true), country = meta.countries[dv.getUint16(o.p + 4, true)], fm = dv.getUint16(o.p + 6, true) - 1000 + 24000;
+    const fam = b[o.p + 8], anyRel = b[o.p + 9] === 1; o.p += 10;
+    const scene = new Map(); let n = readVarint(b, o);
+    for (let j = 0; j < n; j++) { const y = b[o.p++] + 2000, s = b[o.p++]; scene.set(y, s === 255 ? -1 : s); }
+    const rel = []; n = readVarint(b, o); let prev = meta.m0 - 12;
+    for (let j = 0; j < n; j++) { prev += readVarint(b, o); rel.push(prev); }
+    artists.push({ id, country, fm, fam, anyRel, scene, rel, rows: readRows(b, o, meta.m0) });
+  }
+  p = o.p;
+  for (let i = 0; i < nSN; i++) { songNames.set(dv.getBigInt64(p, true), dv.getUint16(p + 8, true)); p += 10; }
+  o.p = p; const songs = [];
+  for (let i = 0; i < nSR; i++) {
+    const id = dv.getUint32(o.p, true), fm = dv.getUint16(o.p + 4, true) - 1000 + 24000; o.p += 6;
+    songs.push({ id, fm, rows: readRows(b, o, meta.m0) });
+  }
+  return { artistNames, artists, songNames, songs };
+}
+// Pack: index + range reader. fetchRange(fileNo, start, endInclusive) -> Uint8Array; fetchIndex() -> ArrayBuffer
+export class Pack {
+  constructor(meta, fetchIndex, fetchRange) { Object.assign(this, { meta, fetchIndex, fetchRange, shards: new Map(), bytes: 0, requests: 0 }); }
+  async init() {
+    if (this.loc) return;
+    const b = new Uint8Array(await this.fetchIndex()), dv = new DataView(b.buffer, b.byteOffset, b.byteLength);
+    const S = dv.getUint32(4, true), F = dv.getUint16(8, true); let p = 10;
+    this.compressed = dv.getUint32(0, true) === 0x54535432;
+    const fileSizes = []; for (let i = 0; i < F; i++) { fileSizes.push(dv.getUint32(p, true)); p += 4; }
+    this.S = S; this.bits = Math.round(Math.log2(S));
+    this.loc = new Array(S); let file = 0, off = 0;
+    for (let s = 0; s < S; s++) {
+      const len = dv.getUint32(p, true); p += 4;
+      if (len && off + len > fileSizes[file]) { file++; off = 0; }
+      this.loc[s] = [file, off, len]; off += len;
+    }
+  }
+  shardOf(h) { return Number(BigInt.asUintN(64, h) & BigInt(this.S - 1)); }
+  async load(ids, onProgress = () => {}) {
+    await this.init();
+    const need = [...new Set(ids)].filter((s) => !this.shards.has(s) && this.loc[s][2] > 0);
+    for (const s of ids) if (!this.shards.has(s) && this.loc[s][2] === 0) this.shards.set(s, decodeShard(new Uint8Array(8), this.meta));
+    const byFile = new Map();
+    for (const s of need) { const [f] = this.loc[s]; if (!byFile.has(f)) byFile.set(f, []); byFile.get(f).push(s); }
+    const ranges = [];
+    for (const [f, ss] of byFile) {
+      ss.sort((x, y) => this.loc[x][1] - this.loc[y][1]);
+      let cur = null;
+      for (const s of ss) {
+        const [, off, len] = this.loc[s];
+        if (cur && off - cur.end <= 16384) { cur.end = off + len; cur.shards.push(s); } else { cur = { f, start: off, end: off + len, shards: [s] }; ranges.push(cur); }
+      }
+    }
+    let done = 0; const queue = [...ranges];
+    const worker = async () => {
+      while (queue.length) {
+        const r = queue.shift();
+        const data = await this.fetchRange(r.f, r.start, r.end - 1);
+        this.bytes += data.length; this.requests++;
+        for (const s of r.shards) {
+          const [, off, len] = this.loc[s]; let part = data.subarray(off - r.start, off - r.start + len);
+          if (this.compressed) part = await inflateRaw(part);
+          this.shards.set(s, decodeShard(part, this.meta));
+        }
+        done++; if (done % 10 === 0 || done === ranges.length) onProgress(done / ranges.length);
+      }
+    };
+    await Promise.all(Array.from({ length: Math.min(16, ranges.length) }, worker));
+  }
+  artist(h) { const s = this.shards.get(this.shardOf(h)); const i = s && s.artistNames.get(h); return i === undefined ? null : s.artists[i]; }
+  song(h) { const s = this.shards.get(this.shardOf(h)); const i = s && s.songNames.get(h); return i === undefined ? null : s.songs[i]; }
 }
 
-function features(art, m) {
-  const sum = (lo, hi) => { let s = 0; for (let t = lo; t <= hi; t++) s += art.adopt.get(t) || 0; return s; };
-  const a0 = sum(m - 5, m), a1 = sum(m + 7, m + 12), ap = sum(m - 11, m - 6);
-  const d = m - art.fm;
-  const age = art.fm <= 2005 * 12 ? 9 : d < 3 ? 0 : d < 6 ? 1 : d < 12 ? 2 : d < 24 ? 3 : 4;
-  let relc = 4;
-  if (art.anyRel) relc = 2 * (art.rel.some((r) => r > m && r <= m + 3) ? 1 : 0) + (art.rel.some((r) => r >= m - 3 && r <= m) ? 1 : 0);
-  const sc = art.scene.has(Math.floor(m / 12)) ? art.scene.get(Math.floor(m / 12)) : -1;
-  return { a0, a1, ap, age, relc, scene: sc, country: art.country };
+// ---------- features, outcomes, excess
+function sums(rows, m) {
+  let a0 = 0, a1 = 0, ap = 0, tl = 0, kl = 0, tp = 0, kp = 0;
+  const { month, a, t, k } = rows;
+  for (let i = 0; i < month.length; i++) {
+    const x = month[i];
+    if (x > m + 12) break;
+    if (x <= m) { tp += t[i]; kp += k[i]; if (x >= m - 5) a0 += a[i]; else if (x >= m - 11 && x <= m - 6) ap += a[i]; }
+    else { tl += t[i]; kl += k[i]; if (x >= m + 7) a1 += a[i]; }
+  }
+  return { a0, a1, ap, tl, kl, tp, kp };
 }
-
-function lookups(meta) {
-  if (meta._lk) return meta._lk;
-  const base = new Map(meta.baseline.map(([m, bin, g, ten, up3]) => [m * 16 + bin, { g, ten, up3 }]));
-  const eff = {};
-  for (const [name, rows] of Object.entries(meta.effects)) eff[name] = new Map(rows.map((r) => [r.slice(0, -1).join('|'), r[r.length - 1]]));
-  meta._lk = { base, eff };
-  return meta._lk;
+export function features(unit, item, art, m) {
+  const f = sums(item.rows, m);
+  const d = m - item.fm;
+  f.age = unit === 'artist'
+    ? (item.fm <= 2005 * 12 ? 9 : d < 3 ? 0 : d < 6 ? 1 : d < 12 ? 2 : d < 24 ? 3 : 4)
+    : (item.fm <= 2005 * 12 ? 9 : d <= 2 ? d : d < 6 ? 3 : d < 12 ? 4 : d < 24 ? 5 : 6);
+  f.scene = art.scene.has(Math.floor(m / 12)) ? art.scene.get(Math.floor(m / 12)) : -1;
+  f.relc = art.anyRel ? 2 * (art.rel.some((r) => r > m && r <= m + 3) ? 1 : 0) + (art.rel.some((r) => r >= m - 3 && r <= m) ? 1 : 0) : 4;
+  f.country = art.country; f.fam = art.fam;
+  return f;
 }
-
-export function excess(meta, f, m) {
-  const { base, eff } = lookups(meta);
-  const g = Math.log((f.a1 + 1) / (f.a0 + 1));
+function lookups(M) {
+  if (M._lk) return M._lk;
+  const base = new Map(M.baseline.map((r) => [r[0] * 16 + r[1], r]));
+  const eff = {}; for (const [name, rows] of Object.entries(M.effects)) eff[name] = new Map(rows.map((r) => [r.slice(0, -1).join('|'), r[r.length - 1]]));
+  const cuts = M.xb_cuts ? new Map(M.xb_cuts.map((r) => [r[0], r.slice(1)])) : null;
+  M._lk = { base, eff, cuts }; return M._lk;
+}
+export function excess(M, f, m) {
+  const { base, eff, cuts } = lookups(M);
   const bin = Math.min(14, Math.max(0, Math.floor(Math.log(f.a0 + 1) / Math.log(2))));
   const mo = Math.min(3, Math.max(-3, Math.floor((Math.log((f.a0 + 1) / (f.ap + 1)) / Math.log(2)) / 0.5)));
-  const b = base.get(m * 16 + bin);
-  if (!b) return null;
-  const year = Math.floor(m / 12);
-  const sceneEff = eff.year_scene.get(`${year}|${f.scene}`) || 0;
-  const e = (eff.mo.get(String(mo)) || 0) + sceneEff + (eff.age.get(String(f.age)) || 0)
-    + (eff.relc.get(String(f.relc)) || 0) + (eff.country.get(f.country) || 0);
-  return { g, gMean: b.g, tenRate: b.ten, up3Rate: b.up3, excess: g - b.g - e, sceneEff, ten: g >= Math.log(10), up3: g >= Math.log(3) };
+  const b = base.get(m * 16 + bin); if (!b) return null;
+  const g = Math.log((f.a1 + 1) / (f.a0 + 1));
+  let y;
+  const keys = { mo: String(mo), year_scene: `${Math.floor(m / 12)}|${f.scene}`, age: String(f.age), relc: String(f.relc), country: f.country };
+  if (M.measure === 'A') y = g;
+  else {
+    y = (f.kl + 2 * M.p0) / (f.tl + 2);
+    const cp = (f.kp + 2 * M.p0) / (f.tp + 2), q = cuts.get(m);
+    if (!q) return null;
+    keys.xb = String((cp > q[0]) + (cp > q[1]) + (cp > q[2]) + (cp > q[3]));
+  }
+  let e = 0; for (const [name, k] of Object.entries(keys)) e += eff[name] ? (eff[name].get(k) || 0) : 0;
+  return { y, g, mean: b[2], up3Rate: b[3] ?? null, up3: g >= Math.log(3), excess: y - b[2] - e, sceneEff: eff.year_scene ? (eff.year_scene.get(keys.year_scene) || 0) : 0 };
 }
 
 const NORM = { cdf: (x) => 0.5 * (1 + erf(x / Math.SQRT2)), inv: (p) => { let lo = -10, hi = 10; for (let i = 0; i < 200; i++) { const mid = (lo + hi) / 2; if (NORM.cdf(mid) < p) lo = mid; else hi = mid; } return (lo + hi) / 2; } };
-function erf(x) {   // Abramowitz-Stegun 7.1.26 refined by series; adequate for ranges shown as whole percentiles
+function erf(x) {
   const s = Math.sign(x); x = Math.abs(x);
   if (x < 3) { let sum = x, term = x, n = 0; while (Math.abs(term) > 1e-16 * Math.abs(sum)) { n++; term *= -x * x / n; sum += term / (2 * n + 1); } return s * 2 / Math.sqrt(Math.PI) * sum; }
-  const t = 1 / (1 + 0.3275911 * x), y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
-  return s * y;
+  const t = 1 / (1 + 0.3275911 * x); return s * (1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x));
 }
 export function trueRange(rho, observed) {
   rho = Math.max(Math.min(rho, 0.999), 0);
@@ -206,10 +289,37 @@ export function trueRange(rho, observed) {
   return [100 * NORM.cdf(z - 1.2816 * sd), 100 * NORM.cdf(z + 1.2816 * sd)];
 }
 function bisectLeft(a, x) { let lo = 0, hi = a.length; while (lo < hi) { const mid = (lo + hi) >> 1; if (a[mid] < x) lo = mid + 1; else hi = mid; } return lo; }
+const mean = (a) => (a.length ? a.reduce((t, x) => t + x, 0) / a.length : null);
+const cmpName = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
-// ---------- scoring
-// fetchShard(i) -> ArrayBuffer of data/s/{i as 4 hex digits}.bin; meta = parsed data/meta.json
-export async function scoreHistory(files, meta, fetchShard, onProgress = () => {}) {
+// score one measure from matched picks (each {m, item, art, w, ...}); songs merge per artist and month (plays-weighted)
+export function scoreMeasure(meta, key, picks) {
+  const M = meta.measures[key], unit = M.unit;
+  const scored = [];
+  for (const p of picks) { const f = features(unit, p.item, p.art, p.m); const x = excess(M, f, p.m); if (x) scored.push({ ...p, f, ...x }); }
+  let units = scored;
+  if (unit === 'song') {
+    const g = new Map();
+    for (const p of scored) { const k = `${p.art.id}|${p.m}`; if (!g.has(k)) g.set(k, []); g.get(k).push(p); }
+    units = [...g.values()].map((ps) => { const W = ps.reduce((t, p) => t + p.w, 0); return { m: ps[0].m, art: ps[0].art, songs: ps, excess: ps.reduce((t, p) => t + p.excess * p.w, 0) / W, w: W }; });
+  }
+  const last = Math.max(...units.map((p) => p.m), -Infinity);
+  const win = units.filter((p) => p.m > last - 12 * meta.window_years);
+  const n = win.length, r = { key, unit, measure: M.measure, picks: n, enough: n >= meta.min_picks, solid: n >= 250, win, scored, all: units };
+  if (n) r.window = [Math.min(...win.map((p) => p.m)), last];
+  if (n >= meta.min_picks) {
+    const s = win.reduce((t, p) => t + p.excess, 0) / (n + meta.shrink);
+    const pct = bisectLeft(M.scores, s) / M.scores.length, rel = n * M.per_pick / (1 + (n - 1) * M.per_pick);
+    const [lo, hi] = trueRange(rel, pct);
+    Object.assign(r, { score: s, percentile: Math.round(100 * pct), range: [Math.round(lo), Math.round(hi)], reliability: Math.round(rel * 100) / 100,
+      growth: Math.expm1(mean(win.map((p) => p.excess))) });
+  }
+  return r;
+}
+
+// ---------- the whole thing
+// pack: a Pack; meta: parsed data/meta.json
+export async function scoreHistory(files, meta, pack, onProgress = () => {}) {
   const out = { kind: null, checks: [], ok: false };
   const { plays, kind, tsMin, tsMax } = await readHistory(files);
   out.kind = kind;
@@ -222,127 +332,88 @@ export async function scoreHistory(files, meta, fetchShard, onProgress = () => {
   if (span < RULES.minHistoryWeeks) out.checks.push({ id: 'history', ok: false, text: `Your history covers ${Math.floor(span / 52)} year(s); we need at least two.` });
   if (out.checks.some((c) => !c.ok)) return out;
 
-  const lastJudgeable = meta.last_month - 12;
+  const lastJ = meta.last_month - 12;
   const notPicked = { warmup: [], tried: [] };
-  const picks = findPicks(plays, notPicked);
-  const judged = picks.filter((p) => p.m <= lastJudgeable && p.m >= meta.y0);
-  const tooRecent = picks.filter((p) => p.m > lastJudgeable).length;
-  // look up names, newest judged finds first (enough to fill the five-year window; a second pass if matches run short)
-  const lastAll = Math.max(...judged.map((p) => p.m), -Infinity);
-  const need = (lo) => judged.filter((p) => p.m > lo && p.hash === undefined);
-  const shards = new Map(); let fetched = 0;
-  async function lookup(list) {
-    for (const p of list) { p.hash = nameHash(p.an); p.shard = Number(BigInt.asUintN(64, p.hash) & BigInt((1 << meta.shard_bits) - 1)); }
-    const ids = [...new Set(list.map((p) => p.shard))].filter((i) => !shards.has(i));
-    let done = 0;
-    await Promise.all(ids.map(async (i) => {
-      const buf = await fetchShard(i); shards.set(i, buf ? decodeShard(buf, meta) : { names: new Map(), arts: [] });
-      done++; fetched++; if (done % 20 === 0) onProgress(done / ids.length);
-    }));
-    for (const p of list) { const s = shards.get(p.shard); const ai = s.names.get(p.hash); p.art = ai === undefined ? null : s.arts[ai]; p.artKey = ai === undefined ? null : s.arts[ai].id; }
-  }
-  let lo = lastAll - 12 * (meta.window_years + 2);
-  await lookup(need(lo));
-  const matchedOf = () => judged.filter((p) => p.hash !== undefined && p.art);
-  let last = Math.max(...matchedOf().map((p) => p.m), -Infinity);
-  if (Number.isFinite(last) && last - 12 * meta.window_years < lo) { lo = last - 12 * meta.window_years; await lookup(need(lo)); }
-  const looked = judged.filter((p) => p.hash !== undefined);
-  // one pick per artist: two names for the same ListenBrainz artist keep the earliest find
-  const seen = new Map();
-  for (const p of looked.filter((q) => q.art).sort((a, b) => a.m - b.m || (a.an < b.an ? -1 : a.an > b.an ? 1 : 0))) if (!seen.has(p.artKey)) seen.set(p.artKey, p);
-  const matched = [...seen.values()];
-  const share = looked.length ? looked.filter((p) => p.art).length / looked.length : 0;
-  out.history.matched_share = Math.round(share * 1000) / 1000;
-  out.history.shards = fetched;
-  if (share < RULES.minMatch) { out.checks.push({ id: 'match', ok: false, text: `We recognised only ${Math.round(share * 100)}% of the artists you got into. Your taste may be outside what we can judge.` }); return out; }
-  if (share < RULES.warnMatch) out.checks.push({ id: 'match', ok: true, warn: true, text: `We recognised ${Math.round(share * 100)}% of the artists you got into, so your score rests on part of them.` });
-
-  for (const p of matched) { const f = features(p.art, p.m); Object.assign(p, f, excess(meta, f, p.m) || { excess: null }); }
-  const scored = matched.filter((p) => p.excess !== null);
-  last = Math.max(...scored.map((p) => p.m), -Infinity);
-  const win = scored.filter((p) => p.m > last - 12 * meta.window_years);
-  const n = win.length;
-  const u = { picks: n, too_recent: tooRecent, enough: n >= meta.min_picks, solid: n >= meta.solid_picks,
-    window: n ? `${monthLabel(Math.min(...win.map((p) => p.m)))} – ${monthLabel(last)}` : null };
-  if (n >= meta.min_picks) {
-    const s = win.reduce((t, p) => t + p.excess, 0) / (n + meta.shrink);
-    const pct = bisectLeft(meta.scores, s) / meta.scores.length;
-    const rel = n * meta.per_pick / (1 + (n - 1) * meta.per_pick);
-    const [rlo, rhi] = trueRange(rel, pct);
-    Object.assign(u, { score: s, percentile: Math.round(100 * pct), range: [Math.round(rlo), Math.round(rhi)], reliability: Math.round(rel * 100) / 100 });
-  }
-  out.units = { artist: u };
-  if (!u.enough) {
-    out.checks.push({ id: 'picks', ok: false, text: `We found ${n} artists you got into that we can judge from your last ${meta.window_years} years of finds; we need at least ${meta.min_picks}.`
-      + (tooRecent ? ` ${tooRecent} more are too recent to judge yet; come back in a few months.` : '') });
+  const aPicks = findPicks(plays, (p) => p.an, notPicked);
+  const sPicks = findPicks(plays, (p) => `${p.an}\t${p.tn}`).filter((p) => p.key.slice(p.key.indexOf('\t') + 1));
+  const judgedA = aPicks.filter((p) => p.m >= meta.y0 && p.m <= lastJ), judgedS = sPicks.filter((p) => p.m >= meta.y0 && p.m <= lastJ);
+  const recentA = aPicks.filter((p) => p.m > lastJ).sort((a, b) => b.plays26 - a.plays26).slice(0, 15);
+  for (const p of [...judgedA, ...recentA]) p.ah = nameHash(p.an);
+  for (const p of judgedS) { p.sh = nameHash(p.key); p.ah = nameHash(p.an); }
+  await pack.init();
+  await pack.load([...judgedA, ...recentA, ...judgedS].flatMap((p) => [pack.shardOf(p.ah), ...(p.sh !== undefined ? [pack.shardOf(p.sh)] : [])]), onProgress);
+  out.history.bytes = pack.bytes; out.history.requests = pack.requests;
+  const dedup = (ps) => { const seen = new Map(); for (const p of ps.sort((a, b) => a.m - b.m || cmpName(a.key, b.key))) if (!seen.has(p.item.id)) seen.set(p.item.id, p); return [...seen.values()]; };
+  for (const p of judgedA) { p.art = pack.artist(p.ah); p.item = p.art; p.w = p.plays26; }
+  for (const p of recentA) p.art = pack.artist(p.ah);
+  for (const p of judgedS) { p.art = pack.artist(p.ah); p.item = p.art ? pack.song(p.sh) : null; p.w = p.plays26; }
+  const mA = dedup(judgedA.filter((p) => p.item)), mS = dedup(judgedS.filter((p) => p.item));
+  const shareA = judgedA.length ? judgedA.filter((p) => p.item).length / judgedA.length : 0;
+  const shareS = judgedS.length ? judgedS.filter((p) => p.item).length / judgedS.length : 0;
+  out.history.matched = { artists: shareA, songs: shareS };
+  if (Math.max(shareA, shareS) < RULES.minMatch) { out.checks.push({ id: 'match', ok: false, text: `We recognised only ${Math.round(100 * Math.max(shareA, shareS))}% of the music you got into. Your taste may be outside what we can judge.` }); return out; }
+  if (shareA < RULES.warnMatch) out.checks.push({ id: 'match', ok: true, warn: true, text: `We recognised ${Math.round(100 * shareA)}% of the artists you got into, so your score rests on part of them.` });
+  const R = {};
+  for (const [key, ps] of [['song_A', mS], ['song_D', mS], ['artist_A', mA], ['artist_D', mA]]) R[key] = scoreMeasure(meta, key, ps);
+  out.measures = R;
+  out.headline = R.song_A.enough ? 'song_A' : R.artist_A.enough ? 'artist_A' : null;
+  if (!out.headline) {
+    out.checks.push({ id: 'picks', ok: false, text: `We found ${R.song_A.picks} groups of songs and ${R.artist_A.picks} artists you got into that we can judge from your last ${meta.window_years} years of finds; we need at least ${meta.min_picks} of one.`
+      + (recentA.length ? ' Some of your finds are too recent to judge yet; come back in a few months.' : '') });
     return out;
   }
-  if (!u.solid) out.checks.push({ id: 'picks', ok: true, warn: true, text: 'You have enough finds for a rough score; more history would narrow the range.' });
-  out.best_calls = [...win].sort((a, b) => b.excess - a.excess).slice(0, 8).map((p) => ({ artist: p.name, found: monthLabel(p.m),
-    grew: Math.round(Math.exp(p.g) * 10) / 10, similar_grew: Math.round(Math.exp(p.gMean) * 10) / 10 }));
-  out.took_off = { yours: win.filter((p) => p.up3).length, expected: Math.round(win.reduce((t, p) => t + p.up3Rate, 0)), picks: n };
-  const byHook = [...win].sort((a, b) => a.plays26 - b.plays26);
-  const q = Math.floor(n / 4);
-  const meanEx = (arr) => arr.length ? Math.expm1(arr.reduce((t, p) => t + p.excess, 0) / arr.length) : null;
-  out.obsessions = { most_hooked: meanEx(byHook.slice(n - q)), least_hooked: meanEx(byHook.slice(0, q)) };
-  out.report = await buildReport({ meta, plays, picks, judged, looked, matched, scored, win, u, notPicked, lastJudgeable, lookup, wMin, wMax });
+  if (!R[out.headline].solid) out.checks.push({ id: 'picks', ok: true, warn: true, text: 'You have enough finds for a rough score; more history would narrow the range.' });
+  out.report = buildReport({ meta, plays, aPicks, sPicks, judgedA, mA, R, recentA, lastJ, notPicked, wMin, wMax, pack });
   out.ok = true;
   return out;
 }
 
-// ---------- personal report (descriptive; the score above doesn't depend on it)
-const mean = (a) => a.length ? a.reduce((t, x) => t + x, 0) / a.length : null;
-async function buildReport({ meta, plays, picks, judged, looked, matched, scored, win, u, notPicked, lastJudgeable, lookup, wMin, wMax }) {
-  const R = {};
-  const n = win.length, denom = n + meta.shrink;
-  const yearsSpan = (wMax - wMin) / 52.18;
-  R.facts = { plays: plays.length, artists: new Set(plays.map((p) => p.an)).size, finds: picks.length, years: Math.round(yearsSpan * 10) / 10,
-    findsPerYear: Math.round(picks.length / Math.max(yearsSpan - 0.5, 1)) };
-  R.avgGrowth = Math.expm1(mean(win.map((p) => p.excess)));
-  const qs = (pct) => meta.scores[Math.min(meta.scores.length - 1, Math.max(0, Math.round(pct / 100 * (meta.scores.length - 1))))];
-  R.rangeScores = [qs(u.range[0]), qs(u.range[1])];
-  // how far ahead of the crowd: share of each artist's ListenBrainz fans (since 2010) who arrived after you
+// ---------- personal report (descriptive; the scores above don't depend on it)
+function buildReport({ meta, plays, aPicks, sPicks, judgedA, mA, R, recentA, lastJ, notPicked, wMin, wMax }) {
+  const Rp = {}, A = R.artist_A, S = R.song_A;
+  const years = (wMax - wMin) / 52.18;
+  Rp.facts = { plays: plays.length, artists: new Set(plays.map((p) => p.an)).size, songs: new Set(plays.map((p) => `${p.an}\t${p.tn}`)).size,
+    findsA: aPicks.length, findsS: sPicks.length, years: Math.round(years * 10) / 10, perYear: Math.round(aPicks.length / Math.max(years - 0.5, 1)) };
+  // artists-level stories use artist prescience picks in its window (artists are what people recognise)
+  const win = A.win || [];
   const ahead = [];
   for (const p of win) {
-    if (p.art.fm < (meta.y0 - 12)) continue;
-    let tot = 0, after = 0;
-    for (const [t, c] of p.art.adopt) { if (t > meta.last_month) continue; tot += c; if (t > p.m) after += c; }
+    if (p.art.fm < meta.m0) continue;
+    let tot = 0, after = 0; const r = p.art.rows;
+    for (let i = 0; i < r.month.length; i++) { if (r.month[i] > meta.last_month) break; tot += r.a[i]; if (r.month[i] > p.m) after += r.a[i]; }
     if (tot >= 5) ahead.push({ name: p.name, m: p.m, share: after / tot, fans: tot });
   }
-  R.ahead = { share: mean(ahead.map((a) => a.share)), artists: ahead.length,
-    best: ahead.filter((a) => a.fans >= 30).sort((a, b) => b.share - a.share || b.fans - a.fans).slice(0, 3) };
-  // where the edge comes from: being in scenes that grew vs picking well within them
-  R.edge = { scenes: Math.expm1(mean(win.map((p) => p.sceneEff))), within: Math.expm1(mean(win.map((p) => p.excess))) };
-  // year by year (every judged year, not only the scored window)
-  const byY = new Map();
-  for (const p of scored) { const y = Math.floor(p.m / 12); if (!byY.has(y)) byY.set(y, []); byY.get(y).push(p.excess); }
-  R.byYear = [...byY.entries()].sort((a, b) => a[0] - b[0]).map(([y, xs]) => ({ year: y, finds: xs.length, growth: Math.expm1(mean(xs)), inScore: y * 12 + 11 > Math.max(...win.map((p) => p.m)) - 12 * meta.window_years }));
-  // conviction: plays in the first six months
-  const bins = [[4, 9, 'Tried a few times'], [10, 24, 'Kept coming back'], [25, 59, 'Hooked'], [60, Infinity, 'Obsessed']];
-  R.conviction = bins.map(([lo, hi, label]) => { const xs = win.filter((p) => p.plays26 >= lo && p.plays26 <= hi); return { label, lo, hi, finds: xs.length, growth: xs.length ? Math.expm1(mean(xs.map((p) => p.excess))) : null }; });
-  // how you found them (how the first play started; Spotify's reason_start)
+  Rp.ahead = { share: mean(ahead.map((a) => a.share)), artists: ahead.length, best: ahead.filter((a) => a.fans >= 30).sort((a, b) => b.share - a.share || b.fans - a.fans).slice(0, 3) };
+  Rp.tookOff = win.length ? { yours: win.filter((p) => p.up3).length, expected: Math.round(win.reduce((t, p) => t + (p.up3Rate || 0), 0)) } : null;
+  Rp.edge = win.length ? { scenes: Math.expm1(mean(win.map((p) => p.sceneEff))), within: Math.expm1(mean(win.map((p) => p.excess))) } : null;
+  const byY = new Map(); for (const p of A.all || []) { const y = Math.floor(p.m / 12); if (!byY.has(y)) byY.set(y, []); byY.get(y).push(p.excess); }
+  const wlo = A.window ? A.window[0] : Infinity;
+  Rp.byYear = [...byY.entries()].sort((a, b) => a[0] - b[0]).map(([y, xs]) => ({ year: y, finds: xs.length, growth: Math.expm1(mean(xs)), inScore: y * 12 + 11 >= wlo }));
+  const bins = [[4, 9, 'Tried a few times'], [10, 24, 'Kept coming back'], [25, 59, 'Hooked'], [60, 1e9, 'Obsessed']];
+  Rp.conviction = bins.map(([lo, hi, label]) => { const xs = win.filter((p) => p.plays26 >= lo && p.plays26 <= hi); return { label, lo, hi: hi >= 1e9 ? null : hi, finds: xs.length, growth: xs.length ? Math.expm1(mean(xs.map((p) => p.excess))) : null }; });
   const HOW = { chose: 'You chose it (clicked or pressed play)', next: 'Came up next (album, playlist or queue)', shuffle: 'Came up on shuffle', skip: 'You skipped to it', other: 'Other (app opened, another device…)' };
-  R.how = Object.entries(HOW).map(([k, label]) => { const xs = win.filter((p) => p.how === k); return { key: k, label, finds: xs.length, growth: xs.length ? Math.expm1(mean(xs.map((p) => p.excess))) : null }; }).filter((h) => h.finds);
-  // every scored find
-  R.finds = win.map((p) => ({ name: p.name, m: p.m, found: monthLabel(p.m), a0: p.a0, a1: p.a1, vs: Math.expm1(p.excess), excess: p.excess,
-    impact: p.excess / denom, plays26: p.plays26, track: p.firstTrack, how: p.how, extra: (p.a1 + 1) - (p.a0 + 1) * Math.exp(p.gMean) }));
-  // open bets: the newest finds, too recent to judge; how they're doing so far
-  const recent = picks.filter((p) => p.m > lastJudgeable).sort((a, b) => b.plays26 - a.plays26).slice(0, 15);
-  if (recent.length) await lookup(recent);
-  R.open = recent.filter((p) => p.art).map((p) => {
-    const sum = (lo, hi) => { let s = 0; for (let t = lo; t <= hi; t++) s += p.art.adopt.get(t) || 0; return s; };
-    const then = sum(p.m - 5, p.m), now = p.m <= meta.last_month - 6 ? sum(meta.last_month - 5, meta.last_month) : null;
-    return { name: p.name, found: monthLabel(p.m), plays26: p.plays26, then, now };
-  });
-  // not counted
-  const scoredSet = new Set(win), lookedSet = new Set(looked);
-  R.notCounted = {
-    tried: notPicked.tried, warmup: notPicked.warmup,
-    unrecognised: looked.filter((p) => !p.art).map((p) => p.name),
-    tooRecent: picks.filter((p) => p.m > lastJudgeable).map((p) => p.name),
-    older: [...judged.filter((p) => !lookedSet.has(p)), ...scored.filter((p) => !scoredSet.has(p))].map((p) => p.name),
-    early: picks.filter((p) => p.m < meta.y0).map((p) => p.name),
-  };
-  R.reliability = u.reliability; R.matchedShare = looked.length ? looked.filter((p) => p.art).length / looked.length : 0;
-  return R;
+  Rp.how = Object.entries(HOW).map(([k, label]) => { const xs = win.filter((p) => p.how === k); return { key: k, label, finds: xs.length, growth: xs.length ? Math.expm1(mean(xs.map((p) => p.excess))) : null }; }).filter((h) => h.finds);
+  // genres (headline measure's finds; a song's genre is its artist's)
+  const H = R[R.song_A.enough ? 'song_A' : 'artist_A'];
+  const famRows = meta.families.map((name, i) => {
+    const xs = (H.win || []).filter((p) => p.art.fam === i);
+    return { name, finds: xs.length, share: (H.win || []).length ? xs.length / H.win.length : 0, typical: meta.family_share ? meta.family_share[H.unit][i] : null,
+      growth: xs.length >= 5 ? Math.expm1(mean(xs.map((p) => p.excess))) : null };
+  }).filter((g) => g.finds || (g.typical && g.typical > 0.02));
+  Rp.genres = famRows.sort((a, b) => b.finds - a.finds);
+  const denomA = win.length + meta.shrink;
+  Rp.findsA = win.map((p) => ({ name: p.name, m: p.m, found: monthLabel(p.m), a0: p.f.a0, a1: p.f.a1, vs: Math.expm1(p.excess), impact: p.excess / denomA, plays26: p.plays26, track: p.firstTrack, fam: meta.families[p.art.fam],
+    extra: (p.f.a1 + 1) - (p.f.a0 + 1) * Math.exp(p.mean) }));
+  const denomS = (S.win || []).length + meta.shrink;
+  Rp.findsS = (S.win || []).flatMap((u) => u.songs.map((p) => ({ name: p.track, artist: p.name, m: p.m, found: monthLabel(p.m), a0: p.f.a0, a1: p.f.a1, vs: Math.expm1(p.excess), impact: (p.excess * p.w / u.w) / denomS, plays26: p.plays26 })));
+  Rp.open = recentA.map((p) => {
+    const art = p.art || null; if (!art) return null;
+    const sum = (lo, hi) => { let s = 0; const r = art.rows; for (let i = 0; i < r.month.length; i++) if (r.month[i] >= lo && r.month[i] <= hi) s += r.a[i]; return s; };
+    return { name: p.name, found: monthLabel(p.m), plays26: p.plays26, then: sum(p.m - 5, p.m), now: p.m <= meta.last_month - 6 ? sum(meta.last_month - 5, meta.last_month) : null };
+  }).filter(Boolean);
+  const winSet = new Set(win), mSet = new Set(mA);
+  Rp.notCounted = { tried: notPicked.tried, warmup: notPicked.warmup, unrecognised: judgedA.filter((p) => !p.item).map((p) => p.name),
+    tooRecent: aPicks.filter((p) => p.m > lastJ).map((p) => p.name), older: mA.filter((p) => !winSet.has(p)).map((p) => p.name).concat(judgedA.filter((p) => p.item && !mSet.has(p)).map((p) => p.name)),
+    early: aPicks.filter((p) => p.m < meta.y0).map((p) => p.name) };
+  return Rp;
 }
