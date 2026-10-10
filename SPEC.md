@@ -292,6 +292,15 @@ Descriptive: all genre families.
 [3.1, 4.1; 99% low 3.0]. Gaps on the sealed half: Electronic 6.9, Hip hop 6.8, Indie & alternative 6.5, Pop 6.1, R&B 5.2,
 Metal 4.0, Folk & country 3.0, Rock & punk 2.9, Jazz, blues & classical 1.7.
 
+## Genre, continued (written 2026-10-09 20:42, before any sealed run of analysis/genre2.py)
+Exploratory on the explore half; tested once on the sealed half with the committed code. Confirmed = 99% lower bound > 0.
+- P14a. Taste is partly general: people rated only on one genre's picks separate on their later picks in other genres
+  (average over genres of the top-minus-bottom-fifth gap in other genres > 0). Explore +4.0 points (99% low 3.7).
+- P14b. And partly genre-specific: the same-genre gap exceeds the other-genre gap (average). Explore +2.6 points (99% low 2.1).
+- P14c. Scaled by each genre's spread of outcomes, the gap is still larger in Indie & alternative than in Rock & punk.
+  Explore +0.062 SD (99% low 0.047).
+Descriptive: per-genre carry-over, genre favourites of good pickers, all spread-scaled gaps.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|
