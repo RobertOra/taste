@@ -380,10 +380,22 @@
       <h3>How much of a good picker's edge is a general good ear, and how much is knowing the genre</h3>
       <p class="wu-note">Hidden half. People rated only on their earlier picks in one genre. Each bar is how much better the best fifth's later picks in
         that genre did than the worst fifth's. The first part also showed up in their picks in other genres: a general good ear. The rest showed up only
-        in the genre itself. For rock and for jazz, blues, and classical, a record predicted other genres about as well as its own, so the bar is all
-        good ear (and small). Hover for exact figures and ranges.</p>
+        in the genre itself. For rock and for jazz, blues, and classical, a record predicted other genres slightly better than its own: there's no
+        genre-specific edge to show, so the bar has no genre part, and a small mark shows the (slightly larger) edge in other genres. Hover for exact figures and ranges.</p>
       <div class="wu-legend" id="gc-legend"></div>
       <div class="wu-chart dash-skeleton" id="gc-chart" data-source="genre"></div>
+    </div>
+    <p><b>So who picks a genre best: its specialists, or people with a good ear in general?</b> Neither wins. Within each genre we rated the same people
+      two ways, on their picks in that genre alone and on all their picks, and compared the best fifth on each ranking. Their later picks in the genre did
+      about equally well (specialists minus good-in-general, on average: <span class="wu-num dash-skeleton" data-source="headlines" data-field="hidden" data-where="key=P15" data-fmt="pts">—</span>). To find the best hip hop picker, you
+      might as well look for the best picker.</p>
+    <div class="wu-card">
+      <h3>Within each genre: the best at that genre, the best in general, and the average picker</h3>
+      <p class="wu-note">Hidden half. Growth of their later new artists in the genre against similar artists of that genre. Both top fifths come from the
+        same people (keen fans with at least 15 earlier picks in the genre), which is also why the average picker sits above zero. The two top fifths
+        overlap by about half. Bars are 95% ranges.</p>
+      <div class="wu-legend" id="gs-legend"></div>
+      <div class="wu-chart dash-skeleton" id="gs-chart" data-source="genrespec"></div>
     </div>
   </section>
 
@@ -445,7 +457,7 @@
       strength matched what the first half had shown.</p>
     <p><b>We checked the takeoff and good-picker numbers the same way.</b> They were found afterwards, on the first half. Before touching the hidden half
       again, we wrote down each prediction, exactly how it would be measured, and a stricter bar for passing (99% sure, since there were
-      several), in eleven rounds. Then we checked each once. Of thirty predictions, twenty-eight held; the two that didn't, both about how fast
+      several), in twelve rounds. Then we checked each once. Of thirty-one predictions, twenty-nine held; the two that didn't, both about how fast
       taste drifts, pointed the right way but fell short of the bar, and the page says so where they come up.</p>
     <div class="wu-card">
       <h3>Checks of these findings on the hidden half</h3>
@@ -1259,12 +1271,45 @@
       svg.append('rect').attr('x', x(0)).attr('y', cy - h / 2).attr('width', Math.max(0, x(ear) - x(0))).attr('height', h).attr('fill', cEar);
       if (bonus > 0) svg.append('rect').attr('x', x(ear) + 2).attr('y', cy - h / 2).attr('width', Math.max(0, x(ear + bonus) - x(ear) - 2)).attr('height', h)
         .attr('rx', 3).attr('fill', cBonus);
-      svg.append('text').attr('x', x(ear + bonus) + 6).attr('y', cy).attr('dy', '0.35em').attr('fill', css('--color-fg')).style('font-size', fs)
-        .text(r.same > 0 ? `${fmt.pct(ear / r.same)} good ear` : '');
+      if (r.other > r.same) svg.append('line').attr('x1', x(r.other)).attr('x2', x(r.other)).attr('y1', cy - h / 2 - 2).attr('y2', cy + h / 2 + 2)
+        .attr('stroke', cEar).attr('stroke-width', 2);
+      svg.append('text').attr('x', x(Math.max(ear + bonus, r.other)) + 6).attr('y', cy).attr('dy', '0.35em').attr('fill', css('--color-fg')).style('font-size', fs)
+        .text(r.other >= r.same ? 'no genre-specific edge' : `${fmt.pct(ear / r.same)} good ear`);
       const lines = [['Edge in this genre', fmt.spct1(r.same), cBonus], ['Edge in other genres (good ear)', fmt.spct1(r.other), cEar]];
       if (r.r) lines.push(['Ranges', `${fmt.spct1(+r.r.gap_same_lo)} to ${fmt.spct1(+r.r.gap_same_hi)}; ${fmt.spct1(+r.r.gap_other_lo)} to ${fmt.spct1(+r.r.gap_other_hi)}`]);
       svg.append('rect').attr('x', 0).attr('y', cy - rowH / 2).attr('width', width).attr('height', rowH).attr('fill', 'transparent')
         .on('mousemove', (ev) => tip.show(ev, r.avg ? 'All genres (average)' : `Rated on ${r.label}`, lines)).on('mouseleave', () => tip.hide());
+    });
+  }
+
+  function drawGenreSpec() {
+    const el = document.getElementById('gs-chart');
+    if (!ready(el, ['genrespec'])) return;
+    const kinds = [['specialist', 'Best fifth at this genre', dash.colors[0]], ['general', 'Best fifth overall', dash.colors[1]], ['everyone', 'Average picker', css('--cds-chart-muted')]];
+    legend('gs-legend', kinds.map(([, l, c]) => [l, c, 'dot']));
+    const rows = dash.data('genrespec').data.slice().sort((a, b) => +b.general - +a.general);
+    const fs = css('--cds-font-size-caption') || '12px';
+    const width = el.clientWidth, rowH = 40, m = { t: 4, r: 48, b: 26 };
+    const height = m.t + rows.length * rowH + m.b;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
+    const left = Math.min(textWidth(svg, rows.map((r) => r.family), fs) + 14, width * 0.45);
+    const x = d3.scaleLinear([0, d3.max(rows, (r) => Math.max(+r.specialist_hi, +r.general_hi)) * 1.05], [left, width - m.r]).nice();
+    svg.append('g').selectAll('line').data(x.ticks(5)).join('line').attr('x1', (v) => x(v)).attr('x2', (v) => x(v)).attr('y1', m.t).attr('y2', height - m.b)
+      .attr('stroke', (v) => (v === 0 ? css('--cds-chart-axis') : css('--cds-chart-grid')));
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 6})`).call(d3.axisBottom(x).ticks(5).tickFormat(d3.format('+.0%')).tickSize(0)), fs);
+    const tip = tooltip(el);
+    rows.forEach((r, i) => {
+      const y0 = m.t + i * rowH;
+      svg.append('text').attr('x', 0).attr('y', y0 + rowH / 2).attr('dy', '0.35em').attr('fill', css('--color-fg-muted')).style('font-size', fs).text(r.family);
+      kinds.forEach(([k, kl, c], j) => {
+        const v = Math.max(0, +r[k]), cy = y0 + 8 + j * 11, h = 9;
+        svg.append('rect').attr('x', x(0)).attr('y', cy - h / 2).attr('width', Math.max(1, x(v) - x(0))).attr('height', h).attr('rx', 2).attr('fill', c);
+        if (k !== 'everyone') svg.append('line').attr('x1', x(+r[`${k}_lo`])).attr('x2', x(+r[`${k}_hi`])).attr('y1', cy).attr('y2', cy).attr('stroke', css('--color-fg')).attr('opacity', 0.5);
+      });
+      svg.append('rect').attr('x', 0).attr('y', y0).attr('width', width).attr('height', rowH).attr('fill', 'transparent')
+        .on('mousemove', (ev) => tip.show(ev, r.family, kinds.map(([k, kl, c]) => [kl, `${fmt.spct1(+r[k])} (${fmt.spct1(+r[`${k}_lo`])} to ${fmt.spct1(+r[`${k}_hi`])})`, c])
+          .concat([['Top fifths overlap', fmt.pct(+r.overlap)]])))
+        .on('mouseleave', () => tip.hide());
     });
   }
 
@@ -1513,6 +1558,7 @@
     drawHabits();
     drawGenre();
     drawGenreCarry();
+    drawGenreSpec();
     drawFanRel();
     drawStayBad();
     drawSceneSplit();

@@ -143,6 +143,10 @@ def headlines():
     rows.append({"key": "P14c", "claim": "Scaled by each genre's spread, taste matters more in Indie & alternative than in Rock & punk", "unit": "log",
                  "hidden": g2s["spread_test"]["est"], "lo": g2s["spread_test"]["lo"], "hi": g2s["spread_test"]["hi"], "lo99": g2s["spread_test"]["lo99"],
                  "first_half": g2e["spread_test"]["est"], "rate": None, "rate_compared": None, "confirmed": g2s["spread_test"]["lo99"] > 0})
+    g3s, g3e = (json.loads((OUT / f"genre3_{h}.json").read_text())["summary"] for h in ("sealed", "explore"))
+    rows.append({"key": "P15", "claim": "Within genres, genre specialists don't beat good-in-general pickers by more than 1 point (average difference)",
+                 "unit": "points", "hidden": g3s["avg_spec_minus_gen"], "lo": g3s["lo"], "hi": g3s["hi"], "lo99": None,
+                 "first_half": g3e["avg_spec_minus_gen"], "rate": None, "rate_compared": None, "confirmed": g3s["hi99"] < 0.01})
     rows.append({"key": "H2growth", "claim": "3+ good pickers agree: growth vs similar artists (descriptive)", "unit": "more growth",
                  "hidden": hs["H2"]["best"]["growth_vs_similar"], "lo": None, "hi": None, "lo99": None,
                  "first_half": he["H2"]["best"]["growth_vs_similar"], "rate": None, "rate_compared": None, "confirmed": None})
@@ -259,6 +263,10 @@ def genre():
     return rows
 
 
+def genrespec():
+    return json.loads((OUT / "genre3_sealed.json").read_text())["families"]
+
+
 def obstaste():
     return json.loads((OUT / "obs_taste_sealed_deciles.json").read_text())["curve"]
 
@@ -303,7 +311,7 @@ def crowd():
 
 
 if __name__ == "__main__":
-    for name, fn in (("headlines", headlines), ("obsession", obsession), ("obstaste", obstaste), ("recency", recency), ("badtaste", badtaste), ("fanrel", fanrel), ("learning", learning), ("genre", genre), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
+    for name, fn in (("headlines", headlines), ("obsession", obsession), ("obstaste", obstaste), ("recency", recency), ("badtaste", badtaste), ("fanrel", fanrel), ("genre", genre), ("genrespec", genrespec), ("ladder", ladder), ("crowd", crowd), ("fanvalue", fanvalue)):
         rows = fn()
         (W / f"{name}.json").write_text(json.dumps(rows, indent=1))
         print(name, json.dumps(rows)[:600])

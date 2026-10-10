@@ -314,6 +314,9 @@ Exploratory on the explore half; tested once on the sealed half with the committ
   Explore average -0.5 points. (A pre-registered bound rather than a no-difference claim; the overall ranking uses more picks.)
 Descriptive: per-genre values, the average picker in each group, overlap of the two top fifths.
 
+**Sealed result (run once, 2026-10-10): confirmed.** Average specialists minus good in general -0.2 points [-0.6, +0.1;
+99% upper +0.2], below the +1 point bound.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|
