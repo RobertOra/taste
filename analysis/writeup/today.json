@@ -1,0 +1,82 @@
+[
+ {
+  "key": "mlhd_hidden:50",
+  "platform": "Last.fm (2005\u20132013)",
+  "src": "mlhd_hidden",
+  "picks": 50,
+  "typical": false,
+  "reliability": 0.347,
+  "lo": 26,
+  "hi": 92
+ },
+ {
+  "key": "mlhd_hidden:173",
+  "platform": "Last.fm (2005\u20132013)",
+  "src": "mlhd_hidden",
+  "picks": 173,
+  "typical": true,
+  "reliability": 0.647,
+  "lo": 41,
+  "hi": 90
+ },
+ {
+  "key": "mlhd_hidden:500",
+  "platform": "Last.fm (2005\u20132013)",
+  "src": "mlhd_hidden",
+  "picks": 500,
+  "typical": false,
+  "reliability": 0.841,
+  "lo": 54,
+  "hi": 87
+ },
+ {
+  "key": "mlhd_hidden:1500",
+  "platform": "Last.fm (2005\u20132013)",
+  "src": "mlhd_hidden",
+  "picks": 1500,
+  "typical": false,
+  "reliability": 0.941,
+  "lo": 63,
+  "hi": 83
+ },
+ {
+  "key": "lb_recent:50",
+  "platform": "ListenBrainz (2019\u20132025)",
+  "src": "lb_recent",
+  "picks": 50,
+  "typical": false,
+  "reliability": 0.316,
+  "lo": 25,
+  "hi": 92
+ },
+ {
+  "key": "lb_recent:278",
+  "platform": "ListenBrainz (2019\u20132025)",
+  "src": "lb_recent",
+  "picks": 278,
+  "typical": true,
+  "reliability": 0.72,
+  "lo": 46,
+  "hi": 89
+ },
+ {
+  "key": "lb_recent:500",
+  "platform": "ListenBrainz (2019\u20132025)",
+  "src": "lb_recent",
+  "picks": 500,
+  "typical": false,
+  "reliability": 0.822,
+  "lo": 53,
+  "hi": 88
+ },
+ {
+  "key": "lb_recent:1500",
+  "platform": "ListenBrainz (2019\u20132025)",
+  "src": "lb_recent",
+  "picks": 1500,
+  "typical": false,
+  "reliability": 0.933,
+  "lo": 63,
+  "hi": 84
+ }
+]
