@@ -41,9 +41,12 @@ MONTH = "(year(make_timestamp({w}::BIGINT * 604800000000 + 302400000000)) * 12 "
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--horizon", type=int, default=12)
-    ap.add_argument("--half", choices=["explore", "sealed"], default="explore")
+    ap.add_argument("--half", choices=["explore", "sealed", "lb"], default="explore")
     args = ap.parse_args()
     H, half = args.horizon, args.half
+    global LAST
+    LAST = 2026 * 12 + 8 if half == "lb" else 2012 * 12 + 11  # pipeline/periods.py
+    SY = "lb" if half == "lb" else "explore"  # lb has its own scenes
     out = X / "community" / f"{half}_h{H}.parquet"
     out.parent.mkdir(parents=True, exist_ok=True)
     tmp = ROOT / "data" / "_tmp" / f"community-{os.getpid()}"
@@ -68,7 +71,7 @@ def main():
         WHERE b.first_week >= f.start_week + 26 AND b.w4 IS NOT NULL AND b.w4 - b.first_week < 26""")
     ex(f"CREATE TABLE act AS SELECT DISTINCT user, month FROM {uam}")
     parts = []
-    for y in range(2006, 2013):
+    for y in range(2006, LAST // 12 + 1):
         m0, m1 = y * 12, y * 12 + 11
         if m0 > LAST - H:
             break
@@ -77,7 +80,7 @@ def main():
         # mainstream scenes (everyone plays popular artists), making "communities" about popularity.
         ex(f"""CREATE OR REPLACE TABLE home AS
             WITH up AS (SELECT u.user, s.scene_200 AS scene, sum(u.plays) AS p FROM {uam} u
-                        JOIN read_parquet('{X}/scenes_yearly/explore.parquet') s ON s.artist = u.artist AND s.year = {y}
+                        JOIN read_parquet('{X}/scenes_yearly/{SY}.parquet') s ON s.artist = u.artist AND s.year = {y}
                         WHERE u.month BETWEEN {m0 - 12} AND {m0 - 1} GROUP BY ALL),
                  us AS (SELECT user, scene, p / sum(p) OVER (PARTITION BY user) AS share FROM up),
                  gs AS (SELECT scene, sum(p) / (SELECT sum(p) FROM up) AS gshare FROM up GROUP BY scene)

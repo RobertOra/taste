@@ -46,8 +46,10 @@ MONTH = "(year(make_timestamp({w}::BIGINT * 604800000000 + 302400000000)) * 12 "
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("half", choices=["explore", "sealed"])
+    ap.add_argument("half", choices=["explore", "sealed", "lb"])
     half = ap.parse_args().half
+    global LAST
+    LAST = 2026 * 12 + 8 if half == "lb" else 2012 * 12 + 11  # pipeline/periods.py
     out = X / "song_bets" / f"{half}.parquet"
     out.parent.mkdir(parents=True, exist_ok=True)
     tmp = ROOT / "data" / "_tmp" / f"songbets-{os.getpid()}"
@@ -64,7 +66,7 @@ def main():
     for c in "0123456789abcdef":  # one archive at a time (users never span archives)
         con.execute(f"""INSERT INTO sb
             WITH w AS (SELECT user, recording, any_value(artists[1]) AS artist, (ts::BIGINT // 604800)::INT AS week,
-                              count(*) AS plays
+                              {'sum(plays)' if half == 'lb' else 'count(*)'} AS plays
                        FROM read_parquet('{D}/raw/{half}/mlhdplus-complete-{c}.parquet') GROUP BY user, recording, week),
                  r AS (SELECT *, row_number() OVER (PARTITION BY user, recording ORDER BY week) AS rn,
                               min(week) OVER (PARTITION BY user, recording) AS fw FROM w),

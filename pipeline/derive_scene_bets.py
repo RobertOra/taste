@@ -50,7 +50,7 @@ MONTH = "(year(make_timestamp({w}::BIGINT * 604800000000 + 302400000000)) * 12 "
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("half", choices=["explore", "sealed"])
+    ap.add_argument("half", choices=["explore", "sealed", "lb"])
     half = ap.parse_args().half
     out = X / "scene_bets" / f"{half}.parquet"
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -61,7 +61,9 @@ def main():
     con = duckdb.connect()
     con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; "
                 "SET max_temp_directory_size='40GB'")
-    sy = f"read_parquet('{X}/scenes_yearly/explore.parquet')"  # scenes are built on explore listening only
+    global LAST
+    LAST = 2026 * 12 + 8 if half == "lb" else 2012 * 12 + 11  # pipeline/periods.py
+    sy = f"read_parquet('{X}/scenes_yearly/{'lb' if half == 'lb' else 'explore'}.parquet')"  # MLHD+: explore listening; lb: its own
     con.execute(f"""CREATE TABLE abets AS
         SELECT b.user, b.artist, {MONTH.format(w='b.w4')}::SMALLINT AS m, b.plays_26w,
                regexp_extract(b.filename, 'mlhdplus-(.)[.]parquet', 1) AS arch
@@ -71,12 +73,12 @@ def main():
     con.execute(f"CREATE TABLE act AS SELECT DISTINCT user, month FROM read_parquet('{X}/user_artist_month/{half}/*.parquet')")
     con.execute(f"CREATE TABLE panel AS SELECT * FROM read_parquet('{X}/market/{half}/panel.parquet')")
     parts = []
-    for y in range(2006, 2012):
+    for y in range(2006, LAST // 12):
         # 1. artist -> year-y scene, with later artists mapped through the most-overlapping scene.
         con.execute(f"CREATE OR REPLACE TABLE base AS SELECT artist, scene_200 AS s FROM {sy} WHERE year = {y}")
         maps = ["SELECT artist, s, 0 AS pri FROM base"]
         for k, y2 in enumerate([y + 1, y + 2], start=1):
-            if y2 > 2012:
+            if y2 > LAST // 12:
                 continue
             con.execute(f"""CREATE OR REPLACE TABLE m{k} AS
                 WITH ov AS (SELECT l.scene_200 AS s2, b.s, sum(l.n_listeners) AS w FROM {sy} l JOIN base b USING (artist)

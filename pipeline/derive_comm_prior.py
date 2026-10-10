@@ -30,7 +30,7 @@ MONTH = "(year(make_timestamp({w}::BIGINT * 604800000000 + 302400000000)) * 12 "
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("half", choices=["explore", "sealed"])
+    ap.add_argument("half", choices=["explore", "sealed", "lb"])
     half = ap.parse_args().half
     out = X / "comm_prior"
     out.mkdir(parents=True, exist_ok=True)

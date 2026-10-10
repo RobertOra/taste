@@ -86,7 +86,7 @@ def main():
 
     # --- going stale
     decay, lag_parts = [], {}
-    for ry in ((2006, 2007) if half != "lb" else ()):  # going-stale test not run on lb (not pre-registered there)
+    for ry in (2006, 2007):  # same design on every half (rating years 2006 and 2007, judged through 2011)
         r = yr.filter((pl.col("year") == ry) & (pl.col("n") >= 20)).with_columns(sc=pl.col("s") / (pl.col("n") + 20))
         later = yr.filter(pl.col("year").is_between(ry + 1, 2011) & (pl.col("n") >= 10))
         keep = later.group_by("user").agg(k=pl.len()).filter(pl.col("k") == 2011 - ry)

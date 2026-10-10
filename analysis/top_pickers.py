@@ -37,10 +37,10 @@ def pct(x, q):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--half", choices=["explore", "sealed"], required=True)
+    ap.add_argument("--half", choices=["explore", "sealed", "lb"], required=True)
     half = ap.parse_args().half
     b, f = bets_with_bands(half)
-    sc = pl.read_parquet(X / "scenes_yearly" / "explore.parquet", columns=["artist", "year", "scene_200"])
+    sc = pl.read_parquet(X / "scenes_yearly" / ("lb.parquet" if half == "lb" else "explore.parquet"), columns=["artist", "year", "scene_200"])
     ob = pl.read_parquet(X / "obsession" / f"{half}_artist.parquet", columns=["user", "artist", "plays_to_commit"])
     b = b.join(sc, on=["artist", "year"], how="left").with_columns(pl.col("scene_200").fill_null(-1),
                                                                   x10=(pl.col("v") >= np.log(10)).cast(pl.Float64),
