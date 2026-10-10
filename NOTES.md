@@ -144,3 +144,8 @@ Era test passed: taste predicts as well or better in 2019-2023 than 2007-2012. D
   small real remnant at 9 years (noise-corrected 0.09-0.21; prescience songs most lasting 0.50 -> 0.21); scenes too noisy.
   The single-year 10-year point (2025, Jan-Aug) understates. Decade chart: prescience songs default, discernment toggle;
   prescience bottom fifth still 31% bottom at 10 years (top fifth 22%).
+
+## Taste-scoring site (site/, 2026-10-10)
+Reference data in data/site (~3 GB, from LB). Score = prescience vs similar picks (same month, size) with the project's
+corrections, simplified for outside visitors; agrees 0.71 with the frozen score (~0.95 disattenuated); reliability 0.65 / 0.81
+(artists) and 0.74 / 0.87 (songs) at 110 / 250 judged finds. Engine reproduces builder scores exactly. Not deployed yet.
