@@ -494,6 +494,19 @@
   "confirmed": true
  },
  {
+  "key": "P16",
+  "claim": "Rated on other genres only, people predict a genre within 1 point of their record in that genre (average)",
+  "unit": "points",
+  "hidden": 0.005940944005323036,
+  "lo": 0.0022056259480199045,
+  "hi": 0.009312661296364258,
+  "lo99": null,
+  "first_half": 0.003419154320978073,
+  "rate": null,
+  "rate_compared": null,
+  "confirmed": false
+ },
+ {
   "key": "H2growth",
   "claim": "3+ good pickers agree: growth vs similar artists (descriptive)",
   "unit": "more growth",

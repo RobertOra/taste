@@ -165,9 +165,9 @@
         <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_traits" data-fmt="times">—</span>; by track record, <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_record" data-fmt="times">—</span>.</li>
       <li><a href="#scenesplit"><b>Good taste is right scenes and right artists.</b></a> For the top 1%, their scenes took off
         <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=scene_quality" data-fmt="times">—</span> as often, and their artists within those scenes <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=within_scene" data-fmt="times">—</span>.</li>
-      <li><a href="#genre"><b>A good ear carries across genres, and matters least in established ones.</b></a> People rated on one genre picked
-        well in others too (about <span class="wu-num dash-skeleton" data-source="genre" data-field="carryover" data-where="key=summary" data-fmt="pct">—</span> of the edge carries over). The gap between good and poor pickers was smallest
-        in rock, folk, and jazz, blues, and classical.</li>
+      <li><a href="#genre"><b>A good ear carries across genres, and matters least in established ones.</b></a> Rated only on their other genres,
+        people picked a genre about <span class="wu-num dash-skeleton" data-source="genregeneral" data-field="share_general" data-where="key=summary" data-fmt="pct">—</span> as well as when rated on the genre itself. The gap between
+        good and poor pickers was smallest in rock, folk, and jazz, blues, and classical, where most of what people get into is long established.</li>
       <li><a href="#obsession"><b>A good picker's obsessions are their best calls.</b></a> People's most-replayed finds beat their
         least-replayed ones, and good pickers' edge lives almost entirely in what they got hooked on.</li>
       <li><a href="#every-size"><b>It's a steady edge, not a nose for hits.</b></a> Good taste raises the odds by about the same multiple whether the
@@ -360,10 +360,13 @@
   <section class="wu-section" id="genre">
     <h2>A good ear carries across genres, and matters least in established ones</h2>
     <p>Where does taste make the biggest difference? Within each genre, we compared the new artists found by the best fifth of pickers with those
-      found by the worst fifth, each against similar artists in the same genre. The gap was biggest in electronic, hip hop, and indie and smallest in
-      rock and punk, folk and country, and jazz, blues, and classical. Some of that is room to be right: genres where new artists' fortunes vary more
-      leave more to get right. Allowing for that, the middle genres come out about even, but rock, folk, and jazz, blues, and classical stay clearly
-      lowest. In established genres, much of what people get into is already proven.</p>
+      found by the worst fifth, each against similar artists in the same genre. The gap was biggest in fast-moving genres like electronic, hip hop,
+      and indie, where many of the artists people get into are newcomers, and smallest in rock and punk, folk and country, and jazz, blues, and
+      classical. Those are established catalogs: <span class="wu-num dash-skeleton" data-source="genregeneral" data-field="established" data-where="key=Rock %26 punk" data-fmt="pct">—</span> of the rock and <span class="wu-num" data-source="genregeneral" data-field="established" data-where="key=Jazz, blues %26 classical" data-fmt="pct">—</span> of
+      the jazz, blues, and classical artists people got into were already around at the start of our data, against
+      <span class="wu-num" data-source="genregeneral" data-field="established" data-where="key=Electronic" data-fmt="pct">—</span> in electronic. Picking a long-established act leaves little to foresee. Some of the bigger gaps in fast-moving
+      genres are simply more room to be right: allowing for how much new artists' fortunes vary in each genre, the middle genres come out about even,
+      but the established ones stay clearly lowest.</p>
     <div class="wu-card">
       <h3>The gap between the best and worst pickers, by genre</h3>
       <p class="wu-note">Hidden half. How much more the best fifth's new artists grew than the worst fifth's, compared with similar artists of the same
@@ -371,31 +374,20 @@
         untagged artists are left out. Bars are 95% ranges.</p>
       <div class="wu-chart dash-skeleton" id="gn-chart" data-source="genre"></div>
     </div>
-    <p><b>Is taste general or genre-specific?</b> Mostly general. Rate people only on their picks in one genre, and the best fifth also beat the
-      worst fifth on their later picks in other genres, by <span class="wu-num dash-skeleton" data-source="genre" data-field="other_avg" data-where="key=summary" data-fmt="spct1">—</span> on average against
-      <span class="wu-num" data-source="genre" data-field="same_avg" data-where="key=summary" data-fmt="spct1">—</span> in the genre they were rated on: about <span class="wu-num" data-source="genre" data-field="carryover" data-where="key=summary" data-fmt="pct">—</span> of the edge carries
-      over. There's a real "good ear," plus a bonus for knowing a genre well. Good pickers' tastes lean only a little: they pick slightly more hip hop and
-      R&amp;B than poor pickers do (<span class="wu-num" data-source="genre" data-field="fav_ratio" data-where="key=Hip hop" data-fmt="times1">—</span> the share for hip hop) and less metal (<span class="wu-num" data-source="genre" data-field="fav_ratio" data-where="key=Metal" data-fmt="times1">—</span>).</p>
+    <p><b>Is taste general or genre-specific?</b> Mostly general. Take the same people and rate them two ways: on their picks in one genre, and only on
+      their picks in every other genre. Then see how their later picks in that genre did. The best fifth on the other-genres ranking did almost as well,
+      reaching about <span class="wu-num dash-skeleton" data-source="genregeneral" data-field="share_general" data-where="key=summary" data-fmt="pct">—</span> of the best fifth on the genre's own ranking. Knowing a genre adds a
+      small bonus in the fast-moving ones (a point or two in hip hop, electronic, indie, and pop) and none in the established ones. We had predicted the two
+      rankings would come within one point of each other on average; they came <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P16" data-fmt="pts">—</span> apart, narrowly missing that bar,
+      so "mostly general" is the honest summary. Good pickers' tastes lean only a little: they pick slightly more hip hop and R&amp;B than poor pickers do
+      (<span class="wu-num" data-source="genre" data-field="fav_ratio" data-where="key=Hip hop" data-fmt="times1">—</span> the share for hip hop) and less metal (<span class="wu-num" data-source="genre" data-field="fav_ratio" data-where="key=Metal" data-fmt="times1">—</span>).</p>
     <div class="wu-card">
-      <h3>How much of a good picker's edge is a general good ear, and how much is knowing the genre</h3>
-      <p class="wu-note">Hidden half. People rated only on their earlier picks in one genre. Each bar is how much better the best fifth's later picks in
-        that genre did than the worst fifth's. The first part also showed up in their picks in other genres: a general good ear. The rest showed up only
-        in the genre itself. For rock and for jazz, blues, and classical, a record predicted other genres slightly better than its own: there's no
-        genre-specific edge to show, so the bar has no genre part, and a small mark shows the (slightly larger) edge in other genres. Hover for exact figures and ranges.</p>
-      <div class="wu-legend" id="gc-legend"></div>
-      <div class="wu-chart dash-skeleton" id="gc-chart" data-source="genre"></div>
-    </div>
-    <p><b>So who picks a genre best: its specialists, or people with a good ear in general?</b> Neither wins. Within each genre we rated the same people
-      two ways, on their picks in that genre alone and on all their picks, and compared the best fifth on each ranking. Their later picks in the genre did
-      about equally well (specialists minus good-in-general, on average: <span class="wu-num dash-skeleton" data-source="headlines" data-field="hidden" data-where="key=P15" data-fmt="pts">—</span>). To find the best hip hop picker, you
-      might as well look for the best picker.</p>
-    <div class="wu-card">
-      <h3>Within each genre: the best at that genre, the best in general, and the average picker</h3>
-      <p class="wu-note">Hidden half. Growth of their later new artists in the genre against similar artists of that genre. Both top fifths come from the
-        same people (keen fans with at least 15 earlier picks in the genre), which is also why the average picker sits above zero. The two top fifths
-        overlap by about half. Bars are 95% ranges.</p>
-      <div class="wu-legend" id="gs-legend"></div>
-      <div class="wu-chart dash-skeleton" id="gs-chart" data-source="genrespec"></div>
+      <h3>Predicting a genre from the genre itself, or from everything else someone picks</h3>
+      <p class="wu-note">Hidden half. The same people (with at least 15 earlier picks in the genre and 20 in others), rated on their picks in the genre
+        or only on their picks in other genres. Bars show how much their later new artists in the genre grew against similar artists of that genre; the
+        average picker in this group of keen fans sits above zero. Bars are 95% ranges.</p>
+      <div class="wu-legend" id="gg-legend"></div>
+      <div class="wu-chart dash-skeleton" id="gg-chart" data-source="genregeneral"></div>
     </div>
   </section>
 
@@ -457,8 +449,9 @@
       strength matched what the first half had shown.</p>
     <p><b>We checked the takeoff and good-picker numbers the same way.</b> They were found afterwards, on the first half. Before touching the hidden half
       again, we wrote down each prediction, exactly how it would be measured, and a stricter bar for passing (99% sure, since there were
-      several), in twelve rounds. Then we checked each once. Of thirty-one predictions, twenty-nine held; the two that didn't, both about how fast
-      taste drifts, pointed the right way but fell short of the bar, and the page says so where they come up.</p>
+      several), in thirteen rounds. Then we checked each once. Of thirty-two predictions, twenty-nine held; the three that didn't (two about how fast
+      taste drifts, one about how general taste is across genres) pointed the right way but fell short of the bar, and the page says so where they
+      come up.</p>
     <div class="wu-card">
       <h3>Checks of these findings on the hidden half</h3>
       <div class="wu-tablewrap">
@@ -1243,57 +1236,19 @@
     });
   }
 
-  function drawGenreCarry() {
-    const el = document.getElementById('gc-chart');
-    if (!ready(el, ['genre'])) return;
-    const cEar = dash.colors[0], cBonus = dash.colors[1];
-    legend('gc-legend', [['General good ear (also shows in other genres)', cEar, 'dot'], ['Extra from knowing the genre', cBonus, 'dot']]);
-    const data = dash.data('genre').data;
-    const sum = data.find((r) => r.key === 'summary');
-    const genres = data.filter((r) => r.family && r.family !== 'Other' && r.gap_same !== undefined && r.gap_same !== null)
-      .map((r) => ({ label: r.family, same: +r.gap_same, other: +r.gap_other, r })).sort((a, b) => b.same - a.same);
-    const rows = [{ label: 'All genres (average)', same: +sum.same_avg, other: +sum.other_avg, avg: true }].concat(genres);
-    const fs = css('--cds-font-size-caption') || '12px';
-    const width = el.clientWidth, rowH = 28, m = { t: 4, r: 56, b: 26 };
-    const height = m.t + rows.length * rowH + 8 + m.b;
-    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
-    const left = Math.min(textWidth(svg, rows.map((r) => r.label), fs) + 14, width * 0.45);
-    const x = d3.scaleLinear([0, d3.max(rows, (r) => Math.max(r.same, r.other)) * 1.05], [left, width - m.r]).nice();
-    svg.append('g').selectAll('line').data(x.ticks(5)).join('line').attr('x1', (v) => x(v)).attr('x2', (v) => x(v)).attr('y1', m.t).attr('y2', height - m.b)
-      .attr('stroke', (v) => (v === 0 ? css('--cds-chart-axis') : css('--cds-chart-grid')));
-    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 6})`).call(d3.axisBottom(x).ticks(5).tickFormat(d3.format('+.0%')).tickSize(0)), fs);
-    const tip = tooltip(el);
-    rows.forEach((r, i) => {
-      const cy = m.t + i * rowH + rowH / 2 + (r.avg ? 0 : 8), h = r.avg ? 18 : 14;
-      const ear = Math.max(0, Math.min(r.other, r.same)), bonus = Math.max(0, r.same - r.other);
-      svg.append('text').attr('x', 0).attr('y', cy).attr('dy', '0.35em').attr('fill', r.avg ? css('--color-fg') : css('--color-fg-muted')).style('font-size', fs)
-        .style('font-weight', r.avg ? css('--cds-font-weight-medium') : null).text(r.label);
-      svg.append('rect').attr('x', x(0)).attr('y', cy - h / 2).attr('width', Math.max(0, x(ear) - x(0))).attr('height', h).attr('fill', cEar);
-      if (bonus > 0) svg.append('rect').attr('x', x(ear) + 2).attr('y', cy - h / 2).attr('width', Math.max(0, x(ear + bonus) - x(ear) - 2)).attr('height', h)
-        .attr('rx', 3).attr('fill', cBonus);
-      if (r.other > r.same) svg.append('line').attr('x1', x(r.other)).attr('x2', x(r.other)).attr('y1', cy - h / 2 - 2).attr('y2', cy + h / 2 + 2)
-        .attr('stroke', cEar).attr('stroke-width', 2);
-      svg.append('text').attr('x', x(Math.max(ear + bonus, r.other)) + 6).attr('y', cy).attr('dy', '0.35em').attr('fill', css('--color-fg')).style('font-size', fs)
-        .text(r.other >= r.same ? 'no genre-specific edge' : `${fmt.pct(ear / r.same)} good ear`);
-      const lines = [['Edge in this genre', fmt.spct1(r.same), cBonus], ['Edge in other genres (good ear)', fmt.spct1(r.other), cEar]];
-      if (r.r) lines.push(['Ranges', `${fmt.spct1(+r.r.gap_same_lo)} to ${fmt.spct1(+r.r.gap_same_hi)}; ${fmt.spct1(+r.r.gap_other_lo)} to ${fmt.spct1(+r.r.gap_other_hi)}`]);
-      svg.append('rect').attr('x', 0).attr('y', cy - rowH / 2).attr('width', width).attr('height', rowH).attr('fill', 'transparent')
-        .on('mousemove', (ev) => tip.show(ev, r.avg ? 'All genres (average)' : `Rated on ${r.label}`, lines)).on('mouseleave', () => tip.hide());
-    });
-  }
-
-  function drawGenreSpec() {
-    const el = document.getElementById('gs-chart');
-    if (!ready(el, ['genrespec'])) return;
-    const kinds = [['specialist', 'Best fifth at this genre', dash.colors[0]], ['general', 'Best fifth overall', dash.colors[1]], ['everyone', 'Average picker', css('--cds-chart-muted')]];
-    legend('gs-legend', kinds.map(([, l, c]) => [l, c, 'dot']));
-    const rows = dash.data('genrespec').data.slice().sort((a, b) => +b.general - +a.general);
+  function drawGenreGeneral() {
+    const el = document.getElementById('gg-chart');
+    if (!ready(el, ['genregeneral'])) return;
+    const kinds = [['this_genre', 'Best fifth on this genre', dash.colors[0]], ['other_genres', 'Best fifth on other genres only', dash.colors[1]],
+      ['everyone', 'Average picker', css('--cds-chart-muted')]];
+    legend('gg-legend', kinds.map(([, l, c]) => [l, c, 'dot']));
+    const rows = dash.data('genregeneral').data.filter((r) => r.family).sort((a, b) => +b.this_genre - +a.this_genre);
     const fs = css('--cds-font-size-caption') || '12px';
     const width = el.clientWidth, rowH = 40, m = { t: 4, r: 48, b: 26 };
     const height = m.t + rows.length * rowH + m.b;
     const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
     const left = Math.min(textWidth(svg, rows.map((r) => r.family), fs) + 14, width * 0.45);
-    const x = d3.scaleLinear([0, d3.max(rows, (r) => Math.max(+r.specialist_hi, +r.general_hi)) * 1.05], [left, width - m.r]).nice();
+    const x = d3.scaleLinear([0, d3.max(rows, (r) => Math.max(+r.this_genre_hi, +r.other_genres_hi)) * 1.05], [left, width - m.r]).nice();
     svg.append('g').selectAll('line').data(x.ticks(5)).join('line').attr('x1', (v) => x(v)).attr('x2', (v) => x(v)).attr('y1', m.t).attr('y2', height - m.b)
       .attr('stroke', (v) => (v === 0 ? css('--cds-chart-axis') : css('--cds-chart-grid')));
     axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 6})`).call(d3.axisBottom(x).ticks(5).tickFormat(d3.format('+.0%')).tickSize(0)), fs);
@@ -1308,7 +1263,7 @@
       });
       svg.append('rect').attr('x', 0).attr('y', y0).attr('width', width).attr('height', rowH).attr('fill', 'transparent')
         .on('mousemove', (ev) => tip.show(ev, r.family, kinds.map(([k, kl, c]) => [kl, `${fmt.spct1(+r[k])} (${fmt.spct1(+r[`${k}_lo`])} to ${fmt.spct1(+r[`${k}_hi`])})`, c])
-          .concat([['Top fifths overlap', fmt.pct(+r.overlap)]])))
+          .concat([['Established artists among picks', fmt.pct(+r.established)]])))
         .on('mouseleave', () => tip.hide());
     });
   }
@@ -1557,8 +1512,7 @@
     drawObsTaste();
     drawHabits();
     drawGenre();
-    drawGenreCarry();
-    drawGenreSpec();
+    drawGenreGeneral();
     drawFanRel();
     drawStayBad();
     drawSceneSplit();

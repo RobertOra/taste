@@ -327,6 +327,11 @@ genre-specific skill, because genres differ in how much room their picks have; P
 which removes that. The write-up's earlier "good ear vs genre knowledge" split is withdrawn in favour of this comparison.
 Descriptive: per-genre values; share of each genre's picks that are artists already in the data by April 2005.
 
+**Sealed result (run once, 2026-10-10): not confirmed (narrowly).** Average this-genre minus other-genres ranking +0.59 points
+[+0.22, +0.93; 99% upper +1.09], just above the +1 point bound. The other-genres ranking reached 91% of the this-genre gap.
+Reading: taste is mostly general, with a small genre-specific bonus (about 1-2 points in hip hop, electronic, indie, pop; none
+in rock, folk, R&B, jazz/classical).
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|
