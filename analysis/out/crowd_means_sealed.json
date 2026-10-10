@@ -1,0 +1,17 @@
+[
+ {
+  "key": "niche:mean",
+  "crowd": "niche",
+  "mean_good": 0.1485166939423318
+ },
+ {
+  "key": "middle:mean",
+  "crowd": "middle",
+  "mean_good": 0.7052688736875034
+ },
+ {
+  "key": "crowded:mean",
+  "crowd": "crowded",
+  "mean_good": 2.12572789835892
+ }
+]

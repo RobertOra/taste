@@ -175,6 +175,19 @@ def crowd_log():
     return rows
 
 
+def crowd_means():
+    """Hidden half: the average number of good pickers among new fans, for the artist-months behind each crowding line
+    (same filters as analysis/ladder.py crowd_curve), i.e. where 'similar artists' sit on that line."""
+    df = pl.read_parquet(X / "pickers" / "rate_A_sealed.parquet")
+    df = df.with_columns(sz=(pl.col("l0") + 1).log(2).floor().cast(pl.Int16),
+                         mo=(((pl.col("l0") + 1) / (pl.col("l_pre") + 1)).log() / 0.5).floor().clip(-3, 3).cast(pl.Int8),
+                         ub=pl.col("n_unrated").clip(0, 4), others=pl.col("n_ord") + pl.col("n_poor"))
+    cell = ["m", "sz", "mo", "ub", "n_ord", "n_poor"]
+    df = df.with_columns(cs=pl.len().over(cell), cg=pl.col("n_good").n_unique().over(cell)).filter((pl.col("cs") >= 2) & (pl.col("cg") >= 2))
+    df = df.with_columns(grp=pl.when(pl.col("others") <= 2).then(pl.lit("niche")).when(pl.col("others") <= 5).then(pl.lit("middle")).otherwise(pl.lit("crowded")))
+    return [{"key": f"{g}:mean", "crowd": g, "mean_good": float(df.filter(pl.col("grp") == g)["n_good"].mean())} for g in ("niche", "middle", "crowded")]
+
+
 def crowd_steps(rows):
     """What each additional good picker adds: step k = multiplier at k / multiplier at k-1 (from crowd_log points), with an
     approximate 95% range from the two points' ranges (independent groups of artist-months)."""
@@ -192,6 +205,11 @@ def crowd_steps(rows):
 
 if __name__ == "__main__":
     W = ROOT / "analysis" / "writeup"
+    if "--crowd-means" in sys.argv:
+        rows = crowd_means()
+        (ROOT / "analysis" / "out" / "crowd_means_sealed.json").write_text(json.dumps(rows, indent=1))
+        print(rows)
+        raise SystemExit
     if "--crowd-steps" in sys.argv:
         (W / "crowdsteps.json").write_text(json.dumps(crowd_steps(json.loads((W / "crowdlog.json").read_text())), indent=1))
         raise SystemExit

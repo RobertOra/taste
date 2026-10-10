@@ -1,6 +1,7 @@
 [
  {
   "key": "niche:0",
+  "kind": "point",
   "crowd": "niche",
   "good": 0,
   "label": "0",
@@ -11,6 +12,7 @@
  },
  {
   "key": "niche:1",
+  "kind": "point",
   "crowd": "niche",
   "good": 1,
   "label": "1",
@@ -21,6 +23,7 @@
  },
  {
   "key": "niche:2",
+  "kind": "point",
   "crowd": "niche",
   "good": 2,
   "label": "2",
@@ -31,6 +34,7 @@
  },
  {
   "key": "niche:3",
+  "kind": "point",
   "crowd": "niche",
   "good": 3,
   "label": "3",
@@ -41,6 +45,7 @@
  },
  {
   "key": "niche:4",
+  "kind": "point",
   "crowd": "niche",
   "good": 4,
   "label": "4",
@@ -51,6 +56,7 @@
  },
  {
   "key": "niche:5+",
+  "kind": "point",
   "crowd": "niche",
   "good": 5,
   "label": "5+",
@@ -61,6 +67,7 @@
  },
  {
   "key": "middle:0",
+  "kind": "point",
   "crowd": "middle",
   "good": 0,
   "label": "0",
@@ -71,6 +78,7 @@
  },
  {
   "key": "middle:1",
+  "kind": "point",
   "crowd": "middle",
   "good": 1,
   "label": "1",
@@ -81,6 +89,7 @@
  },
  {
   "key": "middle:2",
+  "kind": "point",
   "crowd": "middle",
   "good": 2,
   "label": "2",
@@ -91,6 +100,7 @@
  },
  {
   "key": "middle:3",
+  "kind": "point",
   "crowd": "middle",
   "good": 3,
   "label": "3",
@@ -101,6 +111,7 @@
  },
  {
   "key": "middle:4",
+  "kind": "point",
   "crowd": "middle",
   "good": 4,
   "label": "4",
@@ -111,6 +122,7 @@
  },
  {
   "key": "middle:5",
+  "kind": "point",
   "crowd": "middle",
   "good": 5,
   "label": "5",
@@ -121,6 +133,7 @@
  },
  {
   "key": "middle:6+",
+  "kind": "point",
   "crowd": "middle",
   "good": 6,
   "label": "6+",
@@ -131,6 +144,7 @@
  },
  {
   "key": "crowded:0",
+  "kind": "point",
   "crowd": "crowded",
   "good": 0,
   "label": "0",
@@ -141,6 +155,7 @@
  },
  {
   "key": "crowded:1",
+  "kind": "point",
   "crowd": "crowded",
   "good": 1,
   "label": "1",
@@ -151,6 +166,7 @@
  },
  {
   "key": "crowded:2",
+  "kind": "point",
   "crowd": "crowded",
   "good": 2,
   "label": "2",
@@ -161,6 +177,7 @@
  },
  {
   "key": "crowded:3",
+  "kind": "point",
   "crowd": "crowded",
   "good": 3,
   "label": "3",
@@ -171,6 +188,7 @@
  },
  {
   "key": "crowded:4",
+  "kind": "point",
   "crowd": "crowded",
   "good": 4,
   "label": "4",
@@ -181,6 +199,7 @@
  },
  {
   "key": "crowded:5",
+  "kind": "point",
   "crowd": "crowded",
   "good": 5,
   "label": "5",
@@ -191,6 +210,7 @@
  },
  {
   "key": "crowded:6",
+  "kind": "point",
   "crowd": "crowded",
   "good": 6,
   "label": "6",
@@ -201,6 +221,7 @@
  },
  {
   "key": "crowded:7",
+  "kind": "point",
   "crowd": "crowded",
   "good": 7,
   "label": "7",
@@ -211,6 +232,7 @@
  },
  {
   "key": "crowded:8",
+  "kind": "point",
   "crowd": "crowded",
   "good": 8,
   "label": "8",
@@ -221,6 +243,7 @@
  },
  {
   "key": "crowded:9",
+  "kind": "point",
   "crowd": "crowded",
   "good": 9,
   "label": "9",
@@ -231,6 +254,7 @@
  },
  {
   "key": "crowded:10",
+  "kind": "point",
   "crowd": "crowded",
   "good": 10,
   "label": "10",
@@ -241,6 +265,7 @@
  },
  {
   "key": "crowded:11+",
+  "kind": "point",
   "crowd": "crowded",
   "good": 11,
   "label": "11+",
@@ -248,5 +273,23 @@
   "growth": 0.09553486863980096,
   "growth_lo": 0.04153250046350568,
   "growth_hi": 0.14761049811539662
+ },
+ {
+  "kind": "mean",
+  "key": "niche:mean",
+  "crowd": "niche",
+  "mean_good": 0.1485166939423318
+ },
+ {
+  "kind": "mean",
+  "key": "middle:mean",
+  "crowd": "middle",
+  "mean_good": 0.7052688736875034
+ },
+ {
+  "kind": "mean",
+  "key": "crowded:mean",
+  "crowd": "crowded",
+  "mean_good": 2.12572789835892
  }
 ]

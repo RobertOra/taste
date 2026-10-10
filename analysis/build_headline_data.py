@@ -250,7 +250,9 @@ def fanvalue():
 
 
 def crowd():
-    return [{"key": f"{r['crowd']}:{r['label']}", **r} for r in json.loads((OUT / "ladder_sealed.json").read_text())["crowd_curve"]]
+    rows = [{"key": f"{r['crowd']}:{r['label']}", "kind": "point", **r} for r in json.loads((OUT / "ladder_sealed.json").read_text())["crowd_curve"]]
+    means = json.loads((OUT / "crowd_means_sealed.json").read_text())  # analysis/charts_data.py --crowd-means
+    return rows + [{"kind": "mean", **m} for m in means]
 
 
 if __name__ == "__main__":

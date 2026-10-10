@@ -273,7 +273,9 @@
     <div class="wu-card">
       <h3>Growth by the number of good pickers among an artist's new fans</h3>
       <p class="wu-note">Hidden half. Compared with artists of the same size and momentum that month with exactly the same numbers of
-        ordinary and poor new fans; growth counted only among listeners who weren't used to rate the pickers. Niche: 0–2 other rated new
+        ordinary and poor new fans. Those similar artists had some good pickers too, on average: the hollow diamonds on the zero line mark how many
+        (<span class="wu-num dash-skeleton" data-source="crowd" data-field="mean_good" data-where="key=niche:mean" data-fmt="f2">—</span> for niche, <span class="wu-num" data-source="crowd" data-field="mean_good" data-where="key=middle:mean" data-fmt="f2">—</span> for middle,
+        <span class="wu-num" data-source="crowd" data-field="mean_good" data-where="key=crowded:mean" data-fmt="f2">—</span> for crowded), which is why each line starts below zero and crosses it right there; growth counted only among listeners who weren't used to rate the pickers. Niche: 0–2 other rated new
         fans that month; middle: 3–5; crowded: 6 or more. Each line's last point pools the larger counts. Bars are 95% ranges.</p>
       <div class="wu-legend" id="cr-legend"></div>
       <div class="wu-chart dash-skeleton" id="cr-chart" data-source="crowd"></div>
@@ -1210,8 +1212,9 @@
     const el = document.getElementById('cr-chart');
     if (!ready(el, ['crowd'])) return;
     const groups = [['niche', 'Niche (0–2 other new fans)', dash.colors[0]], ['middle', 'Middle (3–5)', dash.colors[1]], ['crowded', 'Crowded (6+)', dash.colors[2]]];
-    legend('cr-legend', groups.map(([, l, c]) => [l, c, 'dot']));
-    const rows = dash.data('crowd').data.map((r) => ({ ...r, good: +r.good, v: +r.growth, lo: +r.growth_lo, hi: +r.growth_hi }));
+    legend('cr-legend', groups.map(([, l, c]) => [l, c, 'dot']).concat([['Average for similar artists', css('--color-fg-muted'), 'hollow']]));
+    const means = dash.data('crowd').data.filter((r) => r.kind === 'mean');
+    const rows = dash.data('crowd').data.filter((r) => r.kind !== 'mean').map((r) => ({ ...r, good: +r.good, v: +r.growth, lo: +r.growth_lo, hi: +r.growth_hi }));
     const fs = css('--cds-font-size-caption') || '12px';
     const width = el.clientWidth, height = 300, m = { t: 28, r: 64, b: 40, l: 44 };
     const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
@@ -1238,6 +1241,16 @@
         .on('mousemove', (ev) => tip.show(ev, `${label}: ${d.label} good picker${d.label === '1' ? '' : 's'}`,
           [['Growth vs similar', `${fmt.spct1(d.v)} (${fmt.spct1(d.lo)} to ${fmt.spct1(d.hi)})`, c], ['Artist-months', fmt.int(+d.artist_months)]]))
         .on('mouseleave', () => tip.hide()));
+    });
+    const tipM = tooltip(el);
+    means.forEach((mm) => {
+      const g = groups.find((q) => q[0] === mm.crowd); if (!g) return;
+      const cx = x(+mm.mean_good), cy = y(0);
+      svg.append('path').attr('d', `M${cx},${cy - 7}L${cx + 6},${cy}L${cx},${cy + 7}L${cx - 6},${cy}Z`).attr('fill', css('--color-panel'))
+        .attr('stroke', g[2]).attr('stroke-width', 2);
+      svg.append('circle').attr('cx', cx).attr('cy', cy).attr('r', 10).attr('fill', 'transparent')
+        .on('mousemove', (ev) => tipM.show(ev, `${g[1]}: average for similar artists`, [['Good pickers among new fans', d3.format('.2f')(+mm.mean_good), g[2]]]))
+        .on('mouseleave', () => tipM.hide());
     });
   }
 
