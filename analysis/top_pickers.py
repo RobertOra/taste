@@ -24,6 +24,7 @@ import polars as pl
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "analysis"))
 from explain import bets_with_bands  # noqa: E402
+from cutoffs import cuts  # noqa: E402
 
 X = ROOT / "data" / "derived"
 RNG = np.random.default_rng(77)
@@ -68,7 +69,7 @@ def main():
     feats = pl.concat([uy.filter(pl.col("year") <= c).group_by("user").agg(
         pl.col("listens").sum(), pl.col("active_months").sum(), pl.col("new_artists").sum(), pl.col("committed").sum(),
         (pl.col("mainstream_plays").sum() / pl.col("artist_plays").sum()).alias("mainstream_share"),
-        pl.col("year").n_unique().alias("years")).with_columns(cut=pl.lit(c)) for c in (2007, 2008, 2009)])
+        pl.col("year").n_unique().alias("years")).with_columns(cut=pl.lit(c)) for c in cuts(half)])
     feats = feats.with_columns(listens_per_month=pl.col("listens") / pl.col("active_months"),
                                commit_rate=pl.col("committed") / pl.col("new_artists").clip(1))
     prof = past.group_by("user", "cut", "band", "q").agg(

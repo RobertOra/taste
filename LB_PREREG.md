@@ -47,3 +47,8 @@ early era is too noisy, we say so rather than calling it.
 
 ## Before the run
 The adapted code is checked to reproduce the MLHD+ results it already produced (explore half) before LB is touched.
+
+## Changes after freezing (before the affected step ran)
+- top_pickers.py built the style profile (used by P7c) only for cutoffs 2007-2009, though bands used every cutoff; fixed to
+  use every cutoff, as this plan states. Found by rereading the code after the run started, before that step ran. No change
+  for MLHD+ (its cutoffs are 2007-2009).
