@@ -2,7 +2,8 @@
 computed with exactly the site's procedure (mirrored by site/static/engine.js) on ListenBrainz users.
 
 Picks: found by name from weekly listening (artists: user_artist_week by artist name; songs: user_rec_week by "artist\ttrack"
-name): 4 separate weeks, the 4th within 26 weeks, after the first 26 weeks of the person's listening; dated at the 4th
+name): 4 separate weeks, the 4th within 26 weeks, not within 26 weeks of the start of the person's listening or of a return after a
+26+ week gap; dated at the 4th
 week's month; judged picks from 2016 (m >= Y0) to last month - 12. Names matched to shipped items (artists: >= 2 new
 listeners since 2015; songs: >= 3) and the song's artist to a shipped artist; eligible if at least 2 (artists) / 3 (songs)
 *other* people first played it since 2015; one pick per item (earliest).
@@ -14,8 +15,8 @@ Measures (per pick, from the item's monthly rows since 2015; site/static/engine.
     excess = outcome - mean of reference picks in the same month and size bin (log2 A0) - additive effects
              (momentum, scene x year, age, release timing, country [, xb]) fitted by backfitting
 Songs by one artist found in the same month count as one pick (plays-weighted mean excess), as in the study.
-Score = sum of excess / (picks + 20) over the last five judged years; people with >= MIN_PICKS form the reference.
-Writes data/site/pack_meta.json (everything the engine needs except item data) and per-person scores for tests.
+Writes data/site/pack_meta.json (baselines and corrections) and every reference find's excess (_pack_ex_*.parquet); scores, reliability
+and the yearly reference come from site/build_pack_scores.py.
 """
 import json
 import shutil
@@ -33,7 +34,7 @@ from genre import FAMILIES, family_expr  # noqa: E402
 
 REF, LB, X = ROOT / "data" / "site", ROOT / "data" / "lb", ROOT / "data" / "derived"
 LAST, Y0, M0 = 2026 * 12 + 8, 2016 * 12, 2015 * 12
-SHRINK, WINDOW, MIN_PICKS = 20, 5, 110
+SHRINK, MIN_PICKS = 20, 110
 FACT = ["mo", ["year", "scene"], "age", "relc", "country"]
 MONTH = "(year(make_timestamp({w}::BIGINT * 604800000000 + 302400000000)) * 12 + month(make_timestamp({w}::BIGINT * 604800000000 + 302400000000)) - 1)"
 W0, W1 = 1104537600 // 604800, 1790812800 // 604800
@@ -65,12 +66,14 @@ def picks(unit, c):
         src = f"SELECT user, rec_name_h AS nh, any_value(artist_name_h) AS ah, week, sum(plays) AS n FROM read_parquet('{LB}/user_rec_week/*.parquet') WHERE {uf} GROUP BY user, rec_name_h, week"
     con.execute(f"CREATE OR REPLACE TABLE w_{unit} AS {src}")
     con.execute(f"""CREATE OR REPLACE TABLE p0_{unit} AS
-        WITH st AS (SELECT user, min(week) AS start FROM read_parquet('{LB}/user_artist_week/*.parquet') WHERE {uf} GROUP BY user),
+        WITH aw AS (SELECT DISTINCT user, week FROM read_parquet('{LB}/user_artist_week/*.parquet') WHERE {uf}),
+             seg AS (SELECT user, week AS start FROM (SELECT user, week, week - lag(week) OVER (PARTITION BY user ORDER BY week) AS gap FROM aw)
+                     WHERE gap IS NULL OR gap >= 26),   -- a fresh warm-up after any gap of 26+ weeks without listening
              r AS (SELECT w.*, row_number() OVER (PARTITION BY user, nh ORDER BY week) AS rn, min(week) OVER (PARTITION BY user, nh) AS fw FROM w_{unit} w),
              a AS (SELECT user, nh, any_value(ah) AS ah, min(week) AS first_week, min(week) FILTER (WHERE rn = 4) AS w4, sum(n) FILTER (WHERE week < fw + 26) AS w
                    FROM r GROUP BY user, nh)
-        SELECT a.user, a.nh, a.ah, a.first_week, a.w, ({MONTH.format(w='a.w4')})::INT AS m FROM a JOIN st USING (user)
-        WHERE a.w4 IS NOT NULL AND a.w4 - a.first_week < 26 AND a.first_week >= st.start + 26""")
+        SELECT a.user, a.nh, a.ah, a.first_week, a.w, ({MONTH.format(w='a.w4')})::INT AS m FROM a ASOF JOIN seg ON a.user = seg.user AND a.first_week >= seg.start
+        WHERE a.w4 IS NOT NULL AND a.w4 - a.first_week < 26 AND a.first_week >= seg.start + 26""")
     con.execute(f"DROP TABLE w_{unit}")
     if unit == "artist":
         con.execute(f"""CREATE OR REPLACE TABLE pk_{unit} AS SELECT p.user, n.artist AS key, n.artist, p.m, p.w, ({MONTH.format(w='p.first_week')})::INT AS fm
@@ -142,7 +145,7 @@ def reliability(d):
     return float(rr / (nh - (nh - 1) * rr))
 
 
-meta = {"last_month": LAST, "y0": Y0, "m0": M0, "shrink": SHRINK, "window_years": WINDOW, "min_picks": MIN_PICKS, "families": FAMS, "measures": {}}
+meta = {"last_month": LAST, "y0": Y0, "m0": M0, "shrink": SHRINK, "min_picks": MIN_PICKS, "families": FAMS, "measures": {}}
 frozen = {"artist": {"A": "lb_A_artist_main", "D": "lb_D_artist_main"}, "song": {"A": "lb_A_song_main", "D": "lb_D_song_main"}}
 for unit in ("artist", "song"):
     parts = []
@@ -173,26 +176,14 @@ for unit in ("artist", "song"):
         dd = dd.with_columns(ex=pl.col("excess"))
         if unit == "song":   # one pick per artist and month, plays-weighted
             dd = dd.group_by("user", "artist", "m").agg(excess=(pl.col("ex") * pl.col("w")).sum() / pl.col("w").sum(), item=pl.col("item").min())
-        dd = dd.with_columns(last=pl.col("m").max().over("user")).filter(pl.col("m") > pl.col("last") - 12 * WINDOW)
-        per = dd.group_by("user").agg(s=pl.col("excess").sum() / (pl.len() + SHRINK), n=pl.len())
-        refp = per.filter(pl.col("n") >= MIN_PICKS)
-        r1 = reliability(dd)
-        # agreement with the study's frozen score (same people; frozen per-year sums over the window's years)
-        ag = pl.read_parquet(ROOT / "analysis" / "out" / "cand" / frozen[unit][meas] / "agg.parquet", columns=["user", "year", "sw", "swe"])
-        win = dd.group_by("user").agg(y0=(pl.col("m").min() // 12), y1=(pl.col("m").max() // 12))
-        fz = ag.join(win, on="user").filter(pl.col("year").is_between(pl.col("y0"), pl.col("y1"))).group_by("user").agg(f=pl.col("swe").sum() / pl.col("sw").sum())
-        j = refp.join(fz, on="user")
-        agree = spearmanr(j["s"], j["f"]).statistic
         key = f"{unit}_{meas}"
+        dd.select("user", "item", "m", "excess").write_parquet(REF / f"_pack_ex_{key}.parquet")   # every reference find's result (site/build_pack_scores.py)
         meta["measures"][key] = {
-            "unit": unit, "measure": meas, "per_pick": r1, "people": refp.height, "agreement_with_study": float(agree), "p0": p0,
-            "scores": sorted(round(float(v), 6) for v in refp["s"].to_list()),
+            "unit": unit, "measure": meas, "p0": p0,
             "baseline": [[int(r["m"]), int(r["bin"]), round(float(r["mean"]), 6)] + ([round(float(r["up3"]), 6)] if meas == "A" else []) for r in base.iter_rows(named=True)],
             "effects": {name: [[*(list(row[:-1])), round(float(row[-1]), 6)] for row in t.iter_rows()] for name, t in eff.items()},
             **({"xb_cuts": [[int(r[0]), *[round(float(v), 6) for v in r[1:]]] for r in cuts.iter_rows()]} if meas == "D" else {})}
-        per.write_parquet(REF / f"_pack_ref_{key}.parquet")
-        print(f"{key}: picks {dd.height:,}; reference people {refp.height:,}; per-pick reliability {r1:.4f} (at 110 / 250: "
-              f"{110 * r1 / (1 + 109 * r1):.2f} / {250 * r1 / (1 + 249 * r1):.2f}); agreement with the study's score {agree:.3f} ({j.height:,} people)", flush=True)
+        print(f"{key}: {dd.height:,} reference finds saved", flush=True)
     df.select("user", "key", "artist", "m", "w", "fm", "fam").write_parquet(REF / f"_pack_picks_{unit}.parquet")
 countries = sorted(set(pl.read_parquet(REF / "artist_info.parquet", columns=["country"])["country"].to_list()) | {"?"})
 meta["countries"] = countries

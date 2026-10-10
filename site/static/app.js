@@ -152,18 +152,20 @@ function render(r) {
     <p class="meaning">On average, ${Math.round(A.share * 100)}% of each artist's ListenBrainz fans got into them <b>after</b> you did (across ${n(A.artists)} artists that took off since 2015).</p>
     ${A.best.length ? `<div class="calls">${A.best.map((b) => `<div class="call"><b>${esc(b.name)}</b><span>you got into them in ${monthLabel(b.m)},<br>before ${Math.round(b.share * 100)}% of their ${n(b.fans)} fans</span></div>`).join('')}</div>` : ''}`);
   const sure = card('How sure is this?', null, `<div class="facts">
-    <div class="fact"><b>${n(H.picks)}</b><span>${hm.what === 'songs' ? 'groups of songs' : 'artists'} scored (your last five judged years)</span></div>
+    <div class="fact"><b>${n(H.picks)}</b><span>${hm.what === 'songs' ? 'groups of songs' : 'artists'} scored (all your judged finds since 2016)</span></div>
     <div class="fact"><b>${ord(H.range[0])}–${ord(H.range[1])}</b><span>likely range of your rank (80%)</span></div>
     <div class="fact"><b>${H.reliability.toFixed(2)}</b><span>reliability with this much history (1 = perfectly repeatable)</span></div>
     <div class="fact"><b>${Math.round(r.history.matched.songs * 100)}% / ${Math.round(r.history.matched.artists * 100)}%</b><span>of your songs / artists were in the reference data</span></div></div>
     <p class="note">Any single find is mostly luck, so a score built from a few hundred is fuzzy; more history narrows the range. Taste also drifts:
-      in the study, good taste faded over about a decade, so only your last five judged years count.</p>`);
+      in the study, good taste faded over about a decade, so see how yours changed under Your taste over time.</p>`);
   const where = Rp.edge ? card('Where your edge comes from', 'Part of a score comes from being into scenes that were about to grow; the rest from picking better artists than others in the same scene. Your score counts only the second.',
     signedBars([{ label: 'Being in rising scenes', v: Rp.edge.scenes }, { label: 'Picking well within your scenes', v: Rp.edge.within }])) : '';
   const conv = card('Conviction', 'Artists you got into, grouped by how many times you played them in their first six months.',
     signedBars(Rp.conviction.map((c) => ({ label: `${c.label} <span class="muted">(${c.hi === null ? c.lo + '+' : c.lo + '–' + c.hi})</span>`, v: c.finds >= 5 ? c.growth : null, note: `${n(c.finds)} artists` }))));
-  const years = card('Year by year', 'How the artists you got into each year did. Gray years are outside your score.',
-    signedBars(Rp.byYear.map((y) => ({ label: y.inScore ? String(y.year) : `<span class="muted">${y.year}</span>`, v: y.finds >= 5 ? y.growth : null, note: `${y.finds} artists` }))));
+  const years = `<section class="card"><h2>Your taste over time</h2>
+    <p class="sub">Your percentile from each year's finds, with its likely range (years with fewer than ${META.min_year} finds aren't scored). Single years rest on fewer finds,
+      so their ranges are wider. Taste drifts: in the study, it faded over about a decade.</p>
+    <div class="tablebar" id="tchips"></div><div id="tchart"></div><p class="note" id="tnote"></p></section>`;
   const how = Rp.how.length > 1 ? card('How you found them', 'How the first play of each artist started, from your Spotify data.',
     signedBars(Rp.how.map((h) => ({ label: h.label, v: h.finds >= 5 ? h.growth : null, note: `${n(h.finds)} artists` })))) : '';
 
@@ -182,7 +184,6 @@ function render(r) {
     ['Only tried', NC.tried, 'Played in fewer than four separate weeks, or not four weeks within six months of first hearing them. A find counts once you play it in four different weeks.'],
     ['Warm-up', NC.warmup, 'First heard in your first six months of history: when a history starts, music you already loved shows up as "new". Reference listeners get the same warm-up.'],
     ['Too recent to judge', NC.tooRecent, 'Found less than a year before the reference data ends, so there\'s no year of follow-up yet. See Open bets.'],
-    ['Older finds', NC.older, 'Finds from before your last five judged years. Taste drifts, so they don\'t count toward your score.'],
     ['Not in the reference data', NC.unrecognised, 'Too few ListenBrainz listeners ever played them, or the name is spelled differently there.'],
     ['Before 2016', NC.early, 'The reference data for scoring starts in 2016.'],
   ].filter(([, l]) => l.length);
@@ -195,14 +196,15 @@ function render(r) {
       things that aren't taste (a scene that was growing anyway, an artist already rising, a new release, how new the music was, where the artist is from). Songs by one artist that
       you found the same month count once.</p>
     <p><b>Prescience</b>: how many new listeners your finds gained over the next year. <b>Discernment</b>: how many of the people who tried your finds over the next year kept
-      playing them. Your score is the average over your last five judged years, ranked against ListenBrainz listeners scored exactly the same way, with a range for how sure we can be.
+      playing them. Your score is the average over all your judged finds since 2016, ranked against ListenBrainz listeners scored exactly the same way, with a range for how sure we can be.
       On ListenBrainz these scores agree closely with the study's own measures. <a href="study.html">Read the study</a>.</p></details>`;
 
   $('#report').innerHTML = hero + `<h2 style="margin:28px 0 4px">Explore more</h2>` + facts + all + genres + `<div class="cols">${ahead}${sure}</div>`
-    + `<div class="cols">${where}${conv}</div>` + `<div class="cols">${years}${how}</div>` + picksCard() + bigT + openT + ncT + howScore
+    + `<div class="cols">${where}${conv}</div>` + years + (how ? `<div class="cols">${how}</div>` : '') + picksCard() + bigT + openT + ncT + howScore
     + `<p class="note" style="text-align:center"><a href="study.html">Is good taste real? The study</a> · <a href="#" id="again">Score another history</a></p>`;
   $('#report').hidden = false;
   wirePicks(Rp);
+  wireTime(M, r.headline);
   document.querySelectorAll('tr.mrow').forEach((tr) => (tr.onclick = () => {
     const d = document.querySelector(`tr.mdetail[data-k="${tr.dataset.k}"]`); d.hidden = !d.hidden;
     tr.querySelector('.muted').textContent = d.hidden ? '▸' : '▾';
@@ -252,3 +254,31 @@ function wirePicks(Rp) {
 
 window.__render = (r) => { META = META || window.__meta; render(r); };   // local page tests
 window.__run = run;
+
+// your taste over time: yearly percentile with its range, one measure at a time
+function wireTime(M, head) {
+  let cur = head;
+  const draw = () => {
+    $('#tchips').innerHTML = Object.entries(MEAS).map(([k, d]) => `<button class="btn small${k === cur ? '' : ' ghost'}" data-k="${k}">${d.short}</button>`).join('');
+    $('#tchips').querySelectorAll('button').forEach((b) => (b.onclick = () => { cur = b.dataset.k; draw(); }));
+    const ys = (M[cur].years || []), sc = ys.filter((y) => y.percentile !== undefined);
+    const el = $('#tchart'), W = Math.max(320, Math.min(900, el.clientWidth || 700)), H = 260, pad = { l: 40, r: 34, t: 24, b: 44 };
+    if (!ys.length) { el.innerHTML = '<p class="muted">No judged finds.</p>'; return; }
+    const y0 = ys[0].year, y1 = ys[ys.length - 1].year;
+    const X = (y) => pad.l + (y1 === y0 ? 0.5 : (y - y0) / (y1 - y0)) * (W - pad.l - pad.r), Y = (v) => pad.t + (1 - v / 100) * (H - pad.t - pad.b);
+    let g = [0, 25, 50, 75, 100].map((t) => `<line class="grid" x1="${pad.l}" x2="${W - pad.r}" y1="${Y(t)}" y2="${Y(t)}"/><text x="${pad.l - 6}" y="${Y(t) + 4}" text-anchor="end">${t}</text>`).join('');
+    g += `<line class="ref" x1="${pad.l}" x2="${W - pad.r}" y1="${Y(50)}" y2="${Y(50)}"/>`;
+    ys.forEach((y) => { g += `<text x="${X(y.year)}" y="${H - 24}" text-anchor="middle">${y.year}</text><text x="${X(y.year)}" y="${H - 9}" text-anchor="middle" style="font-size:11px">${y.finds} finds</text>`; });
+    if (sc.length) {
+      g += `<path d="M${sc.map((y) => `${X(y.year)},${Y(y.range[1])}`).join('L')}L${[...sc].reverse().map((y) => `${X(y.year)},${Y(y.range[0])}`).join('L')}Z" class="bandref" opacity="0.8"/>`;
+      g += `<path d="M${sc.map((y) => `${X(y.year)},${Y(y.percentile)}`).join('L')}" fill="none" stroke="var(--accent)" stroke-width="2.2"/>`;
+      g += `<text x="${pad.l + 4}" y="${Y(50) - 5}" style="fill:var(--ink-2)">average</text>`;
+      g += sc.map((y) => `<circle cx="${X(y.year)}" cy="${Y(y.percentile)}" r="4" fill="var(--accent)"><title>${y.year}: better than ${y.percentile}% (likely ${ord(y.range[0])}–${ord(y.range[1])}), ${y.finds} finds</title></circle>
+        <text x="${X(y.year)}" y="${Y(y.percentile) - 9}" text-anchor="middle" style="fill:var(--ink);font-weight:600">${y.percentile}</text>`).join('');
+    }
+    el.innerHTML = `<svg width="100%" viewBox="0 0 ${W} ${H}" role="img" aria-label="Your percentile by year">${g}</svg>`;
+    const few = ys.filter((y) => y.percentile === undefined).map((y) => y.year);
+    $('#tnote').textContent = `Percentile among ListenBrainz listeners' years with at least ${META.min_year} finds. Blue band: likely range.` + (few.length ? ` Too few finds to score: ${few.join(', ')}.` : '');
+  };
+  draw();
+}

@@ -117,8 +117,19 @@ export async function readHistory(files) {   // files: [{name, bytes}] -> {plays
 }
 
 // ---------- picks: artists by name, songs by "artist\ttrack" (as Spotify gives them)
-export function findPicks(plays, keyOf, notPicked = null) {
-  let start = Infinity; for (const p of plays) if (p.week < start) start = p.week;
+// warm-up: no find counts in the 26 weeks after the start of the listening, or after a return from a gap of 26+ weeks
+export function segmentStarts(plays) {
+  const ws = [...new Set(plays.map((p) => p.week))].sort((a, b) => a - b), out = [];
+  for (let i = 0; i < ws.length; i++) if (i === 0 || ws[i] - ws[i - 1] >= RULES.onboardWeeks) out.push(ws[i]);
+  return out;
+}
+function inWarmup(starts, fw) {   // latest start <= fw, and fw within 26 weeks of it
+  let lo = 0, hi = starts.length - 1, s = -Infinity;
+  while (lo <= hi) { const mid = (lo + hi) >> 1; if (starts[mid] <= fw) { s = starts[mid]; lo = mid + 1; } else hi = mid - 1; }
+  return fw < s + RULES.onboardWeeks;
+}
+export function findPicks(plays, keyOf, notPicked = null, starts = null) {
+  starts = starts || segmentStarts(plays);
   const by = new Map();
   for (const p of plays) {
     const key = keyOf(p);
@@ -130,7 +141,7 @@ export function findPicks(plays, keyOf, notPicked = null) {
   for (const a of by.values()) {
     const ws = [...a.weeks.keys()].sort((x, y) => x - y);
     const fw = ws[0];
-    if (fw < start + RULES.onboardWeeks) { if (notPicked) notPicked.warmup.push(a.p.name); continue; }
+    if (inWarmup(starts, fw)) { if (notPicked) notPicked.warmup.push(a.p.name); continue; }
     if (ws.length < RULES.minWeeks || ws[RULES.minWeeks - 1] - fw >= RULES.windowWeeks) { if (notPicked) notPicked.tried.push(a.p.name); continue; }
     const w4 = ws[RULES.minWeeks - 1];
     let plays26 = 0; for (const [w, n] of a.weeks) if (w < fw + RULES.windowWeeks) plays26 += n;
@@ -304,7 +315,7 @@ export function scoreMeasure(meta, key, picks) {
     units = [...g.values()].map((ps) => { const W = ps.reduce((t, p) => t + p.w, 0); return { m: ps[0].m, art: ps[0].art, songs: ps, excess: ps.reduce((t, p) => t + p.excess * p.w, 0) / W, w: W }; });
   }
   const last = Math.max(...units.map((p) => p.m), -Infinity);
-  const win = units.filter((p) => p.m > last - 12 * meta.window_years);
+  const win = meta.window_years ? units.filter((p) => p.m > last - 12 * meta.window_years) : units;   // window_years 0: all judged finds
   const n = win.length, r = { key, unit, measure: M.measure, picks: n, enough: n >= meta.min_picks, solid: n >= 250, win, scored, all: units };
   if (n) r.window = [Math.min(...win.map((p) => p.m)), last];
   if (n >= meta.min_picks) {
@@ -312,6 +323,20 @@ export function scoreMeasure(meta, key, picks) {
     const pct = bisectLeft(M.scores, s) / M.scores.length, rel = n * M.per_pick / (1 + (n - 1) * M.per_pick);
     const [lo, hi] = trueRange(rel, pct);
     Object.assign(r, { score: s, percentile: Math.round(100 * pct), range: [Math.round(lo), Math.round(hi)], reliability: Math.round(rel * 100) / 100 });
+  }
+  // year by year: the same score from each year's finds, ranked among reference listeners' years (quantiles), with a range
+  if (M.year_q) {
+    const byY = new Map(); for (const p of win) { const y = Math.floor(p.m / 12); if (!byY.has(y)) byY.set(y, []); byY.get(y).push(p.excess); }
+    r.years = [...byY.entries()].sort((a, b) => a[0] - b[0]).map(([year, xs]) => {
+      const k = xs.length, out = { year, finds: k, avg: mean(xs), typical: M.year_typical ? M.year_typical[String(year)] ?? null : null };
+      if (k >= meta.min_year) {
+        const sy = xs.reduce((t, x) => t + x, 0) / (k + meta.shrink), q = M.year_q;
+        const i = bisectLeft(q, sy), pctY = i <= 0 ? 0 : i >= q.length ? 1 : (i - 1 + (sy - q[i - 1]) / (q[i] - q[i - 1] || 1)) / (q.length - 1);
+        const relY = k * M.per_pick / (1 + (k - 1) * M.per_pick), [lo, hi] = trueRange(relY, pctY);
+        Object.assign(out, { percentile: Math.round(100 * pctY), range: [Math.round(lo), Math.round(hi)] });
+      }
+      return out;
+    });
   }
   // your average (prescience: % more new listeners than similar finds; discernment: points more of the people who tried it kept it)
   if (n) { r.avg = mean(win.map((p) => p.excess)); r.growth = M.measure === 'A' ? Math.expm1(r.avg) : r.avg; }
@@ -340,8 +365,9 @@ export async function scoreHistory(files, meta, pack, onProgress = () => {}) {
 
   const lastJ = meta.last_month - 12;
   const notPicked = { warmup: [], tried: [] };
-  const aPicks = findPicks(plays, (p) => p.an, notPicked);
-  const sPicks = findPicks(plays, (p) => `${p.an}\t${p.tn}`).filter((p) => p.key.slice(p.key.indexOf('\t') + 1));
+  const starts = segmentStarts(plays);
+  const aPicks = findPicks(plays, (p) => p.an, notPicked, starts);
+  const sPicks = findPicks(plays, (p) => `${p.an}\t${p.tn}`, null, starts).filter((p) => p.key.slice(p.key.indexOf('\t') + 1));
   const judgedA = aPicks.filter((p) => p.m >= meta.y0 && p.m <= lastJ), judgedS = sPicks.filter((p) => p.m >= meta.y0 && p.m <= lastJ);
   const recentA = aPicks.filter((p) => p.m > lastJ).sort((a, b) => b.plays26 - a.plays26).slice(0, 15);
   for (const p of [...judgedA, ...recentA]) p.ah = nameHash(p.an);

@@ -109,8 +109,17 @@ def decode(b):
     return an, ar, sn, sr
 
 
-def find_picks(plays, key_of):
-    start = min(p["week"] for p in plays); by = {}
+def segment_starts(weeks):
+    ws = sorted(set(weeks)); return [w for i, w in enumerate(ws) if i == 0 or w - ws[i - 1] >= 26]
+
+
+def in_warmup(starts, fw):
+    i = bisect.bisect_right(starts, fw) - 1
+    return i >= 0 and fw < starts[i] + 26
+
+
+def find_picks(plays, key_of, starts=None):
+    starts = starts if starts is not None else segment_starts(p["week"] for p in plays); by = {}
     for p in plays:
         k = key_of(p)
         a = by.get(k)
@@ -120,7 +129,7 @@ def find_picks(plays, key_of):
     out = []
     for k, a in by.items():
         ws = sorted(a["weeks"]); fw = ws[0]
-        if fw < start + 26 or len(ws) < 4 or ws[3] - fw >= 26:
+        if in_warmup(starts, fw) or len(ws) < 4 or ws[3] - fw >= 26:
             continue
         out.append({"key": k, "an": a["p"]["an"], "name": a["p"]["name"], "ah": a["p"].get("ah"), "sh": a["p"].get("sh") if "sh" in a["p"] else None,
                     "first_week": fw, "m": month_of_week(ws[3]), "w": sum(n for w, n in a["weeks"].items() if w < fw + 26)})
@@ -198,7 +207,8 @@ def score_measure(key, picks, exclude_self=False):
         sc = [{"m": ps[0]["m"], "excess": sum(p["excess"] * p["w"] for p in ps) / sum(p["w"] for p in ps)} for ps in g.values()]
     if not sc:
         return {"picks": 0}
-    last = max(p["m"] for p in sc); win = [p for p in sc if p["m"] > last - 12 * META["window_years"]]
+    last = max(p["m"] for p in sc)
+    win = [p for p in sc if p["m"] > last - 12 * META["window_years"]] if META.get("window_years") else sc
     n = len(win); r = {"picks": n}
     if n >= META["min_picks"]:
         s = sum(p["excess"] for p in win) / (n + META["shrink"])
@@ -210,8 +220,9 @@ def score_measure(key, picks, exclude_self=False):
 
 def score(plays, exclude_self=False, pack=None):
     pack = pack or Pack(); lj = META["last_month"] - 12
-    ap = [p for p in find_picks(plays, lambda p: p["an"]) if META["y0"] <= p["m"] <= lj]
-    sp = [p for p in find_picks(plays, lambda p: p["an"] + "\t" + p["tn"]) if p["key"].split("\t", 1)[1] and META["y0"] <= p["m"] <= lj]
+    starts = segment_starts(p["week"] for p in plays)
+    ap = [p for p in find_picks(plays, lambda p: p["an"], starts) if META["y0"] <= p["m"] <= lj]
+    sp = [p for p in find_picks(plays, lambda p: p["an"] + "\t" + p["tn"], starts) if p["key"].split("\t", 1)[1] and META["y0"] <= p["m"] <= lj]
     for p in ap:
         p["ah"] = p["ah"] if p["ah"] is not None else S.name_hash(p["an"]); p["art"] = pack.artist(p["ah"]); p["item"] = p["art"]
     for p in sp:

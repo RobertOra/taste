@@ -31,9 +31,10 @@ for uid in users:
         p["key_override"] = True
     lj = SP.META["last_month"] - 12
     r = {}
-    ap = [p for p in SP.find_picks(aplays, lambda p: p["an"]) if SP.META["y0"] <= p["m"] <= lj]
+    starts = SP.segment_starts(p["week"] for p in aplays)   # warm-up segments from the person's whole listening (artist table)
+    ap = [p for p in SP.find_picks(aplays, lambda p: p["an"], starts) if SP.META["y0"] <= p["m"] <= lj]
     # songs: same start as the person's whole listening (artist table), keyed by the song name hash
-    sp_all = SP.find_picks(splays + [{"week": start, "ts": 0, "an": "_start", "name": "", "tn": "", "ah": 0, "sh": 0, "n": 0}], lambda p: str(p["sh"]))
+    sp_all = SP.find_picks(splays, lambda p: str(p["sh"]), starts)
     sp = [p for p in sp_all if p["key"] != "0" and SP.META["y0"] <= p["m"] <= lj]
     for p in ap:
         p["art"] = pack.artist(p["ah"]); p["item"] = p["art"]
