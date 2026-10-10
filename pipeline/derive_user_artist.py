@@ -21,7 +21,7 @@ DST = ROOT / "data" / "derived" / "user_artist"
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("half", choices=["explore", "sealed"])
+    ap.add_argument("half", choices=["explore", "sealed", "lb"])
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
     out = DST / args.half

@@ -30,7 +30,7 @@ MONTH = "(year(make_timestamp(week::BIGINT * 604800000000 + 302400000000)) * 12 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("half", choices=["explore", "sealed"])
+    ap.add_argument("half", choices=["explore", "sealed", "lb"])
     ap.add_argument("--only", default="0123456789abcdef")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()

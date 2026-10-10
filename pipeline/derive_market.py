@@ -21,14 +21,17 @@ import duckdb
 ROOT = Path(__file__).resolve().parent.parent
 UAM = ROOT / "data" / "derived" / "user_artist_month"
 DST = ROOT / "data" / "derived" / "market"
-FIRST, LAST = 2005 * 12, 2012 * 12 + 11
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))
+from periods import first_month, last_month  # noqa: E402
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("half", choices=["explore", "sealed"])
+    ap.add_argument("half", choices=["explore", "sealed", "lb"])
     ap.add_argument("--horizons", type=int, nargs="+", default=[6, 12, 24])
     args = ap.parse_args()
+    FIRST, LAST = first_month(args.half), last_month(args.half)
     out = DST / args.half
     out.mkdir(parents=True, exist_ok=True)
     tmp = ROOT / "data" / "_tmp" / f"market-{os.getpid()}"

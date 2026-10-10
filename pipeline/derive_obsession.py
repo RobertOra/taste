@@ -26,7 +26,7 @@ D = ROOT / "data" / "mlhd"
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("half", choices=["explore", "sealed"])
+    ap.add_argument("half", choices=["explore", "sealed", "lb"])
     ap.add_argument("--artists-only", action="store_true")
     args = ap.parse_args()
     half = args.half

@@ -25,9 +25,14 @@ from sklearn.cluster import MiniBatchKMeans
 from sklearn.decomposition import TruncatedSVD
 
 ROOT = Path(__file__).resolve().parent.parent
-UAM = ROOT / "data" / "derived" / "user_artist_month" / "explore"
-OUT = ROOT / "data" / "derived" / "scenes_yearly" / "explore.parquet"
-YEARS = range(2006, 2013)
+import sys
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent))
+from periods import scene_years  # noqa: E402
+HALF = sys.argv[1] if len(sys.argv) > 1 else "explore"  # explore (default) or lb
+UAM = ROOT / "data" / "derived" / "user_artist_month" / HALF
+OUT = ROOT / "data" / "derived" / "scenes_yearly" / f"{HALF}.parquet"
+YEARS = range(2006, 2013) if HALF == "explore" else scene_years(HALF)
 MIN_LISTENERS = 50
 FIT_USERS = 75_000
 DIM = 64

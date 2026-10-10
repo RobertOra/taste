@@ -29,7 +29,7 @@ YEAR = "year(make_timestamp({w}::BIGINT * 604800000000 + 302400000000))"
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("half", choices=["explore", "sealed"])
+    ap.add_argument("half", choices=["explore", "sealed", "lb"])
     h = ap.parse_args().half
     out = X / "user_year_features" / f"{h}.parquet"
     out.parent.mkdir(parents=True, exist_ok=True)

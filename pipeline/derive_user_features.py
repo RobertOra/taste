@@ -22,7 +22,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("half", choices=["explore", "sealed"])
+    ap.add_argument("half", choices=["explore", "sealed", "lb"])
     h = ap.parse_args().half
     D, X = ROOT / "data" / "mlhd", ROOT / "data" / "derived"
     out = X / "user_features" / f"{h}.parquet"

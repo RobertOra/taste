@@ -7,6 +7,7 @@ Artists absent from the current dump (e.g. MBIDs merged since 2023) are simply m
 """
 
 import json
+import sys
 import lzma
 import tarfile
 import urllib.request
@@ -17,11 +18,21 @@ import polars as pl
 ROOT = Path(__file__).resolve().parent.parent
 BASE = "https://data.metabrainz.org/pub/musicbrainz/data/json-dumps/"
 OUT = ROOT / "data" / "derived" / "mb_artists.parquet"
+LB = "--lb" in sys.argv  # ListenBrainz artists: match on the numeric id (last 15 hex digits of the MBID)
+if LB:
+    OUT = ROOT / "data" / "derived" / "mb_artists_lb.parquet"
 
 
 def main():
     latest = urllib.request.urlopen(BASE + "LATEST").read().decode().strip()
-    wanted = set(pl.read_parquet(ROOT / "data" / "mlhd" / "artist_map" / "all" / "artist_map.parquet")["mbid"].to_list())
+    if LB:
+        import duckdb
+        ids = duckdb.connect().execute(f"SELECT DISTINCT artist_mbid_id FROM read_parquet('{ROOT}/data/lb/name_mbid/*.parquet')").fetchall()
+        wanted_ids = {r[0] for r in ids}
+        mid = lambda m: int(m.replace("-", "")[-15:], 16) if m else None
+        print(f"ListenBrainz artist ids wanted: {len(wanted_ids):,}", flush=True)
+    else:
+        wanted = set(pl.read_parquet(ROOT / "data" / "mlhd" / "artist_map" / "all" / "artist_map.parquet")["mbid"].to_list())
     resp = urllib.request.urlopen(urllib.request.Request(BASE + f"{latest}/artist.tar.xz",
                                                          headers={"User-Agent": "taste-research/0.1"}), timeout=300)
     rows, seen = [], 0
@@ -32,7 +43,7 @@ def main():
             for line in tar.extractfile(member):
                 seen += 1
                 a = json.loads(line)
-                if a["id"] not in wanted:
+                if (mid(a["id"]) not in wanted_ids) if LB else (a["id"] not in wanted):
                     continue
                 tags = sorted(a.get("tags") or [], key=lambda t: -t.get("count", 0))[:20]
                 rows.append({

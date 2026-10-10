@@ -7,6 +7,7 @@ before or after one of the artist's releases?
 """
 
 import json
+import sys
 import lzma
 import tarfile
 import urllib.request
@@ -17,11 +18,21 @@ import polars as pl
 ROOT = Path(__file__).resolve().parent.parent
 BASE = "https://data.metabrainz.org/pub/musicbrainz/data/json-dumps/"
 OUT = ROOT / "data" / "derived" / "mb_release_groups.parquet"
+LB = "--lb" in sys.argv  # ListenBrainz artists: match on the numeric id (last 15 hex digits of the MBID)
+if LB:
+    OUT = ROOT / "data" / "derived" / "mb_release_groups_lb.parquet"
 
 
 def main():
     latest = urllib.request.urlopen(BASE + "LATEST").read().decode().strip()
-    wanted = set(pl.read_parquet(ROOT / "data" / "mlhd" / "artist_map" / "all" / "artist_map.parquet")["mbid"].to_list())
+    if LB:
+        import duckdb
+        ids = duckdb.connect().execute(f"SELECT DISTINCT artist_mbid_id FROM read_parquet('{ROOT}/data/lb/name_mbid/*.parquet')").fetchall()
+        wanted_ids = {r[0] for r in ids}
+        mid = lambda m: int(m.replace("-", "")[-15:], 16) if m else None
+        print(f"ListenBrainz artist ids wanted: {len(wanted_ids):,}", flush=True)
+    else:
+        wanted = set(pl.read_parquet(ROOT / "data" / "mlhd" / "artist_map" / "all" / "artist_map.parquet")["mbid"].to_list())
     resp = urllib.request.urlopen(urllib.request.Request(BASE + f"{latest}/release-group.tar.xz",
                                                          headers={"User-Agent": "taste-research/0.1"}), timeout=300)
     cols = {"mbid": [], "rg_mbid": [], "primary_type": [], "secondary_types": [], "first_release_date": []}
@@ -36,7 +47,7 @@ def main():
                 date = rg.get("first-release-date") or None
                 for credit in rg.get("artist-credit") or []:
                     a = (credit.get("artist") or {}).get("id")
-                    if a in wanted:
+                    if a and ((mid(a) in wanted_ids) if LB else (a in wanted)):
                         cols["mbid"].append(a)
                         cols["rg_mbid"].append(rg["id"])
                         cols["primary_type"].append(rg.get("primary-type"))
