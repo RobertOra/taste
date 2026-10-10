@@ -271,6 +271,13 @@ the sealed half in an earlier descriptive table (32.6%), so not a test here.
 99% low 1.08]. P11b 0.009 [0.006, 0.012; 99% low 0.006] (top fifth +3.5 points above all picks, bottom fifth -2.6 below).
 Persistence: bottom fifth stays bottom 32.6%, top fifth stays top 34.0% (chance 20%).
 
+## Can taste be learned? (written 2026-10-09 20:21, before any sealed run of analysis/learning.py)
+Exploratory on the explore half; tested once on the sealed half with the committed code (artists, frozen prescience measure).
+- P12. Within the same people, picks in experience years 3-4 beat picks in years 1-2 (difference in growth vs similar > 0;
+  99% bootstrap lower bound > 0). Explore +0.44 points [0.40, 0.49].
+Descriptive: years 1-2 vs 5-6; the year-by-year curve for people active in years 1-5; change by starting third (split-half,
+but odd and even picks share period-level luck, so some regression to the mean may remain).
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|
