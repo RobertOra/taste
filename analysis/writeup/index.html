@@ -244,7 +244,31 @@
     </div>
     <p>The best pickers' edge at the rarest breakouts has narrowed, though. Their new artists took off tenfold
       <span class="wu-num dash-skeleton" data-source="eras" data-field="ratio_10x" data-where="key=2007–2012" data-fmt="times">—</span> as often as the worst fifth's in
-      2007–2012, and <span class="wu-num" data-source="eras" data-field="ratio_10x" data-where="key=2019–2023" data-fmt="times">—</span> as often in 2019–2023.</p>
+      2007–2012, and <span class="wu-num" data-source="eras" data-field="ratio_10x" data-where="key=2019–2023" data-fmt="times">—</span> as often in 2019–2023. Against similar artists,
+      the top 1%'s new artists took off tenfold <span class="wu-num dash-skeleton" data-source="erastakeoff" data-field="times_similar" data-where="key=1:2007–2012" data-fmt="times">—</span> as often in
+      2007–2012 and <span class="wu-num" data-source="erastakeoff" data-field="times_similar" data-where="key=1:2019–2023" data-fmt="times">—</span> in 2019–2023. Nearly all of that drop came between
+      the first two eras; since 2013 the edge has held about steady.</p>
+    <div class="wu-card">
+      <h3>Tenfold takeoffs by era, for the top pickers</h3>
+      <p class="wu-note">ListenBrainz. How many times as often the top pickers' new artists grew tenfold within a year as similar artists (same size,
+        same month), by when the pickers were rated. Hover over or click a group to highlight it. The early era rests on fewer people (the top 1% had
+        <span class="wu-num dash-skeleton" data-source="erastakeoff" data-field="people" data-where="key=1:2007–2012" data-fmt="int">—</span> person-years), so its ranges are wider.</p>
+      <div class="wu-chips" id="et-chips" role="group" aria-label="Group of top pickers"></div>
+      <div class="wu-chart dash-skeleton" id="et-chart" data-source="erastakeoff"></div>
+    </div>
+    <p>From an artist's side, a good new fan still counts for a lot. In 2019–2023, one new fan with a good track record went with
+      <span class="wu-num dash-skeleton" data-source="erasfan" data-field="effect" data-where="key=2019–2023:small:good" data-fmt="spct1">—</span> growth for a small artist over the
+      next year, against <span class="wu-num" data-source="erasfan" data-field="effect" data-where="key=2019–2023:small:ordinary" data-fmt="spct1">—</span> for an ordinary new fan and
+      <span class="wu-num" data-source="erasfan" data-field="effect" data-where="key=2019–2023:small:poor" data-fmt="spct1">—</span> for a poor picker. A poor picker has gone from a
+      small plus to a minus, the same widening as above.</p>
+    <div class="wu-card">
+      <h3>Extra growth over the next year from one new fan, compared with not having that fan, by era</h3>
+      <p class="wu-note">ListenBrainz. The same comparison as in "What one new fan is worth", made separately in each era: artists of the same size and
+        momentum in the same month, holding the other kinds of new fans fixed. Pick an artist size. Bars are 95% ranges.</p>
+      <div class="wu-chips" id="ef-chips" role="group" aria-label="Artist size"></div>
+      <div class="wu-legend" id="ef-legend"></div>
+      <div class="wu-chart dash-skeleton" id="ef-chart" data-source="erasfan"></div>
+    </div>
     <p>Our formal test, set before looking, asked whether taste scores predicted later picks at least half as well in 2019–2023 as in 2007–2012.
       They predicted them better: <span class="wu-num dash-skeleton" data-source="eras" data-field="ratio" data-where="key=formal_A" data-fmt="times2">—</span> as well for prescience and
       <span class="wu-num" data-source="eras" data-field="ratio" data-where="key=formal_D" data-fmt="times2">—</span> for discernment. Most of ListenBrainz's listening before 2014 was
@@ -1120,6 +1144,114 @@
     });
   }
 
+  let etSel = 1, etHover = null;
+  function drawErasTakeoff() {
+    const el = document.getElementById('et-chart');
+    const chips = document.getElementById('et-chips');
+    if (!ready(el, ['erastakeoff'])) { chips.replaceChildren(); return; }
+    const rows = dash.data('erastakeoff').data.map((r) => ({ ...r, top: +r.top, v: +r.times_similar, lo: +r.lo, hi: +r.hi }));
+    const tops = [...new Set(rows.map((r) => r.top))].sort((a, b) => b - a);
+    const eras = [...new Set(rows.map((r) => r.era))];
+    const col = dash.colors[0], mute = css('--cds-chart-muted');
+    const f = frame(el, 280, { t: 28, r: 16, b: 30, l: 36 });
+    const { svg, fs, width, height, m } = f;
+    const x = d3.scalePoint(eras, [m.l, width - m.r]).padding(0.35);
+    const y = d3.scaleLinear([0, d3.max(rows, (r) => r.hi) * 1.05], [height - m.b, m.t]).nice();
+    gridY(f, y, (d) => `${d}×`, 5);
+    svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(1)).attr('y2', y(1)).attr('stroke', css('--cds-chart-axis'));
+    svg.append('text').attr('x', m.l + 4).attr('y', y(1) - 6).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Same as similar artists');
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`).call(d3.axisBottom(x).tickSize(0)), fs);
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Tenfold takeoffs, times as often as similar artists');
+    const lines = svg.append('g'), hi = svg.append('g');
+    const tip = tooltip(el);
+    function paint() {
+      const cur = etHover ?? etSel;
+      lines.selectAll('*').remove(); hi.selectAll('*').remove();
+      tops.forEach((k) => {
+        const pts = rows.filter((r) => r.top === k).sort((a, b) => eras.indexOf(a.era) - eras.indexOf(b.era));
+        const on = k === cur;
+        const line = d3.line().x((d) => x(d.era)).y((d) => y(d.v));
+        (on ? hi : lines).append('path').datum(pts).attr('d', line).attr('fill', 'none')
+          .attr('stroke', on ? col : mute).attr('stroke-width', on ? 2.5 : 1.5).attr('opacity', on ? 1 : 0.55).attr('stroke-linejoin', 'round');
+        lines.append('path').datum(pts).attr('d', line).attr('fill', 'none').attr('stroke', 'transparent').attr('stroke-width', 12).style('cursor', 'pointer')
+          .on('mouseenter', () => { etHover = k; paint(); }).on('mouseleave', () => { etHover = null; paint(); })
+          .on('click', () => { etSel = k; etHover = null; paint(); });
+        if (on) {
+          errorDots(hi, pts, (d) => x(d.era), y, col, false);
+          hi.selectAll('circle.hit').data(pts).join('circle').attr('class', 'hit').attr('cx', (d) => x(d.era)).attr('cy', (d) => y(d.v)).attr('r', 10)
+            .attr('fill', 'transparent')
+            .on('mousemove', (ev, d) => tip.show(ev, `Top ${k}% of pickers, rated ${d.era}`, [['Tenfold takeoffs', `${fmt.times(d.v)} (${fmt.times(d.lo)} to ${fmt.times(d.hi)})`, col],
+              ['Their new artists', `${d3.format('.2~f')(+d.per_1000)} per 1,000`], ['Similar artists', `${d3.format('.2~f')(+d.similar_per_1000)} per 1,000`],
+              ['Cases', fmt.int(+d.events)], ['Person-years', fmt.int(+d.people)]]))
+            .on('mouseleave', () => tip.hide());
+          const last = pts[pts.length - 1];
+          hi.append('text').attr('x', x(last.era)).attr('y', y(last.hi) - 8).attr('text-anchor', 'middle').attr('fill', css('--color-fg'))
+            .style('font-size', fs).text(`Top ${k}%: ${fmt.times(last.v)}`);
+        }
+      });
+      chips.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.top === etSel)));
+    }
+    chips.replaceChildren(...tops.map((k) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'wu-chip'; b.dataset.top = k; b.textContent = `Top ${k}%`;
+      b.addEventListener('click', () => { etSel = k; etHover = null; paint(); });
+      b.addEventListener('mouseenter', () => { etHover = k; paint(); });
+      b.addEventListener('mouseleave', () => { etHover = null; paint(); });
+      b.addEventListener('focus', () => { etHover = k; paint(); });
+      b.addEventListener('blur', () => { etHover = null; paint(); });
+      return b;
+    }));
+    paint();
+  }
+
+  let efSel = 'small';
+  function drawErasFan() {
+    const el = document.getElementById('ef-chart');
+    const chips = document.getElementById('ef-chips');
+    if (!ready(el, ['erasfan'])) { chips.replaceChildren(); return; }
+    const fans = [['good', 'Good picker', dash.colors[0]], ['ordinary', 'Ordinary fan', css('--cds-chart-muted')], ['poor', 'Poor picker', dash.colors[1]]];
+    const sizes = [['small', 'Small artist (≤20)'], ['medium', 'Medium (21–100)'], ['big', 'Big (100+)']];
+    legend('ef-legend', fans.map(([, l, c]) => [l, c, 'dot']));
+    const all = dash.data('erasfan').data.map((r) => ({ ...r, v: +r.effect, lo: +r.lo, hi: +r.hi }));
+    const eras = [...new Set(all.map((r) => r.era))];
+    const f = frame(el, 270, { t: 28, r: 8, b: 30, l: 44 });
+    const { svg, fs, width, height, m } = f;
+    const x0 = d3.scaleBand(eras, [m.l, width - m.r]).paddingInner(0.25).paddingOuter(0.1);
+    const x1 = d3.scaleBand(fans.map((d) => d[0]), [0, x0.bandwidth()]).padding(0.12);
+    const y = d3.scaleLinear([Math.min(0, d3.min(all, (r) => r.lo)), d3.max(all, (r) => r.hi) * 1.12], [height - m.b, m.t]).nice();
+    gridY(f, y, d3.format('+.0%'), 5);
+    svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', css('--cds-chart-axis'));
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`).call(d3.axisBottom(x0).tickSize(0)), fs);
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Extra growth over the next year');
+    const bars = svg.append('g');
+    const tip = tooltip(el);
+    function paint() {
+      bars.selectAll('*').remove();
+      all.filter((r) => r.stage === efSel).forEach((r) => {
+        const fn = fans.find((q) => q[0] === r.fan); if (!fn) return;
+        const bx = x0(r.era) + x1(r.fan), bw = x1.bandwidth();
+        const top = y(Math.max(0, r.v)), bot = y(Math.min(0, r.v)), rad = Math.min(4, bw / 2, Math.max(1, bot - top));
+        const path = r.v >= 0
+          ? `M${bx},${bot}V${top + rad}Q${bx},${top} ${bx + rad},${top}H${bx + bw - rad}Q${bx + bw},${top} ${bx + bw},${top + rad}V${bot}Z`
+          : `M${bx},${top}V${bot - rad}Q${bx},${bot} ${bx + rad},${bot}H${bx + bw - rad}Q${bx + bw},${bot} ${bx + bw},${bot - rad}V${top}Z`;
+        bars.append('path').attr('d', path).attr('fill', fn[2]);
+        bars.append('line').attr('x1', bx + bw / 2).attr('x2', bx + bw / 2).attr('y1', y(r.lo)).attr('y2', y(r.hi)).attr('stroke', css('--color-fg-muted')).attr('stroke-width', 1.5);
+        if (r.fan === 'good') bars.append('text').attr('x', bx + bw / 2).attr('y', y(r.hi) - 6).attr('text-anchor', 'middle')
+          .attr('fill', css('--color-fg')).style('font-size', fs).text(fmt.spct0(r.v));
+        bars.append('rect').attr('x', bx).attr('y', m.t).attr('width', bw).attr('height', height - m.t - m.b).attr('fill', 'transparent')
+          .on('mousemove', (ev) => tip.show(ev, `${r.era}, ${sizes.find((q) => q[0] === r.stage)[1].toLowerCase()}: one new ${fn[1].toLowerCase()}`,
+            [['Extra growth', `${fmt.spct1(r.v)} (${fmt.spct1(r.lo)} to ${fmt.spct1(r.hi)})`, fn[2]], ['Artist-months', fmt.int(+r.artist_months)]]))
+          .on('mouseleave', () => tip.hide());
+      });
+      chips.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.size === efSel)));
+    }
+    chips.replaceChildren(...sizes.map(([k, l]) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'wu-chip'; b.dataset.size = k; b.textContent = l;
+      b.addEventListener('click', () => { efSel = k; paint(); });
+      return b;
+    }));
+    paint();
+  }
+
   function drawHabits() {
     const el = document.getElementById('hb-chart');
     if (!ready(el, ['toppickers'])) return;
@@ -1521,6 +1653,8 @@
     fillMarks();
     drawRepeat();
     drawEras();
+    drawErasTakeoff();
+    drawErasFan();
     drawObsession();
     drawObsTaste();
     drawHabits();
