@@ -113,3 +113,5 @@ the frozen one-sided Holm test). Full table: analysis/out/sealed_run.log, analys
 | Durability, scenes | 0.006 [-0.001, 0.013] | 0.012 [0.004, 0.019] |
 
 Write-up for a general reader: https://claude.ai/artifact/GLyaqWkJrEnJKPJNeG2zPt (source: analysis/writeup/; data built by analysis/build_writeup_data.py).
+
+- 2026-10-10: freed 22.4 GB before the ListenBrainz ingest: deleted agg.parquet for 200 variant/sweep candidates and analysis/out/cand/_superseded. Kept every scorecard.json/meta.json and the full folders of the 12 main and 12 sealed candidates. Any deleted agg can be rebuilt with analysis/taste_models.py using the settings in its meta.json.
