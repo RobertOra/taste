@@ -317,6 +317,16 @@ Descriptive: per-genre values, the average picker in each group, overlap of the 
 **Sealed result (run once, 2026-10-10): confirmed.** Average specialists minus good in general -0.2 points [-0.6, +0.1;
 99% upper +0.2], below the +1 point bound.
 
+## Is taste general? Predicting a genre from other genres only (written 2026-10-09 21:01, before any sealed run of analysis/genre4.py)
+Exploratory on the explore half; tested once on the sealed half with the committed code (one run).
+- P16. Averaged over genres, rating people only on their picks in other genres predicts their later picks in a genre within
+  1 point of rating them on that genre itself: 99% upper bound of (this-genre ranking - other-genres ranking) < +1 point.
+  Explore +0.34 points [-0.05, +0.74; 99% upper +0.86]; other-genres ranking reaches 95% of the this-genre gap.
+Interpretation note on P14b (confirmed earlier): the same-genre gap exceeding the other-genre gap does not by itself show
+genre-specific skill, because genres differ in how much room their picks have; P16 compares two rankings on the same picks,
+which removes that. The write-up's earlier "good ear vs genre knowledge" split is withdrawn in favour of this comparison.
+Descriptive: per-genre values; share of each genre's picks that are artists already in the data by April 2005.
+
 ## Revisions
 | Date | Change | Why | Prompted by results? |
 |---|---|---|---|
