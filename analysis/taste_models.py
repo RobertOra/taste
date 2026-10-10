@@ -210,7 +210,7 @@ def main():
         con.execute(f"""CREATE TABLE relm AS
             SELECT DISTINCT artist, (substr(first_release_date, 1, 4)::INT * 12 + substr(first_release_date, 6, 2)::INT - 1)::SMALLINT AS rm
             FROM read_parquet('{X}/mb_release_groups{"_lb" if a.half == "lb" else ""}.parquet')
-            WHERE regexp_matches(first_release_date, '^[0-9]{{4}}-[0-9]{{2}}')
+            WHERE regexp_matches(first_release_date, '^[0-9]{{4}}-[0-9]{{2}}') AND first_release_date < '2700'  -- typo dates past a SMALLINT month
               AND primary_type IN ('Album', 'EP', 'Single') AND secondary_types NOT LIKE '%Compilation%'""")
         con.execute("""CREATE TABLE rel AS
             WITH k AS (SELECT DISTINCT artist, m FROM r)

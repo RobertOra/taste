@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "/Users/robert/Projects/taste/analysis/taste_models.py", line 107, in <lambda>
+    signal.signal(signal.SIGTERM, lambda *_: sys.exit(143))  # run cleanup when stopped  # also on failure
+                                             ~~~~~~~~^^^^^
+SystemExit: 143
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/robert/Projects/taste/analysis/taste_models.py", line 460, in <module>
+    main()
+    ~~~~^^
+  File "/Users/robert/Projects/taste/analysis/taste_models.py", line 170, in main
+    con.execute(f"""CREATE TABLE first_seen AS SELECT artist, min(month) AS fm
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    FROM read_parquet('{X}/user_artist_month/{a.half}/*.parquet') GROUP BY artist""")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: Query interrupted
