@@ -267,6 +267,9 @@
     <p>Counting good pickers one at a time: for a niche artist, each additional good picker among its new fans added about
       <span class="wu-num dash-skeleton" data-source="headlines" data-field="hidden" data-where="key=slope_niche" data-fmt="spct1">—</span> growth, with no sign of levelling off as more arrived. For an artist
       already drawing a crowd of new fans, each added about <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=slope_crowded" data-fmt="spct1">—</span>.</p>
+    <p>There are no diminishing returns. For niche artists, a second good picker adds even more than the first
+      (<span class="wu-num dash-skeleton" data-source="crowdsteps" data-field="step" data-where="key=niche:2" data-fmt="spct1">—</span> against <span class="wu-num" data-source="crowdsteps" data-field="step" data-where="key=niche:1" data-fmt="spct1">—</span>): agreement counts for more than a
+      lone vote. For middle and crowded artists, each good picker adds about the same as the last, as far as the data reaches.</p>
     <div class="wu-card">
       <h3>Growth by the number of good pickers among an artist's new fans</h3>
       <p class="wu-note">Hidden half. Compared with artists of the same size and momentum that month with exactly the same numbers of
@@ -274,16 +277,6 @@
         fans that month; middle: 3–5; crowded: 6 or more. Each line's last point pools the larger counts. Bars are 95% ranges.</p>
       <div class="wu-legend" id="cr-legend"></div>
       <div class="wu-chart dash-skeleton" id="cr-chart" data-source="crowd"></div>
-    </div>
-    <div class="wu-card">
-      <h3>What each additional good picker adds</h3>
-      <p class="wu-note">Hidden half. The extra growth from the 1st, 2nd, 3rd… good picker among an artist's new fans, on top of the ones before. A
-        flat line would mean every good picker adds the same; a falling one would mean diminishing returns. For niche artists the second good
-        picker adds more than the first: agreement counts for more than a lone vote. For middle and crowded artists each good picker adds about the
-        same, and nowhere do the returns shrink. Steps are shown while their 95% range stays within six points either way; beyond that there are too
-        few artists to tell.</p>
-      <div class="wu-legend" id="cs-legend"></div>
-      <div class="wu-chart dash-skeleton" id="cs-chart" data-source="crowdsteps"></div>
     </div>
   </section>
 
@@ -1174,38 +1167,6 @@
     svg.append('text').attr('x', x(0.2) + 4).attr('y', height - m.b - 4).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Chance: 20%');
   }
 
-  function drawCrowdSteps() {
-    const el = document.getElementById('cs-chart');
-    if (!ready(el, ['crowdsteps'])) return;
-    const groups = [['niche', 'Niche', dash.colors[0]], ['middle', 'Middle', dash.colors[1]], ['crowded', 'Crowded', dash.colors[2]]];
-    legend('cs-legend', groups.map(([, l, c]) => [l, c, 'line']));
-    const rows = dash.data('crowdsteps').data.map((r) => ({ ...r, nth: +r.nth, v: +r.step, lo: +r.lo, hi: +r.hi }))
-      .filter((r) => (r.hi - r.lo) / 2 <= 0.06);
-    const f = frame(el, 270, { t: 28, r: 16, b: 40, l: 44 });
-    const { svg, fs, width, height, m } = f;
-    const x = d3.scaleLinear([0.6, d3.max(rows, (r) => r.nth) + 0.4], [m.l, width - m.r]);
-    const y = d3.scaleLinear([Math.min(0, d3.min(rows, (r) => r.lo)), d3.max(rows, (r) => r.hi) * 1.1], [height - m.b, m.t]).nice();
-    gridY(f, y, d3.format('+.0%'), 5);
-    svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', css('--cds-chart-axis'));
-    const ord = (n) => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ({ 1: 'st', 2: 'nd', 3: 'rd' }[n % 10] || 'th'));
-    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`)
-      .call(d3.axisBottom(x).tickValues(d3.range(1, d3.max(rows, (r) => r.nth) + 1)).tickFormat(ord).tickSize(0)), fs);
-    svg.append('text').attr('x', (m.l + width - m.r) / 2).attr('y', height - 4).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted'))
-      .style('font-size', fs).text('Which good picker (counting the new fans that month)');
-    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Extra growth from this good picker');
-    const tip = tooltip(el);
-    const off = { niche: -0.12, middle: 0, crowded: 0.12 };
-    groups.forEach(([g, label, c]) => {
-      const p = rows.filter((r) => r.group === g).sort((a, b) => a.nth - b.nth);
-      const xx = (d) => x(d.nth + off[g]);
-      svg.append('path').datum(p).attr('d', d3.line().x(xx).y((d) => y(d.v))).attr('fill', 'none').attr('stroke', c).attr('stroke-width', 2);
-      errorDots(svg, p, xx, y, c, false);
-      p.forEach((d) => svg.append('circle').attr('cx', xx(d)).attr('cy', y(d.v)).attr('r', 10).attr('fill', 'transparent')
-        .on('mousemove', (ev) => tip.show(ev, `${label} artist: the ${ord(d.nth)} good picker`, [['Extra growth', `${fmt.spct1(d.v)} (${fmt.spct1(d.lo)} to ${fmt.spct1(d.hi)})`, c],
-          ['Artist-months with this many', fmt.int(+d.artist_months)]])).on('mouseleave', () => tip.hide()));
-    });
-  }
-
   function drawFanValue() {
     const el = document.getElementById('fv-chart');
     if (!ready(el, ['fanvalue'])) return;
@@ -1457,7 +1418,6 @@
     drawGrowthBand();
     drawFanValue();
     drawCrowd();
-    drawCrowdSteps();
     const hl = (r, f) => (r[f] === null || r[f] === undefined ? '–' : r.unit === 'times as often' ? fmt.times(+r[f])
       : r.unit === 'points' ? `${d3.format('.1f')(+r[f] * 100)} points` : r.unit === 'log' ? d3.format('+.2f')(+r[f]) : fmt.spct1(+r[f]));
     (function fillHeadlines() {
