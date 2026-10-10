@@ -163,8 +163,9 @@
         edge at the rarest breakouts is smaller than it was in the early 2010s.</li>
       <li><a href="#ladder"><b>The best pickers are far better.</b></a> The top 1%'s new artists grew tenfold
         <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P4a" data-fmt="times">—</span> as often as similar artists. The bottom half did no better than chance.</li>
-      <li><a href="#careers"><b>Good taste is being early; bad taste lasts.</b></a> Good pickers' finds rise ahead of similar artists, then the others catch up.
-        Bad pickers' finds keep sinking year after year.</li>
+      <li><a href="#careers"><b>Good pickers' typical finds are early; their big hits last.</b></a> Six years on, the top 1%'s new artists were still
+        <span class="wu-num dash-skeleton" data-source="careerten" data-field="times_similar" data-where="key=top1:6" data-fmt="times">—</span> as likely as similar artists to be ten
+        times bigger. Bad pickers' finds keep sinking year after year.</li>
       <li><a href="#fanvalue"><b>Good pickers matter most early.</b></a> One good new fan went with <span class="wu-num" data-source="fanvalue" data-field="effect" data-where="key=small:good" data-fmt="spct0">—</span>
         growth for a small artist, against <span class="wu-num" data-source="fanvalue" data-field="effect" data-where="key=small:ordinary" data-fmt="spct1">—</span> for an ordinary fan. Several good pickers add up;
         poor pickers count against an artist.</li>
@@ -203,12 +204,15 @@
     </div>
     <div class="wu-card">
       <h3>Over a decade, most of the edge fades</h3>
-      <p class="wu-note">ListenBrainz. People ranked on their picks up to 2015, then ranked again on each later year's picks. The lines show how many
-        of the 2015 top fifth were in that year's top fifth, and how many of the 2015 bottom fifth were in that year's bottom fifth. By chance, 20%.
-        Shaded bands are 95% ranges.</p>
+      <p class="wu-note">ListenBrainz; discernment for songs, as in the chart above. People ranked on their picks up to 2015, then ranked again on each
+        later year's picks. The lines show how many of the 2015 top fifth were in that year's top fifth, and how many of the 2015 bottom fifth were in
+        that year's bottom fifth. By chance, 20%. The hollow first point is a little inflated: its picks were judged over some of the same months as the
+        2015 picks. Shaded bands are 95% ranges.</p>
       <div class="wu-legend" id="dc-legend"></div>
       <div class="wu-chart dash-skeleton" id="dc-chart" data-source="decade"></div>
     </div>
+    <p>It isn't noise: each year's score is about equally reliable, yet people's taste matches their 2015 taste a little less every year. Bad pickers
+      stay bad a little longer than good pickers stay good.</p>
     <p>The formal test asks the same thing with every correction in place: a person's score from earlier years has to predict their later
       picks, after ruling out luck and a long list of other explanations. All four kinds of taste passed. Each dot is how well earlier taste scores predicted later results for one measure,
       on the hidden half of listeners. Zero would mean no prediction at all. Bars show the range we're 95% sure of, and hollow dots show what
@@ -253,11 +257,11 @@
       <div class="wu-chart dash-skeleton" id="yg-chart" data-source="yeargrowth"></div>
     </div>
     <div class="wu-card">
-      <h3>The same people, then and now</h3>
-      <p class="wu-note">ListenBrainz. "Same people" picked new artists both in 2010–2014 and in 2021–2025. Left: the gap in growth between the best
-        and worst fifth's new artists. Right: how many times as often the top 10%'s new artists grew tenfold as similar artists. Bars are 95% ranges.</p>
-      <div class="wu-legend" id="sp-legend"></div>
-      <div class="wu-chart dash-skeleton" id="sp-chart" data-source="samepeople"></div>
+      <h3>The gap grew for the same people too</h3>
+      <p class="wu-note">ListenBrainz. The gap in growth between the best and worst fifth's new artists, year by year, for everyone and for the same
+        people: those who picked new artists both in 2010–2014 and in 2021–2025. Shaded band: 95% range for the same people.</p>
+      <div class="wu-legend" id="sy-legend"></div>
+      <div class="wu-chart dash-skeleton" id="sy-chart" data-source="samepeople_year"></div>
     </div>
     <p>The widening gap holds for the same people, so it isn't just who joined. The shrinking takeoff edge is partly who was there early: people
       seen only before 2021 had an unusually large edge.</p>
@@ -325,15 +329,23 @@
   </section>
 
   <section class="wu-section" id="careers">
-    <h2>Good taste is being early; bad taste lasts</h2>
-    <p>Do good pickers find careers, or one-hit wonders? Following each new artist for six years: good pickers' finds pull ahead of similar artists
-      for the first few years, then the others catch up. Bad pickers' finds fall further behind every year.</p>
+    <h2>Good pickers' typical finds are early; their big hits last</h2>
+    <p>Following each new artist for six years: a good picker's typical find pulls ahead of similar artists for the first few years, then the others
+      catch up. But their biggest finds are much more likely to become lasting breakouts. Bad pickers' finds fall further behind every year.</p>
     <div class="wu-card">
       <h3>How far ahead of (or behind) similar artists their new artists were, year after year</h3>
       <p class="wu-note">ListenBrainz, new artists found 2012–2019. Each artist's listeners in each later year, compared with artists of the same size
         found the same month; the picker isn't counted. Shaded bands are 95% ranges.</p>
       <div class="wu-legend" id="cv-legend"></div>
       <div class="wu-chart dash-skeleton" id="cv-chart" data-source="careers"></div>
+    </div>
+    <div class="wu-card">
+      <h3>Their biggest finds last: new artists ten times bigger, years later</h3>
+      <p class="wu-note">The same artists. How many times as often their listeners were at least ten times what they had been when found, compared with
+        similar artists, one to six years later. More artists of every kind get there given more time, so the multiple shrinks even as the lead in
+        numbers grows. Hover over or click a group to highlight it; the shaded band is its 95% range.</p>
+      <div class="wu-chips" id="ct-chips" role="group" aria-label="Group of pickers"></div>
+      <div class="wu-chart dash-skeleton" id="ct-chart" data-source="careerten"></div>
     </div>
   </section>
 
@@ -1299,16 +1311,20 @@
     const f = frame(el, 270, { t: 28, r: 16, b: 40, l: 40 });
     const { svg, fs, width, height, m } = f;
     const x = d3.scaleLinear(d3.extent(rows, (r) => r.year), [m.l, width - m.r]);
-    const y = d3.scaleLinear([0.1, 0.35], [height - m.b, m.t]);
-    gridY(f, y, d3.format('.0%'), 5);
+    const y = d3.scaleLinear([0.1, 0.4], [height - m.b, m.t]);
+    gridY(f, y, d3.format('.0%'), 6);
     svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(0.2)).attr('y2', y(0.2)).attr('stroke', css('--cds-chart-reference')).attr('stroke-dasharray', '4 3');
     svg.append('text').attr('x', width - m.r - 4).attr('y', y(0.2) + 14).attr('text-anchor', 'end').attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Chance: 20%');
     axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`).call(d3.axisBottom(x).ticks(rows.length).tickFormat((v) => `${v}`).tickSize(0)), fs);
     svg.append('text').attr('x', (m.l + width - m.r) / 2).attr('y', height - 4).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted')).style('font-size', fs)
       .text('Years after 2015');
     svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Still in the same fifth');
-    ser.forEach(([k, , c]) => bandLine(svg.append('g'), rows.map((r) => ({ year: r.year, v: +r[k], lo: +r[`${k}_lo`], hi: +r[`${k}_hi`] })), x, y, c, true));
-    bandHover(f, rows, x, (d) => [`${d.year} years later (${d.year + 2015})`, [['Top fifth still top', `${fmt.pct(+d.top_in_top)} (${fmt.pct(+d.top_in_top_lo)} to ${fmt.pct(+d.top_in_top_hi)})`, ser[0][2]],
+    ser.forEach(([k, , c]) => {
+      bandLine(svg.append('g'), rows.map((r) => ({ year: r.year, v: +r[k], lo: +r[`${k}_lo`], hi: +r[`${k}_hi`] })), x, y, c, true);
+      rows.filter((r) => truthy(r.overlap)).forEach((r) => svg.append('circle').attr('cx', x(r.year)).attr('cy', y(+r[k])).attr('r', 4)
+        .attr('fill', css('--color-panel')).attr('stroke', c).attr('stroke-width', 2));
+    });
+    bandHover(f, rows, x, (d) => [`${d.year} year${d.year > 1 ? 's' : ''} later (${d.year + 2015})`, [['Top fifth still top', `${fmt.pct(+d.top_in_top)} (${fmt.pct(+d.top_in_top_lo)} to ${fmt.pct(+d.top_in_top_hi)})`, ser[0][2]],
       ['Bottom fifth still bottom', `${fmt.pct(+d.bottom_in_bottom)} (${fmt.pct(+d.bottom_in_bottom_lo)} to ${fmt.pct(+d.bottom_in_bottom_hi)})`, ser[1][2]], ['People', fmt.int(+d.people)]]]);
   }
 
@@ -1336,47 +1352,81 @@
       ser.filter(([g]) => d.r[g]).map(([g, l, c]) => [l, `${fmt.spct1(d.r[g].v)} (${fmt.spct1(d.r[g].lo)} to ${fmt.spct1(d.r[g].hi)})`, c])]);
   }
 
-  function drawSamePeople() {
-    const el = document.getElementById('sp-chart');
-    if (!ready(el, ['samepeople'])) return;
-    const per = [['early', 'New artists found 2010–2014', css('--cds-chart-muted')], ['recent', 'New artists found 2021–2025', dash.colors[0]]];
-    legend('sp-legend', per.map(([, l, c]) => [l, c, 'dot']));
-    const rows = dash.data('samepeople').data.filter((r) => r.group !== 'Joined after 2014');
-    const groups = ['Everyone', 'Same people', 'Seen only before 2021'];
-    const f = frame(el, 280, { t: 30, r: 8, b: 44, l: 8 });
+  function drawSamePeopleYear() {
+    const el = document.getElementById('sy-chart');
+    if (!ready(el, ['samepeople_year'])) return;
+    const ser = [['everyone', 'Everyone', css('--cds-chart-muted')], ['same', 'Same people', dash.colors[0]]];
+    legend('sy-legend', ser.map(([, l, c]) => [l, c, 'line']));
+    const all = dash.data('samepeople_year').data.map((r) => ({ ...r, year: +r.year, v: +r.gap, lo: +r.lo, hi: +r.hi }));
+    const years = [...new Set(all.map((r) => r.year))].sort((a, b) => a - b);
+    const f = frame(el, 260, { t: 28, r: 16, b: 30, l: 40 });
     const { svg, fs, width, height, m } = f;
-    const panels = [['gap', 'Gap, best vs worst fifth', d3.format('.0%'), (v) => fmt.pts0(v)], ['top10', "Top 10%'s tenfold takeoffs", (v) => `${v}×`, (v) => fmt.times(v)]];
-    const pw = (width - m.l - m.r) / 2;
+    const x = d3.scaleLinear(d3.extent(years), [m.l, width - m.r]);
+    const y = d3.scaleLinear([0, d3.max(all, (r) => r.hi) * 1.05], [height - m.b, m.t]).nice();
+    gridY(f, y, (v) => `${d3.format('.0f')(v * 100)} pts`, 5);
+    yearAxis(f, x, years);
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Gap in growth, best vs worst fifth');
+    ser.forEach(([g, , c]) => bandLine(svg.append('g'), all.filter((r) => r.group === g).sort((a, b) => a.year - b.year), x, y, c, g === 'same'));
+    const byYear = years.map((yr) => ({ year: yr, mid: yr, r: Object.fromEntries(all.filter((q) => q.year === yr).map((q) => [q.group, q])) }));
+    bandHover(f, byYear, x, (d) => [`New artists found in ${d.year}`, ser.filter(([g]) => d.r[g]).map(([g, l, c]) => [l, `${fmt.pts0(d.r[g].v)} (${fmt.pts0(d.r[g].lo)} to ${fmt.pts0(d.r[g].hi)})`, c])]);
+  }
+
+  let ctSel = 'top1', ctHover = null;
+  function drawCareerTen() {
+    const el = document.getElementById('ct-chart');
+    const chips = document.getElementById('ct-chips');
+    if (!ready(el, ['careerten'])) { chips.replaceChildren(); return; }
+    const groups = [['top1', 'Top 1%'], ['top5', 'Top 5%'], ['best', 'Best fifth'], ['worst', 'Worst fifth']];
+    const rows = dash.data('careerten').data.map((r) => ({ ...r, year: +r.years, v: +r.times_similar, lo: +r.lo, hi: +r.hi }));
+    const col = (g) => (g === 'worst' ? dash.colors[1] : dash.colors[0]), mute = css('--cds-chart-muted');
+    const f = frame(el, 280, { t: 28, r: 16, b: 40, l: 36 });
+    const { svg, fs, width, height, m } = f;
+    const x = d3.scaleLinear([1, 6], [m.l, width - m.r]);
+    const y = d3.scaleLinear([0, d3.max(rows, (r) => r.hi) * 1.05], [height - m.b, m.t]).nice();
+    gridY(f, y, (d) => `${d}×`, 5);
+    svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(1)).attr('y2', y(1)).attr('stroke', css('--cds-chart-axis'));
+    svg.append('text').attr('x', width - m.r - 4).attr('y', y(1) + 14).attr('text-anchor', 'end').attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Same as similar artists');
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`).call(d3.axisBottom(x).ticks(6).tickFormat(d3.format('d')).tickSize(0)), fs);
+    svg.append('text').attr('x', (m.l + width - m.r) / 2).attr('y', height - 4).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted')).style('font-size', fs)
+      .text('Years after the artist was found');
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Ten times bigger, times as often as similar artists');
+    const lines = svg.append('g'), hi = svg.append('g'), hit = svg.append('g');
     const tip = tooltip(el);
-    panels.forEach(([k, title, tick, show], pi) => {
-      const L = m.l + pi * pw + 40, R = m.l + (pi + 1) * pw - 12;
-      const y = d3.scaleLinear([0, d3.max(rows, (r) => +r[`${k}_hi`]) * 1.1], [height - m.b, m.t]).nice();
-      svg.append('g').selectAll('line').data(y.ticks(4)).join('line').attr('x1', L).attr('x2', R).attr('y1', (d) => y(d)).attr('y2', (d) => y(d))
-        .attr('stroke', (d) => (d === 0 ? css('--cds-chart-axis') : css('--cds-chart-grid')));
-      axisStyle(svg.append('g').attr('transform', `translate(${L - 6},0)`).call(d3.axisLeft(y).ticks(4).tickFormat(tick).tickSize(0)), fs);
-      svg.append('text').attr('x', L - 34).attr('y', 12).attr('fill', css('--color-fg-muted')).style('font-size', fs).style('font-weight', 600).text(title);
-      if (k === 'top10') {
-        svg.append('line').attr('x1', L).attr('x2', R).attr('y1', y(1)).attr('y2', y(1)).attr('stroke', css('--cds-chart-reference')).attr('stroke-dasharray', '4 3');
-      }
-      const x0 = d3.scaleBand(groups, [L, R]).paddingInner(0.25).paddingOuter(0.05);
-      const x1 = d3.scaleBand(per.map((d) => d[0]), [0, x0.bandwidth()]).padding(0.1);
-      const gx = svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`).call(d3.axisBottom(x0).tickSize(0));
-      axisStyle(gx, fs);
-      gx.selectAll('text').call((t) => t.each(function (d) {
-          const words = d.split(' '), el2 = d3.select(this); el2.text('');
-          const mid = Math.ceil(words.length / 2);
-          [words.slice(0, mid).join(' '), words.slice(mid).join(' ')].filter(Boolean).forEach((ln, i) => el2.append('tspan').attr('x', 0).attr('dy', i ? '1.1em' : 0).text(ln));
-        }));
-      rows.forEach((r) => {
-        const pp = per.find((q) => q[0] === r.period); const bx = x0(r.group) + x1(r.period), bw = x1.bandwidth();
-        const v = +r[k], top = y(v), bot = y(0), rad = Math.min(4, bw / 2, Math.max(1, bot - top));
-        svg.append('path').attr('d', `M${bx},${bot}V${top + rad}Q${bx},${top} ${bx + rad},${top}H${bx + bw - rad}Q${bx + bw},${top} ${bx + bw},${top + rad}V${bot}Z`).attr('fill', pp[2]);
-        svg.append('line').attr('x1', bx + bw / 2).attr('x2', bx + bw / 2).attr('y1', y(+r[`${k}_lo`])).attr('y2', y(+r[`${k}_hi`])).attr('stroke', css('--color-fg-muted')).attr('stroke-width', 1.5);
-        svg.append('rect').attr('x', bx).attr('y', m.t).attr('width', bw).attr('height', height - m.t - m.b).attr('fill', 'transparent')
-          .on('mousemove', (ev) => tip.show(ev, `${r.group}: ${pp[1].toLowerCase()}`, [[title, `${show(v)} (${show(+r[`${k}_lo`])} to ${show(+r[`${k}_hi`])})`, pp[2]],
-            ['People', fmt.int(+(k === 'gap' ? r.best_people : r.top10_people))]])).on('mouseleave', () => tip.hide());
+    function paint() {
+      const cur = ctHover ?? ctSel;
+      lines.selectAll('*').remove(); hi.selectAll('*').remove(); hit.selectAll('*').remove();
+      groups.forEach(([g, label]) => {
+        const pts = rows.filter((r) => r.group === g).sort((a, b) => a.year - b.year);
+        const on = g === cur, line = d3.line().x((d) => x(d.year)).y((d) => y(d.v));
+        if (on) bandLine(hi, pts, x, y, col(g), true);
+        else lines.append('path').datum(pts).attr('d', line).attr('fill', 'none').attr('stroke', mute).attr('stroke-width', 1.5).attr('opacity', 0.55);
+        lines.append('path').datum(pts).attr('d', line).attr('fill', 'none').attr('stroke', 'transparent').attr('stroke-width', 12).style('cursor', 'pointer')
+          .on('mouseenter', () => { ctHover = g; paint(); }).on('mouseleave', () => { ctHover = null; paint(); })
+          .on('click', () => { ctSel = g; ctHover = null; paint(); });
+        if (on) {
+          hit.selectAll(null).data(pts).join('circle').attr('cx', (d) => x(d.year)).attr('cy', (d) => y(d.v)).attr('r', 9).attr('fill', 'transparent')
+            .on('mousemove', (ev, d) => tip.show(ev, `${label}'s new artists, ${d.year} year${d.year > 1 ? 's' : ''} later`,
+              [['Ten times bigger', `${fmt.times(d.v)} as often (${fmt.times(d.lo)} to ${fmt.times(d.hi)})`, col(g)],
+                ['Their new artists', `${d3.format('.1f')(+d.per_1000)} per 1,000`], ['Similar artists', `${d3.format('.1f')(+d.similar_per_1000)} per 1,000`],
+                ['People', fmt.int(+d.people)]]))
+            .on('mouseleave', () => tip.hide());
+          const last = pts[pts.length - 1];
+          hi.append('text').attr('x', x(last.year)).attr('y', y(last.hi) - 8).attr('text-anchor', 'end').attr('fill', css('--color-fg'))
+            .style('font-size', fs).text(`${label}: ${fmt.times(last.v)} after 6 years`);
+        }
       });
-    });
+      chips.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.g === ctSel)));
+    }
+    chips.replaceChildren(...groups.map(([g, label]) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'wu-chip'; b.dataset.g = g; b.textContent = label;
+      b.addEventListener('click', () => { ctSel = g; ctHover = null; paint(); });
+      b.addEventListener('mouseenter', () => { ctHover = g; paint(); });
+      b.addEventListener('mouseleave', () => { ctHover = null; paint(); });
+      b.addEventListener('focus', () => { ctHover = g; paint(); });
+      b.addEventListener('blur', () => { ctHover = null; paint(); });
+      return b;
+    }));
+    paint();
   }
 
   function drawToday() {
@@ -1814,7 +1864,8 @@
     drawRepeat();
     drawDecade();
     drawCareers();
-    drawSamePeople();
+    drawSamePeopleYear();
+    drawCareerTen();
     drawToday();
     drawYearGrowth();
     drawYearTakeoff();

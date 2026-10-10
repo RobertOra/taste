@@ -135,3 +135,8 @@ Era test passed: taste predicts as well or better in 2019-2023 than 2007-2012. D
 - Score someone today (analysis/lb_today.py): split-half reliability on 2019-25 picks similar per pick to MLHD+; typical
   recent LB user has more picks (278 song picks vs 173), so a 75th-percentile person's true range is 46-89 (MLHD+ 41-90);
   1,500 picks: 63-84.
+- Drift vs noise (analysis/lb_drift.py): later-year score reliability is flat, but the noise-corrected correlation with the
+  2015 score falls steadily (discernment songs 0.44 at 2y, 0.30 at 3y, ~0.2 at 6-7y, ~0.04 at 10y): real drift.
+- Decade chart now discernment songs (analysis/lb_decade.py), 1-10 years: top fifth still top 36% -> 19%; bottom fifth
+  still bottom 34% -> 23% (bad taste persists a little longer).
+- Careers tenfold: top 1%'s finds 10x bigger vs similar 3.1x at 1y -> 1.6x at 6y (20 vs 12 per 1,000); lead in counts grows.
