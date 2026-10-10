@@ -1,0 +1,314 @@
+{
+ "D_song": {
+  "lb_recent": {
+   "split_half": 0.5724033868569919,
+   "people": 23356,
+   "median_half_picks": 145.0,
+   "per_pick": 0.009147636225468148,
+   "typical_picks": 278,
+   "people_20": 23982,
+   "rows": [
+    {
+     "picks": 50,
+     "typical": false,
+     "reliability": 0.316,
+     "lo": 25,
+     "hi": 92
+    },
+    {
+     "picks": 278,
+     "typical": true,
+     "reliability": 0.72,
+     "lo": 46,
+     "hi": 89
+    },
+    {
+     "picks": 500,
+     "typical": false,
+     "reliability": 0.822,
+     "lo": 53,
+     "hi": 88
+    },
+    {
+     "picks": 1500,
+     "typical": false,
+     "reliability": 0.933,
+     "lo": 63,
+     "hi": 84
+    }
+   ]
+  },
+  "mlhd_hidden": {
+   "split_half": 0.4829692009294036,
+   "people": 30962,
+   "median_half_picks": 88.0,
+   "per_pick": 0.010503513703285818,
+   "typical_picks": 173,
+   "people_20": 31611,
+   "rows": [
+    {
+     "picks": 50,
+     "typical": false,
+     "reliability": 0.347,
+     "lo": 26,
+     "hi": 92
+    },
+    {
+     "picks": 173,
+     "typical": true,
+     "reliability": 0.647,
+     "lo": 41,
+     "hi": 90
+    },
+    {
+     "picks": 500,
+     "typical": false,
+     "reliability": 0.841,
+     "lo": 54,
+     "hi": 87
+    },
+    {
+     "picks": 1500,
+     "typical": false,
+     "reliability": 0.941,
+     "lo": 63,
+     "hi": 83
+    }
+   ]
+  }
+ },
+ "A_song": {
+  "lb_recent": {
+   "split_half": 0.6327327340810218,
+   "people": 23356,
+   "median_half_picks": 145.0,
+   "per_pick": 0.01174195568529858,
+   "typical_picks": 278,
+   "people_20": 23982,
+   "rows": [
+    {
+     "picks": 50,
+     "typical": false,
+     "reliability": 0.373,
+     "lo": 27,
+     "hi": 92
+    },
+    {
+     "picks": 278,
+     "typical": true,
+     "reliability": 0.768,
+     "lo": 49,
+     "hi": 89
+    },
+    {
+     "picks": 500,
+     "typical": false,
+     "reliability": 0.856,
+     "lo": 55,
+     "hi": 87
+    },
+    {
+     "picks": 1500,
+     "typical": false,
+     "reliability": 0.947,
+     "lo": 64,
+     "hi": 83
+    }
+   ]
+  },
+  "mlhd_hidden": {
+   "split_half": 0.44498504800611055,
+   "people": 30962,
+   "median_half_picks": 88.0,
+   "per_pick": 0.00902857468650243,
+   "typical_picks": 173,
+   "people_20": 31611,
+   "rows": [
+    {
+     "picks": 50,
+     "typical": false,
+     "reliability": 0.313,
+     "lo": 25,
+     "hi": 93
+    },
+    {
+     "picks": 173,
+     "typical": true,
+     "reliability": 0.612,
+     "lo": 39,
+     "hi": 91
+    },
+    {
+     "picks": 500,
+     "typical": false,
+     "reliability": 0.82,
+     "lo": 53,
+     "hi": 88
+    },
+    {
+     "picks": 1500,
+     "typical": false,
+     "reliability": 0.932,
+     "lo": 62,
+     "hi": 84
+    }
+   ]
+  }
+ },
+ "D_artist": {
+  "lb_recent": {
+   "split_half": 0.42582570857574426,
+   "people": 22458,
+   "median_half_picks": 83.0,
+   "per_pick": 0.00885618575524229,
+   "typical_picks": 161,
+   "people_20": 22998,
+   "rows": [
+    {
+     "picks": 50,
+     "typical": false,
+     "reliability": 0.309,
+     "lo": 24,
+     "hi": 93
+    },
+    {
+     "picks": 161,
+     "typical": true,
+     "reliability": 0.59,
+     "lo": 38,
+     "hi": 91
+    },
+    {
+     "picks": 500,
+     "typical": false,
+     "reliability": 0.817,
+     "lo": 52,
+     "hi": 88
+    },
+    {
+     "picks": 1500,
+     "typical": false,
+     "reliability": 0.931,
+     "lo": 62,
+     "hi": 84
+    }
+   ]
+  },
+  "mlhd_hidden": {
+   "split_half": 0.3897435935390695,
+   "people": 233943,
+   "median_half_picks": 56.0,
+   "per_pick": 0.011275964569602942,
+   "typical_picks": 108,
+   "people_20": 239699,
+   "rows": [
+    {
+     "picks": 50,
+     "typical": false,
+     "reliability": 0.363,
+     "lo": 27,
+     "hi": 92
+    },
+    {
+     "picks": 108,
+     "typical": true,
+     "reliability": 0.552,
+     "lo": 36,
+     "hi": 91
+    },
+    {
+     "picks": 500,
+     "typical": false,
+     "reliability": 0.851,
+     "lo": 55,
+     "hi": 87
+    },
+    {
+     "picks": 1500,
+     "typical": false,
+     "reliability": 0.945,
+     "lo": 64,
+     "hi": 83
+    }
+   ]
+  }
+ },
+ "A_artist": {
+  "lb_recent": {
+   "split_half": 0.41155462503215723,
+   "people": 22458,
+   "median_half_picks": 83.0,
+   "per_pick": 0.008356011403826294,
+   "typical_picks": 161,
+   "people_20": 22998,
+   "rows": [
+    {
+     "picks": 50,
+     "typical": false,
+     "reliability": 0.296,
+     "lo": 24,
+     "hi": 93
+    },
+    {
+     "picks": 161,
+     "typical": true,
+     "reliability": 0.576,
+     "lo": 37,
+     "hi": 91
+    },
+    {
+     "picks": 500,
+     "typical": false,
+     "reliability": 0.808,
+     "lo": 52,
+     "hi": 88
+    },
+    {
+     "picks": 1500,
+     "typical": false,
+     "reliability": 0.927,
+     "lo": 62,
+     "hi": 84
+    }
+   ]
+  },
+  "mlhd_hidden": {
+   "split_half": 0.31787148993396747,
+   "people": 233943,
+   "median_half_picks": 56.0,
+   "per_pick": 0.00825274367953859,
+   "typical_picks": 108,
+   "people_20": 239699,
+   "rows": [
+    {
+     "picks": 50,
+     "typical": false,
+     "reliability": 0.294,
+     "lo": 24,
+     "hi": 93
+    },
+    {
+     "picks": 108,
+     "typical": true,
+     "reliability": 0.473,
+     "lo": 32,
+     "hi": 92
+    },
+    {
+     "picks": 500,
+     "typical": false,
+     "reliability": 0.806,
+     "lo": 52,
+     "hi": 88
+    },
+    {
+     "picks": 1500,
+     "typical": false,
+     "reliability": 0.926,
+     "lo": 62,
+     "hi": 84
+    }
+   ]
+  }
+ }
+}

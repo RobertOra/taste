@@ -120,3 +120,18 @@ Write-up for a general reader: https://claude.ai/artifact/GLyaqWkJrEnJKPJNeG2zPt
 8 of 9 main measures confirmed (community-leading/scenes not). 24 of 32 plain-language findings held (MLHD+ 29): misses
 P2a/b (too few cases), P4a (2.6x, bar 2x), P10a/b/c (recency), P11b (reversed: bad taste hurts more on LB), P11c. P16 held.
 Era test passed: taste predicts as well or better in 2019-2023 than 2007-2012. Details: LB_PREREG.md, analysis/out/lb_report.txt.
+
+## ListenBrainz long-run questions (2026-10-10, exploratory: after the frozen LB run, no untouched data left)
+- Same people (analysis/lb_longrun.py A): panel active 2010-14 and 2021-25 (7.5k). Gap best-worst fifth widened within the
+  panel too (+4.5 -> +9.0 points; worst fifth fell), so it is not just who joined. Top 10%/5% tenfold edge fell in the panel
+  (1.97x -> 1.41x; 1.81x -> 1.30x; ranges wide), and people seen only early (left before 2021) had a very large edge (4-5x),
+  which inflated the early-era takeoff numbers. (Script labels that group "newcomers" in both periods; early = left-before-2021.)
+- A decade later (B): rated through 2015, followed 2017-2025. 2015 top fifth in that year's top fifth: 28% at 2 years ->
+  22% at 10 (chance 20%); growth gap +7.9 points -> ~+2 (range includes 0). Top 1% (54 people) still 57th percentile, 33% top
+  fifth at 9-10 years (wide). Taste mostly fades over a decade (prescience, artists; single-year later scores are noisy).
+- Careers (analysis/lb_careers.py): picks 2012-19, artist's yearly listeners 1-6 years on vs similar picks. Best fifth's
+  finds +1.5..1.9% at 1-3 years, fading to 0 by 6; worst fifth's keep falling, -3.6% -> -9.0%. Good pickers are early, not
+  picking longer careers; bad pickers pick lasting losers.
+- Score someone today (analysis/lb_today.py): split-half reliability on 2019-25 picks similar per pick to MLHD+; typical
+  recent LB user has more picks (278 song picks vs 173), so a 75th-percentile person's true range is 46-89 (MLHD+ 41-90);
+  1,500 picks: 63-84.
