@@ -311,9 +311,15 @@ export function scoreMeasure(meta, key, picks) {
     const s = win.reduce((t, p) => t + p.excess, 0) / (n + meta.shrink);
     const pct = bisectLeft(M.scores, s) / M.scores.length, rel = n * M.per_pick / (1 + (n - 1) * M.per_pick);
     const [lo, hi] = trueRange(rel, pct);
-    Object.assign(r, { score: s, percentile: Math.round(100 * pct), range: [Math.round(lo), Math.round(hi)], reliability: Math.round(rel * 100) / 100,
-      growth: Math.expm1(mean(win.map((p) => p.excess))) });
+    Object.assign(r, { score: s, percentile: Math.round(100 * pct), range: [Math.round(lo), Math.round(hi)], reliability: Math.round(rel * 100) / 100 });
   }
+  // your average (prescience: % more new listeners than similar finds; discernment: points more of the people who tried it kept it)
+  if (n) { r.avg = mean(win.map((p) => p.excess)); r.growth = M.measure === 'A' ? Math.expm1(r.avg) : r.avg; }
+  // every find in the window with its numbers (songs listed one by one)
+  const one = (p, extra) => ({ name: p.name, found: monthLabel(p.m), m: p.m, excess: p.excess, a0: p.f.a0, a1: p.f.a1, kept: p.f.kl, tried: p.f.tl,
+    keepShare: p.y, simShare: p.y - p.excess, simGrowth: Math.exp(p.mean), ...extra });
+  r.items = unit === 'song' ? win.flatMap((u) => u.songs.map((p) => one(p, { name: p.track, artist: p.name }))) : win.map((p) => one(p, {}));
+  r.items.sort((x, y) => y.excess - x.excess);
   return r;
 }
 

@@ -114,11 +114,30 @@ function render(r) {
     ${Rp.tookOff ? `<div class="fact"><b>${Rp.tookOff.yours} <span style="font-size:15px;color:var(--ink-3)">vs ${Rp.tookOff.expected} typical</span></b><span>of your scored artists took off (3× the new listeners a year later)</span></div>` : ''}
   </div>`;
 
-  const all = card('All four kinds of taste', 'The study measured taste a few ways; these are the ones we can score from a Spotify history. Songs are the strongest measure.',
+  const pts = (x) => `${x >= 0 ? '+' : '−'}${Math.abs(100 * x).toFixed(1)} points`;
+  const detail = (k) => {
+    const m = M[k], d = MEAS[k], typ = META.measures[k].typical_avg, A = k.endsWith('A');
+    const unitWord = k.startsWith('song') ? 'groups of songs' : 'artists';
+    if (!m.picks) return '<p class="muted">No finds we could judge.</p>';
+    const yours = A ? `Your finds gained <b class="${cls(m.growth)}">${pct(m.growth, 1)}</b> new listeners compared with similar ${d.what} found the same month; the typical listener's finds: <b>${pct(Math.expm1(typ), 1)}</b>.`
+      : `People who tried your finds kept playing them <b class="${cls(m.growth)}">${pts(m.growth)}</b> ${m.growth >= 0 ? 'more' : 'less'} often than for similar ${d.what}; for the typical listener's finds: <b>${pts(typ)}</b>.`;
+    const line = (x) => `<tr><td class="artist" title="${esc(x.name)}">${esc(x.name)}${x.artist ? `<div class="muted" style="font-size:12.5px;font-weight:400">${esc(x.artist)}</div>` : ''}</td>
+      <td class="muted nowrap">${x.found}</td>
+      <td class="num nowrap">${A ? `${n(x.a0)} → ${n(x.a1)}` : `${n(x.kept)} of ${n(x.tried)} kept it`}</td>
+      <td class="num nowrap ${cls(x.excess)}">${A ? pct(Math.expm1(x.excess)) : pts(x.excess)}</td></tr>`;
+    const best = m.items.slice(0, 5), worst = m.items.slice(-5).reverse();
+    return `<p style="margin:4px 0 10px">${yours} Based on ${n(m.picks)} ${unitWord} you got into${m.window ? ` (${win(m)})` : ''}${m.enough ? '' : `; we need ${META.min_picks} for a score`}.</p>
+      <div class="tablewrap"><table class="bw">
+        <tr><th>Your best ${d.what}</th><th>Found</th><th class="num">${A ? 'New listeners then → a year later' : 'Of those who tried it'}</th><th class="num">vs similar</th></tr>${best.map(line).join('')}
+        <tr><th style="padding-top:16px">Your worst ${d.what}</th><th></th><th></th><th></th></tr>${worst.map(line).join('')}</table></div>
+      <p class="note">${A ? 'New listeners: ListenBrainz listeners who first played it in the six months up to your find, and in the same six months a year later. The last column is compared with similar finds (same month, size, momentum, scene, age and release timing).'
+        : 'Of the people who first tried it in the year after your find (past their own first six months of listening), how many kept playing it. The last column is compared with similar finds.'}</p>`;
+  };
+  const all = card('All four kinds of taste', 'The study measured taste a few ways; these are the ones we can score from a Spotify history. Songs are the strongest measure. Click a row for your numbers and your best and worst finds.',
     `<table class="mtable"><tr><th></th><th class="num">Better than</th><th>Likely range</th><th class="num hide-sm">Finds</th></tr>
-    ${Object.entries(MEAS).map(([k, d]) => { const m = M[k]; return `<tr${k === r.headline ? ' class="hl"' : ''}><td><b>${d.short}</b><div class="muted" style="font-size:13px">${k.endsWith('A') ? 'Prescience: your finds gained new listeners' : 'Discernment: people who tried your finds kept playing them'}</div></td>
+    ${Object.entries(MEAS).map(([k, d]) => { const m = M[k]; return `<tr class="mrow${k === r.headline ? ' hl' : ''}" data-k="${k}" style="cursor:pointer"><td><b>${d.short}</b> <span class="muted">▸</span><div class="muted" style="font-size:13px">${k.endsWith('A') ? 'Prescience: your finds gained new listeners' : 'Discernment: people who tried your finds kept playing them'}</div></td>
       <td class="num"><b>${m.enough ? m.percentile + '%' : '–'}</b></td><td style="min-width:140px">${rangeBar(m)}${m.enough ? `<div class="muted" style="font-size:12.5px">${ord(m.range[0])}–${ord(m.range[1])}</div>` : ''}</td>
-      <td class="num hide-sm muted">${n(m.picks)}</td></tr>`; }).join('')}</table>`);
+      <td class="num hide-sm muted">${n(m.picks)}</td></tr><tr class="mdetail" data-k="${k}" hidden><td colspan="4">${detail(k)}</td></tr>`; }).join('')}</table>`);
 
   const G = Rp.genres.filter((g) => g.finds > 0 || g.typical > 0.03);
   const gmax = Math.max(...G.map((g) => Math.max(g.share, g.typical || 0)), 0.01);
@@ -184,6 +203,10 @@ function render(r) {
     + `<p class="note" style="text-align:center"><a href="study.html">Is good taste real? The study</a> · <a href="#" id="again">Score another history</a></p>`;
   $('#report').hidden = false;
   wirePicks(Rp);
+  document.querySelectorAll('tr.mrow').forEach((tr) => (tr.onclick = () => {
+    const d = document.querySelector(`tr.mdetail[data-k="${tr.dataset.k}"]`); d.hidden = !d.hidden;
+    tr.querySelector('.muted').textContent = d.hidden ? '▸' : '▾';
+  }));
   $('#again').onclick = (e) => { e.preventDefault(); $('#report').hidden = true; window.scrollTo(0, 0); };
   $('#report').scrollIntoView();
 }
