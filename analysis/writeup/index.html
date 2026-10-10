@@ -197,8 +197,10 @@
       hasn't changed.</p>
     <div class="wu-card">
       <h3>Where people ranked years later</h3>
-      <p class="wu-note">Hidden half; discernment for songs (other people stick with your picks). The line is the average later rank of each
-        band of earlier rank; the shaded band holds the middle half of people. Turnover is highest in the middle and lowest at the top.</p>
+      <p class="wu-note">Hidden half. People ranked on all their song picks up to a year, then ranked again on their picks two to three years later.
+        The line is the average later rank of each band of earlier rank; the shaded band holds the middle half of people. Turnover is highest in the
+        middle and lowest at the top. Discernment: other people stick with your picks. Prescience: your picks grow.</p>
+      <div class="wu-chips" id="rp-chips" role="group" aria-label="Measure"></div>
       <div class="wu-legend" id="rp-legend"></div>
       <div class="wu-chart dash-skeleton" id="rp-chart" data-source="repeat"></div>
     </div>
@@ -986,31 +988,50 @@
     });
   }
 
+  let rpSel = 'discernment';
   function drawRepeat() {
     const el = document.getElementById('rp-chart');
-    if (!ready(el, ['repeat'])) return;
+    const chips = document.getElementById('rp-chips');
+    if (!ready(el, ['repeat'])) { chips.replaceChildren(); return; }
+    const measures = [['discernment', 'Discernment, songs'], ['prescience', 'Prescience, songs']];
     const col = dash.colors[0], ref = css('--cds-chart-reference');
     legend('rp-legend', [['Average later rank', col, 'line'], ['Perfect repeat / pure luck', ref, 'line']]);
-    const rows = dash.data('repeat').data.map((r) => ({ ...r, mid: +r.mid, mean: +r.later_mean, p25: +r.later_p25, p75: +r.later_p75 }));
+    const all = dash.data('repeat').data.map((r) => ({ ...r, measure: r.measure || 'discernment', mid: +r.mid, mean: +r.later_mean, p25: +r.later_p25, p75: +r.later_p75 }));
     const f = frame(el, 300, { t: 28, r: 16, b: 40, l: 36 });
     const { svg, fs, width, height, m } = f;
     const x = d3.scaleLinear([0, 100], [m.l, width - m.r]), y = d3.scaleLinear([0, 100], [height - m.b, m.t]);
     gridY(f, y, (d) => d, 4);
     axisXRank(f, x, 'Rank in earlier years (percentile)');
-    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Rank two or more years later');
-    svg.append('path').datum(rows).attr('d', d3.area().x((d) => x(d.mid)).y0((d) => y(d.p25)).y1((d) => y(d.p75)))
-      .attr('fill', col).attr('fill-opacity', 0.14);
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Rank two to three years later');
     svg.append('line').attr('x1', x(0)).attr('x2', x(100)).attr('y1', y(0)).attr('y2', y(100)).attr('stroke', ref).attr('stroke-dasharray', '4 3');
     svg.append('line').attr('x1', x(0)).attr('x2', x(100)).attr('y1', y(50)).attr('y2', y(50)).attr('stroke', ref).attr('stroke-dasharray', '4 3');
     svg.append('text').attr('x', x(97)).attr('y', y(97) - 2).attr('text-anchor', 'end').attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Perfect repeat');
     svg.append('text').attr('x', x(3)).attr('y', y(50) - 6).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Pure luck');
-    svg.append('path').datum(rows).attr('d', d3.line().x((d) => x(d.mid)).y((d) => y(d.mean))).attr('fill', 'none').attr('stroke', col)
-      .attr('stroke-width', 2).attr('stroke-linejoin', 'round');
-    svg.append('g').selectAll('circle').data(rows).join('circle').attr('cx', (d) => x(d.mid)).attr('cy', (d) => y(d.mean)).attr('r', 4)
-      .attr('fill', col).attr('stroke', css('--color-panel')).attr('stroke-width', 2);
-    bandHover(f, rows, x, (d) => [`Earlier rank ${d.band}`, [['Average later rank', fmt.ord(d.mean), col],
-      ['Middle half landed', `${fmt.ord(d.p25)} to ${fmt.ord(d.p75)}`], ['Still top fifth', fmt.pct(+d.later_top_fifth)],
-      ['Fell to bottom fifth', fmt.pct(+d.later_bottom_fifth)], ['People', fmt.int(+d.people)]]]);
+    const body = svg.append('g');
+    const tip = tooltip(el);
+    function paint() {
+      body.selectAll('*').remove();
+      const rows = all.filter((r) => r.measure === rpSel).sort((a, b) => a.mid - b.mid);
+      body.append('path').datum(rows).attr('d', d3.area().x((d) => x(d.mid)).y0((d) => y(d.p25)).y1((d) => y(d.p75))).attr('fill', col).attr('fill-opacity', 0.14);
+      body.append('path').datum(rows).attr('d', d3.line().x((d) => x(d.mid)).y((d) => y(d.mean))).attr('fill', 'none').attr('stroke', col)
+        .attr('stroke-width', 2).attr('stroke-linejoin', 'round');
+      body.append('g').selectAll('circle').data(rows).join('circle').attr('cx', (d) => x(d.mid)).attr('cy', (d) => y(d.mean)).attr('r', 4)
+        .attr('fill', col).attr('stroke', css('--color-panel')).attr('stroke-width', 2);
+      rows.forEach((d, i) => {
+        const x0 = i === 0 ? m.l : x((rows[i - 1].mid + d.mid) / 2), x1 = i === rows.length - 1 ? width - m.r : x((d.mid + rows[i + 1].mid) / 2);
+        body.append('rect').attr('x', x0).attr('y', m.t).attr('width', Math.max(1, x1 - x0)).attr('height', height - m.t - m.b).attr('fill', 'transparent')
+          .on('mousemove', (ev) => tip.show(ev, `Earlier rank ${d.band}`, [['Average later rank', fmt.ord(d.mean), col],
+            ['Middle half landed', `${fmt.ord(d.p25)} to ${fmt.ord(d.p75)}`], ['Still top fifth', fmt.pct(+d.later_top_fifth)],
+            ['Fell to bottom fifth', fmt.pct(+d.later_bottom_fifth)], ['People', fmt.int(+d.people)]])).on('mouseleave', () => tip.hide());
+      });
+      chips.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.m === rpSel)));
+    }
+    chips.replaceChildren(...measures.map(([k, l]) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'wu-chip'; b.dataset.m = k; b.textContent = l;
+      b.addEventListener('click', () => { rpSel = k; paint(); });
+      return b;
+    }));
+    paint();
   }
 
   let thSel = 10, thHover = null;
