@@ -74,8 +74,10 @@
     <p class="wu-scope">How
       <span class="wu-num dash-skeleton" data-source="facts" data-field="listeners" data-row="0" data-fmt="int">—</span> Last.fm listeners
       discovered music between <span class="wu-num" data-source="facts" data-field="first_year" data-row="0" data-fmt="text">—</span> and
-      <span class="wu-num" data-source="facts" data-field="last_year" data-row="0" data-fmt="text">—</span>. Half of them were kept hidden
-      until the method was locked in, and every finding below held on that hidden half.</p>
+      <span class="wu-num" data-source="facts" data-field="last_year" data-row="0" data-fmt="text">—</span>, checked again on
+      <span class="wu-num" data-source="facts" data-field="lb_listeners" data-row="0" data-fmt="int">—</span> ListenBrainz listeners through 2026. Half of the
+      Last.fm listeners were kept hidden until the method was locked in. The main findings held on that hidden half and most held again on ListenBrainz;
+      the few later charts that weren't tested that way are marked exploratory.</p>
   </header>
 
   <section id="takeaways" aria-label="Key findings">
@@ -84,7 +86,7 @@
       <div class="wu-card wu-take">
         <span class="wu-tt">Good taste lasts</span>
         <span class="wu-big dash-skeleton" data-source="repeat" data-field="later_top_fifth" data-where="key=99–100" data-fmt="pct">—</span>
-        <span class="wu-cap">of the top 1% at picking songs were still in the top fifth years later; only
+        <span class="wu-cap">of the top 1% at picking songs were still in the top fifth two to three years later; only
           <span class="wu-num" data-source="repeat" data-field="later_bottom_fifth" data-where="key=99–100" data-fmt="pct">—</span> fell to the bottom fifth. By chance, each would be 20%.</span>
       </div>
       <div class="wu-card wu-take">
@@ -135,7 +137,7 @@
       <div class="wu-chart dash-skeleton" id="ex-chart" data-source="example"></div>
     </div>
     <p>A person's taste score is how their bets did on average compared with the bets around them. The real test is whether a score built
-      from someone's earlier years predicts how their bets do <b>two or more years later</b>, on completely different music.</p>
+      from someone's earlier years predicts how their bets do <b>two to three years later</b>, on completely different music.</p>
     <p>We ran everything twice, on two separate platforms with different people: Last.fm
       (<span class="wu-num dash-skeleton" data-source="facts" data-field="listeners" data-row="0" data-fmt="int">—</span> listeners, 2005–2013) and ListenBrainz
       (<span class="wu-num" data-source="facts" data-field="lb_listeners" data-row="0" data-fmt="int">—</span> listeners, 2005–2026). Each time, we wrote down our predictions
@@ -154,13 +156,9 @@
     <h2>What we found, in short</h2>
     <ol class="wu-list">
       <li><a href="#findings"><b>Taste is real and it lasts.</b></a> Of the top 1% at picking songs,
-        <span class="wu-num dash-skeleton" data-source="repeat" data-field="later_top_fifth" data-where="key=99–100" data-fmt="pct">—</span> were still in the top fifth years later and only
+        <span class="wu-num dash-skeleton" data-source="repeat" data-field="later_top_fifth" data-where="key=99–100" data-fmt="pct">—</span> were still in the top fifth two to three years later and only
         <span class="wu-num" data-source="repeat" data-field="later_bottom_fifth" data-where="key=99–100" data-fmt="pct">—</span> fell to the bottom fifth, against 20% each by chance. Any one snapshot of
-        someone's taste is noisy, which hides a lot of it. Over a decade, most of it fades.</li>
-      <li><a href="#eras"><b>Taste still works in the algorithm era.</b></a> On ListenBrainz, the gap between good and bad pickers' finds grew from
-        <span class="wu-num dash-skeleton" data-source="yeargrowth" data-field="gap_growth" data-where="key=early" data-fmt="pts0">—</span> in 2010–2013 to
-        <span class="wu-num" data-source="yeargrowth" data-field="gap_growth" data-where="key=recent" data-fmt="pts0">—</span> in 2021–2025, though the best pickers'
-        edge at the rarest breakouts is smaller than it was in the early 2010s.</li>
+        someone's taste is noisy, which hides a lot of it. Over a decade, good taste mostly fades, while bad taste lingers.</li>
       <li><a href="#ladder"><b>The best pickers are far better.</b></a> The top 1%'s new artists grew tenfold
         <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P4a" data-fmt="times">—</span> as often as similar artists. The bottom half did no better than chance.</li>
       <li><a href="#careers"><b>Good pickers' typical finds are early; their big hits last.</b></a> Six years on, the top 1%'s new artists were still
@@ -169,6 +167,10 @@
       <li><a href="#fanvalue"><b>Good pickers matter most early.</b></a> One good new fan went with <span class="wu-num" data-source="fanvalue" data-field="effect" data-where="key=small:good" data-fmt="spct0">—</span>
         growth for a small artist, against <span class="wu-num" data-source="fanvalue" data-field="effect" data-where="key=small:ordinary" data-fmt="spct1">—</span> for an ordinary fan. Several good pickers add up;
         poor pickers count against an artist.</li>
+      <li><a href="#eras"><b>Taste still works in the algorithm era.</b></a> On ListenBrainz, the gap between good and bad pickers' finds grew from
+        <span class="wu-num dash-skeleton" data-source="yeargrowth" data-field="gap_growth" data-where="key=early" data-fmt="pts0">—</span> in 2010–2013 to
+        <span class="wu-num" data-source="yeargrowth" data-field="gap_growth" data-where="key=recent" data-fmt="pts0">—</span> in 2021–2025, though the best pickers'
+        edge at the rarest breakouts is smaller than it was in the early 2010s.</li>
       <li><a href="#whygood"><b>It's judgment, not habits.</b></a> Choosing the top 1% by listening habits finds pickers at
         <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_traits" data-fmt="times">—</span>; by track record, <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_record" data-fmt="times">—</span>.</li>
       <li><a href="#scenesplit"><b>Good taste is right scenes and right artists.</b></a> For the top 1%, their scenes took off
@@ -183,14 +185,14 @@
       <li><a href="#findings"><b>It shows most in songs, less in artists, and least in scenes,</b></a> and "others stick with your picks" is
         among its clearest forms.</li>
       <li><a href="#badtaste"><b>Bad taste is real too.</b></a> The worst pickers' finds flop more often and take off no more often
-        than average, and bad pickers stay bad about as reliably as good ones stay good.</li>
+        than average, and bad pickers stay bad about as reliably as good ones stay good over a few years, and longer over a decade.</li>
     </ol>
   </section>
 
   <section class="wu-section" id="findings">
     <h2>The same people keep picking well</h2>
     <p>The simplest way to see it: rank everyone by how well they picked songs in earlier years, then rank them again on completely
-      different songs two or more years later. If taste were luck, everyone would land at the middle on average. Instead, people kept much
+      different songs two to three years later. If taste were luck, everyone would land at the middle on average. Instead, people kept much
       of their rank: the top 1% landed around the <span class="wu-num dash-skeleton" data-source="repeat" data-field="later_mean" data-where="key=99–100" data-fmt="ord">—</span> percentile on average, and
       <span class="wu-num" data-source="repeat" data-field="later_top_fifth" data-where="key=99–100" data-fmt="pct">—</span> of them were still in the top fifth. Much of the
       turnover in the middle is noise: any one snapshot of someone's taste is partly luck, so people bounce around even when their taste
@@ -204,19 +206,6 @@
       <div class="wu-legend" id="rp-legend"></div>
       <div class="wu-chart dash-skeleton" id="rp-chart" data-source="repeat"></div>
     </div>
-    <div class="wu-card">
-      <h3>Over a decade, good taste fades; bad taste lingers</h3>
-      <p class="wu-note">ListenBrainz. People ranked on their song picks up to 2015, then ranked again on each later year's picks. The lines show how many
-        of the 2015 top fifth were in that year's top fifth, and how many of the 2015 bottom fifth were in that year's bottom fifth. By chance, 20%.
-        Prescience (your picks grow) is the most lasting of our measures; switch to discernment, the measure in the chart above, to compare. The hollow
-        first point is a little inflated (its picks were judged over some of the same months as the 2015 picks), and 2025 covers January–August only.
-        Shaded bands are 95% ranges.</p>
-      <div class="wu-chips" id="dc-chips" role="group" aria-label="Measure"></div>
-      <div class="wu-legend" id="dc-legend"></div>
-      <div class="wu-chart dash-skeleton" id="dc-chart" data-source="decade"></div>
-    </div>
-    <p>It isn't noise: each year's score is about equally reliable, yet people's taste matches their 2015 taste a little less every year. Bad pickers
-      stay bad longer than good pickers stay good.</p>
     <p>The formal test asks the same thing with every correction in place: a person's score from earlier years has to predict their later
       picks, after ruling out luck and a long list of other explanations. All four kinds of taste passed. Each dot is how well earlier taste scores predicted later results for one measure,
       on the hidden half of listeners. Zero would mean no prediction at all. Bars show the range we're 95% sure of, and hollow dots show what
@@ -238,6 +227,19 @@
       <li><b>For artists and scenes, "still big in 2026" barely counts as taste.</b> Most of it is explained by simply liking popular music.
         For songs it does better.</li>
     </ul>
+    <div class="wu-card">
+      <h3>Over a decade, good taste fades; bad taste lingers</h3>
+      <p class="wu-note">ListenBrainz; exploratory (after the pre-registered run). People ranked on their song picks up to 2015, then ranked again on each later year's picks. The lines show how many
+        of the 2015 top fifth were in that year's top fifth, and how many of the 2015 bottom fifth were in that year's bottom fifth. By chance, 20%.
+        Prescience (your picks grow) is the most lasting of our measures; switch to discernment, the measure in the chart above, to compare. The hollow
+        first point is a little inflated (its picks were judged over some of the same months as the 2015 picks), and 2025 covers January–August only.
+        Shaded bands are 95% ranges.</p>
+      <div class="wu-chips" id="dc-chips" role="group" aria-label="Measure"></div>
+      <div class="wu-legend" id="dc-legend"></div>
+      <div class="wu-chart dash-skeleton" id="dc-chart" data-source="decade"></div>
+    </div>
+    <p>It isn't noise: each year's score is about equally reliable, yet people's taste matches their 2015 taste a little less every year. Bad pickers
+      stay bad longer than good pickers stay good.</p>
   </section>
 
   <section class="wu-section" id="eras">
@@ -260,8 +262,7 @@
       <div class="wu-legend" id="yg-legend"></div>
       <div class="wu-chart dash-skeleton" id="yg-chart" data-source="yeargrowth"></div>
     </div>
-    <p>The widening gap holds for the same people, so it isn't just who joined. The shrinking takeoff edge is partly who was there early: people
-      seen only before 2021 had an unusually large edge.</p>
+    <p>The widening gap holds for the same people, so it isn't just who joined.</p>
     <p>The best pickers' edge at the rarest breakouts narrowed through the 2010s, though. Around 2011, the top 1%'s new artists took off tenfold
       <span class="wu-num dash-skeleton" data-source="yeartakeoff" data-field="times_similar" data-where="key=1:2011" data-fmt="times">—</span> as often as similar artists; by 2016 it was
       <span class="wu-num" data-source="yeartakeoff" data-field="times_similar" data-where="key=1:2016" data-fmt="times">—</span>, about where it has stayed. For the top 5%, the edge bottomed out
@@ -274,6 +275,7 @@
       <div class="wu-chips" id="yt-chips" role="group" aria-label="Group of top pickers"></div>
       <div class="wu-chart dash-skeleton" id="yt-chart" data-source="yeartakeoff"></div>
     </div>
+    <p>Part of the early edge is who was on ListenBrainz then: people seen only before 2021 had an unusually large edge.</p>
     <p>From an artist's side, a good new fan still counts for a lot. In 2021–2025, one new fan with a good track record went with
       <span class="wu-num dash-skeleton" data-source="yearfan" data-field="effect" data-where="key=recent:small:good" data-fmt="spct1">—</span> growth for a small artist over the
       next year, against <span class="wu-num" data-source="yearfan" data-field="effect" data-where="key=recent:small:ordinary" data-fmt="spct1">—</span> for an ordinary new fan and
@@ -296,7 +298,7 @@
   <section class="wu-section" id="ladder">
     <h2>The best pickers' finds take off far more often</h2>
     <p>So taste is real. How much does it matter? A little for most people, a lot for a few. We ranked listeners by how their picks did
-      in earlier years, then followed the new artists they got into two or more years later. Out of every 1,000 new artists that a
+      in earlier years, then followed the new artists they got into two to three years later. Out of every 1,000 new artists that a
       middling picker found, about <span class="wu-num dash-skeleton" data-source="ladder" data-field="rate" data-where="key=40–50" data-fmt="k0">—</span> grew tenfold within the next year, the same as for similar
       artists. For pickers ranked 90–95% it was <span class="wu-num" data-source="ladder" data-field="rate" data-where="key=90–95" data-fmt="k0">—</span>, for 95–99% <span class="wu-num" data-source="ladder" data-field="rate" data-where="key=95–99" data-fmt="k0">—</span>,
       and for the top 1% <span class="wu-num" data-source="ladder" data-field="rate" data-where="key=99–100" data-fmt="k0">—</span>: <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P4a" data-fmt="times">—</span> as often as similar
@@ -331,7 +333,7 @@
       catch up. But their biggest finds are much more likely to become lasting breakouts. Bad pickers' finds fall further behind every year.</p>
     <div class="wu-card">
       <h3>How far ahead of (or behind) similar artists their new artists were, year after year</h3>
-      <p class="wu-note">ListenBrainz, new artists found 2012–2019. Each artist's listeners in each later year, compared with artists of the same size
+      <p class="wu-note">ListenBrainz; exploratory (after the pre-registered run). New artists found 2012–2019. Each artist's listeners in each later year, compared with artists of the same size
         found the same month; the picker isn't counted. Shaded bands are 95% ranges.</p>
       <div class="wu-legend" id="cv-legend"></div>
       <div class="wu-chart dash-skeleton" id="cv-chart" data-source="careers"></div>
@@ -511,11 +513,11 @@
       <div class="wu-legend" id="fr-legend"></div>
       <div class="wu-chart dash-skeleton" id="fr-chart" data-source="fanrel"></div>
     </div>
-    <p><b>Do bad pickers stay bad?</b> Yes, about as reliably as good pickers stay good:
-      <span class="wu-num" data-source="badtaste" data-field="bottom_stays_bottom" data-where="key=persistence" data-fmt="pct">—</span> of the bottom fifth at picking songs were still in the bottom fifth years later,
-      against <span class="wu-num" data-source="badtaste" data-field="top_stays_top" data-where="key=persistence" data-fmt="pct">—</span> of the top fifth staying on top.</p>
+    <p><b>Do bad pickers stay bad?</b> Yes. Over a few years, about as reliably as good pickers stay good:
+      <span class="wu-num" data-source="badtaste" data-field="bottom_stays_bottom" data-where="key=persistence" data-fmt="pct">—</span> of the bottom fifth at picking songs were still in the bottom fifth two to three years later,
+      against <span class="wu-num" data-source="badtaste" data-field="top_stays_top" data-where="key=persistence" data-fmt="pct">—</span> of the top fifth staying on top. Over a decade, bad pickers stay bad longer than good pickers stay good (see "Over a decade" above).</p>
     <div class="wu-card">
-      <h3>Kept their place years later</h3>
+      <h3>Kept their place two to three years later</h3>
       <div class="wu-chart dash-skeleton" id="sb-chart" data-source="badtaste"></div>
     </div>
   </section>
@@ -531,7 +533,8 @@
       several), in thirteen rounds. Then we checked each once. Of thirty-two predictions, twenty-nine held.</p>
     <p><b>Then we checked everything again on a second platform.</b> ListenBrainz is a separate site with different listeners, and nothing had been
       analysed on it. We wrote down every prediction first, with the same bars, then ran each once. Eight of the nine main measures we could run
-      there passed, and twenty-four of the thirty-two predictions held. The table shows every one.</p>
+      there passed, and twenty-four of the thirty-two predictions held. The table shows every one. A few ListenBrainz charts came after that
+      run (a decade later, careers, and one person's range); nothing was predicted for them in advance, so they're marked exploratory.</p>
     <div class="wu-card">
       <h3>Checks of these findings on the hidden half and on ListenBrainz</h3>
       <div class="wu-tablewrap">
@@ -582,7 +585,7 @@
     </ul>
     <div class="wu-card">
       <h3>One person's score is a range, and more picks narrow it</h3>
-      <p class="wu-note">Discernment for songs. Where someone measured at the 75th percentile could truly be (80% range), by how many picks they have.
+      <p class="wu-note">Discernment for songs; the ListenBrainz ranges are exploratory. Where someone measured at the 75th percentile could truly be (80% range), by how many picks they have.
         "Typical" is the middle listener's number of picks on each platform. Today's ListenBrainz listeners have more picks, so their typical range is
         a little narrower.</p>
       <div class="wu-legend" id="td-legend"></div>
@@ -673,7 +676,7 @@
             written down before it was analysed; durability isn't measured there, since its outcome is ListenBrainz's own 2026 listening.</li>
           <li>Every comparison is with other listeners' bets in the same month and popularity group, adjusted for scene, item age, prior
             growth, country, and release timing.</li>
-          <li>Prediction strength: rank correlation between a listener's score up to a cutoff year and their score from bets made two or more
+          <li>Prediction strength: rank correlation between a listener's score up to a cutoff year and their score from bets made two to three
             years later, after removing what impostor traits (measured up to the cutoff) explain.</li>
           <li>Passing (fixed before the hidden half was analysed): Holm-corrected one-sided test within each family (discernment; the other
             nine) at 5%, and 3-year stability above zero.</li>
