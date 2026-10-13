@@ -559,7 +559,9 @@ window.dash = (() => {
       <h3>Predicting a genre from the genre itself, or from everything else someone picks</h3>
       <p class="wu-note">Hidden half. The same people (with at least 15 earlier picks in the genre and 20 in others), rated on their picks in the genre
         or only on their picks in other genres. Bars show how much their later finds in the genre grew against similar ones of that genre. For
-        artists the average picker in this group of keen fans sits above zero; for songs, below it, so compare the bars with each other. Bars are 95% ranges.</p>
+        artists the average picker in this group of keen fans sits above zero. For songs it sits below zero, and that's real, not an error: about two-thirds
+        of these genre fans' later songs are more songs by artists they already followed, which grow less than similar songs (in rock, −6% against +0.5%
+        for the first song they picked by an artist). So for songs, compare the bars with each other. Bars are 95% ranges.</p>
       <div class="wu-chips" id="gg-unit" role="group" aria-label="Songs or artists"></div>
       <div class="wu-legend" id="gg-legend"></div>
       <div class="wu-chart dash-skeleton" id="gg-chart" data-source="genregeneral"></div>
