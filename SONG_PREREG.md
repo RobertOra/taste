@@ -62,3 +62,16 @@ Deviation, disclosed: the first ListenBrainz run used a broken input. ListenBrai
 derive_obsession.py's song step (counting rows, never run on ListenBrainz songs before) counted listening weeks as plays.
 That run produced empty bins (no picks with 15+ "plays") and an impossible +90% gain, not a test result. Fixed to sum plays
 for ListenBrainz (MLHD+ unchanged), rebuilt the input, and ran S3 once more; that run is the one above.
+
+# Round 3: right scenes and right songs (written 2026-10-13, before the sealed and ListenBrainz runs)
+The study's P7a/P7b split the top 1%'s artist edge into scene quality x within scene (hidden half 2.26 x 2.08 = 4.70). Song
+version, explore half (analysis/scene_split_songs.py, exploratory): rated on songs; each later song with its artist's scene.
+Top 1%: scene quality 2.45 [99% low 1.74] x within scene 3.81 [99% low 2.71] = 9.34.
+
+- **S4 sealed / S4 lb.** Top 1%'s songs vs songs of the same size in the same scene, tenfold: 99% lower bound > 1 (P7a's bar).
+- **S5 sealed / S5 lb.** Top 1%'s songs' scenes vs size alone, tenfold: 99% lower bound > 1 (P7b's bar).
+
+Run once each: `scene_split_songs.py --half {sealed,lb}`.
+
+## Round 3 results
+(to be added after the runs)
