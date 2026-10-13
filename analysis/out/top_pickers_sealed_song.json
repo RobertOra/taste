@@ -1,0 +1,11 @@
+{
+ "variance_explained": {
+  "traits": 0.03232751683467472,
+  "track_record": 0.046708776110610084,
+  "people": 29170
+ },
+ "top1_by_traits_odds_10x": 1.6537605084546205,
+ "top1_by_record_odds_10x": 13.737338247901606,
+ "top1_people": 307,
+ "overlap_top1_traits_record": 0.0
+}

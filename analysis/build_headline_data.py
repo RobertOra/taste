@@ -370,3 +370,11 @@ if __name__ == "__main__":
         rows = [{k: clean(v) for k, v in r.items()} if isinstance(r, dict) else r for r in rows]
         (W / f"{name}.json").write_text(json.dumps(rows, indent=1))
         print(name, json.dumps(rows)[:600])
+    # songs for "Picking the best pickers" (top_pickers.py --unit song): rows keyed "songs:..." added to toppickers.json
+    tp = json.loads((OUT / "top_pickers_sealed_song.json").read_text())
+    rows = [r for r in json.loads((W / "toppickers.json").read_text()) if r.get("unit") != "songs"]
+    rows += [{"key": "songs:by_traits", "unit": "songs", "label": "Top 1% chosen by habits alone (songs)", "value": tp["top1_by_traits_odds_10x"], "lo": None, "hi": None},
+             {"key": "songs:by_record", "unit": "songs", "label": "Top 1% chosen by song track record", "value": tp["top1_by_record_odds_10x"], "lo": None, "hi": None},
+             {"key": "songs:r2_traits", "unit": "songs", "label": "Share of later song results explained by habits", "value": tp["variance_explained"]["traits"], "lo": None, "hi": None},
+             {"key": "songs:r2_record", "unit": "songs", "label": "Share explained by song track record", "value": tp["variance_explained"]["track_record"], "lo": None, "hi": None}]
+    (W / "toppickers.json").write_text(json.dumps(rows, indent=1))

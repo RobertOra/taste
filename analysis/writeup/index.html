@@ -422,8 +422,10 @@
       noisy).</p>
     <div class="wu-card">
       <h3>Picking the best pickers: by habits, or by track record</h3>
-      <p class="wu-note">Hidden half. The top 1% of listeners chosen two ways, and how often their later new artists grew tenfold against similar
-        artists.</p>
+      <p class="wu-note">Hidden half. The top 1% of listeners chosen two ways, and how often their later finds grew tenfold against similar ones.
+        Habits are the same either way; for songs, the track record and the later finds are songs. For songs, habits found pickers at
+        <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=songs:by_traits" data-fmt="times">—</span>, track record at <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=songs:by_record" data-fmt="times">—</span>.</p>
+      <div class="wu-chips" id="hb-unit" role="group" aria-label="Songs or artists"></div>
       <div class="wu-chart dash-skeleton" id="hb-chart" data-source="toppickers"></div>
     </div>
     <p>What the best pickers have is two kinds of judgment at once. They're early to scenes that are about to take off, and within those
@@ -955,10 +957,11 @@
   function safeDraw(fn) { try { fn(); } catch (e) { console.error(fn.name, e); } }
 
   // one Songs / Artists setting per section, shared by its charts; each chart shows the switch
-  const unitSel = { ladder: 'songs', eras: 'songs', obsession: 'songs' };
+  const unitSel = { ladder: 'songs', eras: 'songs', obsession: 'songs', habits: 'songs' };
   const unitCharts = { ladder: [['ld-chart', () => drawLadder], ['th-chart', () => drawThresholds], ['gb-chart', () => drawGrowthBand]],
     eras: [['yg-chart', () => drawYearGrowth], ['yt-chart', () => drawYearTakeoff]],
-    obsession: [['ob-chart', () => drawObsession], ['ot-chart', () => drawObsTaste]] };
+    obsession: [['ob-chart', () => drawObsession], ['ot-chart', () => drawObsTaste]],
+    habits: [['hb-chart', () => drawHabits]] };
   const unitOf = (r) => r.unit || 'artists';
   function unitChips(id, group = 'ladder') {
     document.getElementById(id).replaceChildren(...[['songs', 'Songs'], ['artists', 'Artists']].map(([k, l]) => {
@@ -1568,10 +1571,11 @@
 
   function drawHabits() {
     const el = document.getElementById('hb-chart');
-    if (!ready(el, ['toppickers'])) return;
-    const d = dash.data('toppickers').data;
-    const get = (k) => +d.find((r) => r.key === k).value;
-    const bars = [['Similar artists', 1, css('--cds-chart-muted')], ['Top 1% by listening habits', get('by_traits'), css('--cds-chart-muted')],
+    if (!ready(el, ['toppickers'])) { document.getElementById('hb-unit').replaceChildren(); return; }
+    unitChips('hb-unit', 'habits');
+    const d = dash.data('toppickers').data, songs = unitSel.habits === 'songs', pre = songs ? 'songs:' : '';
+    const get = (k) => +d.find((r) => r.key === pre + k).value;
+    const bars = [[songs ? 'Similar songs' : 'Similar artists', 1, css('--cds-chart-muted')], ['Top 1% by listening habits', get('by_traits'), css('--cds-chart-muted')],
       ['Top 1% by track record', get('by_record'), dash.colors[0]]];
     const f = frame(el, 30 + bars.length * 40, { t: 4, r: 56, b: 26, l: 0 });
     const { svg, fs, width, height, m } = f;

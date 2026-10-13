@@ -47,5 +47,37 @@
   "value": 0.04504011342628178,
   "lo": null,
   "hi": null
+ },
+ {
+  "key": "songs:by_traits",
+  "unit": "songs",
+  "label": "Top 1% chosen by habits alone (songs)",
+  "value": 1.6537605084546205,
+  "lo": null,
+  "hi": null
+ },
+ {
+  "key": "songs:by_record",
+  "unit": "songs",
+  "label": "Top 1% chosen by song track record",
+  "value": 13.737338247901606,
+  "lo": null,
+  "hi": null
+ },
+ {
+  "key": "songs:r2_traits",
+  "unit": "songs",
+  "label": "Share of later song results explained by habits",
+  "value": 0.03232751683467472,
+  "lo": null,
+  "hi": null
+ },
+ {
+  "key": "songs:r2_record",
+  "unit": "songs",
+  "label": "Share explained by song track record",
+  "value": 0.046708776110610084,
+  "lo": null,
+  "hi": null
  }
 ]

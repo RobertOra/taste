@@ -10,7 +10,11 @@ picks made in C+2..C+3. Bootstrap over people (500 draws; a person rated at seve
 - Do style traits add up? Person-level later growth vs similar artists predicted from traits alone, from the track
   record alone, and from both (variance explained); and the later 10x odds of the top 1% chosen by traits alone.
 
-Usage: top_pickers.py --half explore|sealed
+--unit song (added 2026-10-13, descriptive): habits as above (they describe the person), but the track record is the song
+record (songs by one artist found the same month count as one pick) and the outcome is each song picked in C+2..C+3, vs
+similar songs. Only the habits-vs-track-record comparison; written to top_pickers_<half>_song.json.
+
+Usage: top_pickers.py --half explore|sealed [--unit artist|song]
 """
 
 import argparse
@@ -39,7 +43,8 @@ def pct(x, q):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--half", choices=["explore", "sealed", "lb"], required=True)
-    half = ap.parse_args().half
+    ap.add_argument("--unit", choices=["artist", "song"], default="artist")
+    a_ = ap.parse_args(); half = a_.half
     b, f = bets_with_bands(half)
     sc = pl.read_parquet(X / "scenes_yearly" / ("lb.parquet" if half == "lb" else "explore.parquet"), columns=["artist", "year", "scene_200"])
     ob = pl.read_parquet(X / "obsession" / f"{half}_artist.parquet", columns=["user", "artist", "plays_to_commit"])
@@ -89,6 +94,10 @@ def main():
     res["pick_popularity_bottom_minus_top"] = {"est": float(bot["pick_popularity"].mean() - top["pick_popularity"].mean()),
                                                "lo": pct(d, 2.5), "hi": pct(d, 97.5), "lo99": pct(d, 0.5)}
 
+    if a_.unit == "song":
+        songs_vs_habits(half, prof)
+        return
+
     # Do style traits add up? Person-level later growth vs similar (and 10x hits vs expected)
     pf = fut.group_by("user", "cut").agg(g=pl.col("gx").mean(), n=pl.len(), h=pl.col("x10").sum(), e=pl.col("s10").sum())
     dd = prof.join(pf, on=["user", "cut"]).filter(pl.col("n") >= 10).drop_nulls(TRAITS)
@@ -114,6 +123,38 @@ def main():
     for lab, v in res["profile"].items():
         print(f"  {lab:>7} " + "  ".join(f"{k} {x:.3g}" for k, x in v.items()))
     (ROOT / "analysis" / "out" / f"top_pickers_{half}.json").write_text(json.dumps(res, indent=1))
+
+
+def songs_vs_habits(half, prof):
+    sb = pl.read_parquet(X / "bet_outcomes" / f"A_song_{half}.parquet", columns=["user", "artist", "m", "bin", "v", "e"]).with_columns(
+        year=pl.col("m") // 12, x10=(pl.col("v") >= np.log(10)).cast(pl.Float64))
+    sb = sb.join(sb.group_by("m", "bin").agg(s10=pl.col("x10").mean(), ve=pl.col("v").mean()), on=["m", "bin"]).with_columns(gx=pl.col("v") - pl.col("ve"))
+    groups = sb.group_by("user", "artist", "m").agg(e=pl.col("e").mean()).with_columns(year=pl.col("m") // 12)
+    rec, fut = [], []
+    for c in cuts(half):
+        rec.append(groups.filter(pl.col("year") <= c).group_by("user").agg(s=pl.col("e").sum() / (pl.len() + 20), n=pl.len())
+                   .filter(pl.col("n") >= 20).with_columns(q=pl.col("s").rank("average") / pl.len(), cut=pl.lit(c)).select("user", "cut", "q"))
+        fut.append(sb.filter(pl.col("year").is_between(c + 2, c + 3)).group_by("user").agg(g=pl.col("gx").mean(), n=pl.len(), h=pl.col("x10").sum(),
+                                                                                           e=pl.col("s10").sum()).with_columns(cut=pl.lit(c)))
+    dd = (prof.drop("q", "band").join(pl.concat(rec), on=["user", "cut"]).join(pl.concat(fut), on=["user", "cut"])
+          .filter(pl.col("n") >= 10).drop_nulls(TRAITS))
+    Z = dd.select(TRAITS).to_numpy().astype(float)
+    Z = (Z - Z.mean(0)) / Z.std(0)
+    y, q = dd["g"].to_numpy(), dd["q"].to_numpy()
+
+    def r2(M):
+        M = np.column_stack([np.ones(len(M)), M])
+        coef = np.linalg.lstsq(M, y, rcond=None)[0]
+        return float(1 - ((y - M @ coef) ** 2).sum() / ((y - y.mean()) ** 2).sum()), M @ coef
+    r_tr, pred_tr = r2(Z)
+    r_q, _ = r2(np.column_stack([q, q ** 2, q ** 3]))
+    sel, selq = pred_tr >= np.quantile(pred_tr, 0.99), q > 0.99
+    h, e = dd["h"].to_numpy(), dd["e"].to_numpy()
+    res = {"variance_explained": {"traits": r_tr, "track_record": r_q, "people": int(len(y))},
+           "top1_by_traits_odds_10x": float(h[sel].sum() / e[sel].sum()), "top1_by_record_odds_10x": float(h[selq].sum() / e[selq].sum()),
+           "top1_people": int(selq.sum()), "overlap_top1_traits_record": float((sel & selq).sum() / max(selq.sum(), 1))}
+    print(json.dumps(res, indent=1))
+    (ROOT / "analysis" / "out" / f"top_pickers_{half}_song.json").write_text(json.dumps(res, indent=1))
 
 
 if __name__ == "__main__":
