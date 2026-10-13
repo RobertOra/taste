@@ -151,8 +151,8 @@ function render(r, scroll = true) {
   const F = Rp.facts;
   const facts = `<div class="facts" style="margin:16px 0">
     <div class="fact"><b>${n(F.plays)}</b><span>plays over ${F.years} years${F.ytPlays ? ` (${n(F.ytPlays)} on YouTube)` : ''}</span></div>
-    <div class="fact"><b>${n(F.findsS)}</b><span>songs you really got into</span></div>
-    <div class="fact"><b>${n(F.findsA)}</b><span>artists you really got into (about ${F.perYear} a year)</span></div>
+    <div class="fact"><b>${n(F.findsS)}</b><span>songs you really got into (played in 4+ separate weeks, the 4th within 6 months of first hearing)</span></div>
+    <div class="fact"><b>${n(F.findsA)}</b><span>artists you really got into (about ${F.perYear} a year; same rule, any of their songs)</span></div>
     ${Rp.tookOff ? `<div class="fact"><b>${Rp.tookOff.yours} <span style="font-size:15px;color:var(--ink-3)">vs ${Rp.tookOff.expected} typical</span></b><span>of your scored artists took off (3× the new listeners a year later)</span></div>` : ''}
   </div>`;
 
