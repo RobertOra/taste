@@ -211,6 +211,52 @@ def crowd_log():
     return rows
 
 
+def poor_crowd():
+    """Hidden half, descriptive (2026-10-13): the crowd curve with poor pickers. Growth by the number of poor pickers among an
+    artist's new fans, against artist-months of the same month, size, momentum and unrated new fans with exactly the same
+    numbers of good and ordinary new fans (ladder.py crowd_curve with the roles swapped). Niche / middle / crowded = 0-2 / 3-5 /
+    6+ other rated new fans (good + ordinary). Each count shown while it has >= 300 artist-months; the rest pooled. Plus a
+    per-poor-picker slope within cells. Bootstrap over artists (1,000 draws)."""
+    df = pl.read_parquet(X / "pickers" / "rate_A_sealed.parquet")
+    df = df.with_columns(g=((pl.col("l1") + 1) / (pl.col("l0") + 1)).log(), sz=(pl.col("l0") + 1).log(2).floor().cast(pl.Int16),
+                         mo=(((pl.col("l0") + 1) / (pl.col("l_pre") + 1)).log() / 0.5).floor().clip(-3, 3).cast(pl.Int8),
+                         ub=pl.col("n_unrated").clip(0, 4), others=pl.col("n_ord") + pl.col("n_good"))
+    cell = ["m", "sz", "mo", "ub", "n_ord", "n_good"]
+    df = df.with_columns(cs=pl.len().over(cell), cp=pl.col("n_poor").n_unique().over(cell)).filter((pl.col("cs") >= 2) & (pl.col("cp") >= 2))
+    df = df.with_columns(gx=pl.col("g") - (pl.col("g").sum().over(cell) - pl.col("g")) / (pl.col("cs") - 1),
+                         grp=pl.when(pl.col("others") <= 2).then(pl.lit("niche")).when(pl.col("others") <= 5).then(pl.lit("middle")).otherwise(pl.lit("crowded")),
+                         Pc=pl.col("n_poor").clip(0, 6).cast(pl.Float64))
+    df = df.with_columns(Pd=pl.col("Pc") - pl.col("Pc").mean().over(cell), yd=pl.col("g") - pl.col("g").mean().over(cell))
+    rng = np.random.default_rng(29)
+    rows = []
+    for grp in ("niche", "middle", "crowded"):
+        d = df.filter(pl.col("grp") == grp)
+        counts = d.group_by("n_poor").agg(n=pl.len()).sort("n_poor")
+        kmax = 0
+        for k, n in zip(counts["n_poor"], counts["n"]):
+            if k == kmax + 1 and n >= 300:
+                kmax = k
+            elif k > kmax + 1 or (k == kmax + 1 and n < 300):
+                break
+        d = d.with_columns(P=pl.col("n_poor").clip(0, kmax + 1))
+        a = d.group_by("artist", "P").agg(s=pl.col("gx").sum(), n=pl.len())
+        for k in range(0, kmax + 2):
+            x = a.filter(pl.col("P") == k)
+            if x.height == 0:
+                continue
+            sv, nv = x["s"].to_numpy().astype(float), x["n"].to_numpy().astype(float)
+            w = rng.poisson(1.0, (1000, x.height)).astype(float)
+            gb = np.expm1((w @ sv) / (w @ nv))
+            rows.append({"key": f"{grp}:{k}", "kind": "point", "crowd": grp, "poor": k, "label": f"{k}+" if k == kmax + 1 else str(k),
+                         "artist_months": int(nv.sum()), "growth": float(np.expm1(sv.sum() / nv.sum())),
+                         "growth_lo": float(np.percentile(gb, 2.5)), "growth_hi": float(np.percentile(gb, 97.5))})
+        ua, inv = np.unique(d["artist"].to_numpy(), return_inverse=True)
+        xg, yg = d["Pd"].to_numpy(), d["yd"].to_numpy()
+        bb = [((w * xg) @ yg) / ((w * xg) @ xg) for w in (rng.poisson(1.0, len(ua))[inv].astype(float) for _ in range(500))]
+        rows.append({"key": f"{grp}:slope", "kind": "slope", "crowd": grp, "per_picker": float(np.expm1((xg @ yg) / (xg @ xg))),
+                     "lo": float(np.expm1(np.percentile(bb, 2.5))), "hi": float(np.expm1(np.percentile(bb, 97.5)))})
+    return rows
+
 def crowd_means():
     """Hidden half: the average number of good pickers among new fans, for the artist-months behind each crowding line
     (same filters as analysis/ladder.py crowd_curve), i.e. where 'similar artists' sit on that line."""
@@ -241,6 +287,12 @@ def crowd_steps(rows):
 
 if __name__ == "__main__":
     W = ROOT / "analysis" / "writeup"
+    if "--poor-crowd" in sys.argv:
+        rows = poor_crowd()
+        (W / "poorcrowd.json").write_text(json.dumps(rows, indent=1))
+        for r in rows:
+            print(r)
+        raise SystemExit
     if "--crowd-means" in sys.argv:
         rows = crowd_means()
         (ROOT / "analysis" / "out" / "crowd_means_sealed.json").write_text(json.dumps(rows, indent=1))

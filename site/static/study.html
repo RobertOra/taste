@@ -36,7 +36,7 @@ body { padding: 0 16px 64px; font-family: var(--font-anthropic-sans); -webkit-fo
 // stand-in for the dashboard runtime: datasets come from study/<id>.json
 window.dash = (() => {
   const store = {}, calcs = {}, cbs = [];
-  const ids = ["badtaste", "careers", "careerten", "crowd", "crowdsteps", "decade", "eras", "example", "facts", "fanrel", "fanvalue", "genre", "genregeneral", "growthband", "headlines", "justx", "ladder", "more", "obsession", "obstaste", "overlap", "repeat", "results", "revisions", "robustness", "scenesplit", "thresholds", "today", "toppickers", "yearfan", "yeargrowth", "yeartakeoff"];
+  const ids = ["badtaste", "careers", "careerten", "crowd", "crowdsteps", "decade", "eras", "example", "facts", "fanrel", "fanvalue", "genre", "genregeneral", "growthband", "headlines", "justx", "ladder", "more", "obsession", "obstaste", "overlap", "poorcrowd", "repeat", "results", "revisions", "robustness", "scenesplit", "thresholds", "today", "toppickers", "yearfan", "yeargrowth", "yeartakeoff"];
   const api = {
     colors: ['#2f5bd3', '#d9622b', '#1f8a5b', '#8e5bd3', '#c99a2e', '#2a9d9d', '#b4508a', '#6b7a8f'],
     data: (id) => store[id] || { status: 'loading' },
@@ -50,7 +50,7 @@ window.dash = (() => {
     }
     cbs.forEach((cb) => { try { cb(); } catch (e) { console.error(e); } });
   };
-  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=c4ba5fe76b`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
+  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=fc65461e76`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
     .then((data) => { store[id] = { status: 'ok', data }; }, () => { store[id] = { status: 'error' }; })))
     .then(() => { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run(); });
   let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(run, 150); });
@@ -632,6 +632,19 @@ window.dash = (() => {
         instead of an ordinary one, for artists of the same size and momentum in the same month. Bars are 95% ranges.</p>
       <div class="wu-legend" id="fr-legend"></div>
       <div class="wu-chart dash-skeleton" id="fr-chart" data-source="fanrel"></div>
+    </div>
+    <p><b>Do several bad pickers doom an artist?</b> Gradually, yes, and only in numbers. For a niche artist, one poor picker among its new fans
+      went with <span class="wu-num" data-source="poorcrowd" data-field="growth" data-where="key=niche:1" data-fmt="spct1">—</span> growth against similar artists (any new fan helps a small artist); with five it was
+      <span class="wu-num" data-source="poorcrowd" data-field="growth" data-where="key=niche:5" data-fmt="spct1">—</span>. For artists already drawing a crowd, each additional poor picker went with about
+      <span class="wu-num" data-source="poorcrowd" data-field="per_picker" data-where="key=crowded:slope" data-fmt="spct1">—</span> growth. It's lopsided: two good pickers lift a niche artist by <span class="wu-num" data-source="crowd" data-field="growth" data-where="key=niche:2" data-fmt="spct0">—</span>, while it takes about
+      five poor ones to drag it down by as much as a tenth.</p>
+    <div class="wu-card">
+      <h3>Growth by the number of poor pickers among an artist's new fans</h3>
+      <p class="wu-note">Hidden half; descriptive. The same comparison as "Growth by the number of good pickers", with the roles swapped: artists of
+        the same size and momentum that month with exactly the same numbers of good and ordinary new fans. Niche: 0–2 other rated new fans that month;
+        middle: 3–5; crowded: 6 or more. Each line's last point pools the larger counts. Bars are 95% ranges.</p>
+      <div class="wu-legend" id="pc-legend"></div>
+      <div class="wu-chart dash-skeleton" id="pc-chart" data-source="poorcrowd"></div>
     </div>
     <p><b>Do bad pickers stay bad?</b> Yes. Over a few years, about as reliably as good pickers stay good:
       <span class="wu-num" data-source="badtaste" data-field="bottom_stays_bottom" data-where="key=persistence" data-fmt="pct">—</span> of the bottom fifth at picking songs were still in the bottom fifth two to three years later,
@@ -1921,6 +1934,42 @@ window.dash = (() => {
     });
   }
 
+  function drawPoorCrowd() {
+    const el = document.getElementById('pc-chart');
+    if (!ready(el, ['poorcrowd'])) return;
+    const groups = [['niche', 'Niche (0–2 other new fans)', dash.colors[0]], ['middle', 'Middle (3–5)', dash.colors[1]], ['crowded', 'Crowded (6+)', dash.colors[2]]];
+    legend('pc-legend', groups.map(([, l, c]) => [l, c, 'dot']));
+    const rows = dash.data('poorcrowd').data.filter((r) => r.kind === 'point').map((r) => ({ ...r, poor: +r.poor, v: +r.growth, lo: +r.growth_lo, hi: +r.growth_hi }));
+    if (!rows.length) { el.innerHTML = '<p class="wu-fail">This chart\'s data didn\'t load. Reload the page.</p>'; return; }
+    const fs = css('--cds-font-size-caption') || '12px';
+    const width = el.clientWidth, height = 300, m = { t: 28, r: 64, b: 40, l: 44 };
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
+    const x = d3.scaleLinear([0, d3.max(rows, (r) => r.poor)], [m.l, width - m.r]);
+    const y = d3.scaleLinear([Math.min(0, d3.min(rows, (r) => r.lo)), Math.max(0.01, d3.max(rows, (r) => r.hi)) * 1.05], [height - m.b, m.t]).nice();
+    svg.append('g').selectAll('line').data(y.ticks(5)).join('line').attr('x1', m.l).attr('x2', width - m.r)
+      .attr('y1', (d) => y(d)).attr('y2', (d) => y(d)).attr('stroke', (d) => (d === 0 ? css('--cds-chart-axis') : css('--cds-chart-grid')));
+    axisStyle(svg.append('g').attr('transform', `translate(${m.l - 6},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(d3.format('+.0%')).tickSize(0)), fs);
+    axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`)
+      .call(d3.axisBottom(x).ticks(Math.min(12, Math.floor((width - m.l - m.r) / 28))).tickFormat(d3.format('d')).tickSize(0)), fs);
+    svg.append('text').attr('x', (m.l + width - m.r) / 2).attr('y', height - 4).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted'))
+      .style('font-size', fs).text('Poor pickers among the new fans that month');
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Growth over the next year vs similar artists');
+    const tip = tooltip(el);
+    groups.forEach(([key, label, c]) => {
+      const pts = rows.filter((r) => r.crowd === key).sort((a, b) => a.poor - b.poor);
+      svg.append('path').datum(pts).attr('d', d3.line().x((d) => x(d.poor)).y((d) => y(d.v))).attr('fill', 'none').attr('stroke', c)
+        .attr('stroke-width', 2).attr('stroke-linejoin', 'round');
+      errorDots(svg, pts, (d) => x(d.poor), y, c, false);
+      const last = pts[pts.length - 1];
+      svg.append('text').attr('x', x(last.poor) + 8).attr('y', y(last.v)).attr('dy', '0.35em').attr('fill', css('--color-fg'))
+        .style('font-size', fs).text(label.split(' ')[0]);
+      pts.forEach((d) => svg.append('circle').attr('cx', x(d.poor)).attr('cy', y(d.v)).attr('r', 10).attr('fill', 'transparent')
+        .on('mousemove', (ev) => tip.show(ev, `${label}: ${d.label} poor picker${d.label === '1' ? '' : 's'}`,
+          [['Growth vs similar', `${fmt.spct1(d.v)} (${fmt.spct1(d.lo)} to ${fmt.spct1(d.hi)})`, c], ['Artist-months', fmt.int(+d.artist_months)]]))
+        .on('mouseleave', () => tip.hide()));
+    });
+  }
+
   function drawResults() {
     const el = document.getElementById('res-chart');
     if (!ready(el, ['results'])) return;
@@ -2098,6 +2147,7 @@ window.dash = (() => {
     safeDraw(drawGenre);
     safeDraw(drawGenreGeneral);
     safeDraw(drawFanRel);
+    safeDraw(drawPoorCrowd);
     safeDraw(drawStayBad);
     safeDraw(drawSceneSplit);
     safeDraw(drawLadder);
