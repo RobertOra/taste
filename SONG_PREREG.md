@@ -79,3 +79,17 @@ Run once each: `scene_split_songs.py --half {sealed,lb}`.
 | Explore (exploratory) | 2.45 [1.74] | - | 3.81 [2.71] | - | 9.34 |
 | **Sealed** | **4.27** [2.41] | **held** | **3.10** [2.57] | **held** | 13.24 |
 | **ListenBrainz** | **1.51** [1.27] | **held** | **2.91** [1.60] | **held** | 4.39 |
+
+# Round 4: right scenes x right artists x right songs (written 2026-10-13, before the sealed and ListenBrainz runs)
+Explore half (analysis/three_way_songs.py, exploratory), top 1% of song pickers, songs whose artist had >= 5 other people's
+picked songs that year (97% of them): right scenes 2.74x, right artists 1.28x [0.96, 1.63], right songs within those artists
+3.16x [2.08, 4.69], overall 11.05x.
+
+- **S6 sealed / S6 lb.** Right songs: the top 1%'s songs took off tenfold more often than other people's picked songs by the
+  same artists that year: 99% lower bound > 1.
+Reported without a bar: right artists (the explore range includes 1) and right scenes.
+
+Run once each: `three_way_songs.py --half {sealed,lb}`.
+
+## Round 4 results
+(to be added after the runs)
