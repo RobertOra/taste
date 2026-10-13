@@ -50,7 +50,7 @@ window.dash = (() => {
     }
     cbs.forEach((cb) => { try { cb(); } catch (e) { console.error(e); } });
   };
-  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=a1a3764314`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
+  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=25c9a83c80`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
     .then((data) => { store[id] = { status: 'ok', data }; }, () => { store[id] = { status: 'error' }; })))
     .then(() => { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run(); });
   let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(run, 150); });
@@ -411,18 +411,24 @@ window.dash = (() => {
     <h2>Good pickers' typical finds are early; their big hits last</h2>
     <p>Following each new artist for six years: a good picker's typical find pulls ahead of similar artists for the first few years, then the others
       catch up. But their biggest finds are much more likely to become lasting breakouts. Bad pickers' finds fall further behind every year.</p>
+    <p>Songs follow the same pattern, with the bad pickers' slide steeper: the worst fifth's songs stood at <span class="wu-num" data-source="careers" data-field="growth" data-where="key=songs:worst:1" data-fmt="spct0">—</span> against similar songs
+      after a year and <span class="wu-num" data-source="careers" data-field="growth" data-where="key=songs:worst:6" data-fmt="spct0">—</span> after six, while the best fifth's held a small lead (<span class="wu-num" data-source="careers" data-field="growth" data-where="key=songs:best:6" data-fmt="spct1">—</span> after six years).
+      The top 1%'s songs were <span class="wu-num" data-source="careerten" data-field="times_similar" data-where="key=songs:top1:1" data-fmt="times">—</span> as likely as similar songs to be ten times bigger a year on, and still
+      <span class="wu-num" data-source="careerten" data-field="times_similar" data-where="key=songs:top1:6" data-fmt="times">—</span> six years on. Both charts switch between songs and artists.</p>
     <div class="wu-card">
-      <h3>How far ahead of (or behind) similar artists their new artists were, year after year</h3>
-      <p class="wu-note">ListenBrainz; exploratory (after the pre-registered run). New artists found 2012–2019. Each artist's listeners in each later year, compared with artists of the same size
-        found the same month; the picker isn't counted. Shaded bands are 95% ranges.</p>
+      <h3>How far ahead of (or behind) similar ones their finds were, year after year</h3>
+      <p class="wu-note">ListenBrainz; exploratory (after the pre-registered run). Songs and new artists found 2012–2019. Each one's listeners in each later year, compared with
+        ones of the same size found the same month; the picker isn't counted. For songs, people are ranked on their songs. Shaded bands are 95% ranges.</p>
+      <div class="wu-chips" id="cv-unit" role="group" aria-label="Songs or artists"></div>
       <div class="wu-legend" id="cv-legend"></div>
       <div class="wu-chart dash-skeleton" id="cv-chart" data-source="careers"></div>
     </div>
     <div class="wu-card">
-      <h3>Their biggest finds last: new artists ten times bigger, years later</h3>
-      <p class="wu-note">The same artists. How many times as often their listeners were at least ten times what they had been when found, compared with
-        similar artists, one to six years later. More artists of every kind get there given more time, so the multiple shrinks even as the lead in
+      <h3>Their biggest finds last: ten times bigger, years later</h3>
+      <p class="wu-note">The same finds. How many times as often their listeners were at least ten times what they had been when found, compared with
+        similar ones, one to six years later. More finds of every kind get there given more time, so the multiple shrinks even as the lead in
         numbers grows. Hover over or click a group to highlight it; the shaded band is its 95% range.</p>
+      <div class="wu-chips" id="ct-unit" role="group" aria-label="Songs or artists"></div>
       <div class="wu-chips" id="ct-chips" role="group" aria-label="Group of pickers"></div>
       <div class="wu-chart dash-skeleton" id="ct-chart" data-source="careerten"></div>
     </div>
@@ -1019,11 +1025,12 @@ window.dash = (() => {
   function safeDraw(fn) { try { fn(); } catch (e) { console.error(fn.name, e); } }
 
   // one Songs / Artists setting per section, shared by its charts; each chart shows the switch
-  const unitSel = { ladder: 'songs', eras: 'songs', obsession: 'songs', habits: 'songs' };
+  const unitSel = { ladder: 'songs', eras: 'songs', obsession: 'songs', habits: 'songs', careers: 'songs' };
   const unitCharts = { ladder: [['ld-chart', () => drawLadder], ['th-chart', () => drawThresholds], ['gb-chart', () => drawGrowthBand]],
     eras: [['yg-chart', () => drawYearGrowth], ['yt-chart', () => drawYearTakeoff]],
     obsession: [['ob-chart', () => drawObsession], ['ot-chart', () => drawObsTaste]],
-    habits: [['hb-chart', () => drawHabits]] };
+    habits: [['hb-chart', () => drawHabits]],
+    careers: [['cv-chart', () => drawCareers], ['ct-chart', () => drawCareerTen]] };
   const unitOf = (r) => r.unit || 'artists';
   function unitChips(id, group = 'ladder') {
     document.getElementById(id).replaceChildren(...[['songs', 'Songs'], ['artists', 'Artists']].map(([k, l]) => {
@@ -1518,10 +1525,13 @@ window.dash = (() => {
 
   function drawCareers() {
     const el = document.getElementById('cv-chart');
-    if (!ready(el, ['careers'])) return;
-    const ser = [['best', "Best fifth's new artists", dash.colors[0]], ['worst', "Worst fifth's new artists", dash.colors[1]]];
+    if (!ready(el, ['careers'])) { document.getElementById('cv-unit').replaceChildren(); return; }
+    unitChips('cv-unit', 'careers');
+    const songs = unitSel.careers === 'songs', noun = songs ? 'songs' : 'artists', one = songs ? 'song' : 'artist', finds = songs ? 'songs' : 'new artists';
+    const ser = [['best', `Best fifth's ${finds}`, dash.colors[0]], ['worst', `Worst fifth's ${finds}`, dash.colors[1]]];
     legend('cv-legend', ser.map(([, l, c]) => [l, c, 'line']));
-    const all = dash.data('careers').data.map((r) => ({ ...r, year: +r.years, v: +r.growth, lo: +r.lo, hi: +r.hi }));
+    const all = dash.data('careers').data.filter((r) => unitOf(r) === unitSel.careers).map((r) => ({ ...r, year: +r.years, v: +r.growth, lo: +r.lo, hi: +r.hi }));
+    if (!all.length) { el.innerHTML = '<p class="wu-fail">This chart\'s data didn\'t load. Reload the page.</p>'; return; }
     const f = frame(el, 280, { t: 28, r: 16, b: 40, l: 44 });
     const { svg, fs, width, height, m } = f;
     const x = d3.scaleLinear([0, 6], [m.l, width - m.r]);
@@ -1529,14 +1539,14 @@ window.dash = (() => {
     const y = d3.scaleLinear([d3.min(all, (r) => r.lo) * 1.1, Math.max(0.04, d3.max(all, (r) => r.hi) * 1.2)], [height - m.b, m.t]).nice();
     gridY(f, y, d3.format('+.0%'), 5);
     svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', css('--cds-chart-axis'));
-    svg.append('text').attr('x', x(3.5)).attr('y', y(0) + 14).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Same as similar artists');
+    svg.append('text').attr('x', x(3.5)).attr('y', y(0) + 14).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted')).style('font-size', fs).text(`Same as similar ${noun}`);
     axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`).call(d3.axisBottom(x).ticks(7).tickFormat((v) => (v === 0 ? 'Found' : `${v}`)).tickSize(0)), fs);
     svg.append('text').attr('x', (m.l + width - m.r) / 2).attr('y', height - 4).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted')).style('font-size', fs)
-      .text('Years after the artist was found');
-    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Listeners, compared with similar artists');
+      .text(`Years after the ${one} was found`);
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text(`Listeners, compared with similar ${noun}`);
     ser.forEach(([g, l, c]) => { const pts = rowsOf(g); bandLine(svg.append('g'), pts, x, y, c, true); endLabel(svg, x, y, pts, l, c, fs, g === 'best' ? -12 : 18); });
     const byYear = [1, 2, 3, 4, 5, 6].map((k) => ({ year: k, mid: k, r: Object.fromEntries(all.filter((q) => q.year === k).map((q) => [q.group, q])) }));
-    bandHover(f, byYear, x, (d) => [`${d.year} year${d.year > 1 ? 's' : ''} after the artist was found`,
+    bandHover(f, byYear, x, (d) => [`${d.year} year${d.year > 1 ? 's' : ''} after the ${one} was found`,
       ser.filter(([g]) => d.r[g]).map(([g, l, c]) => [l, `${fmt.spct1(d.r[g].v)} (${fmt.spct1(d.r[g].lo)} to ${fmt.spct1(d.r[g].hi)})`, c])]);
   }
 
@@ -1544,9 +1554,12 @@ window.dash = (() => {
   function drawCareerTen() {
     const el = document.getElementById('ct-chart');
     const chips = document.getElementById('ct-chips');
-    if (!ready(el, ['careerten'])) { chips.replaceChildren(); return; }
+    if (!ready(el, ['careerten'])) { chips.replaceChildren(); document.getElementById('ct-unit').replaceChildren(); return; }
+    unitChips('ct-unit', 'careers');
+    const songs = unitSel.careers === 'songs', noun = songs ? 'songs' : 'artists', one = songs ? 'song' : 'artist', finds = songs ? 'songs' : 'new artists';
     const groups = [['top1', 'Top 1%'], ['top5', 'Top 5%'], ['best', 'Best fifth'], ['worst', 'Worst fifth']];
-    const rows = dash.data('careerten').data.map((r) => ({ ...r, year: +r.years, v: +r.times_similar, lo: +r.lo, hi: +r.hi }));
+    const rows = dash.data('careerten').data.filter((r) => unitOf(r) === unitSel.careers).map((r) => ({ ...r, year: +r.years, v: +r.times_similar, lo: +r.lo, hi: +r.hi }));
+    if (!rows.length) { el.innerHTML = '<p class="wu-fail">This chart\'s data didn\'t load. Reload the page.</p>'; return; }
     const col = (g) => (g === 'worst' ? dash.colors[1] : dash.colors[0]), mute = css('--cds-chart-muted');
     const f = frame(el, 280, { t: 28, r: 16, b: 40, l: 36 });
     const { svg, fs, width, height, m } = f;
@@ -1554,11 +1567,11 @@ window.dash = (() => {
     const y = d3.scaleLinear([0, d3.max(rows, (r) => r.hi) * 1.05], [height - m.b, m.t]).nice();
     gridY(f, y, (d) => `${d}×`, 5);
     svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(1)).attr('y2', y(1)).attr('stroke', css('--cds-chart-axis'));
-    svg.append('text').attr('x', width - m.r - 4).attr('y', y(1) + 14).attr('text-anchor', 'end').attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Same as similar artists');
+    svg.append('text').attr('x', width - m.r - 4).attr('y', y(1) + 14).attr('text-anchor', 'end').attr('fill', css('--color-fg-muted')).style('font-size', fs).text(`Same as similar ${noun}`);
     axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`).call(d3.axisBottom(x).ticks(6).tickFormat(d3.format('d')).tickSize(0)), fs);
     svg.append('text').attr('x', (m.l + width - m.r) / 2).attr('y', height - 4).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted')).style('font-size', fs)
-      .text('Years after the artist was found');
-    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Ten times bigger, times as often as similar artists');
+      .text(`Years after the ${one} was found`);
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text(`Ten times bigger, times as often as similar ${noun}`);
     const lines = svg.append('g'), hi = svg.append('g'), hit = svg.append('g');
     const tip = tooltip(el);
     function paint() {
@@ -1574,9 +1587,9 @@ window.dash = (() => {
           .on('click', () => { ctSel = g; ctHover = null; paint(); });
         if (on) {
           hit.selectAll(null).data(pts).join('circle').attr('cx', (d) => x(d.year)).attr('cy', (d) => y(d.v)).attr('r', 9).attr('fill', 'transparent')
-            .on('mousemove', (ev, d) => tip.show(ev, `${label}'s new artists, ${d.year} year${d.year > 1 ? 's' : ''} later`,
+            .on('mousemove', (ev, d) => tip.show(ev, `${label}'s ${finds}, ${d.year} year${d.year > 1 ? 's' : ''} later`,
               [['Ten times bigger', `${fmt.times(d.v)} as often (${fmt.times(d.lo)} to ${fmt.times(d.hi)})`, col(g)],
-                ['Their new artists', `${d3.format('.1f')(+d.per_1000)} per 1,000`], ['Similar artists', `${d3.format('.1f')(+d.similar_per_1000)} per 1,000`],
+                [`Their ${finds}`, `${d3.format('.1f')(+d.per_1000)} per 1,000`], [`Similar ${noun}`, `${d3.format('.1f')(+d.similar_per_1000)} per 1,000`],
                 ['People', fmt.int(+d.people)]]))
             .on('mouseleave', () => tip.hide());
           const last = pts[pts.length - 1];

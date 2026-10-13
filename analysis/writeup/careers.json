@@ -178,5 +178,203 @@
   "hi": 0.026073356490571,
   "picks": 138160,
   "people": 1089
+ },
+ {
+  "key": "songs:best:1",
+  "unit": "songs",
+  "group": "best",
+  "years": 1,
+  "growth": 0.024481315960382426,
+  "lo": 0.018783512531769,
+  "hi": 0.029944001917719478,
+  "picks": 1715316,
+  "people": 4110
+ },
+ {
+  "key": "songs:best:2",
+  "unit": "songs",
+  "group": "best",
+  "years": 2,
+  "growth": 0.02398426372674818,
+  "lo": 0.013755680158591964,
+  "hi": 0.03361439150021759,
+  "picks": 1715316,
+  "people": 4110
+ },
+ {
+  "key": "songs:best:3",
+  "unit": "songs",
+  "group": "best",
+  "years": 3,
+  "growth": 0.02119479511917128,
+  "lo": 0.009206752864664101,
+  "hi": 0.03322474222648671,
+  "picks": 1715316,
+  "people": 4110
+ },
+ {
+  "key": "songs:best:4",
+  "unit": "songs",
+  "group": "best",
+  "years": 4,
+  "growth": 0.019967353294671693,
+  "lo": 0.006442338609602242,
+  "hi": 0.03293859506948358,
+  "picks": 1715316,
+  "people": 4110
+ },
+ {
+  "key": "songs:best:5",
+  "unit": "songs",
+  "group": "best",
+  "years": 5,
+  "growth": 0.0175782051043403,
+  "lo": 0.0028677401713846744,
+  "hi": 0.03173559769525975,
+  "picks": 1715316,
+  "people": 4110
+ },
+ {
+  "key": "songs:best:6",
+  "unit": "songs",
+  "group": "best",
+  "years": 6,
+  "growth": 0.013585693362241247,
+  "lo": -0.0018115841043981346,
+  "hi": 0.02862786141267495,
+  "picks": 1715316,
+  "people": 4110
+ },
+ {
+  "key": "songs:worst:1",
+  "unit": "songs",
+  "group": "worst",
+  "years": 1,
+  "growth": -0.07704841430712162,
+  "lo": -0.08397523964028236,
+  "hi": -0.06917458505774465,
+  "picks": 1694247,
+  "people": 3290
+ },
+ {
+  "key": "songs:worst:2",
+  "unit": "songs",
+  "group": "worst",
+  "years": 2,
+  "growth": -0.10639073493018604,
+  "lo": -0.11732941736153954,
+  "hi": -0.09532151674869277,
+  "picks": 1694247,
+  "people": 3290
+ },
+ {
+  "key": "songs:worst:3",
+  "unit": "songs",
+  "group": "worst",
+  "years": 3,
+  "growth": -0.12042294408893447,
+  "lo": -0.13310440883434482,
+  "hi": -0.10723836696707242,
+  "picks": 1694247,
+  "people": 3290
+ },
+ {
+  "key": "songs:worst:4",
+  "unit": "songs",
+  "group": "worst",
+  "years": 4,
+  "growth": -0.13164053942968115,
+  "lo": -0.1460451937079956,
+  "hi": -0.11640761144223331,
+  "picks": 1694247,
+  "people": 3290
+ },
+ {
+  "key": "songs:worst:5",
+  "unit": "songs",
+  "group": "worst",
+  "years": 5,
+  "growth": -0.14031859929723406,
+  "lo": -0.15616954030801694,
+  "hi": -0.1233216808839375,
+  "picks": 1694247,
+  "people": 3290
+ },
+ {
+  "key": "songs:worst:6",
+  "unit": "songs",
+  "group": "worst",
+  "years": 6,
+  "growth": -0.1474228034040447,
+  "lo": -0.16439423428412397,
+  "hi": -0.1300859478152038,
+  "picks": 1694247,
+  "people": 3290
+ },
+ {
+  "key": "songs:top5:1",
+  "unit": "songs",
+  "group": "top5",
+  "years": 1,
+  "growth": 0.04258047248523896,
+  "lo": 0.03044967898293492,
+  "hi": 0.05384950662073653,
+  "picks": 465048,
+  "people": 1415
+ },
+ {
+  "key": "songs:top5:2",
+  "unit": "songs",
+  "group": "top5",
+  "years": 2,
+  "growth": 0.041762620702574214,
+  "lo": 0.0203562409344663,
+  "hi": 0.06245188198054181,
+  "picks": 465048,
+  "people": 1415
+ },
+ {
+  "key": "songs:top5:3",
+  "unit": "songs",
+  "group": "top5",
+  "years": 3,
+  "growth": 0.03801516897970668,
+  "lo": 0.01202913398685809,
+  "hi": 0.06314683628536817,
+  "picks": 465048,
+  "people": 1415
+ },
+ {
+  "key": "songs:top5:4",
+  "unit": "songs",
+  "group": "top5",
+  "years": 4,
+  "growth": 0.03764086292020402,
+  "lo": 0.008768134756280752,
+  "hi": 0.06596085091735945,
+  "picks": 465048,
+  "people": 1415
+ },
+ {
+  "key": "songs:top5:5",
+  "unit": "songs",
+  "group": "top5",
+  "years": 5,
+  "growth": 0.035308849770373116,
+  "lo": 0.0033663919479010943,
+  "hi": 0.06555478946300934,
+  "picks": 465048,
+  "people": 1415
+ },
+ {
+  "key": "songs:top5:6",
+  "unit": "songs",
+  "group": "top5",
+  "years": 6,
+  "growth": 0.02858911003757556,
+  "lo": -0.0053012944806713124,
+  "hi": 0.061183442783859454,
+  "picks": 465048,
+  "people": 1415
  }
 ]
