@@ -98,9 +98,9 @@
       </div>
       <div class="wu-card wu-take">
         <span class="wu-tt">The best are far better</span>
-        <span class="wu-big dash-skeleton" data-source="headlines" data-field="hidden" data-where="key=P4a" data-fmt="times">—</span>
-        <span class="wu-cap">as likely as similar artists to grow tenfold, for new artists found by the top 1% of pickers. The bottom half of
-          pickers do no better than chance.</span>
+        <span class="wu-big dash-skeleton" data-source="headlines" data-field="hidden" data-where="key=S1" data-fmt="times">—</span>
+        <span class="wu-cap">as likely as similar songs to grow tenfold, for songs found by the top 1% of pickers (for their new artists,
+          <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P4a" data-fmt="times">—</span>). The bottom half of pickers do no better than chance.</span>
       </div>
       <div class="wu-card wu-take">
         <span class="wu-tt">Good pickers matter most early</span>
@@ -159,8 +159,7 @@
         <span class="wu-num dash-skeleton" data-source="repeat" data-field="later_top_fifth" data-where="key=99–100" data-fmt="pct">—</span> were still in the top fifth two to three years later and only
         <span class="wu-num" data-source="repeat" data-field="later_bottom_fifth" data-where="key=99–100" data-fmt="pct">—</span> fell to the bottom fifth, against 20% each by chance. Any one snapshot of
         someone's taste is noisy, which hides a lot of it. Over a decade, good taste mostly fades, while bad taste lingers.</li>
-      <li><a href="#ladder"><b>The best pickers are far better.</b></a> The top 1%'s new artists grew tenfold
-        <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P4a" data-fmt="times">—</span> as often as similar artists. The bottom half did no better than chance.</li>
+      <li><a href="#ladder"><b>The best pickers are far better.</b></a> The top 1%'s songs grew tenfold <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=S1" data-fmt="times">—</span> as often as similar songs, and their new artists <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P4a" data-fmt="times">—</span> as often as similar artists. The bottom half did no better than chance.</li>
       <li><a href="#careers"><b>Good pickers' typical finds are early; their big hits last.</b></a> Six years on, the top 1%'s new artists were still
         <span class="wu-num dash-skeleton" data-source="careerten" data-field="times_similar" data-where="key=top1:6" data-fmt="times">—</span> as likely as similar artists to be ten
         times bigger. Bad pickers' finds keep sinking year after year.</li>
@@ -304,10 +303,16 @@
       and for the top 1% <span class="wu-num" data-source="ladder" data-field="rate" data-where="key=99–100" data-fmt="k0">—</span>: <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P4a" data-fmt="times">—</span> as often as similar
       artists. On ListenBrainz, the top 1%'s new artists grew tenfold <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=P4a" data-fmt="times">—</span> as often as similar
       artists.</p>
+    <p>Songs show it even more. Ranked on their songs instead, the top 1%'s songs grew tenfold <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=S1" data-fmt="times">—</span> as often as
+      similar songs: about <span class="wu-num" data-source="ladder" data-field="rate" data-where="key=songs:99–100" data-fmt="k0">—</span> per 1,000, against <span class="wu-num" data-source="ladder" data-field="similar_rate" data-where="key=songs:99–100" data-fmt="k1">—</span>. For the same
+      people, that's <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=S2" data-fmt="times">—</span> their artist edge. On ListenBrainz the songs' edge was <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=S1" data-fmt="times">—</span>, ahead of
+      artists there too, though not by enough to pass our bar. Most of the edge is in catching the rare songs that explode; their songs' average
+      growth was about the same as similar songs'.</p>
     <div class="wu-card">
-      <h3>Tenfold takeoffs per 1,000 new artists found</h3>
+      <h3>Tenfold takeoffs per 1,000 finds</h3>
       <p class="wu-note">Hidden half. Pickers are ranked by how their picks did in earlier years: 90 means better than 90% of pickers.
-        "Similar artists" are artists of the same size, picked the same month.</p>
+        "Similar" means the same size, picked the same month. Songs: songs by one artist found the same month count as one pick for the ranking.</p>
+      <div class="wu-chips" id="ld-chips" role="group" aria-label="Songs or artists"></div>
       <div class="wu-legend" id="ld-legend"></div>
       <div class="wu-chart dash-skeleton" id="ld-chart" data-source="ladder"></div>
     </div>
@@ -535,6 +540,9 @@
       analysed on it. We wrote down every prediction first, with the same bars, then ran each once. Eight of the nine main measures we could run
       there passed, and twenty-four of the thirty-two predictions held. The table shows every one. A few ListenBrainz charts came after that
       run (a decade later, careers, and one person's range); nothing was predicted for them in advance, so they're marked exploratory.</p>
+    <p><b>Later, songs.</b> The takeoff numbers above were for artists. After seeing the songs' version on the first half, we wrote down two more
+      predictions before running it anywhere else: the top 1% of song pickers beat similar songs (S1), and beat their own artist edge (S2).
+      Both held on the hidden half. On ListenBrainz, S1 held and S2 narrowly missed. They're the last two rows of the table.</p>
     <div class="wu-card">
       <h3>Checks of these findings on the hidden half and on ListenBrainz</h3>
       <div class="wu-tablewrap">
@@ -741,7 +749,7 @@
     compact: (v) => Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 0 }).format(v),
     text: (v) => String(v),
     times: (v) => `${d3.format('.1f')(v)}×`, pct0: d3.format('.0%'), pct1: d3.format('.1%'), pct2: d3.format('.2%'),
-    spct1: d3.format('+.1%'), spct0: d3.format('+.0%'), k0: (v) => d3.format('.0f')(v * 1000),
+    spct1: d3.format('+.1%'), spct0: d3.format('+.0%'), k0: (v) => d3.format('.0f')(v * 1000), k1: (v) => d3.format('.1f')(v * 1000),
     times1: (v) => `${d3.format('.1f')(v)}×`,
     pts: (v) => `${d3.format('+.1f')(v * 100)} points`, pts0: (v) => `${d3.format('.1f')(v * 100)} points`,
     times2: (v) => `${d3.format('.2f')(v)}×`,
@@ -922,12 +930,21 @@
     });
   }
 
+  let ldSel = 'songs';
   function drawLadder() {
     const el = document.getElementById('ld-chart');
-    if (!ready(el, ['ladder'])) return;
+    const chips = document.getElementById('ld-chips');
+    if (!ready(el, ['ladder'])) { chips.replaceChildren(); return; }
+    chips.replaceChildren(...[['songs', 'Songs'], ['artists', 'Artists']].map(([k, l]) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'wu-chip'; b.textContent = l;
+      b.setAttribute('aria-pressed', String(k === ldSel));
+      b.addEventListener('click', () => { ldSel = k; el.replaceChildren(); drawLadder(); });
+      return b;
+    }));
+    const word = ldSel === 'songs' ? 'songs' : 'new artists', simWord = ldSel === 'songs' ? 'Similar songs' : 'Similar artists';
     const colT = dash.colors[0], colS = css('--cds-chart-muted');
-    legend('ld-legend', [['Their new artists', colT, 'line'], ['Similar artists', colS, 'line']]);
-    const rows = dash.data('ladder').data.filter((r) => !truthy(r.detail))
+    legend('ld-legend', [[`Their ${word}`, colT, 'line'], [simWord, colS, 'line']]);
+    const rows = dash.data('ladder').data.filter((r) => !truthy(r.detail) && (r.unit || 'artists') === ldSel)
       .map((r) => ({ ...r, mid: +r.mid, t: +r.rate * 1000, sim: +r.similar_rate * 1000, odds: +r.odds }));
     const fs = css('--cds-font-size-caption') || '12px';
     const width = el.clientWidth, height = 280, m = { t: 28, r: 16, b: 40, l: 36 };
@@ -954,8 +971,8 @@
     rows.forEach((d, i) => {
       const x0 = i === 0 ? m.l : x((rows[i - 1].mid + d.mid) / 2), x1 = i === rows.length - 1 ? width - m.r : x((d.mid + rows[i + 1].mid) / 2);
       svg.append('rect').attr('x', x0).attr('y', m.t).attr('width', Math.max(1, x1 - x0)).attr('height', height - m.t - m.b).attr('fill', 'transparent')
-        .on('mousemove', (ev) => tip.show(ev, `Pickers ranked ${d.band}`, [['Their new artists', `${fmt.k0(+d.rate)} per 1,000`, colT],
-          ['Similar artists', `${fmt.k0(+d.similar_rate)} per 1,000`, colS], ['As often as similar', fmt.times(d.odds)], ['People', fmt.int(+d.people)]]))
+        .on('mousemove', (ev) => tip.show(ev, `Pickers ranked ${d.band}`, [[`Their ${word}`, `${fmt.k1(+d.rate)} per 1,000`, colT],
+          [simWord, `${fmt.k1(+d.similar_rate)} per 1,000`, colS], ['As often as similar', fmt.times(d.odds)], ['People', fmt.int(+d.people)]]))
         .on('mouseleave', () => tip.hide());
     });
   }

@@ -303,6 +303,32 @@ def ladder():
             rows.append({"key": "detail:" + r["band"], "band": r["band"], "mid": None, "people": r["people"], "picks": r["picks"],
                          "events_10x": r["events_10x"], "rate": r["events_10x"] / r["picks"], "similar_rate": None, "odds": r["odds_10x"],
                          "odds_lo": r["odds_10x_lo"], "odds_hi": r["odds_10x_hi"], "detail": True})
+    for r in rows:
+        r["unit"] = "artists"
+    # songs (analysis/ladder_songs.py, SONG_PREREG.md): same bands; keys prefixed "songs:"
+    lad = json.loads((OUT / "ladder_songs_sealed.json").read_text())["ladder"]
+    for lab, lo, hi in merge:
+        rs = [r for r in lad if r["lo_pct"] >= lo - 1e-9 and r["hi_pct"] <= hi + 1e-9]
+        ev = sum(r["events_10x"] for r in rs); picks = sum(r["songs"] for r in rs)
+        exp_ev = sum(r["events_10x"] / r["odds_10x"] for r in rs)
+        rows.append({"key": "songs:" + lab, "unit": "songs", "band": f"{lab}%", "mid": (lo + hi) / 2 * 100, "people": sum(r["people"] for r in rs),
+                     "picks": picks, "events_10x": ev, "rate": ev / picks, "similar_rate": exp_ev / picks, "odds": ev / exp_ev, "detail": False})
+    return rows
+
+
+def song_predictions():
+    """SONG_PREREG.md: S1 (top 1% of song pickers' songs vs similar songs, tenfold; 99% low > 2) and S2 (songs vs artists for the
+    same people; 99% low > 1), hidden half and ListenBrainz."""
+    lj = {h: json.loads((OUT / f"ladder_songs_{h}.json").read_text())["summary"] for h in ("explore", "sealed", "lb")}
+    rows = []
+    for key, claim, get, bar in (("S1", "Top 1% of song pickers' songs vs similar songs: grew 10× or more",
+                                  lambda s: (s["top1"]["odds_10x"], s["top1"]["lo"], s["top1"]["hi"], s["top1"]["lo99"]), 2),
+                                 ("S2", "Same people: top 1%'s songs vs their artists, chance of growing 10×",
+                                  lambda s: (s["vs_artists"]["ratio"], s["vs_artists"]["ratio_lo"], s["vs_artists"]["ratio_hi"], s["vs_artists"]["ratio_lo99"]), 1)):
+        v, lo, hi, lo99 = get(lj["sealed"]); lv, llo, lhi, llo99 = get(lj["lb"])
+        rows.append({"key": key, "claim": claim, "unit": "times as often", "hidden": v, "lo": lo, "hi": hi, "lo99": lo99,
+                     "first_half": get(lj["explore"])[0], "rate": None, "rate_compared": None, "confirmed": lo99 > bar,
+                     "lb": lv, "lb_lo": llo, "lb_hi": lhi, "lb_held": llo99 > bar})
     return rows
 
 
@@ -326,7 +352,7 @@ def headlines_with_lb():
         x = lb.get(r["key"])
         r.update({"lb": x["hidden"], "lb_lo": x["lo"], "lb_hi": x["hi"], "lb_held": x["confirmed"]} if x else
                  {"lb": None, "lb_lo": None, "lb_hi": None, "lb_held": None})
-    return rows
+    return rows + song_predictions()
 
 
 if __name__ == "__main__":

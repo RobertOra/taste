@@ -678,5 +678,39 @@
   "lb_lo": null,
   "lb_hi": null,
   "lb_held": null
+ },
+ {
+  "key": "S1",
+  "claim": "Top 1% of song pickers' songs vs similar songs: grew 10\u00d7 or more",
+  "unit": "times as often",
+  "hidden": 13.244046584050004,
+  "lo": 8.665157224492846,
+  "hi": 18.081787931207536,
+  "lo99": 8.016282471555302,
+  "first_half": 9.340903101391497,
+  "rate": null,
+  "rate_compared": null,
+  "confirmed": true,
+  "lb": 4.387625831360251,
+  "lb_lo": 2.342691479144031,
+  "lb_hi": 7.525396320858287,
+  "lb_held": true
+ },
+ {
+  "key": "S2",
+  "claim": "Same people: top 1%'s songs vs their artists, chance of growing 10\u00d7",
+  "unit": "times as often",
+  "hidden": 2.8786084879766145,
+  "lo": 1.8629670801979197,
+  "hi": 4.259448348249584,
+  "lo99": 1.6628285899739146,
+  "first_half": 2.1360376498959766,
+  "rate": null,
+  "rate_compared": null,
+  "confirmed": true,
+  "lb": 1.6681380747610501,
+  "lb_lo": 1.0439594335057174,
+  "lb_hi": 2.2753313563381345,
+  "lb_held": false
  }
 ]
