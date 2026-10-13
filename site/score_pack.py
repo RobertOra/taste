@@ -243,7 +243,7 @@ def score(plays, exclude_self=False, pack=None):
 
 
 # ---------- YouTube watch history (Google Takeout), as engine.js
-YT_TAGS = re.compile(r"\s*[(\[][^)\]]*(official|lyric|audio|video|visualizer|\bmv\b|\bm/v\b|\bhd\b|\b4k\b)[^)\]]*[)\]]", re.I | re.A)
+YT_TAGS = re.compile(r"\s*[(\[][^)\]]*(official|lyric|audio|video|visualizer|(?<![A-Za-z0-9_])mv(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])m/v(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])hd(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])4k(?![A-Za-z0-9_]))[^)\]]*[)\]]", re.I)
 MON = {m: i for i, m in enumerate(["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"])}
 TZ = {"UTC": 0, "GMT": 0, "EST": -5, "EDT": -4, "CST": -6, "CDT": -5, "MST": -7, "MDT": -6, "PST": -8, "PDT": -7, "AKST": -9, "AKDT": -8, "HST": -10, "BST": 1,
       "CET": 1, "CEST": 2, "EET": 2, "EEST": 3, "MSK": 3, "IST": 5.5, "JST": 9, "KST": 9, "AEST": 10, "AEDT": 11, "NZST": 12, "NZDT": 13}
@@ -268,20 +268,48 @@ def _unescape(s):
     return re.sub(r"&(amp|lt|gt|quot|apos|#\d+|#x[0-9a-f]+);", one, s, flags=re.I)
 
 
+FEAT = re.compile(r"(?:\s+|\s*[(\[])\s*(feat\.?|ft\.?|featuring|prod\.?(?: by)?)\s[^)\]]*[)\]]?", re.I)
+SPLIT = re.compile(r"\s*(?:,|&| x | X |(?<![A-Za-z0-9_])feat\.?|(?<![A-Za-z0-9_])ft\.?)\s*")
+QUOTED = re.compile(r"^(.+?)\s+[\"'‘“「『]([^\"'’”」』]+)[\"'’”」』]")
+HANGUL = re.compile(r"[ᄀ-ᇿ㄰-㆏가-힯]+")
+
+
+def _trim(s):
+    return re.sub(r"^[\s\-|]+|[\s\-|]+$", "", s)
+
+
+def _clean(s):
+    return _trim(FEAT.sub("", YT_TAGS.sub("", s)))
+
+
+def yt_cands(header, title, channel):
+    """Readings of one YouTube watch as (rule, artist, song), most reliable first. Rule 'a': counts if the artist is confirmed;
+    'av': same, and the reading also counts toward confirming its artist; 's'/'sv': needs the exact song in ListenBrainz too
+    (resolve_youtube). Channel-name and quoted readings never confirm an artist on their own, which keeps out YouTubers."""
+    out = []; title = re.sub(r" [–—] ", " - ", title)
+    if " - " in title:
+        i = title.index(" - "); a, s = title[:i], title[i + 3:]
+        out += [("av", a, YT_TAGS.sub("", s)), ("sv", SPLIT.split(a)[0], _clean(s)), ("sv", _clean(s), a)]
+    m = QUOTED.match(title)
+    if m:
+        out.append(("s", HANGUL.sub("", re.sub(r"\s*\([^)]*\)", "", m[1])), m[2]))
+    ch = re.sub(r"(VEVO|\s*-?\s*Official(\s+(Channel|YouTube))?)$", "", channel, flags=re.I).strip()
+    rest = title[len(ch) + 3:] if ch and title.lower().startswith(ch.lower() + " - ") else title
+    out.append(("av" if header == "YouTube Music" else "s", ch, _clean(rest)))
+    return [(k, a.strip(), s.strip()) for k, a, s in out if a.strip() and s.strip()]
+
+
 def yt_play(header, title, channel, ts):
-    sure = False
+    if ts is None:
+        return None
+    base = {"week": int(ts // 604800), "ts": ts, "key": f"{int(ts)}\t{title}\t{channel}"}
     if channel.endswith(" - Topic"):
-        artist, track, sure = channel[:-8], title, True
-    elif " - " in title:
-        i = title.index(" - "); artist, track = title[:i], YT_TAGS.sub("", title[i + 3:])
-    elif header == "YouTube Music":
-        artist, track = re.sub(r"VEVO$", "", channel), YT_TAGS.sub("", title)
-    else:
-        return None
-    artist, track = artist.strip(), track.strip(); an = artist.lower()
-    if an in S.EXCLUDE_ARTISTS or ts is None:
-        return None
-    return {"week": int(ts // 604800), "ts": ts, "an": an, "name": artist, "tn": track.lower(), "track": track, "src": "yt" if sure else "yt?"}
+        artist, track = channel[:-8].strip(), title.strip(); an = artist.lower()
+        if an in S.EXCLUDE_ARTISTS or not track:
+            return None
+        return {**base, "an": an, "name": artist, "tn": track.lower(), "track": track, "src": "yt"}
+    c = yt_cands(header, title, channel)
+    return {**base, "src": "yt?", "cands": c} if c else None
 
 
 def _yt_html(text, watch_file):
@@ -339,28 +367,44 @@ def read_youtube(paths):
             one(path.name, path.read_bytes())
     seen = set(); uniq = []
     for p in out:   # the same watch in two exports counts once
-        k = (int(p["ts"]), p["an"], p["tn"])
+        k = p["key"]
         if k not in seen:
             seen.add(k); uniq.append(p)
     return uniq
 
 
 def resolve_youtube(plays, pack):
-    """A guessed YouTube "Artist - Song" counts only if the artist is in the history some surer way, or (4+ separate weeks)
-    ListenBrainz knows the artist and one of its three most-played songs (as engine.js resolveYouTube)."""
+    """Settle each guessed YouTube watch on its first reading that passes (yt_cands). An artist is confirmed if it's in the
+    history some surer way (Spotify, a Topic channel), or (from 'av'/'sv' readings in 4+ separate weeks) ListenBrainz knows it
+    and one of its three most-played songs. Watches with no passing reading are taken as not music (as engine.js resolveYouTube)."""
     sure = {p["an"] for p in plays if p.get("src", "spotify") != "yt?"}; by = {}
-    for p in plays:
-        if p.get("src") != "yt?" or p["an"] in sure:
+    guessed = [p for p in plays if p.get("src") == "yt?"]
+    for p in guessed:
+        for rule, a, s in p["cands"]:
+            an = a.lower()
+            if rule.endswith("v") and an not in sure:
+                g = by.setdefault(an, {"weeks": set(), "songs": {}}); g["weeks"].add(p["week"]); g["songs"].setdefault(s.lower(), set()).add(p["week"])
+    known = set(sure)
+    for an, g in by.items():
+        if len(g["weeks"]) < 4 or not pack.artist(S.name_hash(an)):
             continue
-        a = by.setdefault(p["an"], {"weeks": set(), "songs": {}}); a["weeks"].add(p["week"]); a["songs"].setdefault(p["tn"], set()).add(p["week"])
-    ok = set(sure)
-    for an, a in by.items():
-        if len(a["weeks"]) < 4 or not pack.artist(S.name_hash(an)):
-            continue
-        top = sorted(a["songs"].items(), key=lambda kv: (-len(kv[1]), kv[0]))[:3]
+        top = sorted(g["songs"].items(), key=lambda kv: (-len(kv[1]), kv[0]))[:3]
         if any(pack.song(S.name_hash(an + "\t" + tn)) for tn, _ in top):
-            ok.add(an)
-    return [p for p in plays if p.get("src") != "yt?" or p["an"] in ok]
+            known.add(an)
+    span = {}   # weeks an artist could have at most; below 4 it can't be a find, so its song readings aren't checked
+    for p in plays:
+        for an in ([a.lower() for _, a, _ in p["cands"]] if p.get("src") == "yt?" else [p["an"]]):
+            span.setdefault(an, set()).add(p["week"])
+    def passes(rule, an, tn):
+        return an in known and an not in S.EXCLUDE_ARTISTS and (rule[0] == "a" or (len(span[an]) >= 4 and pack.artist(S.name_hash(an)) is not None and pack.song(S.name_hash(an + "\t" + tn)) is not None))
+    out = []
+    for p in plays:
+        if p.get("src") != "yt?":
+            out.append(p); continue
+        for rule, a, s in p["cands"]:
+            if passes(rule, a.lower(), s.lower()):
+                out.append({"week": p["week"], "ts": p["ts"], "an": a.lower(), "name": a, "tn": s.lower(), "track": s, "src": "yt?"}); break
+    return out
 
 
 def plays_from_files(paths):

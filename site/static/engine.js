@@ -90,7 +90,7 @@ export async function unzip(src, want = (name) => /\.(json|html)$/i.test(name)) 
 export const WANT = (n) => (/\.json$/i.test(n) && /history|youtube/i.test(n)) || (/\.html$/i.test(n) && /youtube|watch-history/i.test(n));
 // ---------- reading YouTube watch history (Google Takeout: watch-history.html or .json). No play length is given, so every watch counts.
 // A song is certain when it comes from an auto-generated "Artist - Topic" channel; an "Artist - Song" title is a guess, checked in resolveYouTube.
-const YT_TAGS = /\s*[([][^)\]]*(official|lyric|audio|video|visualizer|\bmv\b|\bm\/v\b|\bhd\b|\b4k\b)[^)\]]*[)\]]/gi;
+const YT_TAGS = /\s*[([][^)\]]*(official|lyric|audio|video|visualizer|(?<![A-Za-z0-9_])mv(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])m\/v(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])hd(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])4k(?![A-Za-z0-9_]))[^)\]]*[)\]]/gi;
 const MON = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
 const TZ = { UTC: 0, GMT: 0, EST: -5, EDT: -4, CST: -6, CDT: -5, MST: -7, MDT: -6, PST: -8, PDT: -7, AKST: -9, AKDT: -8, HST: -10, BST: 1, CET: 1, CEST: 2,
   EET: 2, EEST: 3, MSK: 3, IST: 5.5, JST: 9, KST: 9, AEST: 10, AEDT: 11, NZST: 12, NZDT: 13 };
@@ -105,16 +105,38 @@ export function ytTime(s) {   // "Oct 5, 2026, 11:49:22 AM EDT" or "5 Oct 2026, 
 const unescapeHtml = (s) => s.replace(/&(amp|lt|gt|quot|apos|#\d+|#x[0-9a-f]+);/gi, (_, e) => {
   const k = e.toLowerCase(); return k === 'amp' ? '&' : k === 'lt' ? '<' : k === 'gt' ? '>' : k === 'quot' ? '"' : k === 'apos' ? "'" : String.fromCodePoint(k[1] === 'x' ? parseInt(k.slice(2), 16) : +k.slice(1));
 });
+const FEAT = /(?:\s+|\s*[([])\s*(feat\.?|ft\.?|featuring|prod\.?(?: by)?)\s[^)\]]*[)\]]?/gi;
+const SPLIT = /\s*(?:,|&| x | X |(?<![A-Za-z0-9_])feat\.?|(?<![A-Za-z0-9_])ft\.?)\s*/;
+const QUOTED = /^(.+?)\s+["'‘“「『]([^"'’”」』]+)["'’”」』]/;
+const HANGUL = /[ᄀ-ᇿ㄰-㆏가-힯]+/g;
+const trimDash = (s) => s.replace(/^[\s\-|]+|[\s\-|]+$/g, '');
+const cleanSong = (s) => trimDash(s.replace(YT_TAGS, '').replace(FEAT, ''));
+// readings of one watch as [rule, artist, song], most reliable first. 'a': counts if the artist is confirmed; 'av': same, and the
+// reading also counts toward confirming its artist; 's'/'sv': needs the exact song in ListenBrainz too (resolveYouTube).
+// Channel-name and quoted readings never confirm an artist on their own, which keeps out YouTubers.
+function ytCands(header, title, channel) {
+  const out = []; title = title.replace(/ [–—] /g, ' - ');
+  if (title.includes(' - ')) {
+    const i = title.indexOf(' - '), a = title.slice(0, i), s = title.slice(i + 3);
+    out.push(['av', a, s.replace(YT_TAGS, '')], ['sv', a.split(SPLIT)[0], cleanSong(s)], ['sv', cleanSong(s), a]);
+  }
+  const m = title.match(QUOTED);
+  if (m) out.push(['s', m[1].replace(/\s*\([^)]*\)/g, '').replace(HANGUL, ''), m[2]]);
+  const ch = channel.replace(/(VEVO|\s*-?\s*Official(\s+(Channel|YouTube))?)$/i, '').trim();
+  const rest = ch && title.toLowerCase().startsWith(ch.toLowerCase() + ' - ') ? title.slice(ch.length + 3) : title;
+  out.push([header === 'YouTube Music' ? 'av' : 's', ch, cleanSong(rest)]);
+  return out.map(([k, a, s]) => [k, a.trim(), s.trim()]).filter(([, a, s]) => a && s);
+}
 function ytPlay(header, title, channel, ts) {
-  let artist, track, sure = false;
-  if (channel.endsWith(' - Topic')) { artist = channel.slice(0, -8); track = title; sure = true; }
-  else if (title.includes(' - ')) { const i = title.indexOf(' - '); artist = title.slice(0, i); track = title.slice(i + 3).replace(YT_TAGS, ''); }
-  else if (header === 'YouTube Music') { artist = channel.replace(/VEVO$/, ''); track = title.replace(YT_TAGS, ''); }
-  else return null;
-  artist = artist.trim(); track = track.trim();
-  const an = artist.toLowerCase();
-  if (EXCLUDE.has(an) || !Number.isFinite(ts)) return null;
-  return { week: Math.floor(ts / WEEK), an, name: artist, ts, how: 'youtube', track, tn: track.toLowerCase(), src: sure ? 'yt' : 'yt?' };
+  if (!Number.isFinite(ts)) return null;
+  const base = { week: Math.floor(ts / WEEK), ts, how: 'youtube', key: `${Math.floor(ts)}\t${title}\t${channel}` };
+  if (channel.endsWith(' - Topic')) {
+    const artist = channel.slice(0, -8).trim(), track = title.trim(), an = artist.toLowerCase();
+    if (EXCLUDE.has(an) || !track) return null;
+    return { ...base, an, name: artist, track, tn: track.toLowerCase(), src: 'yt' };
+  }
+  const cands = ytCands(header, title, channel);
+  return cands.length ? { ...base, src: 'yt?', cands } : null;
 }
 function readYouTubeHtml(text, watchFile) {   // watchFile: a watch-history file (every entry a watch, in any language); else only "Watched" entries count
   const out = [];
@@ -171,30 +193,49 @@ export async function readHistory(files) {   // files: [{name, bytes} or {name, 
     }
   }
   const kind = kinds.has('extended') ? 'extended' : (kinds.size ? 'standard' : null);
-  const seen = new Set(), ytU = yt.filter((p) => { const k = `${Math.floor(p.ts)}\t${p.an}\t${p.tn}`; if (seen.has(k)) return false; seen.add(k); return true; });   // the same watch in two exports counts once
+  const seen = new Set(), ytU = yt.filter((p) => { if (seen.has(p.key)) return false; seen.add(p.key); return true; });   // the same watch in two exports counts once
   const plays = (kind ? got[kind] : []).concat(ytU);   // with both Spotify exports present, only the extended history counts (no double counting)
   let tsMin = Infinity, tsMax = -Infinity; for (const p of plays) { if (p.ts < tsMin) tsMin = p.ts; if (p.ts > tsMax) tsMax = p.ts; }
   return { plays, kind, youtube: ytU.length, tsMin, tsMax };
 }
-// A guessed YouTube "Artist - Song" counts only if that artist is in your history some surer way, or (played in 4+ separate weeks,
-// so it could be a find) ListenBrainz knows the artist and one of its three most-played songs. The rest is taken as not music.
+// Settle each guessed YouTube watch on its first reading that passes (ytCands). An artist is confirmed if it's in the history some
+// surer way (Spotify, a Topic channel), or (from 'av'/'sv' readings in 4+ separate weeks) ListenBrainz knows it and one of its
+// three most-played songs. Watches with no passing reading are taken as not music.
 export async function resolveYouTube(plays, pack) {
-  const sure = new Set(plays.filter((p) => p.src !== 'yt?').map((p) => p.an)), by = new Map();
+  const sure = new Set(plays.filter((p) => p.src !== 'yt?').map((p) => p.an)), by = new Map(), guessed = plays.filter((p) => p.src === 'yt?');
+  for (const p of guessed) for (const [rule, a, s] of p.cands) {
+    const an = a.toLowerCase(); if (!rule.endsWith('v') || sure.has(an)) continue;
+    let g = by.get(an); if (!g) by.set(an, g = { weeks: new Set(), songs: new Map() });
+    g.weeks.add(p.week); const tn = s.toLowerCase(); let w = g.songs.get(tn); if (!w) g.songs.set(tn, w = new Set()); w.add(p.week);
+  }
+  await pack.init();
+  const cand = [...by.entries()].filter(([, g]) => g.weeks.size >= RULES.minWeeks), known = new Set(sure);
+  await pack.load(cand.map(([an]) => pack.shardOf(nameHash(an))));
+  const tops = cand.filter(([an]) => pack.artist(nameHash(an))).map(([an, g]) => [an, [...g.songs.entries()]
+    .sort((x, y) => y[1].size - x[1].size || cmpName(x[0], y[0])).slice(0, 3).map(([tn]) => nameHash(`${an}\t${tn}`))]);
+  await pack.load(tops.flatMap(([, hs]) => hs.map((h) => pack.shardOf(h))));
+  for (const [an, hs] of tops) if (hs.some((h) => pack.song(h))) known.add(an);
+  // song checks for 's' readings of confirmed artists that come before a reading that passes on its artist alone; skipped for an
+  // artist that could have fewer than 4 weeks in all (it can't be a find)
+  const span = new Map(), addW = (an, w) => { let x = span.get(an); if (!x) span.set(an, x = new Set()); x.add(w); };
+  for (const p of plays) { if (p.src === 'yt?') for (const [, a] of p.cands) addW(a.toLowerCase(), p.week); else addW(p.an, p.week); }
+  const need = [];
+  for (const p of guessed) for (const [rule, a, s] of p.cands) {
+    const an = a.toLowerCase(); if (!known.has(an) || EXCLUDE.has(an)) continue;
+    if (rule[0] === 'a') break;
+    if (span.get(an).size < RULES.minWeeks) continue;
+    need.push(nameHash(an), nameHash(`${an}\t${s.toLowerCase()}`));
+  }
+  await pack.load(need.map((h) => pack.shardOf(h)));
+  const passes = (rule, an, tn) => known.has(an) && !EXCLUDE.has(an) && (rule[0] === 'a' || (span.get(an).size >= RULES.minWeeks && pack.artist(nameHash(an)) !== null && pack.song(nameHash(`${an}\t${tn}`)) !== null));
+  const out = [];
   for (const p of plays) {
-    if (p.src !== 'yt?' || sure.has(p.an)) continue;
-    let a = by.get(p.an); if (!a) by.set(p.an, a = { weeks: new Set(), songs: new Map() });
-    a.weeks.add(p.week); let s = a.songs.get(p.tn); if (!s) a.songs.set(p.tn, s = new Set()); s.add(p.week);
+    if (p.src !== 'yt?') { out.push(p); continue; }
+    for (const [rule, a, s] of p.cands) {
+      if (passes(rule, a.toLowerCase(), s.toLowerCase())) { out.push({ week: p.week, ts: p.ts, how: 'youtube', an: a.toLowerCase(), name: a, tn: s.toLowerCase(), track: s, src: 'yt?' }); break; }
+    }
   }
-  const cand = [...by.entries()].filter(([, a]) => a.weeks.size >= RULES.minWeeks), ok = new Set(sure);
-  if (cand.length) {
-    await pack.init();
-    await pack.load(cand.map(([an]) => pack.shardOf(nameHash(an))));
-    const tops = cand.filter(([an]) => pack.artist(nameHash(an))).map(([an, a]) => [an, [...a.songs.entries()]
-      .sort((x, y) => y[1].size - x[1].size || cmpName(x[0], y[0])).slice(0, 3).map(([tn]) => nameHash(`${an}\t${tn}`))]);
-    await pack.load(tops.flatMap(([, hs]) => hs.map((h) => pack.shardOf(h))));
-    for (const [an, hs] of tops) if (hs.some((h) => pack.song(h))) ok.add(an);
-  }
-  return plays.filter((p) => p.src !== 'yt?' || ok.has(p.an));
+  return out;
 }
 
 // ---------- picks: artists by name, songs by "artist\ttrack" (as Spotify gives them)
