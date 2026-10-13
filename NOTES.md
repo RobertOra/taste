@@ -170,3 +170,9 @@ Song data is the 1-in-8 raw sample on MLHD+ (~34k people per half), everyone on 
 - 2026-10-13: freed 8.5 GB (Robert approved): deleted data/_ckpt (finished LB song checkpoint), data/derived/community,
   comm_prior (community-leading inputs) and scene_bets (scene-measure inputs). Results are saved; all are rebuildable with the
   pipeline scripts. data/derived/market was kept: the artist prescience outcome reads it. Project now 136 GB.
+- 2026-10-13, exploratory (rough: LB 1-in-10 users, artists, month x size [+ momentum] only): counting "slow burns" (artists
+  first reaching 4 weeks within 26 later than 26 weeks after the first-ever play) adds ~50% more finds (Robert +55% artists,
+  +34% songs; LB sample +28%). Slow burns grow +4.7% vs similar (size + momentum), only 8% picked while rising fast (regular
+  finds 22%), but separate people slightly less: best-minus-worst-fifth growth gap 8.8 -> 7.2 points; top-1% tenfold 1.91x ->
+  2.16x (1.79x -> 1.42x without momentum). Conclusion: the first-listen clock costs coverage, not correctness. Not adopted.
+  Also tried on Robert only: "4 weeks or 10 plays" adds ~5% finds (+27 artists, +16 songs); kept 4 weeks (site must match study).
