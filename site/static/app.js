@@ -103,6 +103,8 @@ const MEAS = {
   artist_A: { title: 'Finding artists before they take off', short: 'Artists that take off', what: 'artists', verb: 'gained', of: 'new listeners than similar artists found the same month' },
   artist_D: { title: 'Finding artists people stick with', short: 'Artists people stick with', what: 'artists', verb: 'kept', of: 'more of the people who tried them than similar artists' },
 };
+const songsWord = (m) => `${n(m.items ? m.items.length : m.picks)} songs`;
+const groupNote = (m) => ` (${n(m.picks)} independent finds: songs by one artist found in the same month count as one)`;
 const win = (m) => (m.window ? `${monthLabel(m.window[0])} – ${monthLabel(m.window[1])}` : '');
 
 function distChart(score, lo, hi, ref) {
@@ -143,7 +145,7 @@ function render(r, scroll = true) {
           <b class="${cls(H.growth)}">${pct(H.growth, 1)}</b> ${hm.of}.</p>
         <p class="meaning">Your true rank is most likely between the <b>${ord(H.range[0])}</b> and <b>${ord(H.range[1])}</b> percentile (80% confidence interval).</p>${warn}</div>
       <div>${distChart(H.score, qs(H.range[0]), qs(H.range[1]), ref)}
-        <p class="note">Gray bars: ${n(ref.length)} ListenBrainz listeners scored the same way. Blue band: your likely range (80% confidence interval). Based on ${n(H.picks)} ${hm.what === 'songs' ? 'groups of songs' : 'artists'} you got into, ${win(H)}.</p></div>
+        <p class="note">Gray bars: ${n(ref.length)} ListenBrainz listeners scored the same way. Blue band: your likely range (80% confidence interval). Based on ${hm.what === 'songs' ? songsWord(H) : `${n(H.picks)} artists`} you got into, ${win(H)}${hm.what === 'songs' ? groupNote(H) : ''}.</p></div>
     </div></section>`;
 
   const F = Rp.facts;
@@ -157,7 +159,6 @@ function render(r, scroll = true) {
   const pts = (x) => `${x >= 0 ? '+' : '−'}${Math.abs(100 * x).toFixed(1)} points`;
   const detail = (k) => {
     const m = M[k], d = MEAS[k], typ = META.measures[k].typical_avg, A = k.endsWith('A');
-    const unitWord = k.startsWith('song') ? 'groups of songs' : 'artists';
     if (!m.picks) return '<p class="muted">No finds we could judge.</p>';
     const yours = A ? `Your finds gained <b class="${cls(m.growth)}">${pct(m.growth, 1)}</b> new listeners compared with similar ${d.what} found the same month; the typical listener's finds: <b>${pct(Math.expm1(typ), 1)}</b>.`
       : `People who tried your finds kept playing them <b class="${cls(m.growth)}">${pts(m.growth)}</b> ${m.growth >= 0 ? 'more' : 'less'} often than for similar ${d.what}; for the typical listener's finds: <b>${pts(typ)}</b>.`;
@@ -166,7 +167,7 @@ function render(r, scroll = true) {
       <td class="num nowrap">${A ? `${n(x.a0)} → ${n(x.a1)}` : `${n(x.kept)} of ${n(x.tried)} kept it`}</td>
       <td class="num nowrap ${cls(x.excess)}">${A ? pct(Math.expm1(x.excess)) : pts(x.excess)}</td></tr>`;
     const best = m.items.slice(0, 5), worst = m.items.slice(-5).reverse();
-    return `<p style="margin:4px 0 10px">${yours} Based on ${n(m.picks)} ${unitWord} you got into${m.window ? ` (${win(m)})` : ''}${m.enough ? '' : `; we need ${META.min_picks} for a score`}.</p>
+    return `<p style="margin:4px 0 10px">${yours} Based on ${k.startsWith('song') ? songsWord(m) : `${n(m.picks)} artists`} you got into${m.window ? ` (${win(m)})` : ''}${k.startsWith('song') ? groupNote(m) : ''}${m.enough ? '' : `; we need ${META.min_picks} for a score`}.</p>
       <div class="tablewrap"><table class="bw">
         <tr><th>Your best ${d.what}</th><th>Found</th><th class="num">${A ? 'New listeners then → a year later' : 'Of those who tried it'}</th><th class="num">vs similar</th></tr>${best.map(line).join('')}
         <tr><th style="padding-top:16px">Your worst ${d.what}</th><th></th><th></th><th></th></tr>${worst.map(line).join('')}</table></div>
@@ -192,7 +193,7 @@ function render(r, scroll = true) {
     <p class="meaning">On average, ${Math.round(A.share * 100)}% of each artist's ListenBrainz fans got into them <b>after</b> you did (across ${n(A.artists)} artists that took off since 2015).</p>
     ${A.best.length ? `<div class="calls">${A.best.map((b) => `<div class="call"><b>${esc(b.name)}</b><span>you got into them in ${monthLabel(b.m)},<br>before ${Math.round(b.share * 100)}% of their ${n(b.fans)} fans</span></div>`).join('')}</div>` : ''}`);
   const sure = card('How sure is this?', null, `<div class="facts">
-    <div class="fact"><b>${n(H.picks)}</b><span>${hm.what === 'songs' ? 'groups of songs' : 'artists'} scored (all your judged finds since 2016)</span></div>
+    <div class="fact"><b>${n(H.picks)}</b><span>${hm.what === 'songs' ? `independent song finds scored (from ${n(H.items.length)} songs; songs by one artist found in the same month count as one)` : 'artists scored'} (all your judged finds since 2016)</span></div>
     <div class="fact"><b>${ord(H.range[0])}–${ord(H.range[1])}</b><span>likely range of your rank (80%)</span></div>
     <div class="fact"><b>${H.reliability.toFixed(2)}</b><span>reliability with this much history (1 = perfectly repeatable)</span></div>
     <div class="fact"><b>${Math.round(r.history.matched.songs * 100)}% / ${Math.round(r.history.matched.artists * 100)}%</b><span>of your songs / artists were in the reference data</span></div></div>
