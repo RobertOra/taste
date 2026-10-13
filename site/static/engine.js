@@ -160,9 +160,10 @@ export async function readHistory(files) {   // files: [{name, bytes}] -> {plays
     }
   }
   const kind = kinds.has('extended') ? 'extended' : (kinds.size ? 'standard' : null);
-  const plays = (kind ? got[kind] : []).concat(yt);   // with both Spotify exports present, only the extended history counts (no double counting)
+  const seen = new Set(), ytU = yt.filter((p) => { const k = `${Math.floor(p.ts)}\t${p.an}\t${p.tn}`; if (seen.has(k)) return false; seen.add(k); return true; });   // the same watch in two exports counts once
+  const plays = (kind ? got[kind] : []).concat(ytU);   // with both Spotify exports present, only the extended history counts (no double counting)
   let tsMin = Infinity, tsMax = -Infinity; for (const p of plays) { if (p.ts < tsMin) tsMin = p.ts; if (p.ts > tsMax) tsMax = p.ts; }
-  return { plays, kind, youtube: yt.length, tsMin, tsMax };
+  return { plays, kind, youtube: ytU.length, tsMin, tsMax };
 }
 // A guessed YouTube "Artist - Song" counts only if that artist is in your history some surer way, or (played in 4+ separate weeks,
 // so it could be a find) ListenBrainz knows the artist and one of its three most-played songs. The rest is taken as not music.

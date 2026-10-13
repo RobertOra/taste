@@ -333,7 +333,12 @@ def read_youtube(paths):
                     one(n, z.read(n)) if re.search(r"\.(json|html)$", n, re.I) else None
         else:
             one(path.name, path.read_bytes())
-    return out
+    seen = set(); uniq = []
+    for p in out:   # the same watch in two exports counts once
+        k = (int(p["ts"]), p["an"], p["tn"])
+        if k not in seen:
+            seen.add(k); uniq.append(p)
+    return uniq
 
 
 def resolve_youtube(plays, pack):
