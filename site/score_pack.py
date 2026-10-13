@@ -284,22 +284,22 @@ def yt_play(header, title, channel, ts):
     return {"week": int(ts // 604800), "ts": ts, "an": an, "name": artist, "tn": track.lower(), "track": track, "src": "yt" if sure else "yt?"}
 
 
-def _yt_html(text):
+def _yt_html(text, watch_file):
     text = text.replace("\u202f", " ").replace("\xa0", " "); out = []
     for cell in text.split("outer-cell")[1:]:
         if "From Google Ads" in cell:
             continue
         h = re.search(r'mdl-typography--title">([^<]*)<', cell)
-        c = re.search(r'mdl-typography--body-1">[^<]*<a href="([^"]*)">([^<]*)</a><br><a href="[^"]*">([^<]*)</a><br>([^<]*)<br>', cell)
-        if not c or "watch?v=" not in c[1]:
+        c = re.search(r'mdl-typography--body-1">([^<]*)<a href="([^"]*)">([^<]*)</a><br><a href="[^"]*">([^<]*)</a><br>([^<]*)<br>', cell)
+        if not c or "watch?v=" not in c[2] or not (watch_file or c[1].strip() == "Watched"):
             continue
-        p = yt_play(h[1].strip() if h else "", _unescape(c[2]).strip(), _unescape(c[3]).strip(), yt_time(c[4].strip()))
+        p = yt_play(h[1].strip() if h else "", _unescape(c[3]).strip(), _unescape(c[4]).strip(), yt_time(c[5].strip()))
         if p:
             out.append(p)
     return out
 
 
-def _yt_json(data):
+def _yt_json(data, watch_file):
     out = []
     for d in data if isinstance(data, list) else []:
         if not (isinstance(d, dict) and "time" in d and "header" in d and isinstance(d.get("title"), str) and isinstance(d.get("titleUrl"), str)):
@@ -307,6 +307,8 @@ def _yt_json(data):
         if "watch?v=" not in d["titleUrl"] or not isinstance(d.get("subtitles"), list) or not d["subtitles"]:
             continue
         if isinstance(d.get("details"), list) and any(isinstance(x, dict) and x.get("name") == "From Google Ads" for x in d["details"]):
+            continue
+        if not watch_file and not d["title"].startswith("Watched "):
             continue
         t = d["title"][8:] if d["title"].startswith("Watched ") else d["title"]
         ts = datetime.fromisoformat(d["time"].replace("Z", "+00:00")).timestamp()
@@ -319,18 +321,20 @@ def _yt_json(data):
 def read_youtube(paths):
     out = []
     def one(name, raw):
+        wf = bool(re.search("watch-history", name, re.I))
         if name.lower().endswith(".html"):
-            out.extend(_yt_html(raw.decode("utf-8", "replace")))
+            out.extend(_yt_html(raw.decode("utf-8", "replace"), wf))
         elif name.lower().endswith(".json"):
             try:
-                out.extend(_yt_json(json.loads(raw)))
+                out.extend(_yt_json(json.loads(raw), wf))
             except ValueError:
                 pass
     for path in map(Path, paths):
         if path.suffix.lower() == ".zip":
             with zipfile.ZipFile(path) as z:
                 for n in z.namelist():
-                    one(n, z.read(n)) if re.search(r"\.(json|html)$", n, re.I) else None
+                    want = (n.lower().endswith(".json") and re.search("history|youtube", n, re.I)) or (n.lower().endswith(".html") and re.search("youtube|watch-history", n, re.I))
+                    one(n, z.read(n)) if want else None
         else:
             one(path.name, path.read_bytes())
     seen = set(); uniq = []

@@ -1,5 +1,5 @@
 // Taste Test page: reads Spotify and YouTube (Google Takeout) files, scores them with engine.js in the browser (reference data read by byte range), renders the report.
-import { scoreHistory, monthLabel, Pack } from './engine.js';
+import { scoreHistory, monthLabel, Pack, WANT } from './engine.js';
 
 const $ = (s) => document.querySelector(s);
 let META = null;
@@ -13,7 +13,7 @@ async function fetchRange(file, start, end) {
 
 // ---------- input
 async function readEntries(entry, out) {
-  if (entry.isFile) { if (/\.(zip|json|html)$/i.test(entry.name)) out.push(await new Promise((res, rej) => entry.file(res, rej))); return; }
+  if (entry.isFile) { if (/\.(zip|json|html)$/i.test(entry.name)) { const f = await new Promise((res, rej) => entry.file(res, rej)); f._path = entry.fullPath; out.push(f); } return; }
   const reader = entry.createReader(); let batch;
   do { batch = await new Promise((res, rej) => reader.readEntries(res, rej)); for (const e of batch) await readEntries(e, out); } while (batch.length);
 }
@@ -24,12 +24,13 @@ function status(msg, { err = false, progress = null } = {}) {
   if (progress !== null) s.querySelector('.bar i').style.width = `${Math.round(progress * 100)}%`;
 }
 async function run(fileList) {
-  const files = [...fileList].filter((f) => /\.(zip|json|html)$/i.test(f.name));
+  const inFolder = (f) => f._path || f.webkitRelativePath || '';   // from a folder, open only Spotify histories and YouTube files (a full Takeout holds much else)
+  const files = [...fileList].filter((f) => /\.zip$/i.test(f.name) || (/\.(json|html)$/i.test(f.name) && (!inFolder(f) || WANT(inFolder(f)))));
   if (!files.length) return status('No Spotify or YouTube files found. Look for Streaming_History_Audio_….json (Spotify), watch-history.html (YouTube), or the zip that contains them.', { err: true });
   try {
     $('#report').hidden = true;
     status('Reading your files…');
-    const data = await Promise.all(files.map(async (f) => ({ name: f.name, bytes: new Uint8Array(await f.arrayBuffer()) })));
+    const data = await Promise.all(files.map(async (f) => (/\.zip$/i.test(f.name) ? { name: f.name, blob: f } : { name: f.name, bytes: new Uint8Array(await f.arrayBuffer()) })));   // zips are read in pieces
     await metaReady;
     status('Looking up the music you got into…', { progress: 0 });
     const pack = new Pack(META, fetchIndex, fetchRange);

@@ -60,25 +60,34 @@ async function inflateRaw(bytes) {
   const out = await new Response(new Blob([bytes]).stream().pipeThrough(ds)).arrayBuffer();
   return new Uint8Array(out);
 }
-export async function unzip(bytes) {   // -> [{name, bytes}] for .json and .html entries
-  const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+// src: bytes, or a Blob/File read in pieces (so a big Takeout zip never has to fit in memory); want(name) picks the entries to inflate
+export async function unzip(src, want = (name) => /\.(json|html)$/i.test(name)) {   // -> [{name, bytes}]
+  const isBytes = src instanceof Uint8Array, size = isBytes ? src.length : src.size;
+  const read = async (a, b) => (isBytes ? src.subarray(a, b) : new Uint8Array(await src.slice(a, b).arrayBuffer()));
+  const t0 = Math.max(0, size - 65557), tail = await read(t0, size), tv = new DataView(tail.buffer, tail.byteOffset, tail.byteLength);
   let eocd = -1;
-  for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 65557); i--) if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+  for (let i = tail.length - 22; i >= 0; i--) if (tv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
   if (eocd < 0) throw new Error('not a zip file');
-  const n = dv.getUint16(eocd + 10, true); let p = dv.getUint32(eocd + 16, true);
+  const n = tv.getUint16(eocd + 10, true), cdSize = tv.getUint32(eocd + 12, true), cdOff = tv.getUint32(eocd + 16, true);
+  if (cdOff === 0xffffffff || n === 0xffff) throw new Error('this zip is too big to read here; unzip it and drop the folder instead');
+  const cd = await read(cdOff, cdOff + cdSize), dv = new DataView(cd.buffer, cd.byteOffset, cd.byteLength);
   const dec = new TextDecoder(), out = [];
+  let p = 0;
   for (let k = 0; k < n; k++) {
     const method = dv.getUint16(p + 10, true), csize = dv.getUint32(p + 20, true), nlen = dv.getUint16(p + 28, true);
     const xlen = dv.getUint16(p + 30, true), clen = dv.getUint16(p + 32, true), loff = dv.getUint32(p + 42, true);
-    const name = dec.decode(bytes.subarray(p + 46, p + 46 + nlen));
+    const name = dec.decode(cd.subarray(p + 46, p + 46 + nlen));
     p += 46 + nlen + xlen + clen;
-    if (!/\.(json|html)$/i.test(name)) continue;
-    const lstart = loff + 30 + dv.getUint16(loff + 26, true) + dv.getUint16(loff + 28, true);
-    const raw = bytes.subarray(lstart, lstart + csize);
+    if (!want(name)) continue;
+    const lh = await read(loff, loff + 30), lv = new DataView(lh.buffer, lh.byteOffset, lh.byteLength);
+    const lstart = loff + 30 + lv.getUint16(26, true) + lv.getUint16(28, true);
+    const raw = await read(lstart, lstart + csize);
     out.push({ name, bytes: method === 0 ? raw : await inflateRaw(raw) });
   }
   return out;
 }
+// inside a zip, only Spotify histories and YouTube files are opened (a full Takeout holds much else)
+export const WANT = (n) => (/\.json$/i.test(n) && /history|youtube/i.test(n)) || (/\.html$/i.test(n) && /youtube|watch-history/i.test(n));
 // ---------- reading YouTube watch history (Google Takeout: watch-history.html or .json). No play length is given, so every watch counts.
 // A song is certain when it comes from an auto-generated "Artist - Topic" channel; an "Artist - Song" title is a guess, checked in resolveYouTube.
 const YT_TAGS = /\s*[([][^)\]]*(official|lyric|audio|video|visualizer|\bmv\b|\bm\/v\b|\bhd\b|\b4k\b)[^)\]]*[)\]]/gi;
@@ -107,28 +116,29 @@ function ytPlay(header, title, channel, ts) {
   if (EXCLUDE.has(an) || !Number.isFinite(ts)) return null;
   return { week: Math.floor(ts / WEEK), an, name: artist, ts, how: 'youtube', track, tn: track.toLowerCase(), src: sure ? 'yt' : 'yt?' };
 }
-function readYouTubeHtml(text) {
+function readYouTubeHtml(text, watchFile) {   // watchFile: a watch-history file (every entry a watch, in any language); else only "Watched" entries count
   const out = [];
   text = text.replace(/[  ]/g, ' ');
   for (const cell of text.split('outer-cell').slice(1)) {
     if (cell.includes('From Google Ads')) continue;
-    const h = cell.match(/mdl-typography--title">([^<]*)</), c = cell.match(/mdl-typography--body-1">[^<]*<a href="([^"]*)">([^<]*)<\/a><br><a href="[^"]*">([^<]*)<\/a><br>([^<]*)<br>/);
-    if (!c || !c[1].includes('watch?v=')) continue;
-    const p = ytPlay(h ? h[1].trim() : '', unescapeHtml(c[2]).trim(), unescapeHtml(c[3]).trim(), ytTime(c[4].trim()));
+    const h = cell.match(/mdl-typography--title">([^<]*)</), c = cell.match(/mdl-typography--body-1">([^<]*)<a href="([^"]*)">([^<]*)<\/a><br><a href="[^"]*">([^<]*)<\/a><br>([^<]*)<br>/);
+    if (!c || !c[2].includes('watch?v=') || !(watchFile || c[1].trim() === 'Watched')) continue;
+    const p = ytPlay(h ? h[1].trim() : '', unescapeHtml(c[3]).trim(), unescapeHtml(c[4]).trim(), ytTime(c[5].trim()));
     if (p) out.push(p);
   }
   return out;
 }
 
-export async function readHistory(files) {   // files: [{name, bytes}] -> {plays: [{week, an, name, src}], kind, youtube, tsMin, tsMax}
+export async function readHistory(files) {   // files: [{name, bytes} or {name, blob}] -> {plays: [{week, an, name, src}], kind, youtube, tsMin, tsMax}
   const dec = new TextDecoder(); const got = { extended: [], standard: [] }; const kinds = new Set(); const yt = [];
   const jsons = [];
   for (const f of files) {
-    if (f.name.toLowerCase().endsWith('.zip')) jsons.push(...await unzip(f.bytes));
-    else if (/\.(json|html)$/i.test(f.name)) jsons.push(f);
+    if (f.name.toLowerCase().endsWith('.zip')) jsons.push(...await unzip(f.blob || f.bytes, WANT));
+    else if (/\.(json|html)$/i.test(f.name)) jsons.push(f.bytes ? f : { name: f.name, bytes: new Uint8Array(await f.blob.arrayBuffer()) });
   }
   for (const f of jsons) {
-    if (f.name.toLowerCase().endsWith('.html')) { yt.push(...readYouTubeHtml(dec.decode(f.bytes))); continue; }
+    const watchFile = /watch-history/i.test(f.name);
+    if (f.name.toLowerCase().endsWith('.html')) { yt.push(...readYouTubeHtml(dec.decode(f.bytes), watchFile)); continue; }
     let data; try { data = JSON.parse(dec.decode(f.bytes)); } catch { continue; }
     if (!Array.isArray(data)) continue;
     for (const d of data) {
@@ -137,6 +147,7 @@ export async function readHistory(files) {   // files: [{name, bytes}] -> {plays
       if ('time' in d && 'header' in d && typeof d.title === 'string' && typeof d.titleUrl === 'string') {   // YouTube (Takeout JSON)
         if (!d.titleUrl.includes('watch?v=') || !Array.isArray(d.subtitles) || !d.subtitles.length) continue;
         if (Array.isArray(d.details) && d.details.some((x) => x && x.name === 'From Google Ads')) continue;
+        if (!watchFile && !d.title.startsWith('Watched ')) continue;
         const p = ytPlay(String(d.header).trim(), d.title.replace(/^Watched /, '').trim(), String(d.subtitles[0].name || '').trim(), Date.parse(d.time) / 1000);
         if (p) yt.push(p);
         continue;
