@@ -50,7 +50,7 @@ window.dash = (() => {
     }
     cbs.forEach((cb) => { try { cb(); } catch (e) { console.error(e); } });
   };
-  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=fc65461e76`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
+  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=3ac6842366`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
     .then((data) => { store[id] = { status: 'ok', data }; }, () => { store[id] = { status: 'error' }; })))
     .then(() => { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run(); });
   let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(run, 150); });
@@ -532,6 +532,12 @@ window.dash = (() => {
       <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=S5" data-fmt="times">—</span> for scenes and <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=S4" data-fmt="times">—</span> for songs within them; on ListenBrainz
       <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=S5" data-fmt="times">—</span> and <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=S4" data-fmt="times">—</span>. On the hidden half, songs beat artists on both parts; on ListenBrainz, songs'
       extra edge is all in picking the right songs within a scene.</p>
+    <p><b>Right scenes, right artists, or right songs?</b> Songs can be split one step further, because a song's artist is a choice too. Compare the
+      top 1%'s songs with other people's picked songs by the same artists that year, and the edge splits three ways. On the hidden half: right scenes
+      <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=threeway:sealed:scenes" data-fmt="times">—</span> × right artists <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=threeway:sealed:artists" data-fmt="times">—</span> × right songs by those artists <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=threeway:sealed:songs_within_artist" data-fmt="times">—</span>. On ListenBrainz:
+      <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=threeway:lb:scenes" data-fmt="times">—</span> × <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=threeway:lb:artists" data-fmt="times">—</span> × <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=threeway:lb:songs_within_artist" data-fmt="times">—</span>. Picking the right song by an artist held on both, written down in
+      advance (S6). Picking the right artist within a scene added nothing on Last.fm but a fair amount on ListenBrainz. So the best song pickers aren't
+      only finding good artists; they pick that artist's song that's about to break.</p>
     <div class="wu-card" id="scenesplit">
       <h3>Right scenes and right artists, all the way up the ladder</h3>
       <p class="wu-note">Hidden half. For each band of pickers: how much more often their scenes took off than finds of the same size elsewhere,
@@ -669,10 +675,10 @@ window.dash = (() => {
       there passed, and twenty-four of the thirty-two predictions held. The table shows every one. A few ListenBrainz charts came after that
       run (a decade later, careers, and one person's range); nothing was predicted for them in advance, so they're marked exploratory.</p>
     <p><b>Later, songs.</b> The takeoff, getting-hooked, and scene numbers above were first for artists. After seeing the songs' versions on the
-      first half, we wrote down five more predictions before running them anywhere else: the top 1% of song pickers beat similar songs (S1) and
-      their own artist edge (S2); getting hooked pays off more for top song pickers (S3); and their edge splits into right songs within a scene
-      (S4) and right scenes (S5). All five held on the hidden half. On ListenBrainz, four held and S2 narrowly missed. They're the last five rows
-      of the table.</p>
+      first half, we wrote down six more predictions before running them anywhere else: the top 1% of song pickers beat similar songs (S1) and
+      their own artist edge (S2); getting hooked pays off more for top song pickers (S3); their edge splits into right songs within a scene (S4)
+      and right scenes (S5); and they beat other songs by the same artists (S6). All six held on the hidden half. On ListenBrainz, five held and
+      S2 narrowly missed. They're the last rows of the table.</p>
     <div class="wu-card">
       <h3>Checks of these findings on the hidden half and on ListenBrainz</h3>
       <div class="wu-tablewrap">

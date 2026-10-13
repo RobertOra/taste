@@ -91,5 +91,9 @@ Reported without a bar: right artists (the explore range includes 1) and right s
 
 Run once each: `three_way_songs.py --half {sealed,lb}`.
 
-## Round 4 results
-(to be added after the runs)
+## Round 4 results (2026-10-13, run once each)
+| | Right scenes | Right artists | Right songs [99% low] | S6 (> 1) | Overall |
+|---|---|---|---|---|---|
+| Explore (exploratory) | 2.74 | 1.28 [0.89] | 3.16 [1.84] | - | 11.05 |
+| **Sealed** | 4.26 | 1.07 [0.56] | **3.24** [1.84] | **held** | 14.83 |
+| **ListenBrainz** | 1.49 | 1.71 [1.47] | **2.20** [1.19] | **held** | 5.59 |

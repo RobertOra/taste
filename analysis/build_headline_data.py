@@ -345,6 +345,16 @@ def song_predictions():
                      "hi": ss["sealed"][f"{f}_hi"], "lo99": ss["sealed"][f"{f}_lo99"], "first_half": ss["explore"][f], "rate": None, "rate_compared": None,
                      "confirmed": ss["sealed"][f"{f}_lo99"] > 1, "lb": ss["lb"][f], "lb_lo": ss["lb"][f"{f}_lo"], "lb_hi": ss["lb"][f"{f}_hi"],
                      "lb_held": ss["lb"][f"{f}_lo99"] > 1})
+    tw = {h: json.loads((OUT / f"three_way_songs_{h}.json").read_text()) for h in ("explore", "sealed", "lb")}
+    x, l = tw["sealed"]["songs_within_artist"], tw["lb"]["songs_within_artist"]
+    rows.append({"key": "S6", "claim": "Top 1%'s songs vs other songs by the same artists: tenfold takeoffs", "unit": "times as often",
+                 "hidden": x["est"], "lo": x["lo"], "hi": x["hi"], "lo99": x["lo99"], "first_half": tw["explore"]["songs_within_artist"]["est"],
+                 "rate": None, "rate_compared": None, "confirmed": x["lo99"] > 1, "lb": l["est"], "lb_lo": l["lo"], "lb_hi": l["hi"], "lb_held": l["lo99"] > 1})
+    for h, lab in (("sealed", "hidden"), ("lb", "lb")):   # descriptive three-way parts, for the text
+        for part in ("scenes", "artists", "songs_within_artist", "overall"):
+            rows.append({"key": f"threeway:{h}:{part}", "claim": None, "unit": "times as often", "hidden": tw[h][part]["est"], "lo": tw[h][part]["lo"],
+                         "hi": tw[h][part]["hi"], "lo99": None, "first_half": None, "rate": None, "rate_compared": None, "confirmed": None,
+                         "lb": None, "lb_lo": None, "lb_hi": None, "lb_held": None, "hidden_from_table": True})
     rows.append({"key": "S3", "claim": "Getting hooked pays off more for top-fifth than bottom-fifth song pickers (difference)", "unit": "points",
                  "hidden": t["sealed"]["diff"], "lo": t["sealed"]["lo"], "hi": t["sealed"]["hi"], "lo99": t["sealed"]["lo99"],
                  "first_half": t["explore"]["diff"], "rate": None, "rate_compared": None, "confirmed": t["sealed"]["lo99"] > 0,
