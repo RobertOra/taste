@@ -198,7 +198,7 @@ export async function readHistory(files) {   // files: [{name, bytes} or {name, 
   let tsMin = Infinity, tsMax = -Infinity; for (const p of plays) { if (p.ts < tsMin) tsMin = p.ts; if (p.ts > tsMax) tsMax = p.ts; }
   return { plays, kind, youtube: ytU.length, tsMin, tsMax };
 }
-// Settle each guessed YouTube watch on its first reading that passes (ytCands). An artist is confirmed if it's in the history some
+// Settle each guessed YouTube watch on its first reading that passes (ytCands), preferring one whose artist you play elsewhere. An artist is confirmed if it's in the history some
 // surer way (Spotify, a Topic channel), or (from 'av'/'sv' readings in 4+ separate weeks) ListenBrainz knows it and one of its
 // three most-played songs. Watches with no passing reading are taken as not music.
 export async function resolveYouTube(plays, pack) {
@@ -215,25 +215,30 @@ export async function resolveYouTube(plays, pack) {
     .sort((x, y) => y[1].size - x[1].size || cmpName(x[0], y[0])).slice(0, 3).map(([tn]) => nameHash(`${an}\t${tn}`))]);
   await pack.load(tops.flatMap(([, hs]) => hs.map((h) => pack.shardOf(h))));
   for (const [an, hs] of tops) if (hs.some((h) => pack.song(h))) known.add(an);
-  // song checks for 's' readings of confirmed artists that come before a reading that passes on its artist alone; skipped for an
-  // artist that could have fewer than 4 weeks in all (it can't be a find)
+  // song checks, only for 's' readings that could still be picked: a passing 'a' reading of an artist you play elsewhere always wins,
+  // and any passing 'a' reading wins over later ones. Skipped for an artist that could have fewer than 4 weeks in all (it can't be a find).
   const span = new Map(), addW = (an, w) => { let x = span.get(an); if (!x) span.set(an, x = new Set()); x.add(w); };
   for (const p of plays) { if (p.src === 'yt?') for (const [, a] of p.cands) addW(a.toLowerCase(), p.week); else addW(p.an, p.week); }
-  const need = [];
-  for (const p of guessed) for (const [rule, a, s] of p.cands) {
-    const an = a.toLowerCase(); if (!known.has(an) || EXCLUDE.has(an)) continue;
-    if (rule[0] === 'a') break;
-    if (span.get(an).size < RULES.minWeeks) continue;
-    need.push(nameHash(an), nameHash(`${an}\t${s.toLowerCase()}`));
+  const need = [], certain = (rule, an) => rule[0] === 'a' && known.has(an) && !EXCLUDE.has(an);
+  for (const p of guessed) {
+    const sureA = p.cands.some(([rule, a]) => certain(rule, a.toLowerCase()) && sure.has(a.toLowerCase()));
+    let earlierA = false, earlierSureA = false;
+    for (const [rule, a, s] of p.cands) {
+      const an = a.toLowerCase();
+      if (certain(rule, an)) { earlierA = true; if (sure.has(an)) earlierSureA = true; continue; }
+      if (rule[0] === 'a' || !known.has(an) || EXCLUDE.has(an) || span.get(an).size < RULES.minWeeks) continue;
+      if (sure.has(an) ? earlierSureA : (earlierA || sureA)) continue;
+      need.push(nameHash(an), nameHash(`${an}\t${s.toLowerCase()}`));
+    }
   }
   await pack.load(need.map((h) => pack.shardOf(h)));
   const passes = (rule, an, tn) => known.has(an) && !EXCLUDE.has(an) && (rule[0] === 'a' || (span.get(an).size >= RULES.minWeeks && pack.artist(nameHash(an)) !== null && pack.song(nameHash(`${an}\t${tn}`)) !== null));
   const out = [];
   for (const p of plays) {
     if (p.src !== 'yt?') { out.push(p); continue; }
-    for (const [rule, a, s] of p.cands) {
-      if (passes(rule, a.toLowerCase(), s.toLowerCase())) { out.push({ week: p.week, ts: p.ts, how: 'youtube', an: a.toLowerCase(), name: a, tn: s.toLowerCase(), track: s, src: 'yt?' }); break; }
-    }
+    const ok = p.cands.filter(([rule, a, s]) => passes(rule, a.toLowerCase(), s.toLowerCase()));
+    const pick = ok.find(([, a]) => sure.has(a.toLowerCase())) || ok[0];   // an artist you play elsewhere wins
+    if (pick) { const [, a, s] = pick; out.push({ week: p.week, ts: p.ts, how: 'youtube', an: a.toLowerCase(), name: a, tn: s.toLowerCase(), track: s, src: 'yt?' }); }
   }
   return out;
 }

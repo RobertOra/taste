@@ -374,7 +374,7 @@ def read_youtube(paths):
 
 
 def resolve_youtube(plays, pack):
-    """Settle each guessed YouTube watch on its first reading that passes (yt_cands). An artist is confirmed if it's in the
+    """Settle each guessed YouTube watch on its first reading that passes (yt_cands), preferring one whose artist you play elsewhere. An artist is confirmed if it's in the
     history some surer way (Spotify, a Topic channel), or (from 'av'/'sv' readings in 4+ separate weeks) ListenBrainz knows it
     and one of its three most-played songs. Watches with no passing reading are taken as not music (as engine.js resolveYouTube)."""
     sure = {p["an"] for p in plays if p.get("src", "spotify") != "yt?"}; by = {}
@@ -401,9 +401,10 @@ def resolve_youtube(plays, pack):
     for p in plays:
         if p.get("src") != "yt?":
             out.append(p); continue
-        for rule, a, s in p["cands"]:
-            if passes(rule, a.lower(), s.lower()):
-                out.append({"week": p["week"], "ts": p["ts"], "an": a.lower(), "name": a, "tn": s.lower(), "track": s, "src": "yt?"}); break
+        ok = [(a, s) for rule, a, s in p["cands"] if passes(rule, a.lower(), s.lower())]
+        pick = next(((a, s) for a, s in ok if a.lower() in sure), ok[0] if ok else None)   # an artist you play elsewhere wins
+        if pick:
+            a, s = pick; out.append({"week": p["week"], "ts": p["ts"], "an": a.lower(), "name": a, "tn": s.lower(), "track": s, "src": "yt?"})
     return out
 
 
