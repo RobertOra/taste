@@ -60,7 +60,7 @@ async function inflateRaw(bytes) {
   const out = await new Response(new Blob([bytes]).stream().pipeThrough(ds)).arrayBuffer();
   return new Uint8Array(out);
 }
-export async function unzip(bytes) {   // -> [{name, bytes}] for .json entries
+export async function unzip(bytes) {   // -> [{name, bytes}] for .json and .html entries
   const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
   let eocd = -1;
   for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 65557); i--) if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
@@ -72,26 +72,75 @@ export async function unzip(bytes) {   // -> [{name, bytes}] for .json entries
     const xlen = dv.getUint16(p + 30, true), clen = dv.getUint16(p + 32, true), loff = dv.getUint32(p + 42, true);
     const name = dec.decode(bytes.subarray(p + 46, p + 46 + nlen));
     p += 46 + nlen + xlen + clen;
-    if (!name.toLowerCase().endsWith('.json')) continue;
+    if (!/\.(json|html)$/i.test(name)) continue;
     const lstart = loff + 30 + dv.getUint16(loff + 26, true) + dv.getUint16(loff + 28, true);
     const raw = bytes.subarray(lstart, lstart + csize);
     out.push({ name, bytes: method === 0 ? raw : await inflateRaw(raw) });
   }
   return out;
 }
-export async function readHistory(files) {   // files: [{name, bytes}] -> {plays: [{week, an, name}], kind, tsMin, tsMax}
-  const dec = new TextDecoder(); const got = { extended: [], standard: [] }; const kinds = new Set();
+// ---------- reading YouTube watch history (Google Takeout: watch-history.html or .json). No play length is given, so every watch counts.
+// A song is certain when it comes from an auto-generated "Artist - Topic" channel; an "Artist - Song" title is a guess, checked in resolveYouTube.
+const YT_TAGS = /\s*[([][^)\]]*(official|lyric|audio|video|visualizer|\bmv\b|\bm\/v\b|\bhd\b|\b4k\b)[^)\]]*[)\]]/gi;
+const MON = { jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5, jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11 };
+const TZ = { UTC: 0, GMT: 0, EST: -5, EDT: -4, CST: -6, CDT: -5, MST: -7, MDT: -6, PST: -8, PDT: -7, AKST: -9, AKDT: -8, HST: -10, BST: 1, CET: 1, CEST: 2,
+  EET: 2, EEST: 3, MSK: 3, IST: 5.5, JST: 9, KST: 9, AEST: 10, AEDT: 11, NZST: 12, NZDT: 13 };
+export function ytTime(s) {   // "Oct 5, 2026, 11:49:22 AM EDT" or "5 Oct 2026, 11:49:22 BST" -> unix seconds (unknown zones as UTC)
+  const m = s.match(/^(?:([A-Za-z]{3})[A-Za-z]*\.? (\d{1,2}),? (\d{4})|(\d{1,2}) ([A-Za-z]{3})[A-Za-z]*\.? (\d{4})),? (\d{1,2}):(\d{2}):(\d{2}) ?(AM|PM)? ?(?:GMT([+-])(\d{1,2}):?(\d{2})|([A-Z]{2,5}))?$/i);
+  if (!m) return NaN;
+  const mon = MON[(m[1] || m[5]).toLowerCase()]; if (mon === undefined) return NaN;
+  let h = +m[7]; if (m[10]) h = (h % 12) + (m[10].toUpperCase() === 'PM' ? 12 : 0);
+  const off = m[11] ? (m[11] === '-' ? -1 : 1) * (+m[12] + +m[13] / 60) : (TZ[(m[14] || '').toUpperCase()] ?? 0);
+  return Date.UTC(+(m[3] || m[6]), mon, +(m[2] || m[4]), h, +m[8], +m[9]) / 1000 - off * 3600;
+}
+const unescapeHtml = (s) => s.replace(/&(amp|lt|gt|quot|apos|#\d+|#x[0-9a-f]+);/gi, (_, e) => {
+  const k = e.toLowerCase(); return k === 'amp' ? '&' : k === 'lt' ? '<' : k === 'gt' ? '>' : k === 'quot' ? '"' : k === 'apos' ? "'" : String.fromCodePoint(k[1] === 'x' ? parseInt(k.slice(2), 16) : +k.slice(1));
+});
+function ytPlay(header, title, channel, ts) {
+  let artist, track, sure = false;
+  if (channel.endsWith(' - Topic')) { artist = channel.slice(0, -8); track = title; sure = true; }
+  else if (title.includes(' - ')) { const i = title.indexOf(' - '); artist = title.slice(0, i); track = title.slice(i + 3).replace(YT_TAGS, ''); }
+  else if (header === 'YouTube Music') { artist = channel.replace(/VEVO$/, ''); track = title.replace(YT_TAGS, ''); }
+  else return null;
+  artist = artist.trim(); track = track.trim();
+  const an = artist.toLowerCase();
+  if (EXCLUDE.has(an) || !Number.isFinite(ts)) return null;
+  return { week: Math.floor(ts / WEEK), an, name: artist, ts, how: 'youtube', track, tn: track.toLowerCase(), src: sure ? 'yt' : 'yt?' };
+}
+function readYouTubeHtml(text) {
+  const out = [];
+  text = text.replace(/[  ]/g, ' ');
+  for (const cell of text.split('outer-cell').slice(1)) {
+    if (cell.includes('From Google Ads')) continue;
+    const h = cell.match(/mdl-typography--title">([^<]*)</), c = cell.match(/mdl-typography--body-1">[^<]*<a href="([^"]*)">([^<]*)<\/a><br><a href="[^"]*">([^<]*)<\/a><br>([^<]*)<br>/);
+    if (!c || !c[1].includes('watch?v=')) continue;
+    const p = ytPlay(h ? h[1].trim() : '', unescapeHtml(c[2]).trim(), unescapeHtml(c[3]).trim(), ytTime(c[4].trim()));
+    if (p) out.push(p);
+  }
+  return out;
+}
+
+export async function readHistory(files) {   // files: [{name, bytes}] -> {plays: [{week, an, name, src}], kind, youtube, tsMin, tsMax}
+  const dec = new TextDecoder(); const got = { extended: [], standard: [] }; const kinds = new Set(); const yt = [];
   const jsons = [];
   for (const f of files) {
     if (f.name.toLowerCase().endsWith('.zip')) jsons.push(...await unzip(f.bytes));
-    else if (f.name.toLowerCase().endsWith('.json')) jsons.push(f);
+    else if (/\.(json|html)$/i.test(f.name)) jsons.push(f);
   }
   for (const f of jsons) {
+    if (f.name.toLowerCase().endsWith('.html')) { yt.push(...readYouTubeHtml(dec.decode(f.bytes))); continue; }
     let data; try { data = JSON.parse(dec.decode(f.bytes)); } catch { continue; }
     if (!Array.isArray(data)) continue;
     for (const d of data) {
       if (!d || typeof d !== 'object') continue;
       let ts, artist, how = 'other', track = '';
+      if ('time' in d && 'header' in d && typeof d.title === 'string' && typeof d.titleUrl === 'string') {   // YouTube (Takeout JSON)
+        if (!d.titleUrl.includes('watch?v=') || !Array.isArray(d.subtitles) || !d.subtitles.length) continue;
+        if (Array.isArray(d.details) && d.details.some((x) => x && x.name === 'From Google Ads')) continue;
+        const p = ytPlay(String(d.header).trim(), d.title.replace(/^Watched /, '').trim(), String(d.subtitles[0].name || '').trim(), Date.parse(d.time) / 1000);
+        if (p) yt.push(p);
+        continue;
+      }
       if ('ts' in d && 'master_metadata_album_artist_name' in d) {
         kinds.add('extended');
         artist = d.master_metadata_album_artist_name; track = d.master_metadata_track_name || '';
@@ -107,13 +156,33 @@ export async function readHistory(files) {   // files: [{name, bytes}] -> {plays
       if (!Number.isFinite(ts)) continue;
       const an = artist.trim().toLowerCase();
       if (EXCLUDE.has(an)) continue;
-      got['ts' in d ? 'extended' : 'standard'].push({ week: Math.floor(ts / WEEK), an, name: artist, ts, how, track, tn: track.trim().toLowerCase() });
+      got['ts' in d ? 'extended' : 'standard'].push({ week: Math.floor(ts / WEEK), an, name: artist, ts, how, track, tn: track.trim().toLowerCase(), src: 'spotify' });
     }
   }
   const kind = kinds.has('extended') ? 'extended' : (kinds.size ? 'standard' : null);
-  const plays = kind ? got[kind] : [];   // with both exports present, only the extended history counts (no double counting)
+  const plays = (kind ? got[kind] : []).concat(yt);   // with both Spotify exports present, only the extended history counts (no double counting)
   let tsMin = Infinity, tsMax = -Infinity; for (const p of plays) { if (p.ts < tsMin) tsMin = p.ts; if (p.ts > tsMax) tsMax = p.ts; }
-  return { plays, kind, tsMin, tsMax };
+  return { plays, kind, youtube: yt.length, tsMin, tsMax };
+}
+// A guessed YouTube "Artist - Song" counts only if that artist is in your history some surer way, or (played in 4+ separate weeks,
+// so it could be a find) ListenBrainz knows the artist and one of its three most-played songs. The rest is taken as not music.
+export async function resolveYouTube(plays, pack) {
+  const sure = new Set(plays.filter((p) => p.src !== 'yt?').map((p) => p.an)), by = new Map();
+  for (const p of plays) {
+    if (p.src !== 'yt?' || sure.has(p.an)) continue;
+    let a = by.get(p.an); if (!a) by.set(p.an, a = { weeks: new Set(), songs: new Map() });
+    a.weeks.add(p.week); let s = a.songs.get(p.tn); if (!s) a.songs.set(p.tn, s = new Set()); s.add(p.week);
+  }
+  const cand = [...by.entries()].filter(([, a]) => a.weeks.size >= RULES.minWeeks), ok = new Set(sure);
+  if (cand.length) {
+    await pack.init();
+    await pack.load(cand.map(([an]) => pack.shardOf(nameHash(an))));
+    const tops = cand.filter(([an]) => pack.artist(nameHash(an))).map(([an, a]) => [an, [...a.songs.entries()]
+      .sort((x, y) => y[1].size - x[1].size || cmpName(x[0], y[0])).slice(0, 3).map(([tn]) => nameHash(`${an}\t${tn}`))]);
+    await pack.load(tops.flatMap(([, hs]) => hs.map((h) => pack.shardOf(h))));
+    for (const [an, hs] of tops) if (hs.some((h) => pack.song(h))) ok.add(an);
+  }
+  return plays.filter((p) => p.src !== 'yt?' || ok.has(p.an));
 }
 
 // ---------- picks: artists by name, songs by "artist\ttrack" (as Spotify gives them)
@@ -352,15 +421,20 @@ export function scoreMeasure(meta, key, picks) {
 // pack: a Pack; meta: parsed data/meta.json
 export async function scoreHistory(files, meta, pack, onProgress = () => {}) {
   const out = { kind: null, checks: [], ok: false };
-  const { plays, kind, tsMin, tsMax } = await readHistory(files);
-  out.kind = kind;
-  if (!kind || !plays.length) { out.checks.push({ id: 'format', ok: false, text: "We couldn't find Spotify listening history in those files." }); return out; }
-  let wMin = Infinity, wMax = -Infinity; for (const p of plays) { if (p.week < wMin) wMin = p.week; if (p.week > wMax) wMax = p.week; }
+  const read = await readHistory(files), { kind, youtube } = read;
+  out.kind = kind; out.youtube = youtube;
+  if (!read.plays.length) { out.checks.push({ id: 'format', ok: false, text: "We couldn't find Spotify or YouTube listening history in those files." }); return out; }
+  if (kind === 'standard' && !youtube) { out.checks.push({ id: 'format', ok: false, text: "This is Spotify's one-year export (Account data). Each find needs a year of follow-up, so we need your Extended streaming history: in Spotify, Account → Privacy → request Extended streaming history (it can take a few weeks)." }); return out; }
+  const plays = youtube ? await resolveYouTube(read.plays, pack) : read.plays;
+  if (!plays.length) { out.checks.push({ id: 'format', ok: false, text: "We couldn't find any music in that YouTube history. We recognise songs from YouTube Music and \"Artist - Topic\" channels, and videos titled \"Artist - Song\"." }); return out; }
+  let wMin = Infinity, wMax = -Infinity, tsMin = Infinity, tsMax = -Infinity;
+  for (const p of plays) { if (p.week < wMin) wMin = p.week; if (p.week > wMax) wMax = p.week; if (p.ts < tsMin) tsMin = p.ts; if (p.ts > tsMax) tsMax = p.ts; }
   const span = wMax - wMin;
   const fmt = (t) => { const d = new Date(t * 1000); return `${['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.getUTCMonth()]} ${d.getUTCFullYear()}`; };
-  out.history = { plays: plays.length, from: fmt(tsMin), to: fmt(tsMax), weeks: span };
-  if (kind === 'standard') out.checks.push({ id: 'format', ok: false, text: "This is Spotify's one-year export (Account data). Each find needs a year of follow-up, so we need your Extended streaming history: in Spotify, Account → Privacy → request Extended streaming history (it can take a few weeks)." });
-  if (span < RULES.minHistoryWeeks) out.checks.push({ id: 'history', ok: false, text: `Your history covers ${Math.floor(span / 52)} year(s); we need at least two.` });
+  const ytPlays = plays.filter((p) => p.src !== 'spotify').length;
+  out.history = { plays: plays.length, from: fmt(tsMin), to: fmt(tsMax), weeks: span, sources: { spotify: plays.length - ytPlays, youtube: ytPlays } };
+  if (span < RULES.minHistoryWeeks) out.checks.push({ id: 'history', ok: false, text: `Your history covers ${Math.floor(span / 52)} year(s) (${out.history.from} to ${out.history.to}); we need at least two.`
+    + (youtube ? ' Google may delete YouTube history after 3, 18, or 36 months; you can check Auto-delete at myactivity.google.com. Adding your Spotify history can help too.' : '') });
   if (out.checks.some((c) => !c.ok)) return out;
 
   const lastJ = meta.last_month - 12;
@@ -390,7 +464,7 @@ export async function scoreHistory(files, meta, pack, onProgress = () => {}) {
   out.measures = R;
   out.headline = R.song_A.enough ? 'song_A' : R.artist_A.enough ? 'artist_A' : null;
   if (!out.headline) {
-    out.checks.push({ id: 'picks', ok: false, text: `We found ${R.song_A.picks} groups of songs and ${R.artist_A.picks} artists you got into that we can judge from your last ${meta.window_years} years of finds; we need at least ${meta.min_picks} of one.`
+    out.checks.push({ id: 'picks', ok: false, text: `We found ${R.song_A.picks} groups of songs and ${R.artist_A.picks} artists you got into that we can judge; we need at least ${meta.min_picks} of one.`
       + (recentA.length ? ' Some of your finds are too recent to judge yet; come back in a few months.' : '') });
     return out;
   }
@@ -404,7 +478,7 @@ export async function scoreHistory(files, meta, pack, onProgress = () => {}) {
 function buildReport({ meta, plays, aPicks, sPicks, judgedA, mA, R, recentA, lastJ, notPicked, wMin, wMax }) {
   const Rp = {}, A = R.artist_A, S = R.song_A;
   const years = (wMax - wMin) / 52.18;
-  Rp.facts = { plays: plays.length, artists: new Set(plays.map((p) => p.an)).size, songs: new Set(plays.map((p) => `${p.an}\t${p.tn}`)).size,
+  Rp.facts = { plays: plays.length, ytPlays: plays.filter((p) => p.src !== 'spotify').length, artists: new Set(plays.map((p) => p.an)).size, songs: new Set(plays.map((p) => `${p.an}\t${p.tn}`)).size,
     findsA: aPicks.length, findsS: sPicks.length, years: Math.round(years * 10) / 10, perYear: Math.round(aPicks.length / Math.max(years - 0.5, 1)) };
   // artists-level stories use artist prescience picks in its window (artists are what people recognise)
   const win = A.win || [];
@@ -423,7 +497,7 @@ function buildReport({ meta, plays, aPicks, sPicks, judgedA, mA, R, recentA, las
   Rp.byYear = [...byY.entries()].sort((a, b) => a[0] - b[0]).map(([y, xs]) => ({ year: y, finds: xs.length, growth: Math.expm1(mean(xs)), inScore: y * 12 + 11 >= wlo }));
   const bins = [[4, 9, 'Tried a few times'], [10, 24, 'Kept coming back'], [25, 59, 'Hooked'], [60, 1e9, 'Obsessed']];
   Rp.conviction = bins.map(([lo, hi, label]) => { const xs = win.filter((p) => p.plays26 >= lo && p.plays26 <= hi); return { label, lo, hi: hi >= 1e9 ? null : hi, finds: xs.length, growth: xs.length ? Math.expm1(mean(xs.map((p) => p.excess))) : null }; });
-  const HOW = { chose: 'You chose it (clicked or pressed play)', next: 'Came up next (album, playlist or queue)', shuffle: 'Came up on shuffle', skip: 'You skipped to it', other: 'Other (app opened, another device…)' };
+  const HOW = { chose: 'You chose it (clicked or pressed play)', next: 'Came up next (album, playlist or queue)', shuffle: 'Came up on shuffle', skip: 'You skipped to it', youtube: 'On YouTube', other: 'Other (app opened, another device…)' };
   Rp.how = Object.entries(HOW).map(([k, label]) => { const xs = win.filter((p) => p.how === k); return { key: k, label, finds: xs.length, growth: xs.length ? Math.expm1(mean(xs.map((p) => p.excess))) : null }; }).filter((h) => h.finds);
   // genres (headline measure's finds; a song's genre is its artist's)
   const H = R[R.song_A.enough ? 'song_A' : 'artist_A'];

@@ -114,3 +114,4 @@ td.muted, .muted { color: var(--ink-3); }
 .mix i { position: absolute; left: 0; border-radius: 3px; } .mix i.you { top: 0; height: 9px; background: var(--accent); } .mix i.typ { top: 11px; height: 4px; background: var(--ink-3); opacity: .6; }
 .mtable tr.mdetail > td { background: var(--line-2); border-radius: 10px; padding: 14px 16px; }
 .mtable tr.mrow:hover td { background: var(--line-2); } .mtable tr.mrow.hl:hover td { background: var(--accent-bg); }
+.howto + .howto { margin-top: 10px; }

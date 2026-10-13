@@ -2,7 +2,10 @@
 the browser engine and to score ListenBrainz users for validation.
     plays: list of dicts {week, ts, an, name, tn, track[, ah, sh]} (ah/sh: precomputed artist / song name hashes)"""
 import bisect
+import calendar
 import json
+import re
+import zipfile
 import zlib
 import math
 import struct
@@ -220,6 +223,8 @@ def score_measure(key, picks, exclude_self=False):
 
 def score(plays, exclude_self=False, pack=None):
     pack = pack or Pack(); lj = META["last_month"] - 12
+    if any(p.get("src") == "yt?" for p in plays):
+        plays = resolve_youtube(plays, pack)
     starts = segment_starts(p["week"] for p in plays)
     ap = [p for p in find_picks(plays, lambda p: p["an"], starts) if META["y0"] <= p["m"] <= lj]
     sp = [p for p in find_picks(plays, lambda p: p["an"] + "\t" + p["tn"], starts) if p["key"].split("\t", 1)[1] and META["y0"] <= p["m"] <= lj]
@@ -237,6 +242,118 @@ def score(plays, exclude_self=False, pack=None):
     return {k: score_measure(k, ps, exclude_self) for k, ps in (("song_A", mS), ("song_D", mS), ("artist_A", mA), ("artist_D", mA))}
 
 
+# ---------- YouTube watch history (Google Takeout), as engine.js
+YT_TAGS = re.compile(r"\s*[(\[][^)\]]*(official|lyric|audio|video|visualizer|\bmv\b|\bm/v\b|\bhd\b|\b4k\b)[^)\]]*[)\]]", re.I | re.A)
+MON = {m: i for i, m in enumerate(["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"])}
+TZ = {"UTC": 0, "GMT": 0, "EST": -5, "EDT": -4, "CST": -6, "CDT": -5, "MST": -7, "MDT": -6, "PST": -8, "PDT": -7, "AKST": -9, "AKDT": -8, "HST": -10, "BST": 1,
+      "CET": 1, "CEST": 2, "EET": 2, "EEST": 3, "MSK": 3, "IST": 5.5, "JST": 9, "KST": 9, "AEST": 10, "AEDT": 11, "NZST": 12, "NZDT": 13}
+YT_TIME = re.compile(r"^(?:([A-Za-z]{3})[A-Za-z]*\.? (\d{1,2}),? (\d{4})|(\d{1,2}) ([A-Za-z]{3})[A-Za-z]*\.? (\d{4})),? (\d{1,2}):(\d{2}):(\d{2}) ?(AM|PM)? ?(?:GMT([+-])(\d{1,2}):?(\d{2})|([A-Z]{2,5}))?$", re.I)
+
+
+def yt_time(s):
+    m = YT_TIME.match(s)
+    if not m or (m[1] or m[5]).lower() not in MON:
+        return None
+    h = int(m[7])
+    if m[10]:
+        h = h % 12 + (12 if m[10].upper() == "PM" else 0)
+    off = ((-1 if m[11] == "-" else 1) * (int(m[12]) + int(m[13]) / 60)) if m[11] else TZ.get((m[14] or "").upper(), 0)
+    return calendar.timegm((int(m[3] or m[6]), MON[(m[1] or m[5]).lower()] + 1, int(m[2] or m[4]), h, int(m[8]), int(m[9]))) - off * 3600
+
+
+def _unescape(s):
+    def one(mt):
+        k = mt[1].lower()
+        return {"amp": "&", "lt": "<", "gt": ">", "quot": '"', "apos": "'"}.get(k) or chr(int(k[2:], 16) if k[1] == "x" else int(k[1:]))
+    return re.sub(r"&(amp|lt|gt|quot|apos|#\d+|#x[0-9a-f]+);", one, s, flags=re.I)
+
+
+def yt_play(header, title, channel, ts):
+    sure = False
+    if channel.endswith(" - Topic"):
+        artist, track, sure = channel[:-8], title, True
+    elif " - " in title:
+        i = title.index(" - "); artist, track = title[:i], YT_TAGS.sub("", title[i + 3:])
+    elif header == "YouTube Music":
+        artist, track = re.sub(r"VEVO$", "", channel), YT_TAGS.sub("", title)
+    else:
+        return None
+    artist, track = artist.strip(), track.strip(); an = artist.lower()
+    if an in S.EXCLUDE_ARTISTS or ts is None:
+        return None
+    return {"week": int(ts // 604800), "ts": ts, "an": an, "name": artist, "tn": track.lower(), "track": track, "src": "yt" if sure else "yt?"}
+
+
+def _yt_html(text):
+    text = text.replace("\u202f", " ").replace("\xa0", " "); out = []
+    for cell in text.split("outer-cell")[1:]:
+        if "From Google Ads" in cell:
+            continue
+        h = re.search(r'mdl-typography--title">([^<]*)<', cell)
+        c = re.search(r'mdl-typography--body-1">[^<]*<a href="([^"]*)">([^<]*)</a><br><a href="[^"]*">([^<]*)</a><br>([^<]*)<br>', cell)
+        if not c or "watch?v=" not in c[1]:
+            continue
+        p = yt_play(h[1].strip() if h else "", _unescape(c[2]).strip(), _unescape(c[3]).strip(), yt_time(c[4].strip()))
+        if p:
+            out.append(p)
+    return out
+
+
+def _yt_json(data):
+    out = []
+    for d in data if isinstance(data, list) else []:
+        if not (isinstance(d, dict) and "time" in d and "header" in d and isinstance(d.get("title"), str) and isinstance(d.get("titleUrl"), str)):
+            continue
+        if "watch?v=" not in d["titleUrl"] or not isinstance(d.get("subtitles"), list) or not d["subtitles"]:
+            continue
+        if isinstance(d.get("details"), list) and any(isinstance(x, dict) and x.get("name") == "From Google Ads" for x in d["details"]):
+            continue
+        t = d["title"][8:] if d["title"].startswith("Watched ") else d["title"]
+        ts = datetime.fromisoformat(d["time"].replace("Z", "+00:00")).timestamp()
+        p = yt_play(str(d["header"]).strip(), t.strip(), str(d["subtitles"][0].get("name") or "").strip(), ts)
+        if p:
+            out.append(p)
+    return out
+
+
+def read_youtube(paths):
+    out = []
+    def one(name, raw):
+        if name.lower().endswith(".html"):
+            out.extend(_yt_html(raw.decode("utf-8", "replace")))
+        elif name.lower().endswith(".json"):
+            try:
+                out.extend(_yt_json(json.loads(raw)))
+            except ValueError:
+                pass
+    for path in map(Path, paths):
+        if path.suffix.lower() == ".zip":
+            with zipfile.ZipFile(path) as z:
+                for n in z.namelist():
+                    one(n, z.read(n)) if re.search(r"\.(json|html)$", n, re.I) else None
+        else:
+            one(path.name, path.read_bytes())
+    return out
+
+
+def resolve_youtube(plays, pack):
+    """A guessed YouTube "Artist - Song" counts only if the artist is in the history some surer way, or (4+ separate weeks)
+    ListenBrainz knows the artist and one of its three most-played songs (as engine.js resolveYouTube)."""
+    sure = {p["an"] for p in plays if p.get("src", "spotify") != "yt?"}; by = {}
+    for p in plays:
+        if p.get("src") != "yt?" or p["an"] in sure:
+            continue
+        a = by.setdefault(p["an"], {"weeks": set(), "songs": {}}); a["weeks"].add(p["week"]); a["songs"].setdefault(p["tn"], set()).add(p["week"])
+    ok = set(sure)
+    for an, a in by.items():
+        if len(a["weeks"]) < 4 or not pack.artist(S.name_hash(an)):
+            continue
+        top = sorted(a["songs"].items(), key=lambda kv: (-len(kv[1]), kv[0]))[:3]
+        if any(pack.song(S.name_hash(an + "\t" + tn)) for tn, _ in top):
+            ok.add(an)
+    return [p for p in plays if p.get("src") != "yt?" or p["an"] in ok]
+
+
 def plays_from_files(paths):
     df, kind = S.read_history(paths)
     out = []
@@ -244,8 +361,8 @@ def plays_from_files(paths):
         an = artist.strip().lower()
         if an in S.EXCLUDE_ARTISTS:
             continue
-        out.append({"week": int(ts // 604800), "ts": ts, "an": an, "name": artist, "tn": (track or "").strip().lower(), "track": track})
-    return out
+        out.append({"week": int(ts // 604800), "ts": ts, "an": an, "name": artist, "tn": (track or "").strip().lower(), "track": track, "src": "spotify"})
+    return out + read_youtube(paths)
 
 
 if __name__ == "__main__":

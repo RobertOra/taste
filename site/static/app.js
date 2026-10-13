@@ -1,4 +1,4 @@
-// Taste Test page: reads Spotify files, scores them with engine.js in the browser (reference data read by byte range), renders the report.
+// Taste Test page: reads Spotify and YouTube (Google Takeout) files, scores them with engine.js in the browser (reference data read by byte range), renders the report.
 import { scoreHistory, monthLabel, Pack } from './engine.js';
 
 const $ = (s) => document.querySelector(s);
@@ -13,7 +13,7 @@ async function fetchRange(file, start, end) {
 
 // ---------- input
 async function readEntries(entry, out) {
-  if (entry.isFile) { if (/\.(zip|json)$/i.test(entry.name)) out.push(await new Promise((res, rej) => entry.file(res, rej))); return; }
+  if (entry.isFile) { if (/\.(zip|json|html)$/i.test(entry.name)) out.push(await new Promise((res, rej) => entry.file(res, rej))); return; }
   const reader = entry.createReader(); let batch;
   do { batch = await new Promise((res, rej) => reader.readEntries(res, rej)); for (const e of batch) await readEntries(e, out); } while (batch.length);
 }
@@ -24,8 +24,8 @@ function status(msg, { err = false, progress = null } = {}) {
   if (progress !== null) s.querySelector('.bar i').style.width = `${Math.round(progress * 100)}%`;
 }
 async function run(fileList) {
-  const files = [...fileList].filter((f) => /\.(zip|json)$/i.test(f.name));
-  if (!files.length) return status('No Spotify files found. Look for files named Streaming_History_Audio_….json, or the zip that contains them.', { err: true });
+  const files = [...fileList].filter((f) => /\.(zip|json|html)$/i.test(f.name));
+  if (!files.length) return status('No Spotify or YouTube files found. Look for Streaming_History_Audio_….json (Spotify), watch-history.html (YouTube), or the zip that contains them.', { err: true });
   try {
     $('#report').hidden = true;
     status('Reading your files…');
@@ -108,7 +108,7 @@ function render(r) {
 
   const F = Rp.facts;
   const facts = `<div class="facts" style="margin:16px 0">
-    <div class="fact"><b>${n(F.plays)}</b><span>plays over ${F.years} years</span></div>
+    <div class="fact"><b>${n(F.plays)}</b><span>plays over ${F.years} years${F.ytPlays ? ` (${n(F.ytPlays)} on YouTube)` : ''}</span></div>
     <div class="fact"><b>${n(F.findsS)}</b><span>songs you really got into</span></div>
     <div class="fact"><b>${n(F.findsA)}</b><span>artists you really got into (about ${F.perYear} a year)</span></div>
     ${Rp.tookOff ? `<div class="fact"><b>${Rp.tookOff.yours} <span style="font-size:15px;color:var(--ink-3)">vs ${Rp.tookOff.expected} typical</span></b><span>of your scored artists took off (3× the new listeners a year later)</span></div>` : ''}
@@ -133,7 +133,7 @@ function render(r) {
       <p class="note">${A ? 'New listeners: ListenBrainz listeners who first played it in the six months up to your find, and in the same six months a year later. The last column is compared with similar finds (same month, size, momentum, scene, age and release timing).'
         : 'Of the people who first tried it in the year after your find (past their own first six months of listening), how many kept playing it. The last column is compared with similar finds.'}</p>`;
   };
-  const all = card('All four kinds of taste', 'The study measured taste a few ways; these are the ones we can score from a Spotify history. Songs are the strongest measure. Click a row for your numbers and your best and worst finds.',
+  const all = card('All four kinds of taste', 'The study measured taste a few ways; these are the ones we can score from a listening history. Songs are the strongest measure. Click a row for your numbers and your best and worst finds.',
     `<table class="mtable"><tr><th></th><th class="num">Better than</th><th>Likely range</th><th class="num hide-sm">Finds</th></tr>
     ${Object.entries(MEAS).map(([k, d]) => { const m = M[k]; return `<tr class="mrow${k === r.headline ? ' hl' : ''}" data-k="${k}" style="cursor:pointer"><td><b>${d.short}</b> <span class="muted">▸</span><div class="muted" style="font-size:13px">${k.endsWith('A') ? 'Prescience: your finds gained new listeners' : 'Discernment: people who tried your finds kept playing them'}</div></td>
       <td class="num"><b>${m.enough ? m.percentile + '%' : '–'}</b></td><td style="min-width:140px">${rangeBar(m)}${m.enough ? `<div class="muted" style="font-size:12.5px">${ord(m.range[0])}–${ord(m.range[1])}</div>` : ''}</td>
@@ -166,7 +166,7 @@ function render(r) {
     <p class="sub">Your percentile from each year's finds, with its likely range (years with fewer than ${META.min_year} finds aren't scored). Single years rest on fewer finds,
       so their ranges are wider. Taste drifts: in the study, it faded over about a decade.</p>
     <div class="tablebar" id="tchips"></div><div id="tchart"></div><p class="note" id="tnote"></p></section>`;
-  const how = Rp.how.length > 1 ? card('How you found them', 'How the first play of each artist started, from your Spotify data.',
+  const how = Rp.how.length > 1 ? card('How you found them', 'How the first play of each artist started.',
     signedBars(Rp.how.map((h) => ({ label: h.label, v: h.finds >= 5 ? h.growth : null, note: `${n(h.finds)} artists` })))) : '';
 
   const big = [...Rp.findsA].sort((a, b) => b.extra - a.extra).slice(0, 10);
