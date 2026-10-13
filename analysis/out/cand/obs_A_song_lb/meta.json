@@ -1,0 +1,42 @@
+{
+ "name": "obs_A_song_lb",
+ "model": "A",
+ "unit": "song",
+ "horizon": 12,
+ "half": "lb",
+ "bets": 18710617,
+ "users_with_bets": 31134,
+ "args": {
+  "model": "A",
+  "half": "lb",
+  "unit": "song",
+  "onboarding": 26,
+  "rule": "w4",
+  "window": 26,
+  "date": "commit",
+  "horizon": 12,
+  "smooth": 1.0,
+  "bins": 20,
+  "scene": "yearly200",
+  "age": true,
+  "momentum": 5,
+  "country": true,
+  "release": true,
+  "adjust": "additive",
+  "metric": "log",
+  "weight": 0.0,
+  "user_sample": 1,
+  "min_bets": 20,
+  "perms": 1,
+  "name": null,
+  "mem": "5GB",
+  "bets_out": "data/derived/bet_outcomes/A_song_lb.parquet",
+  "threads": 6,
+  "cand": "obs_A_song_lb"
+ },
+ "cells": {
+  "bets_per_cell": 6678.724005146383,
+  "share_single_item_cells": null,
+  "items_per_cell": 4913.6968545719255
+ }
+}

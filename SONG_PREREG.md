@@ -26,5 +26,15 @@ Expectation: both pass on the sealed half; on ListenBrainz, where the artist edg
 2. `ladder_songs.py --half {sealed,lb}` and `--per-group`, with the code committed alongside this file (bands, cutoffs from
    analysis/cutoffs.py, bootstrap of 1,000 draws over people, seed 1013).
 
-## Results
-(to be added after the runs, unchanged above this line)
+## Results (each run once, 2026-10-13 12:33-12:40; outcome files matched the study's runs: sealed 7,649,897 song bets,
+ListenBrainz 18,710,617 bets / 31,134 people)
+| | Top 1%: songs vs similar songs | S1 (99% low > 2) | Same people, artists' top 1% | Songs / artists | S2 (99% low > 1) |
+|---|---|---|---|---|---|
+| Explore (exploratory) | 9.34x [6.13, 13.66; 99% low 5.30] | - | 4.37x | 2.14x [1.45, 3.22; 1.29] | - |
+| **Sealed** | **13.24x** [8.67, 18.08; **99% low 8.02**] | **held** | 4.60x | **2.88x** [1.86, 4.26; **1.66**] | **held** |
+| **ListenBrainz** | **4.39x** [2.34, 7.53; **99% low 2.08**] | **held** (narrowly) | 2.63x | **1.67x** [1.04, 2.28; **0.96**] | **missed** (95% low > 1) |
+
+Without a bar: per artist-month (each album-month once) sealed 13.81x, songs/artists 3.00x; ListenBrainz 5.08x, 1.93x
+[99% low 0.98]. Top 0.1%: sealed 28.5x (25 people), ListenBrainz 16.6x (93 people, 462 of the top 1%'s 953 tenfold
+songs, range 2.2-28.3): on ListenBrainz half of the top 1%'s takeoffs come from the top 0.1%; the 99-99.9% bands are 2.3-3.0x
+(artists 1.9-3.2x there), so most of ListenBrainz's song-over-artist edge sits in a few people at the very top.
