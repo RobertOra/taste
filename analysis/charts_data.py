@@ -68,6 +68,42 @@ def ladder_data():
     return thr, gro
 
 
+def ladder_data_songs():
+    """thresholds and growth for songs (hidden half; exploratory additions 2026-10-13, see SONG_PREREG.md): people ranked on their
+    song picks (songs by one artist found the same month count as one pick, as the study's song measure), outcomes per song
+    they picked in C+2..C+3, vs similar songs (same month and size). Keys prefixed "songs:"."""
+    b = pl.read_parquet(X / "bet_outcomes" / "A_song_sealed.parquet", columns=["user", "artist", "m", "bin", "v", "e"]).with_columns(year=pl.col("m") // 12)
+    groups = b.group_by("user", "artist", "m").agg(e=pl.col("e").mean()).with_columns(year=pl.col("m") // 12)
+    parts = []
+    for c in (2007, 2008, 2009):
+        past = (groups.filter(pl.col("year") <= c).group_by("user").agg(s=pl.col("e").sum() / (pl.len() + 20), n=pl.len())
+                .filter(pl.col("n") >= 20).with_columns(q=pl.col("s").rank("average") / pl.len()))
+        parts.append(b.filter(pl.col("year").is_between(c + 2, c + 3)).join(past.select("user", band=band_expr()), on="user"))
+    f = pl.concat(parts)
+    thr = []
+    for t in THRESH:
+        lt = float(np.log(t))
+        exp = b.group_by("m", "bin").agg(sim=(pl.col("v") >= lt).mean())
+        g = f.join(exp, on=["m", "bin"]).with_columns(hit=(pl.col("v") >= lt).cast(pl.Float64))
+        for lab, _, _ in BANDS:
+            x = g.filter(pl.col("band") == lab)
+            thr.append({"key": f"songs:{t}x:{lab}", "unit": "songs", "fold": t, "band": f"{lab}%", "mid": mid(lab), "events": int(x["hit"].sum()),
+                        "per_1000": float(x["hit"].mean() * 1000), "similar_per_1000": float(x["sim"].mean() * 1000),
+                        "times_similar": float(x["hit"].mean() / x["sim"].mean())})
+    ve = b.group_by("m", "bin").agg(ve=pl.col("v").mean())
+    g = f.join(ve, on=["m", "bin"]).with_columns(gx=pl.col("v") - pl.col("ve"))
+    gro = []
+    rng = np.random.default_rng(31)
+    for lab, _, _ in BANDS:
+        per = g.filter(pl.col("band") == lab).group_by("user").agg(s=pl.col("gx").sum(), n=pl.len())
+        s_, n_ = per["s"].to_numpy(), per["n"].to_numpy().astype(float)
+        w = rng.poisson(1.0, (500, per.height)).astype(float)
+        bs = np.expm1((w @ s_) / (w @ n_))
+        gro.append({"key": f"songs:{lab}", "unit": "songs", "band": f"{lab}%", "mid": mid(lab), "growth": float(np.expm1(s_.sum() / n_.sum())),
+                    "lo": float(np.percentile(bs, 2.5)), "hi": float(np.percentile(bs, 97.5)), "people": per.height})
+    return thr, gro
+
+
 def repeat_data(name="sealed_D_song_main"):
     agg = pl.read_parquet(CAND / name / "agg.parquet")
     years = sorted(agg["year"].unique().to_list())
@@ -225,6 +261,17 @@ if __name__ == "__main__":
         (W / "scenesplit.json").write_text(json.dumps(rows, indent=1))
         for r in rows:
             print(f"  {r['band']:>8}: scenes {r['scenes']:.2f} x artists {r['artists']:.2f} = {r['total']:.2f}")
+        raise SystemExit
+    if "--songs" in sys.argv:   # add song rows to thresholds.json and growthband.json (artist rows untouched)
+        thr, gro = ladder_data_songs()
+        for name, rows in (("thresholds", thr), ("growthband", gro)):
+            old = [r for r in json.loads((W / f"{name}.json").read_text()) if r.get("unit", "artists") != "songs"]
+            (W / f"{name}.json").write_text(json.dumps(old + rows, indent=1))
+        for r in gro:
+            print(f"  songs {r['band']:>8} growth {r['growth']:+.1%} [{r['lo']:+.1%}, {r['hi']:+.1%}] people {r['people']}")
+        for r in thr:
+            if r["band"] == "99–100%":
+                print(f"  songs top 1% {r['fold']:>3}x: {r['per_1000']:.1f} vs {r['similar_per_1000']:.2f} per 1,000 = {r['times_similar']:.1f}x ({r['events']} events)")
         raise SystemExit
     dots, lines = scatter()
     (W / "scatter.json").write_text(json.dumps(dots, separators=(",", ":")))

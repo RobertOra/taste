@@ -306,8 +306,8 @@
     <p>Songs show it even more. Ranked on their songs instead, the top 1%'s songs grew tenfold <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=S1" data-fmt="times">—</span> as often as
       similar songs: about <span class="wu-num" data-source="ladder" data-field="rate" data-where="key=songs:99–100" data-fmt="k0">—</span> per 1,000, against <span class="wu-num" data-source="ladder" data-field="similar_rate" data-where="key=songs:99–100" data-fmt="k1">—</span>. For the same
       people, that's <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=S2" data-fmt="times">—</span> their artist edge. On ListenBrainz the songs' edge was <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=S1" data-fmt="times">—</span>, ahead of
-      artists there too, though not by enough to pass our bar. Most of the edge is in catching the rare songs that explode; their songs' average
-      growth was about the same as similar songs'.</p>
+      artists there too, though not by enough to pass our bar. Most of the edge is in catching the rare songs that explode; on average the top
+      1%'s songs grew only <span class="wu-num" data-source="growthband" data-field="growth" data-where="key=songs:99–100" data-fmt="spct0">—</span> more than similar songs.</p>
     <div class="wu-card">
       <h3>Tenfold takeoffs per 1,000 finds</h3>
       <p class="wu-note">Hidden half. Pickers are ranked by how their picks did in earlier years: 90 means better than 90% of pickers.
@@ -318,16 +318,21 @@
     </div>
     <div class="wu-card" id="every-size">
       <h3>The same at every size of takeoff</h3>
-      <p class="wu-note">How many times as often the top pickers' new artists took off as similar artists did, for each size of takeoff.
-        Hover over or click a size to highlight it. The pattern holds from doubling all the way to 100-fold, though the 100-fold line rests
-        on few cases (the top 1% had <span class="wu-num dash-skeleton" data-source="thresholds" data-field="events" data-where="key=100x:99–100" data-fmt="int">—</span>).</p>
+      <p class="wu-note">How many times as often the top pickers' finds took off as similar ones did, for each size of takeoff.
+        Hover over or click a size to highlight it (for songs the scale is logarithmic: each step up is double). The pattern holds from doubling all the way to 100-fold, though the 100-fold line rests
+        on few cases (the top 1% had <span class="wu-num dash-skeleton" data-source="thresholds" data-field="events" data-where="key=songs:100x:99–100" data-fmt="int">—</span> songs
+        and <span class="wu-num" data-source="thresholds" data-field="events" data-where="key=100x:99–100" data-fmt="int">—</span> artists). For songs the edge grows with the size of the takeoff,
+        from <span class="wu-num" data-source="thresholds" data-field="times_similar" data-where="key=songs:2x:99–100" data-fmt="times">—</span> at doubling to <span class="wu-num" data-source="thresholds" data-field="times_similar" data-where="key=songs:100x:99–100" data-fmt="times">—</span> at 100-fold.</p>
+      <div class="wu-chips" id="th-unit" role="group" aria-label="Songs or artists"></div>
       <div class="wu-chips" id="th-chips" role="group" aria-label="Size of takeoff"></div>
       <div class="wu-chart dash-skeleton" id="th-chart" data-source="thresholds"></div>
     </div>
     <div class="wu-card">
-      <h3>Average growth of their new artists</h3>
-      <p class="wu-note">The typical boost rather than the rare takeoff: how much more their new artists grew over the next year than similar
-        artists (same size, same month). Hidden half; the shaded band is the 95% range.</p>
+      <h3>Average growth of their finds</h3>
+      <p class="wu-note">The typical boost rather than the rare takeoff: how much more their finds grew over the next year than similar ones
+        (same size, same month). Hidden half; the shaded band is the 95% range. For songs, most of the gap is at the bottom: against similar songs,
+        <span class="wu-num" data-source="growthband" data-field="growth" data-where="key=songs:0–10" data-fmt="spct0">—</span> for the worst tenth's songs and <span class="wu-num" data-source="growthband" data-field="growth" data-where="key=songs:99–100" data-fmt="spct0">—</span> for the top 1%'s.</p>
+      <div class="wu-chips" id="gb-unit" role="group" aria-label="Songs or artists"></div>
       <div class="wu-chart dash-skeleton" id="gb-chart" data-source="growthband"></div>
     </div>
   </section>
@@ -933,21 +938,29 @@
   // one chart failing (e.g. data from an older build) must not stop the others
   function safeDraw(fn) { try { fn(); } catch (e) { console.error(fn.name, e); } }
 
+  // one Songs / Artists setting for the ladder section's three charts; each chart shows the switch
   let ldSel = 'songs';
-  function drawLadder() {
-    const el = document.getElementById('ld-chart');
-    const chips = document.getElementById('ld-chips');
-    if (!ready(el, ['ladder'])) { chips.replaceChildren(); return; }
-    chips.replaceChildren(...[['songs', 'Songs'], ['artists', 'Artists']].map(([k, l]) => {
+  const unitOf = (r) => r.unit || 'artists';
+  function unitChips(id) {
+    document.getElementById(id).replaceChildren(...[['songs', 'Songs'], ['artists', 'Artists']].map(([k, l]) => {
       const b = document.createElement('button'); b.type = 'button'; b.className = 'wu-chip'; b.textContent = l;
       b.setAttribute('aria-pressed', String(k === ldSel));
-      b.addEventListener('click', () => { ldSel = k; el.replaceChildren(); drawLadder(); });
+      b.addEventListener('click', () => {
+        ldSel = k;
+        ['ld-chart', 'th-chart', 'gb-chart'].forEach((c) => document.getElementById(c).replaceChildren());
+        safeDraw(drawLadder); safeDraw(drawThresholds); safeDraw(drawGrowthBand);
+      });
       return b;
     }));
+  }
+  function drawLadder() {
+    const el = document.getElementById('ld-chart');
+    if (!ready(el, ['ladder'])) { document.getElementById('ld-chips').replaceChildren(); return; }
+    unitChips('ld-chips');
     const word = ldSel === 'songs' ? 'songs' : 'new artists', simWord = ldSel === 'songs' ? 'Similar songs' : 'Similar artists';
     const colT = dash.colors[0], colS = css('--cds-chart-muted');
     legend('ld-legend', [[`Their ${word}`, colT, 'line'], [simWord, colS, 'line']]);
-    const rows = dash.data('ladder').data.filter((r) => !truthy(r.detail) && (r.unit || 'artists') === ldSel)
+    const rows = dash.data('ladder').data.filter((r) => !truthy(r.detail) && unitOf(r) === ldSel)
       .map((r) => ({ ...r, mid: +r.mid, t: +r.rate * 1000, sim: +r.similar_rate * 1000, odds: +r.odds }));
     if (!rows.length) { el.innerHTML = '<p class="wu-fail">This chart\'s data didn\'t load. Reload the page.</p>'; return; }
     const fs = css('--cds-font-size-caption') || '12px';
@@ -1062,19 +1075,30 @@
   function drawThresholds() {
     const el = document.getElementById('th-chart');
     const chips = document.getElementById('th-chips');
-    if (!ready(el, ['thresholds'])) { chips.replaceChildren(); return; }
-    const rows = dash.data('thresholds').data.map((r) => ({ ...r, fold: +r.fold, mid: +r.mid, v: +r.times_similar }));
+    if (!ready(el, ['thresholds'])) { chips.replaceChildren(); document.getElementById('th-unit').replaceChildren(); return; }
+    unitChips('th-unit');
+    const noun = ldSel === 'songs' ? 'songs' : 'artists', their = ldSel === 'songs' ? 'Their songs' : 'Their new artists';
+    const rows = dash.data('thresholds').data.filter((r) => unitOf(r) === ldSel).map((r) => ({ ...r, fold: +r.fold, mid: +r.mid, v: +r.times_similar }));
+    if (!rows.length) { el.innerHTML = '<p class="wu-fail">This chart\'s data didn\'t load. Reload the page.</p>'; return; }
     const folds = [...new Set(rows.map((r) => r.fold))].sort((a, b) => a - b);
     const col = dash.colors[0], mute = css('--cds-chart-muted');
     const f = frame(el, 300, { t: 28, r: 16, b: 40, l: 36 });
     const { svg, fs, width, height, m } = f;
     const x = d3.scaleLinear([0, 100], [m.l, width - m.r]);
-    const y = d3.scaleLinear([0, d3.max(rows, (r) => r.v) * 1.1], [height - m.b, m.t]).nice();
-    gridY(f, y, (d) => `${d}×`, 5);
+    // songs span ½× to 40×, so their axis is logarithmic; artists keep the plain scale
+    const logY = ldSel === 'songs';
+    const y = logY ? d3.scaleLog([0.4, d3.max(rows, (r) => r.v) * 1.25], [height - m.b, m.t])
+      : d3.scaleLinear([0, d3.max(rows, (r) => r.v) * 1.1], [height - m.b, m.t]).nice();
+    if (logY) {
+      const tv = [0.5, 1, 2, 5, 10, 20, 50].filter((v) => v <= y.domain()[1]);
+      svg.append('g').selectAll('line').data(tv).join('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', (d) => y(d)).attr('y2', (d) => y(d))
+        .attr('stroke', css('--cds-chart-grid'));
+      axisStyle(svg.append('g').attr('transform', `translate(${m.l - 6},0)`).call(d3.axisLeft(y).tickValues(tv).tickFormat((d) => `${d}×`).tickSize(0)), fs);
+    } else gridY(f, y, (d) => `${d}×`, 5);
     svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(1)).attr('y2', y(1)).attr('stroke', css('--cds-chart-axis'));
-    svg.append('text').attr('x', m.l + 4).attr('y', y(1) - 6).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Same as similar artists');
+    svg.append('text').attr('x', m.l + 4).attr('y', y(1) - 6).attr('fill', css('--color-fg-muted')).style('font-size', fs).text(`Same as similar ${noun}`);
     axisXRank(f, x, "Picker's rank from earlier years (percentile)");
-    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Times as often as similar artists');
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text(`Times as often as similar ${noun}`);
     const lines = svg.append('g'), hi = svg.append('g');
     const tip = tooltip(el);
     function paint() {
@@ -1092,8 +1116,8 @@
         if (on) {
           hi.selectAll('circle').data(pts).join('circle').attr('cx', (d) => x(d.mid)).attr('cy', (d) => y(d.v)).attr('r', 4)
             .attr('fill', col).attr('stroke', css('--color-panel')).attr('stroke-width', 2)
-            .on('mousemove', (ev, d) => tip.show(ev, `Grew ${k}× or more, pickers ranked ${d.band}`, [['Their new artists', `${d3.format('.2~f')(+d.per_1000)} per 1,000`, col],
-              ['Similar artists', `${d3.format('.2~f')(+d.similar_per_1000)} per 1,000`], ['As often as similar', fmt.times(d.v)], ['Cases', fmt.int(+d.events)]]))
+            .on('mousemove', (ev, d) => tip.show(ev, `Grew ${k}× or more, pickers ranked ${d.band}`, [[their, `${d3.format('.2~f')(+d.per_1000)} per 1,000`, col],
+              [`Similar ${noun}`, `${d3.format('.2~f')(+d.similar_per_1000)} per 1,000`], ['As often as similar', fmt.times(d.v)], ['Cases', fmt.int(+d.events)]]))
             .on('mouseleave', () => tip.hide());
           const last = pts[pts.length - 1];
           hi.append('text').attr('x', x(last.mid) - 8).attr('y', y(last.v) - 10).attr('text-anchor', 'end').attr('fill', css('--color-fg'))
@@ -1116,9 +1140,11 @@
 
   function drawGrowthBand() {
     const el = document.getElementById('gb-chart');
-    if (!ready(el, ['growthband'])) return;
-    const col = dash.colors[0];
-    const rows = dash.data('growthband').data.map((r) => ({ ...r, mid: +r.mid, v: +r.growth, lo: +r.lo, hi: +r.hi }));
+    if (!ready(el, ['growthband'])) { document.getElementById('gb-unit').replaceChildren(); return; }
+    unitChips('gb-unit');
+    const col = dash.colors[0], noun = ldSel === 'songs' ? 'songs' : 'artists';
+    const rows = dash.data('growthband').data.filter((r) => unitOf(r) === ldSel).map((r) => ({ ...r, mid: +r.mid, v: +r.growth, lo: +r.lo, hi: +r.hi }));
+    if (!rows.length) { el.innerHTML = '<p class="wu-fail">This chart\'s data didn\'t load. Reload the page.</p>'; return; }
     const f = frame(el, 260, { t: 28, r: 16, b: 40, l: 44 });
     const { svg, fs, width, height, m } = f;
     const x = d3.scaleLinear([0, 100], [m.l, width - m.r]);
@@ -1126,7 +1152,7 @@
     gridY(f, y, d3.format('+.0%'), 5);
     svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', css('--cds-chart-axis'));
     axisXRank(f, x, "Picker's rank from earlier years (percentile)");
-    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Extra growth vs similar artists');
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text(`Extra growth vs similar ${noun}`);
     svg.append('path').datum(rows).attr('d', d3.area().x((d) => x(d.mid)).y0((d) => y(d.lo)).y1((d) => y(d.hi))).attr('fill', col).attr('fill-opacity', 0.16);
     svg.append('path').datum(rows).attr('d', d3.line().x((d) => x(d.mid)).y((d) => y(d.v))).attr('fill', 'none').attr('stroke', col).attr('stroke-width', 2);
     svg.append('g').selectAll('circle').data(rows).join('circle').attr('cx', (d) => x(d.mid)).attr('cy', (d) => y(d.v)).attr('r', 4)
