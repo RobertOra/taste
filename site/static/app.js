@@ -167,7 +167,7 @@ function render(r, scroll = true) {
       <td class="num nowrap">${A ? `${n(x.a0)} → ${n(x.a1)}` : `${n(x.kept)} of ${n(x.tried)} kept it`}</td>
       <td class="num nowrap ${cls(x.excess)}">${A ? pct(Math.expm1(x.excess)) : pts(x.excess)}</td></tr>`;
     const best = m.items.slice(0, 5), worst = m.items.slice(-5).reverse();
-    return `<p style="margin:4px 0 10px">${yours} Based on ${k.startsWith('song') ? songsWord(m) : `${n(m.picks)} artists`} you got into${m.window ? ` (${win(m)})` : ''}${k.startsWith('song') ? groupNote(m) : ''}${m.enough ? '' : `; we need ${META.min_picks} for a score`}.</p>
+    return `<p style="margin:4px 0 10px">${yours} Based on ${k.startsWith('song') ? songsWord(m) : `${n(m.picks)} artists`} you got into${m.window ? `, ${win(m)}` : ''}${k.startsWith('song') ? groupNote(m) : ''}${m.enough ? '' : `; we need ${META.min_picks} for a score`}.</p>
       <div class="tablewrap"><table class="bw">
         <tr><th>Your best ${d.what}</th><th>Found</th><th class="num">${A ? 'New listeners then → a year later' : 'Of those who tried it'}</th><th class="num">vs similar</th></tr>${best.map(line).join('')}
         <tr><th style="padding-top:16px">Your worst ${d.what}</th><th></th><th></th><th></th></tr>${worst.map(line).join('')}</table></div>
