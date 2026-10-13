@@ -16,18 +16,31 @@
 <main>
   <section id="intro">
     <h1>How good is your music taste?</h1>
-    <p class="lede">Every new song or artist you get into is a small bet. This checks how your bets did: did the music you got into go on to take off,
-      compared with similar music people got into at the same time? Ranked against about 15,000 music enthusiasts, using the method from
-      <a href="study.html">a study of whether good taste is real</a>.</p>
+    <p class="lede">Some people hear a song months before everyone else does. Are you one of them? Add your listening history and we check whether the songs
+      and artists you got into went on to take off, compared with similar music other people found at the same time. You're ranked against about 15,000
+      music enthusiasts, using the method from <a href="study.html">a study of whether good taste is real</a>.</p>
 
-    <div id="drop" class="drop" tabindex="0">
-      <div class="drop-title">Drop your Spotify or YouTube data here</div>
-      <div class="drop-sub">The zip, the folder, or the files. Add both to combine them.</div>
-      <div class="drop-buttons">
-        <label class="btn">Choose zip or files<input id="pick-files" type="file" multiple accept=".zip,.json,.html" hidden></label>
-        <label class="btn ghost">Choose folder<input id="pick-folder" type="file" webkitdirectory hidden></label>
+    <div class="sources">
+      <div class="drop" data-src="spotify" tabindex="0">
+        <div class="drop-title">Spotify</div>
+        <div class="drop-sub">Drop the zip or folder here</div>
+        <div class="drop-buttons">
+          <label class="btn small">Choose zip or files<input type="file" multiple accept=".zip,.json" hidden></label>
+          <label class="btn small ghost">Choose folder<input type="file" webkitdirectory hidden></label>
+        </div>
+        <div class="src-state">Not added</div>
+      </div>
+      <div class="drop" data-src="youtube" tabindex="0">
+        <div class="drop-title">YouTube</div>
+        <div class="drop-sub">Drop the Google Takeout zip or folder here</div>
+        <div class="drop-buttons">
+          <label class="btn small">Choose zip or files<input type="file" multiple accept=".zip,.json,.html" hidden></label>
+          <label class="btn small ghost">Choose folder<input type="file" webkitdirectory hidden></label>
+        </div>
+        <div class="src-state">Not added</div>
       </div>
     </div>
+    <div class="run-row"><button id="run" class="btn" disabled>Score my taste</button><span class="muted">Add one or both. With both, you can also see each on its own.</span></div>
     <p class="privacy">Everything runs in this browser. Your files never leave your computer.</p>
 
     <details class="howto">

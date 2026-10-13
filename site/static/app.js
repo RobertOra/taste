@@ -1,4 +1,4 @@
-// Taste Test page: reads Spotify and YouTube (Google Takeout) files, scores them with engine.js in the browser (reference data read by byte range), renders the report.
+// Taste Test page: reads Spotify and/or YouTube (Google Takeout) files, scores them with engine.js in the browser (reference data read by byte range), renders the report.
 import { scoreHistory, monthLabel, Pack, WANT } from './engine.js';
 
 const $ = (s) => document.querySelector(s);
@@ -23,32 +23,71 @@ function status(msg, { err = false, progress = null } = {}) {
   s.firstChild.textContent = msg;
   if (progress !== null) s.querySelector('.bar i').style.width = `${Math.round(progress * 100)}%`;
 }
-async function run(fileList) {
-  const inFolder = (f) => f._path || f.webkitRelativePath || '';   // from a folder, open only Spotify histories and YouTube files (a full Takeout holds much else)
-  const files = [...fileList].filter((f) => /\.zip$/i.test(f.name) || (/\.(json|html)$/i.test(f.name) && (!inFolder(f) || WANT(inFolder(f)))));
-  if (!files.length) return status('No Spotify or YouTube files found. Look for Streaming_History_Audio_….json (Spotify), watch-history.html (YouTube), or the zip that contains them.', { err: true });
+const inFolder = (f) => f._path || f.webkitRelativePath || '';   // from a folder, open only Spotify histories and YouTube files (a full Takeout holds much else)
+const usable = (fs) => [...fs].filter((f) => /\.zip$/i.test(f.name) || (/\.(json|html)$/i.test(f.name) && (!inFolder(f) || WANT(inFolder(f)))));
+const SRC = { spotify: { label: 'Spotify', files: [] }, youtube: { label: 'YouTube', files: [] } };
+function showSources() {
+  for (const [k, v] of Object.entries(SRC)) {
+    const el = document.querySelector(`.drop[data-src="${k}"]`), st = el.querySelector('.src-state');
+    el.classList.toggle('has', v.files.length > 0);
+    st.innerHTML = v.files.length ? `✓ ${v.files.length === 1 ? esc(v.files[0].name) : `${v.files.length} files`} <a href="#" data-clear="${k}">remove</a>` : 'Not added';
+  }
+  document.querySelectorAll('[data-clear]').forEach((x) => (x.onclick = (e) => { e.preventDefault(); e.stopPropagation(); SRC[x.dataset.clear].files = []; showSources(); }));
+  $('#run').disabled = !SRC.spotify.files.length && !SRC.youtube.files.length;
+}
+function addFiles(k, fs) {
+  const got = usable(fs);
+  if (!got.length) return status(k === 'spotify' ? 'No Spotify files found there. Look for Streaming_History_Audio_….json, or the zip that contains them.'
+    : 'No YouTube files found there. Look for the Google Takeout zip, MyActivity.html or watch-history.html.', { err: true });
+  $('#status').hidden = true; SRC[k].files = got; showSources();
+}
+for (const el of document.querySelectorAll('.drop[data-src]')) {
+  const k = el.dataset.src;
+  ['dragenter', 'dragover'].forEach((t) => el.addEventListener(t, (e) => { e.preventDefault(); el.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach((t) => el.addEventListener(t, (e) => { e.preventDefault(); el.classList.remove('over'); }));
+  el.addEventListener('drop', async (e) => {
+    const items = [...e.dataTransfer.items].map((i) => i.webkitGetAsEntry && i.webkitGetAsEntry()).filter(Boolean);
+    if (items.length) { const files = []; for (const it of items) await readEntries(it, files); addFiles(k, files); } else addFiles(k, [...e.dataTransfer.files]);
+  });
+  el.querySelectorAll('input[type=file]').forEach((inp) => inp.addEventListener('change', (e) => { addFiles(k, [...e.target.files]); e.target.value = ''; }));
+}
+
+// score every combination given (both together, and each alone when there are two), sharing one cache of reference lookups
+let VIEWS = [];
+async function run(sources = SRC) {
+  const given = Object.entries(sources).filter(([, v]) => v.files.length);
+  if (!given.length) return;
+  const combos = given.length > 1 ? [['both', 'Spotify + YouTube', given.flatMap(([, v]) => v.files)], ...given.map(([k, v]) => [k, `${v.label} only`, v.files])]
+    : [[given[0][0], given[0][1].label, given[0][1].files]];
   try {
     $('#report').hidden = true;
     status('Reading your files…');
-    const data = await Promise.all(files.map(async (f) => (/\.zip$/i.test(f.name) ? { name: f.name, blob: f } : { name: f.name, bytes: new Uint8Array(await f.arrayBuffer()) })));   // zips are read in pieces
     await metaReady;
-    status('Looking up the music you got into…', { progress: 0 });
     const pack = new Pack(META, fetchIndex, fetchRange);
-    const r = await scoreHistory(data, META, pack, (x) => status('Looking up the music you got into…', { progress: x }));
-    if (!r.ok) return status((r.checks || []).filter((c) => !c.ok).map((c) => c.text).join(' ') || 'We couldn\'t score these files.', { err: true });
+    VIEWS = [];
+    for (const [i, [key, label, fs]] of combos.entries()) {
+      const msg = `Looking up the music you got into${combos.length > 1 ? ` (${label}, ${i + 1} of ${combos.length})` : ''}…`;
+      status(msg, { progress: 0 });
+      const data = await Promise.all(fs.map(async (f) => (/\.zip$/i.test(f.name) ? { name: f.name, blob: f } : { name: f.name, bytes: new Uint8Array(await f.arrayBuffer()) })));   // zips are read in pieces
+      VIEWS.push({ key, label, r: await scoreHistory(data, META, pack, (x) => status(msg, { progress: x })) });
+    }
+    const first = VIEWS.find((v) => v.r.ok);
+    if (!first) return status(VIEWS.map((v) => (VIEWS.length > 1 ? `${v.label}: ` : '') + ((v.r.checks || []).filter((c) => !c.ok).map((c) => c.text).join(' ') || "we couldn't score these files.")).join(' '), { err: true });
     $('#status').hidden = true;
-    render(r);
+    show(first.key, true);
   } catch (e) { console.error(e); status(`Something went wrong reading these files: ${e.message || e}`, { err: true }); }
 }
-const drop = $('#drop');
-['dragenter', 'dragover'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add('over'); }));
-['dragleave', 'drop'].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
-drop.addEventListener('drop', async (e) => {
-  const items = [...e.dataTransfer.items].map((i) => i.webkitGetAsEntry && i.webkitGetAsEntry()).filter(Boolean);
-  if (items.length) { const files = []; for (const it of items) await readEntries(it, files); run(files); } else run([...e.dataTransfer.files]);
-});
-$('#pick-files').addEventListener('change', (e) => run([...e.target.files]));
-$('#pick-folder').addEventListener('change', (e) => run([...e.target.files]));
+$('#run').addEventListener('click', () => run());
+function show(key, scroll = false) {
+  const v = VIEWS.find((x) => x.key === key);
+  render(v.r, scroll);
+  if (VIEWS.length < 2) return;
+  const why = (x) => esc((x.r.checks || []).filter((c) => !c.ok).map((c) => c.text).join(' '));
+  $('#report').insertAdjacentHTML('afterbegin', `<div class="views"><span class="label">Scored from</span>${VIEWS.map((x) => x.r.ok
+    ? `<button class="btn small${x.key === key ? '' : ' ghost'}" data-view="${x.key}">${x.label} · ${x.r.measures[x.r.headline].percentile}%</button>`
+    : `<button class="btn small ghost" disabled title="${why(x)}">${x.label} · can't score</button>`).join('')}</div>`);
+  document.querySelectorAll('[data-view]').forEach((b) => (b.onclick = () => show(b.dataset.view)));
+}
 
 // ---------- formatting
 const pct = (x, d = 0) => (x >= 0 ? '+' : '−') + Math.abs(100 * x).toFixed(d) + '%';
@@ -92,7 +131,7 @@ function rangeBar(m) {   // a small 0-100 bar with the likely range and the poin
 }
 
 // ---------- report
-function render(r) {
+function render(r, scroll = true) {
   const M = r.measures, H = M[r.headline], hm = MEAS[r.headline], Rp = r.report;
   const ref = META.measures[r.headline].scores;
   const qs = (p) => ref[Math.min(ref.length - 1, Math.max(0, Math.round(p / 100 * (ref.length - 1))))];
@@ -102,9 +141,9 @@ function render(r) {
         <div class="big">${H.percentile}%<small>of listeners beaten</small></div>
         <p class="meaning">You're better than <b>${H.percentile}%</b> of listeners at <b>${hm.title.toLowerCase()}</b>. The ${hm.what} you got into ${hm.verb}
           <b class="${cls(H.growth)}">${pct(H.growth, 1)}</b> ${hm.of}.</p>
-        <p class="meaning">Your true rank is most likely between the <b>${ord(H.range[0])}</b> and <b>${ord(H.range[1])}</b> percentile.</p>${warn}</div>
+        <p class="meaning">Your true rank is most likely between the <b>${ord(H.range[0])}</b> and <b>${ord(H.range[1])}</b> percentile (80% confidence interval).</p>${warn}</div>
       <div>${distChart(H.score, qs(H.range[0]), qs(H.range[1]), ref)}
-        <p class="note">Gray bars: ${n(ref.length)} ListenBrainz listeners scored the same way. Blue band: your likely range. Based on ${n(H.picks)} ${hm.what === 'songs' ? 'groups of songs' : 'artists'} you got into, ${win(H)}.</p></div>
+        <p class="note">Gray bars: ${n(ref.length)} ListenBrainz listeners scored the same way. Blue band: your likely range (80% confidence interval). Based on ${n(H.picks)} ${hm.what === 'songs' ? 'groups of songs' : 'artists'} you got into, ${win(H)}.</p></div>
     </div></section>`;
 
   const F = Rp.facts;
@@ -211,7 +250,7 @@ function render(r) {
     tr.querySelector('.muted').textContent = d.hidden ? '▸' : '▾';
   }));
   $('#again').onclick = (e) => { e.preventDefault(); $('#report').hidden = true; window.scrollTo(0, 0); };
-  $('#report').scrollIntoView();
+  if (scroll) $('#report').scrollIntoView();
 }
 
 // every scored find, by impact (songs or artists)
@@ -254,7 +293,7 @@ function wirePicks(Rp) {
 }
 
 window.__render = (r) => { META = META || window.__meta; render(r); };   // local page tests
-window.__run = run;
+window.__run = (sources) => run(sources);
 
 // your taste over time: yearly percentile with its range, one measure at a time
 function wireTime(M, head) {

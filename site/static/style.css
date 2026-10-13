@@ -115,3 +115,16 @@ td.muted, .muted { color: var(--ink-3); }
 .mtable tr.mdetail > td { background: var(--line-2); border-radius: 10px; padding: 14px 16px; }
 .mtable tr.mrow:hover td { background: var(--line-2); } .mtable tr.mrow.hl:hover td { background: var(--accent-bg); }
 .howto + .howto { margin-top: 10px; }
+/* two sources, then run; view switch */
+.sources { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 640px) { .sources { grid-template-columns: 1fr; } }
+.sources .drop { padding: 22px 16px; }
+.drop.has { border-style: solid; border-color: var(--good); }
+.src-state { margin-top: 12px; font-size: 14px; color: var(--ink-3); }
+.drop.has .src-state { color: var(--good); }
+.src-state a { margin-left: 8px; color: var(--ink-3); }
+.run-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin: 16px 0 0; }
+.run-row .muted { font-size: 14px; }
+.btn:disabled { opacity: .4; cursor: default; }
+.views { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 4px 0 0; }
+.views .label { color: var(--ink-3); font-size: 14px; margin-right: 2px; }
