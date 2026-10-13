@@ -50,7 +50,7 @@ window.dash = (() => {
     }
     cbs.forEach((cb) => { try { cb(); } catch (e) { console.error(e); } });
   };
-  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=6bae71a406`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
+  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=649e477c76`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
     .then((data) => { store[id] = { status: 'ok', data }; }, () => { store[id] = { status: 'error' }; })))
     .then(() => { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run(); });
   let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(run, 150); });
@@ -559,18 +559,25 @@ window.dash = (() => {
           <span class="wu-num" data-source="obsession" data-field="most_vs_least" data-where="level=Songs" data-fmt="pct0">—</span> more. Plays are counted only until the person was hooked, so there's no
           hindsight. People bet hardest on their best finds, though the effect is modest. On ListenBrainz, the most-replayed quarter again beat the
           least-replayed, by <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=P8" data-fmt="pct1">—</span>, and getting hooked again paid off more for good pickers.</p>
+    <p>Songs show it more sharply. The top 1% of song pickers' most-replayed songs grew <span class="wu-num" data-source="obstaste" data-field="growth" data-where="key=songs:top1:8" data-fmt="pct0">—</span> more than similar
+      songs, against <span class="wu-num" data-source="obstaste" data-field="growth" data-where="key=songs:top1:1" data-fmt="pct0">—</span> for the songs they played least before getting hooked. For songs, getting hooked was worth
+      <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=S3" data-fmt="pts">—</span> more to the top fifth than to the bottom fifth, against <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P9" data-fmt="pts">—</span> for artists, and it held on
+      ListenBrainz (<span class="wu-num" data-source="headlines" data-field="lb" data-where="key=S3" data-fmt="pts">—</span>). Both charts below switch between songs and artists.</p>
     <div class="wu-card">
       <h3>How hooked someone got, and how the artist did</h3>
-      <p class="wu-note">Hidden half, artists. All picks split into ten groups of roughly equal size by how many times the person played the
-        artist before committing (listening in four separate weeks). Growth is compared with similar picks,
-        with every correction; bars are 95% ranges.</p>
+      <p class="wu-note">Hidden half. All picks split into groups of roughly equal size by how many times the person played the song or
+        artist before committing (listening in four separate weeks): ten groups for artists, eight for songs, whose play counts bunch up
+        at the low end. Growth is compared with similar picks, with every correction; bars are 95% ranges.</p>
+      <div class="wu-chips" id="ob-unit" role="group" aria-label="Songs or artists"></div>
       <div class="wu-chart dash-skeleton" id="ob-chart" data-source="obstaste"></div>
     </div>
     <div class="wu-card">
       <h3>Getting hooked matters most for good pickers</h3>
       <p class="wu-note">The same, split by how people picked in earlier years. A good picker's casual picks do about average; their edge lives
-        in the artists they got hooked on. Going from a few plays to ten or more was worth <span class="wu-num dash-skeleton" data-source="headlines" data-field="hidden" data-where="key=P9" data-fmt="pts">—</span> more
-        to top-fifth pickers than to bottom-fifth ones. Hidden half.</p>
+        in the music they got hooked on. Going from a few plays to ten or more was worth <span class="wu-num dash-skeleton" data-source="headlines" data-field="hidden" data-where="key=P9" data-fmt="pts">—</span> more
+        to top-fifth pickers than to bottom-fifth ones for artists, and <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=S3" data-fmt="pts">—</span> for songs
+        (<span class="wu-num" data-source="headlines" data-field="lb" data-where="key=S3" data-fmt="pts">—</span> on ListenBrainz). Hidden half.</p>
+      <div class="wu-chips" id="ot-unit" role="group" aria-label="Songs or artists"></div>
       <div class="wu-legend" id="ot-legend"></div>
       <div class="wu-chart dash-skeleton" id="ot-chart" data-source="obstaste"></div>
     </div>
@@ -615,9 +622,10 @@ window.dash = (() => {
       analysed on it. We wrote down every prediction first, with the same bars, then ran each once. Eight of the nine main measures we could run
       there passed, and twenty-four of the thirty-two predictions held. The table shows every one. A few ListenBrainz charts came after that
       run (a decade later, careers, and one person's range); nothing was predicted for them in advance, so they're marked exploratory.</p>
-    <p><b>Later, songs.</b> The takeoff numbers above were for artists. After seeing the songs' version on the first half, we wrote down two more
-      predictions before running it anywhere else: the top 1% of song pickers beat similar songs (S1), and beat their own artist edge (S2).
-      Both held on the hidden half. On ListenBrainz, S1 held and S2 narrowly missed. They're the last two rows of the table.</p>
+    <p><b>Later, songs.</b> The takeoff and getting-hooked numbers above were first for artists. After seeing the songs' versions on the first
+      half, we wrote down three more predictions before running them anywhere else: the top 1% of song pickers beat similar songs (S1), and beat
+      their own artist edge (S2); getting hooked pays off more for top song pickers (S3). All three held on the hidden half. On ListenBrainz, S1
+      and S3 held and S2 narrowly missed. They're the last three rows of the table.</p>
     <div class="wu-card">
       <h3>Checks of these findings on the hidden half and on ListenBrainz</h3>
       <div class="wu-tablewrap">
@@ -1009,9 +1017,10 @@ window.dash = (() => {
   function safeDraw(fn) { try { fn(); } catch (e) { console.error(fn.name, e); } }
 
   // one Songs / Artists setting per section, shared by its charts; each chart shows the switch
-  const unitSel = { ladder: 'songs', eras: 'songs' };
+  const unitSel = { ladder: 'songs', eras: 'songs', obsession: 'songs' };
   const unitCharts = { ladder: [['ld-chart', () => drawLadder], ['th-chart', () => drawThresholds], ['gb-chart', () => drawGrowthBand]],
-    eras: [['yg-chart', () => drawYearGrowth], ['yt-chart', () => drawYearTakeoff]] };
+    eras: [['yg-chart', () => drawYearGrowth], ['yt-chart', () => drawYearTakeoff]],
+    obsession: [['ob-chart', () => drawObsession], ['ot-chart', () => drawObsTaste]] };
   const unitOf = (r) => r.unit || 'artists';
   function unitChips(id, group = 'ladder') {
     document.getElementById(id).replaceChildren(...[['songs', 'Songs'], ['artists', 'Artists']].map(([k, l]) => {
@@ -1234,28 +1243,30 @@ window.dash = (() => {
     bandHover(f, rows, x, (d) => [`Pickers ranked ${d.band}`, [['Extra growth', `${fmt.spct1(d.v)} (${fmt.spct1(d.lo)} to ${fmt.spct1(d.hi)})`, col], ['People', fmt.int(+d.people)]]]);
   }
 
-  function tenthsAxis(f, rows) {
+  function tenthsAxis(f, rows, label = 'Plays before committing (each point holds about a tenth of all picks)') {
     const { svg, fs, width, height, m } = f;
     const x = d3.scalePoint(rows.map((r) => +r.decile), [m.l, width - m.r]).padding(0.4);
     axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`)
       .call(d3.axisBottom(x).tickFormat((k) => rows.find((r) => +r.decile === k).label).tickSize(0)), fs);
     svg.append('text').attr('x', (m.l + width - m.r) / 2).attr('y', height - 4).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted'))
-      .style('font-size', fs).text('Plays before committing (each point holds about a tenth of all picks)');
+      .style('font-size', fs).text(label);
     return x;
   }
 
   function drawObsession() {
     const el = document.getElementById('ob-chart');
-    if (!ready(el, ['obstaste'])) return;
-    const col = dash.colors[0];
-    const rows = dash.data('obstaste').data.filter((r) => r.group === 'all').map((r) => ({ ...r, v: +r.growth, lo: +r.lo, hi: +r.hi }))
+    if (!ready(el, ['obstaste'])) { document.getElementById('ob-unit').replaceChildren(); return; }
+    unitChips('ob-unit', 'obsession');
+    const col = dash.colors[0], axisLabel = unitSel.obsession === 'songs' ? 'Plays of the song before committing (groups of similar size)' : undefined;
+    const rows = dash.data('obstaste').data.filter((r) => r.group === 'all' && unitOf(r) === unitSel.obsession).map((r) => ({ ...r, v: +r.growth, lo: +r.lo, hi: +r.hi }))
       .sort((a, b) => a.decile - b.decile);
+    if (!rows.length) { el.innerHTML = '<p class="wu-fail">This chart\'s data didn\'t load. Reload the page.</p>'; return; }
     const f = frame(el, 240, { t: 28, r: 16, b: 40, l: 44 });
     const { svg, fs, width, m } = f;
     const y = d3.scaleLinear([Math.min(0, d3.min(rows, (r) => r.lo)) * 1.15, Math.max(0, d3.max(rows, (r) => r.hi)) * 1.15], [f.height - m.b, m.t]).nice();
     gridY(f, y, d3.format('+.0%'), 4);
     svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', css('--cds-chart-axis'));
-    const x = tenthsAxis(f, rows);
+    const x = tenthsAxis(f, rows, axisLabel);
     svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Growth vs similar picks');
     svg.append('path').datum(rows).attr('d', d3.line().x((d) => x(+d.decile)).y((d) => y(d.v))).attr('fill', 'none').attr('stroke', col).attr('stroke-width', 2);
     errorDots(svg, rows, (d) => x(+d.decile), y, col, false);
@@ -1268,17 +1279,20 @@ window.dash = (() => {
 
   function drawObsTaste() {
     const el = document.getElementById('ot-chart');
-    if (!ready(el, ['obstaste'])) return;
+    if (!ready(el, ['obstaste'])) { document.getElementById('ot-unit').replaceChildren(); return; }
+    unitChips('ot-unit', 'obsession');
+    const axisLabel = unitSel.obsession === 'songs' ? 'Plays of the song before committing (groups of similar size)' : undefined;
     const groups = [['top', 'Top fifth', dash.colors[0]], ['middle', 'Middle', css('--cds-chart-muted')],
       ['bottom', 'Bottom fifth', dash.colors[1]]];
     legend('ot-legend', groups.map(([, l, c]) => [l, c, 'line']));
-    const all = dash.data('obstaste').data.filter((r) => ['top', 'middle', 'bottom'].includes(r.group)).map((r) => ({ ...r, v: +r.growth, lo: +r.lo, hi: +r.hi }));
+    const all = dash.data('obstaste').data.filter((r) => ['top', 'middle', 'bottom'].includes(r.group) && unitOf(r) === unitSel.obsession).map((r) => ({ ...r, v: +r.growth, lo: +r.lo, hi: +r.hi }));
+    const rows = all; if (!rows.length) { el.innerHTML = '<p class="wu-fail">This chart\'s data didn\'t load. Reload the page.</p>'; return; }
     const f = frame(el, 300, { t: 28, r: 64, b: 40, l: 44 });
     const { svg, fs, width, m } = f;
     const y = d3.scaleLinear([Math.min(0, d3.min(all, (r) => r.lo)) * 1.1, d3.max(all, (r) => r.hi) * 1.05], [f.height - m.b, m.t]).nice();
     gridY(f, y, d3.format('+.0%'), 5);
     svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', css('--cds-chart-axis'));
-    const x = tenthsAxis(f, all.filter((r) => r.group === 'top').sort((a, b) => a.decile - b.decile));
+    const x = tenthsAxis(f, all.filter((r) => r.group === 'top').sort((a, b) => a.decile - b.decile), axisLabel);
     svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Growth vs similar picks');
     const tip = tooltip(el);
     groups.forEach(([g, label, c]) => {

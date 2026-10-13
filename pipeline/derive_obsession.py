@@ -66,9 +66,12 @@ def artists(con, half, out):
 
 def songs(con, half, out):
     con.execute("CREATE TABLE os (user BIGINT, recording BIGINT, plays_to_commit INTEGER, weeks_to_commit INTEGER)")
+    # MLHD+ raw has one row per listen; the ListenBrainz conversion (lb_convert_songs.py) has one row per user, song and week
+    # with a plays column, so counting rows there would count weeks
+    plays = "sum(plays)" if half == "lb" else "count(*)"
     for c in "0123456789abcdef":
         con.execute(f"""INSERT INTO os
-            WITH w AS (SELECT user, recording, (ts::BIGINT // 604800)::INT AS week, count(*) AS plays
+            WITH w AS (SELECT user, recording, (ts::BIGINT // 604800)::INT AS week, {plays} AS plays
                        FROM read_parquet('{D}/raw/{half}/mlhdplus-complete-{c}.parquet') GROUP BY ALL),
                  r AS (SELECT *, row_number() OVER (PARTITION BY user, recording ORDER BY week) AS rn,
                               min(week) OVER (PARTITION BY user, recording) AS fw FROM w),

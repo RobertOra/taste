@@ -712,5 +712,22 @@
   "lb_lo": 1.0439594335057174,
   "lb_hi": 2.2753313563381345,
   "lb_held": false
+ },
+ {
+  "key": "S3",
+  "claim": "Getting hooked pays off more for top-fifth than bottom-fifth song pickers (difference)",
+  "unit": "points",
+  "hidden": 0.041792792316015494,
+  "lo": 0.027285515723548443,
+  "hi": 0.0559446312582128,
+  "lo99": 0.02235341198619715,
+  "first_half": 0.03611476626411329,
+  "rate": null,
+  "rate_compared": null,
+  "confirmed": true,
+  "lb": 0.03658181480546156,
+  "lb_lo": 0.027013828210116744,
+  "lb_hi": 0.04755235368029969,
+  "lb_held": true
  }
 ]

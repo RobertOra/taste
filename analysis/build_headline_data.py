@@ -277,7 +277,10 @@ def genregeneral():
 
 
 def obstaste():
-    return json.loads((OUT / "obs_taste_sealed_deciles.json").read_text())["curve"]
+    """Artists, plus songs (obs_taste.py --unit song, SONG_PREREG.md round 2): song rows keyed "songs:..." with unit "songs"."""
+    art = json.loads((OUT / "obs_taste_sealed_deciles.json").read_text())["curve"]
+    son = [{**r, "key": "songs:" + r["key"], "unit": "songs"} for r in json.loads((OUT / "obs_taste_sealed_song_deciles.json").read_text())["curve"]]
+    return art + son
 
 
 def obsdeciles():
@@ -329,6 +332,11 @@ def song_predictions():
         rows.append({"key": key, "claim": claim, "unit": "times as often", "hidden": v, "lo": lo, "hi": hi, "lo99": lo99,
                      "first_half": get(lj["explore"])[0], "rate": None, "rate_compared": None, "confirmed": lo99 > bar,
                      "lb": lv, "lb_lo": llo, "lb_hi": lhi, "lb_held": llo99 > bar})
+    t = {h: json.loads((OUT / f"obs_taste_{h}_song.json").read_text())["test"] for h in ("explore", "sealed", "lb")}
+    rows.append({"key": "S3", "claim": "Getting hooked pays off more for top-fifth than bottom-fifth song pickers (difference)", "unit": "points",
+                 "hidden": t["sealed"]["diff"], "lo": t["sealed"]["lo"], "hi": t["sealed"]["hi"], "lo99": t["sealed"]["lo99"],
+                 "first_half": t["explore"]["diff"], "rate": None, "rate_compared": None, "confirmed": t["sealed"]["lo99"] > 0,
+                 "lb": t["lb"]["diff"], "lb_lo": t["lb"]["lo"], "lb_hi": t["lb"]["hi"], "lb_held": t["lb"]["lo99"] > 0})
     return rows
 
 

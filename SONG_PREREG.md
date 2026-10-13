@@ -50,5 +50,15 @@ study's code, unchanged apart from the flag).
 
 Run once each: `obs_taste.py --half {sealed,lb} --unit song` (and `--deciles` for the chart, no bar).
 
-## Round 2 results
-(to be added after the runs)
+## Round 2 results (2026-10-13)
+| | Top fifth's gain | Bottom fifth's gain | Difference [95%; 99% low] | S3 (99% low > 0) |
+|---|---|---|---|---|
+| Explore (exploratory) | +9.9 points | +6.3 | +3.6 [2.3, 5.1; 1.8] | - |
+| **Sealed** | +9.8 | +5.6 | **+4.2** [99% low **2.2**] | **held** |
+| **ListenBrainz** (corrected run, see below) | +5.5 | +1.9 | **+3.7** [2.7, 4.8; **2.3**] | **held** |
+
+Deviation, disclosed: the first ListenBrainz run used a broken input. ListenBrainz's converted song data
+(lb_convert_songs.py) has one row per user, song and week with a plays column, while MLHD+ raw has one row per listen, so
+derive_obsession.py's song step (counting rows, never run on ListenBrainz songs before) counted listening weeks as plays.
+That run produced empty bins (no picks with 15+ "plays") and an impossible +90% gain, not a test result. Fixed to sum plays
+for ListenBrainz (MLHD+ unchanged), rebuilt the input, and ran S3 once more; that run is the one above.
