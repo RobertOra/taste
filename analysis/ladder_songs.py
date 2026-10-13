@@ -5,7 +5,10 @@ count as one pick, mean excess; shrunk sum e/(n+20), >= 20 picks) and ranked int
 Outcome: each song they picked in C+2..C+3, chance of growing 10x (and 4x) in a year vs similar songs (same month and size),
 plus growth vs similar. --per-group weights each song by 1/(songs by that artist the person found that month), so an album
 that took off counts once. 95% intervals: bootstrap over people (1,000 draws). Same bands, cutoffs and bootstrap as ladder.py.
-Input: data/derived/bet_outcomes/A_song_{half}.parquet (taste_models.py --unit song --bets-out, per song before collapsing).
+Same people, songs vs artists: the artist ladder's top 1% (ladder.py's method) recomputed among the people in the song data
+(the raw-sample users on MLHD+), and the ratio of the songs' to the artists' top-1% tenfold rate, bootstrapping people jointly.
+Input: data/derived/bet_outcomes/A_song_{half}.parquet (taste_models.py --unit song --bets-out, per song before collapsing)
+and A_artist_{half}.parquet.
 
 Usage: ladder_songs.py --half explore|sealed|lb
 """
@@ -57,9 +60,32 @@ def ladder_songs(half, per_group=False):
         per = f.filter(pl.col("q") > lo).group_by("user").agg(h10=pl.col("x10").sum(), e10=pl.col("s10").sum(), n=pl.col("wt").sum())
         w = RNG.poisson(1.0, (B, per.height)).astype(float)
         r = (w @ per["h10"].to_numpy()) / (w @ per["e10"].to_numpy())
-        summ[name] = {"odds_10x": float(per["h10"].sum() / per["e10"].sum()), "lo": pct(r, 2.5), "hi": pct(r, 97.5),
+        summ[name] = {"odds_10x": float(per["h10"].sum() / per["e10"].sum()), "lo": pct(r, 2.5), "hi": pct(r, 97.5), "lo99": pct(r, 0.5),
                       "people": per.height, "songs": round(float(per["n"].sum())), "events_10x": round(float(per["h10"].sum()), 1)}
+    summ["vs_artists"] = vs_artists(half, f, b["user"].unique())
     return rows, summ
+
+
+def vs_artists(half, fs, users):
+    """Top 1% on songs vs top 1% on artists, among the same people; joint bootstrap over people."""
+    a = pl.read_parquet(X / "bet_outcomes" / f"A_artist_{half}.parquet", columns=["user", "m", "bin", "v", "e"])
+    a = a.with_columns(year=pl.col("m") // 12, x10=(pl.col("v") >= np.log(10)).cast(pl.Float64))
+    exp = a.group_by("m", "bin").agg(s10=pl.col("x10").mean())   # similar artists: all bets, as ladder.py
+    a = a.filter(pl.col("user").is_in(users.implode()))
+    parts = []
+    for c in cuts(half):
+        past = (a.filter(pl.col("year") <= c).group_by("user").agg(s=pl.col("e").sum() / (pl.len() + 20), n=pl.len())
+                .filter(pl.col("n") >= 20).with_columns(q=pl.col("s").rank("average") / pl.len()))
+        parts.append(a.filter(pl.col("year").is_between(c + 2, c + 3)).join(past.select("user", "q"), on="user"))
+    fa = pl.concat(parts).join(exp, on=["m", "bin"])
+    pa = fa.filter(pl.col("q") > 0.99).group_by("user").agg(ha=pl.col("x10").sum(), ea=pl.col("s10").sum())
+    ps = fs.filter(pl.col("q") > 0.99).group_by("user").agg(hs=pl.col("x10").sum(), es=pl.col("s10").sum())
+    j = ps.join(pa, on="user", how="full", coalesce=True).fill_null(0.0)
+    w = RNG.poisson(1.0, (B, j.height)).astype(float)
+    rs = (w @ j["hs"].to_numpy()) / (w @ j["es"].to_numpy()); ra = (w @ j["ha"].to_numpy()) / (w @ j["ea"].to_numpy())
+    song, art = float(j["hs"].sum() / j["es"].sum()), float(j["ha"].sum() / j["ea"].sum())
+    return {"songs_top1": song, "artists_top1": art, "artists_lo": pct(ra, 2.5), "artists_hi": pct(ra, 97.5), "artist_people": pa.height,
+            "ratio": song / art, "ratio_lo": pct(rs / ra, 2.5), "ratio_hi": pct(rs / ra, 97.5), "ratio_lo99": pct(rs / ra, 0.5)}
 
 
 def main():
@@ -72,8 +98,12 @@ def main():
     for r in rows:
         print(f"  {r['band']:>12} people {r['people']:>6,} songs {r['songs']:>9,} 10x events {r['events_10x']:>7,.1f}  10x odds {r['odds_10x']:.2f}"
               f" [{r['odds_10x_lo']:.2f}, {r['odds_10x_hi']:.2f}]  4x {r['odds_4x']:.2f}  growth {r['growth']:+.1%}")
-    for k, v in summ.items():
-        print(f"  {k}: {v['odds_10x']:.2f} [{v['lo']:.2f}, {v['hi']:.2f}]  people {v['people']:,}  10x events {v['events_10x']:,.1f}")
+    for k in ("top1", "top0_1"):
+        v = summ[k]
+        print(f"  {k}: {v['odds_10x']:.2f} [{v['lo']:.2f}, {v['hi']:.2f}; 99% low {v['lo99']:.2f}]  people {v['people']:,}  10x events {v['events_10x']:,.1f}")
+    v = summ["vs_artists"]
+    print(f"  same people, artists' top 1%: {v['artists_top1']:.2f} [{v['artists_lo']:.2f}, {v['artists_hi']:.2f}] ({v['artist_people']:,} people)"
+          f" | songs / artists: {v['ratio']:.2f} [{v['ratio_lo']:.2f}, {v['ratio_hi']:.2f}; 99% low {v['ratio_lo99']:.2f}]")
     (ROOT / "analysis" / "out" / f"ladder_songs_{half}{'_group' if a.per_group else ''}.json").write_text(json.dumps({"ladder": rows, "summary": summ}, indent=1))
 
 
