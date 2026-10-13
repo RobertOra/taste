@@ -149,3 +149,14 @@ Era test passed: taste predicts as well or better in 2019-2023 than 2007-2012. D
 Reference data in data/site (~3 GB, from LB). Score = prescience vs similar picks (same month, size) with the project's
 corrections, simplified for outside visitors; agrees 0.71 with the frozen score (~0.95 disattenuated); reliability 0.65 / 0.81
 (artists) and 0.74 / 0.87 (songs) at 110 / 250 judged finds. Engine reproduces builder scores exactly. Not deployed yet.
+
+### Planned site reference rebuild (decided 2026-10-13, waiting on disk cleanup)
+1. Song identity by normalized name (case, spacing, punctuation; drop feat./remaster/edit/explicit/version/video labels; keep
+   remix/live/acoustic/slowed separate). Needs song-name text: re-stream the LB dump (~253 GB, ~10 h) saving rec_name_h -> text.
+   Fixes spelling splits (e.g. "Weird Fishes/ Arpeggi" -> "Weird Fishes / Arpeggi" in Dec 2024 faked +699%) and rare-variant 0 -> 0 finds.
+2. Prescience among settled listeners (t, on LB 26+ weeks), as the study's fixed panel did; the 2025 LB newcomer wave inflates
+   all-listener growth for established artists (LE SSERAFIM 2.34x all vs 1.10x settled). Check reliability before switching.
+3. One warm-up only: the first 26 weeks of a history, no restarts after gaps, even for sparse starts (Robert's call). Same rule for
+   reference listeners. Expect histories with a few stray early plays to score differently (those plays no longer end the warm-up early).
+4. Store each song's own excess as well as the artist-month group's, to test empirically whether individual songs or groups
+   make the better score (split-half stability and predicting later years' scores).
