@@ -6,7 +6,7 @@ Obsession is measured only up to the commitment week (the bet date), so later po
 
     data/derived/obsession/<half>_artist.parquet   user, artist, plays_to_commit, weeks_to_commit
     data/derived/obsession/<half>_song.parquet     user, recording, plays_to_commit, weeks_to_commit   (raw sample)
-Usage: derive_obsession.py <half>
+Usage: derive_obsession.py <half> [--artists-only | --songs-only]
 """
 
 import argparse
@@ -28,6 +28,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("half", choices=["explore", "sealed", "lb"])
     ap.add_argument("--artists-only", action="store_true")
+    ap.add_argument("--songs-only", action="store_true", help="skip the artist table (keep the existing one)")
     args = ap.parse_args()
     half = args.half
     out = X / "obsession"
@@ -40,6 +41,14 @@ def main():
     con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; "
                 "SET max_temp_directory_size='20GB'")
 
+    if not args.songs_only:
+        artists(con, half, out)
+        if args.artists_only:
+            return
+    songs(con, half, out)
+
+
+def artists(con, half, out):
     con.execute("CREATE TABLE oa (user BIGINT, artist BIGINT, plays_to_commit INTEGER, weeks_to_commit INTEGER)")
     for c in "0123456789abcdef":
         con.execute(f"""INSERT INTO oa
@@ -53,9 +62,9 @@ def main():
             GROUP BY b.user, b.artist, b.w4, b.first_week""")
     con.execute(f"COPY oa TO '{out / f'{half}_artist.parquet'}' (FORMAT parquet)")
     print("artists", con.execute("SELECT count(*), median(plays_to_commit), median(weeks_to_commit) FROM oa").fetchone(), flush=True)
-    if args.artists_only:
-        return
 
+
+def songs(con, half, out):
     con.execute("CREATE TABLE os (user BIGINT, recording BIGINT, plays_to_commit INTEGER, weeks_to_commit INTEGER)")
     for c in "0123456789abcdef":
         con.execute(f"""INSERT INTO os

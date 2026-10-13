@@ -38,3 +38,17 @@ Without a bar: per artist-month (each album-month once) sealed 13.81x, songs/art
 [99% low 0.98]. Top 0.1%: sealed 28.5x (25 people), ListenBrainz 16.6x (93 people, 462 of the top 1%'s 953 tenfold
 songs, range 2.2-28.3): on ListenBrainz half of the top 1%'s takeoffs come from the top 0.1%; the 99-99.9% bands are 2.3-3.0x
 (artists 1.9-3.2x there), so most of ListenBrainz's song-over-artist edge sits in a few people at the very top.
+
+# Round 2: getting hooked, for songs (written 2026-10-13, before the sealed and ListenBrainz runs)
+The study's P9 (getting hooked pays off more for top-fifth than bottom-fifth pickers) used artists. Song version, explore half
+(analysis/obs_taste.py --unit song, exploratory): rated on songs; gain from 1-4 to 10+ plays before committing, for each
+song picked in C+2..C+3: top fifth +9.9 points, bottom fifth +6.3, difference +3.6 points [2.3, 5.1; 99% low 1.8].
+Song plays-before-committing for sealed and ListenBrainz were built with pipeline/derive_obsession.py --songs-only (the
+study's code, unchanged apart from the flag).
+
+- **S3 sealed / S3 lb.** Top fifth's gain minus bottom fifth's gain > 0: 99% lower bound > 0 (P9's bar).
+
+Run once each: `obs_taste.py --half {sealed,lb} --unit song` (and `--deciles` for the chart, no bar).
+
+## Round 2 results
+(to be added after the runs)

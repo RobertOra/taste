@@ -9,7 +9,11 @@ Test: top fifth's gain minus bottom fifth's gain > 0. Also the all-picks curve b
 With --deciles (descriptive): the same curves by tenths of all picks (by plays before committing) instead of fixed bins,
 with a top 1% group added; written to obs_taste_<half>_deciles.json. The P9 test is unchanged.
 
-Usage: obs_taste.py --half explore|sealed [--deciles]
+--unit song (added 2026-10-13, see SONG_PREREG.md): the same for songs. People are rated on their song picks (songs by one
+artist found the same month count as one pick, as the study's song measure); outcomes are each song they picked, with plays
+of that song before committing (data/derived/obsession/<half>_song.parquet). Output files get a _song suffix.
+
+Usage: obs_taste.py --half explore|sealed|lb [--deciles] [--unit artist|song]
 """
 
 import argparse
@@ -22,12 +26,25 @@ import polars as pl
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "analysis"))
+from cutoffs import cuts  # noqa: E402
 from explain import bets_with_bands  # noqa: E402
 
 X = ROOT / "data" / "derived"
 RNG = np.random.default_rng(909)
 B = 1000
 BINS = [(1, 4), (5, 6), (7, 9), (10, 14), (15, 24), (25, 49), (50, 99), (100, 10**9)]
+
+
+def song_bets_with_bands(half):
+    """Future song picks (C+2..C+3) with the person's rank q on their song record up to C (groups per artist-month)."""
+    b = pl.read_parquet(X / "bet_outcomes" / f"A_song_{half}.parquet", columns=["user", "item", "artist", "m", "e"]).with_columns(year=pl.col("m") // 12)
+    groups = b.group_by("user", "artist", "m").agg(e=pl.col("e").mean()).with_columns(year=pl.col("m") // 12)
+    parts = []
+    for c in cuts(half):
+        past = (groups.filter(pl.col("year") <= c).group_by("user").agg(s=pl.col("e").sum() / (pl.len() + 20), n=pl.len())
+                .filter(pl.col("n") >= 20).with_columns(q=pl.col("s").rank("average") / pl.len()))
+        parts.append(b.filter(pl.col("year").is_between(c + 2, c + 3)).join(past.select("user", "q"), on="user").with_columns(period=pl.lit("future")))
+    return pl.concat(parts)
 
 
 def label(lo, hi):
@@ -38,11 +55,19 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--half", choices=["explore", "sealed", "lb"], required=True)
     ap.add_argument("--deciles", action="store_true")
+    ap.add_argument("--unit", choices=["artist", "song"], default="artist")
     args = ap.parse_args()
     half = args.half
-    _, f = bets_with_bands(half)
-    ob = pl.read_parquet(X / "obsession" / f"{half}_artist.parquet", columns=["user", "artist", "plays_to_commit"])
-    f = f.filter(pl.col("period") == "future").join(ob, on=["user", "artist"], how="inner").filter(pl.col("plays_to_commit") > 0)
+    sfx = "_song" if args.unit == "song" else ""
+    if args.unit == "song":
+        f = song_bets_with_bands(half)
+        ob = pl.read_parquet(X / "obsession" / f"{half}_song.parquet", columns=["user", "recording", "plays_to_commit"]).rename({"recording": "item"})
+        f = f.join(ob, on=["user", "item"], how="inner").filter(pl.col("plays_to_commit") > 0)
+    else:
+        _, f = bets_with_bands(half)
+        ob = pl.read_parquet(X / "obsession" / f"{half}_artist.parquet", columns=["user", "artist", "plays_to_commit"])
+        f = f.filter(pl.col("period") == "future").join(ob, on=["user", "artist"], how="inner").filter(pl.col("plays_to_commit") > 0)
+    print(f"{args.unit} picks with plays before committing: {f.height:,}, people {f['user'].n_unique():,}")
     f = f.with_columns(grp=pl.when(pl.col("q") > 0.8).then(pl.lit("top")).when(pl.col("q") <= 0.2).then(pl.lit("bottom")).otherwise(pl.lit("middle")))
     lab = pl.lit(None, pl.String)
     for lo, hi in BINS:
@@ -87,7 +112,7 @@ def main():
         for g in ("bottom", "middle", "top", "top1", "all"):
             print(f"  {g:7s} " + "  ".join(f"{r['median_plays']:.0f}:{r['growth']:+.1%}" for r in curve if r["group"] == g))
         print("  top1 picks per tenth:", [r["picks"] for r in curve if r["group"] == "top1"])
-        (ROOT / "analysis" / "out" / f"obs_taste_{half}_deciles.json").write_text(json.dumps({"curve": curve}, indent=1))
+        (ROOT / "analysis" / "out" / f"obs_taste_{half}{sfx}_deciles.json").write_text(json.dumps({"curve": curve}, indent=1))
         return
 
     curve = []
@@ -119,7 +144,7 @@ def main():
     print(json.dumps(test, indent=1))
     for g in ("bottom", "middle", "top", "all"):
         print(f"  {g:7s} " + "  ".join(f"{r['bin']} {r['growth']:+.1%}" for r in curve if r["group"] == g))
-    (ROOT / "analysis" / "out" / f"obs_taste_{half}.json").write_text(json.dumps({"curve": curve, "test": test}, indent=1))
+    (ROOT / "analysis" / "out" / f"obs_taste_{half}{sfx}.json").write_text(json.dumps({"curve": curve, "test": test}, indent=1))
 
 
 if __name__ == "__main__":
