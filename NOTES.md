@@ -167,3 +167,6 @@ same people 2.9x / 1.7x (held, missed narrowly); S3 getting hooked pays off more
 (held, held; LB song plays input fixed first, disclosed). Descriptive song versions with Songs/Artists switches: ladder
 thresholds and growth, eras (LB), habits vs track record (13.7x vs 1.7x), careers (LB), genre gap and genre-vs-others.
 Song data is the 1-in-8 raw sample on MLHD+ (~34k people per half), everyone on ListenBrainz.
+- 2026-10-13: freed 8.5 GB (Robert approved): deleted data/_ckpt (finished LB song checkpoint), data/derived/community,
+  comm_prior (community-leading inputs) and scene_bets (scene-measure inputs). Results are saved; all are rebuildable with the
+  pipeline scripts. data/derived/market was kept: the artist prescience outcome reads it. Project now 136 GB.
