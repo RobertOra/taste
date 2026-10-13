@@ -4,6 +4,7 @@
 // Reference data: data/meta.json, data/index.bin and data/p/NN.bin, read by byte range (site/build_pack_*.py).
 
 const WEEK = 604800;
+const YEAR_MIN_SHOW = 5;
 export const RULES = { minPlayMs: 30000, onboardWeeks: 26, windowWeeks: 26, minWeeks: 4, minHistoryWeeks: 104, minMatch: 0.4, warnMatch: 0.6 };
 const EXCLUDE = new Set(['various artists', 'unknown artist', '']);
 
@@ -456,7 +457,9 @@ export function scoreMeasure(meta, key, picks) {
     const byY = new Map(); for (const p of win) { const y = Math.floor(p.m / 12); if (!byY.has(y)) byY.set(y, []); byY.get(y).push(p.excess); }
     r.years = [...byY.entries()].sort((a, b) => a[0] - b[0]).map(([year, xs]) => {
       const k = xs.length, out = { year, finds: k, avg: mean(xs), typical: M.year_typical ? M.year_typical[String(year)] ?? null : null };
-      if (k >= meta.min_year) {
+      // a year needs 5 finds to show; under meta.min_year (20) it's marked as few: a wide range, not a solid rank
+      out.few = k < meta.min_year;
+      if (k >= YEAR_MIN_SHOW) {
         const sy = xs.reduce((t, x) => t + x, 0) / (k + meta.shrink), q = M.year_q;
         const i = bisectLeft(q, sy), pctY = i <= 0 ? 0 : i >= q.length ? 1 : (i - 1 + (sy - q[i - 1]) / (q[i] - q[i - 1] || 1)) / (q.length - 1);
         const relY = k * M.per_pick / (1 + (k - 1) * M.per_pick), [lo, hi] = trueRange(relY, pctY);

@@ -204,7 +204,7 @@ function render(r, scroll = true) {
   const conv = card('Conviction', 'Artists you got into, grouped by how many times you played them in their first six months.',
     signedBars(Rp.conviction.map((c) => ({ label: `${c.label} <span class="muted">(${c.hi === null ? c.lo + '+' : c.lo + '–' + c.hi})</span>`, v: c.finds >= 5 ? c.growth : null, note: `${n(c.finds)} artists` }))));
   const years = `<section class="card"><h2>Your taste over time</h2>
-    <p class="sub">Your percentile from each year's finds, with its likely range (years with fewer than ${META.min_year} finds aren't scored). Single years rest on fewer finds,
+    <p class="sub">Your percentile from each year's finds, with its likely range (years with fewer than 5 finds aren't scored; hollow points have under ${META.min_year}, so their ranges are wide). Single years rest on fewer finds,
       so their ranges are wider. Taste drifts: in the study, it faded over about a decade.</p>
     <div class="tablebar" id="tchips"></div><div id="tchart"></div><p class="note" id="tnote"></p></section>`;
   const how = Rp.how.length > 1 ? card('How you found them', 'How the first play of each artist started.',
@@ -314,12 +314,14 @@ function wireTime(M, head) {
       g += `<path d="M${sc.map((y) => `${X(y.year)},${Y(y.range[1])}`).join('L')}L${[...sc].reverse().map((y) => `${X(y.year)},${Y(y.range[0])}`).join('L')}Z" class="bandref" opacity="0.8"/>`;
       g += `<path d="M${sc.map((y) => `${X(y.year)},${Y(y.percentile)}`).join('L')}" fill="none" stroke="var(--accent)" stroke-width="2.2"/>`;
       g += `<text x="${pad.l + 4}" y="${Y(50) - 5}" style="fill:var(--ink-2)">average</text>`;
-      g += sc.map((y) => `<circle cx="${X(y.year)}" cy="${Y(y.percentile)}" r="4" fill="var(--accent)"><title>${y.year}: better than ${y.percentile}% (likely ${ord(y.range[0])}–${ord(y.range[1])}), ${y.finds} finds</title></circle>
+      g += sc.map((y) => `<circle cx="${X(y.year)}" cy="${Y(y.percentile)}" r="4" fill="${y.few ? 'var(--surface)' : 'var(--accent)'}" stroke="var(--accent)" stroke-width="${y.few ? 2 : 0}"><title>${y.year}: better than ${y.percentile}% (likely ${ord(y.range[0])}–${ord(y.range[1])}), ${y.finds} finds${y.few ? ' (few finds, wide range)' : ''}</title></circle>
         <text x="${X(y.year)}" y="${Y(y.percentile) - 9}" text-anchor="middle" style="fill:var(--ink);font-weight:600">${y.percentile}</text>`).join('');
     }
     el.innerHTML = `<svg width="100%" viewBox="0 0 ${W} ${H}" role="img" aria-label="Your percentile by year">${g}</svg>`;
     const few = ys.filter((y) => y.percentile === undefined).map((y) => y.year);
-    $('#tnote').textContent = `Percentile among ListenBrainz listeners' years with at least ${META.min_year} finds. Blue band: likely range.` + (few.length ? ` Too few finds to score: ${few.join(', ')}.` : '');
+    const thin = sc.filter((y) => y.few).map((y) => y.year);
+    $('#tnote').textContent = `Percentile among ListenBrainz listeners' years with at least ${META.min_year} finds. Blue band: likely range.`
+      + (thin.length ? ` Hollow points (${thin.join(', ')}): fewer than ${META.min_year} finds that year, so the range is wide.` : '') + (few.length ? ` Too few finds to score (under 5): ${few.join(', ')}.` : '');
   };
   draw();
 }
