@@ -264,6 +264,8 @@ def genre():
                      gap_other=gen[r["family"]]["gap_other"], gap_other_lo=gen[r["family"]]["gap_other_lo"], gap_other_hi=gen[r["family"]]["gap_other_hi"])
     gs = g2["general_summary"]
     rows.append({"key": "summary", "family": None, "same_avg": gs["same_avg"], "other_avg": gs["other_avg"], "carryover": gs["carryover"]})
+    # songs (genre.py --unit song, descriptive): rows keyed "songs:<family>"
+    rows += [{**r, "key": "songs:" + r["family"], "unit": "songs"} for r in json.loads((OUT / "genre_sealed_song.json").read_text())["families"]]
     return rows
 
 
@@ -273,7 +275,10 @@ def genrespec():
 
 def genregeneral():
     r = json.loads((OUT / "genre4_sealed.json").read_text())
-    return r["families"] + [{"key": "summary", "family": None, **r["summary"]}]
+    son = json.loads((OUT / "genre4_sealed_song.json").read_text())   # genre4.py --unit song, descriptive
+    return (r["families"] + [{"key": "summary", "family": None, **r["summary"]}]
+            + [{**x, "key": "songs:" + x["family"], "unit": "songs"} for x in son["families"]]
+            + [{"key": "songs:summary", "family": None, "unit": "songs", **son["summary"]}])
 
 
 def obstaste():

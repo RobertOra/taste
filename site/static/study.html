@@ -50,7 +50,7 @@ window.dash = (() => {
     }
     cbs.forEach((cb) => { try { cb(); } catch (e) { console.error(e); } });
   };
-  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=25c9a83c80`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
+  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=eb17d2bc08`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
     .then((data) => { store[id] = { status: 'ok', data }; }, () => { store[id] = { status: 'error' }; })))
     .then(() => { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run(); });
   let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(run, 150); });
@@ -534,11 +534,16 @@ window.dash = (() => {
       <span class="wu-num" data-source="genregeneral" data-field="established" data-where="key=Electronic" data-fmt="pct">—</span> in electronic. Picking a long-established act leaves little to foresee. Some of the bigger gaps in fast-moving
       genres are simply more room to be right: allowing for how much new artists' fortunes vary in each genre, the middle genres come out about even,
       but the established ones stay clearly lowest.</p>
+    <p>Songs agree in part. For songs too the gap was smallest in jazz, blues, and classical (<span class="wu-num" data-source="genre" data-field="gap" data-where="key=songs:Jazz, blues %26 classical" data-fmt="spct1">—</span>) and folk
+      and country (<span class="wu-num" data-source="genre" data-field="gap" data-where="key=songs:Folk %26 country" data-fmt="spct1">—</span>), but rock and metal songs showed some of the biggest gaps, and electronic one of the
+      smaller ones. Rated on songs, people's other genres again predicted their songs in a genre about as well as the genre itself did.
+      Both charts below switch between songs and artists (hidden half; songs descriptive).</p>
     <div class="wu-card">
       <h3>The gap between the best and worst pickers, by genre</h3>
-      <p class="wu-note">Hidden half. How much more the best fifth's new artists grew than the worst fifth's, compared with similar artists of the same
+      <p class="wu-note">Hidden half. How much more the best fifth's finds grew than the worst fifth's, compared with similar ones of the same
         genre, size, and month. Genres come from each artist's most-voted MusicBrainz genre tag, grouped into families by keyword (our grouping);
-        untagged artists are left out. Bars are 95% ranges.</p>
+        a song takes its artist's genre; untagged artists are left out. Bars are 95% ranges.</p>
+      <div class="wu-chips" id="gn-unit" role="group" aria-label="Songs or artists"></div>
       <div class="wu-chart dash-skeleton" id="gn-chart" data-source="genre"></div>
     </div>
     <p><b>Is taste general or genre-specific?</b> Mostly general. Take the same people and rate them two ways: on their picks in one genre, and only on
@@ -553,8 +558,9 @@ window.dash = (() => {
     <div class="wu-card">
       <h3>Predicting a genre from the genre itself, or from everything else someone picks</h3>
       <p class="wu-note">Hidden half. The same people (with at least 15 earlier picks in the genre and 20 in others), rated on their picks in the genre
-        or only on their picks in other genres. Bars show how much their later new artists in the genre grew against similar artists of that genre; the
-        average picker in this group of keen fans sits above zero. Bars are 95% ranges.</p>
+        or only on their picks in other genres. Bars show how much their later finds in the genre grew against similar ones of that genre. For
+        artists the average picker in this group of keen fans sits above zero; for songs, below it, so compare the bars with each other. Bars are 95% ranges.</p>
+      <div class="wu-chips" id="gg-unit" role="group" aria-label="Songs or artists"></div>
       <div class="wu-legend" id="gg-legend"></div>
       <div class="wu-chart dash-skeleton" id="gg-chart" data-source="genregeneral"></div>
     </div>
@@ -1025,12 +1031,13 @@ window.dash = (() => {
   function safeDraw(fn) { try { fn(); } catch (e) { console.error(fn.name, e); } }
 
   // one Songs / Artists setting per section, shared by its charts; each chart shows the switch
-  const unitSel = { ladder: 'songs', eras: 'songs', obsession: 'songs', habits: 'songs', careers: 'songs' };
+  const unitSel = { ladder: 'songs', eras: 'songs', obsession: 'songs', habits: 'songs', careers: 'songs', genre: 'songs' };
   const unitCharts = { ladder: [['ld-chart', () => drawLadder], ['th-chart', () => drawThresholds], ['gb-chart', () => drawGrowthBand]],
     eras: [['yg-chart', () => drawYearGrowth], ['yt-chart', () => drawYearTakeoff]],
     obsession: [['ob-chart', () => drawObsession], ['ot-chart', () => drawObsTaste]],
     habits: [['hb-chart', () => drawHabits]],
-    careers: [['cv-chart', () => drawCareers], ['ct-chart', () => drawCareerTen]] };
+    careers: [['cv-chart', () => drawCareers], ['ct-chart', () => drawCareerTen]],
+    genre: [['gn-chart', () => drawGenre], ['gg-chart', () => drawGenreGeneral]] };
   const unitOf = (r) => r.unit || 'artists';
   function unitChips(id, group = 'ladder') {
     document.getElementById(id).replaceChildren(...[['songs', 'Songs'], ['artists', 'Artists']].map(([k, l]) => {
@@ -1749,9 +1756,11 @@ window.dash = (() => {
 
   function drawGenre() {
     const el = document.getElementById('gn-chart');
-    if (!ready(el, ['genre'])) return;
+    if (!ready(el, ['genre'])) { document.getElementById('gn-unit').replaceChildren(); return; }
+    unitChips('gn-unit', 'genre');
     const col = dash.colors[0];
-    const rows = dash.data('genre').data.filter((r) => r.family && r.family !== 'Other').map((r) => ({ ...r, v: +r.gap, lo: +r.gap_lo, hi: +r.gap_hi })).sort((a, b) => b.v - a.v);
+    const rows = dash.data('genre').data.filter((r) => r.family && r.family !== 'Other' && unitOf(r) === unitSel.genre).map((r) => ({ ...r, v: +r.gap, lo: +r.gap_lo, hi: +r.gap_hi })).sort((a, b) => b.v - a.v);
+    if (!rows.length) { el.innerHTML = '<p class="wu-fail">This chart\'s data didn\'t load. Reload the page.</p>'; return; }
     const fs = css('--cds-font-size-caption') || '12px';
     const width = el.clientWidth, rowH = 26, m = { t: 4, r: 56, b: 26 };
     const height = m.t + rows.length * rowH + m.b;
@@ -1777,17 +1786,22 @@ window.dash = (() => {
 
   function drawGenreGeneral() {
     const el = document.getElementById('gg-chart');
-    if (!ready(el, ['genregeneral'])) return;
+    if (!ready(el, ['genregeneral'])) { document.getElementById('gg-unit').replaceChildren(); return; }
+    unitChips('gg-unit', 'genre');
+    const songs = unitSel.genre === 'songs';
     const kinds = [['this_genre', 'Best fifth on this genre', dash.colors[0]], ['other_genres', 'Best fifth on other genres only', dash.colors[1]],
       ['everyone', 'Average picker', css('--cds-chart-muted')]];
     legend('gg-legend', kinds.map(([, l, c]) => [l, c, 'dot']));
-    const rows = dash.data('genregeneral').data.filter((r) => r.family).sort((a, b) => +b.this_genre - +a.this_genre);
+    const rows = dash.data('genregeneral').data.filter((r) => r.family && unitOf(r) === unitSel.genre).sort((a, b) => +b.this_genre - +a.this_genre);
+    if (!rows.length) { el.innerHTML = '<p class="wu-fail">This chart\'s data didn\'t load. Reload the page.</p>'; return; }
     const fs = css('--cds-font-size-caption') || '12px';
     const width = el.clientWidth, rowH = 40, m = { t: 4, r: 48, b: 26 };
     const height = m.t + rows.length * rowH + m.b;
     const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
     const left = Math.min(textWidth(svg, rows.map((r) => r.family), fs) + 14, width * 0.45);
-    const x = d3.scaleLinear([0, d3.max(rows, (r) => Math.max(+r.this_genre_hi, +r.other_genres_hi)) * 1.05], [left, width - m.r]).nice();
+    // songs sit below zero in this group, so their axis runs below zero and bars go left from it; artists keep the plain axis
+    const lo0 = songs ? Math.min(0, d3.min(rows, (r) => Math.min(+r.this_genre_lo, +r.other_genres_lo, +r.everyone))) * 1.05 : 0;
+    const x = d3.scaleLinear([lo0, Math.max(0.005, d3.max(rows, (r) => Math.max(+r.this_genre_hi, +r.other_genres_hi)) * 1.05)], [left, width - m.r]).nice();
     svg.append('g').selectAll('line').data(x.ticks(5)).join('line').attr('x1', (v) => x(v)).attr('x2', (v) => x(v)).attr('y1', m.t).attr('y2', height - m.b)
       .attr('stroke', (v) => (v === 0 ? css('--cds-chart-axis') : css('--cds-chart-grid')));
     axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 6})`).call(d3.axisBottom(x).ticks(5).tickFormat(d3.format('+.0%')).tickSize(0)), fs);
@@ -1796,8 +1810,8 @@ window.dash = (() => {
       const y0 = m.t + i * rowH;
       svg.append('text').attr('x', 0).attr('y', y0 + rowH / 2).attr('dy', '0.35em').attr('fill', css('--color-fg-muted')).style('font-size', fs).text(r.family);
       kinds.forEach(([k, kl, c], j) => {
-        const v = Math.max(0, +r[k]), cy = y0 + 8 + j * 11, h = 9;
-        svg.append('rect').attr('x', x(0)).attr('y', cy - h / 2).attr('width', Math.max(1, x(v) - x(0))).attr('height', h).attr('rx', 2).attr('fill', c);
+        const v = songs ? +r[k] : Math.max(0, +r[k]), cy = y0 + 8 + j * 11, h = 9;
+        svg.append('rect').attr('x', Math.min(x(0), x(v))).attr('y', cy - h / 2).attr('width', Math.max(1, Math.abs(x(v) - x(0)))).attr('height', h).attr('rx', 2).attr('fill', c);
         if (k !== 'everyone') svg.append('line').attr('x1', x(+r[`${k}_lo`])).attr('x2', x(+r[`${k}_hi`])).attr('y1', cy).attr('y2', cy).attr('stroke', css('--color-fg')).attr('opacity', 0.5);
       });
       svg.append('rect').attr('x', 0).attr('y', y0).attr('width', width).attr('height', rowH).attr('fill', 'transparent')

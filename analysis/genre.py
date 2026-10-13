@@ -7,7 +7,11 @@ pick's genre family. Within a family, each pick is compared with similar picks o
 bin), so a genre growing overall doesn't count. Per family: growth vs similar for the top and bottom fifth of pickers, the
 gap between them, and the top fifth's tenfold-takeoff odds. Bootstrap over people (1,000 draws).
 
-Usage: genre.py --half explore|sealed [--test "TOP|BOTTOM" ...]
+--unit song (added 2026-10-13, descriptive): songs take their artist's genre; people are rated on their song picks (songs by one
+artist found the same month count as one pick); outcomes are each later song vs similar songs of the same genre. Output gets
+a _song suffix.
+
+Usage: genre.py --half explore|sealed [--test "TOP|BOTTOM" ...] [--unit artist|song]
 """
 
 import argparse
@@ -56,15 +60,18 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--half", choices=["explore", "sealed", "lb"], required=True)
     ap.add_argument("--test", nargs="*", default=None, help='pre-registered pairs "TOP|BOTTOM": gap(TOP) - gap(BOTTOM) > 0')
+    ap.add_argument("--unit", choices=["artist", "song"], default="artist")
     a = ap.parse_args()
     g = pl.read_parquet(genre_path(a.half), columns=["artist", "top_genre"]).with_columns(fam=family_expr())
-    b = pl.read_parquet(X / "bet_outcomes" / f"A_artist_{a.half}.parquet", columns=["user", "artist", "m", "bin", "v", "e"]).with_columns(year=pl.col("m") // 12)
+    b = pl.read_parquet(X / "bet_outcomes" / f"A_{a.unit}_{a.half}.parquet", columns=["user", "artist", "m", "bin", "v", "e"]).with_columns(year=pl.col("m") // 12)
+    # ratings: artist picks, or song picks with songs by one artist found the same month counted as one
+    rate = b if a.unit == "artist" else b.group_by("user", "artist", "m").agg(e=pl.col("e").mean()).with_columns(year=pl.col("m") // 12)
     bg = b.join(g.select("artist", "fam"), on="artist", how="inner")
     bg = bg.with_columns(x10=(pl.col("v") >= np.log(10)).cast(pl.Float64))
     exp = bg.group_by("m", "bin", "fam").agg(ve=pl.col("v").mean(), s10=pl.col("x10").mean())
     parts = []
     for c in cuts(a.half):
-        past = (b.filter(pl.col("year") <= c).group_by("user").agg(s=pl.col("e").sum() / (pl.len() + 20), n=pl.len())
+        past = (rate.filter(pl.col("year") <= c).group_by("user").agg(s=pl.col("e").sum() / (pl.len() + 20), n=pl.len())
                 .filter(pl.col("n") >= 20).with_columns(q=pl.col("s").rank("average") / pl.len()))
         parts.append(bg.filter(pl.col("year").is_between(c + 2, c + 3)).join(past.select("user", "q"), on="user"))
     f = pl.concat(parts).join(exp, on=["m", "bin", "fam"]).with_columns(gx=pl.col("v") - pl.col("ve"))
@@ -100,7 +107,7 @@ def main():
             est = next(r["gap"] for r in rows if r["family"] == t_) - next(r["gap"] for r in rows if r["family"] == b_)
             out["tests"].append({"top": t_, "bottom": b_, "est": est, "lo": pct(d, 2.5), "hi": pct(d, 97.5), "lo99": pct(d, 0.5)})
             print("test:", out["tests"][-1])
-    (ROOT / "analysis" / "out" / f"genre_{a.half}.json").write_text(json.dumps(out, indent=1))
+    (ROOT / "analysis" / "out" / f"genre_{a.half}{'_song' if a.unit == 'song' else ''}.json").write_text(json.dumps(out, indent=1))
 
 
 if __name__ == "__main__":

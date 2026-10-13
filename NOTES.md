@@ -160,3 +160,10 @@ corrections, simplified for outside visitors; agrees 0.71 with the frozen score 
    reference listeners. Expect histories with a few stray early plays to score differently (those plays no longer end the warm-up early).
 4. Store each song's own excess as well as the artist-month group's, to test empirically whether individual songs or groups
    make the better score (split-half stability and predicting later years' scores).
+
+### Songs added to the write-up (2026-10-13; SONG_PREREG.md for the tested ones)
+Tested before running (hidden half / ListenBrainz): S1 top 1% songs tenfold 13.2x / 4.4x (held, held); S2 songs vs artists,
+same people 2.9x / 1.7x (held, missed narrowly); S3 getting hooked pays off more for top song pickers +4.2 / +3.7 points
+(held, held; LB song plays input fixed first, disclosed). Descriptive song versions with Songs/Artists switches: ladder
+thresholds and growth, eras (LB), habits vs track record (13.7x vs 1.7x), careers (LB), genre gap and genre-vs-others.
+Song data is the 1-in-8 raw sample on MLHD+ (~34k people per half), everyone on ListenBrainz.

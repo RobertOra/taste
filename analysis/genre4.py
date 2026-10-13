@@ -7,7 +7,11 @@ fully general, the other-genres ranking would predict genre G as well as the gen
 Also, per genre: share of picks of artists already in the data by April 2005 ("established"), popularity percentile.
 Bootstrap over people (500 draws).
 
-Usage: genre4.py --half explore|sealed
+--unit song (added 2026-10-13, descriptive): songs take their artist's genre; ratings use song picks (songs by one artist found
+the same month count as one; >= 15 such picks in the genre, >= 20 in others); outcomes are each later song vs similar songs of
+the genre. Output gets a _song suffix.
+
+Usage: genre4.py --half explore|sealed [--unit artist|song]
 """
 
 import argparse
@@ -39,10 +43,13 @@ def pct(x, q):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--half", choices=["explore", "sealed", "lb"], required=True)
-    half = ap.parse_args().half
+    ap.add_argument("--unit", choices=["artist", "song"], default="artist")
+    a_ = ap.parse_args(); half = a_.half
     g = pl.read_parquet(genre_path(half), columns=["artist", "top_genre"]).with_columns(fam=family_expr())
-    b = pl.read_parquet(X / "bet_outcomes" / f"A_artist_{half}.parquet", columns=["user", "artist", "m", "bin", "v", "e", "pen0"]).with_columns(year=pl.col("m") // 12)
+    b = pl.read_parquet(X / "bet_outcomes" / f"A_{a_.unit}_{half}.parquet", columns=["user", "artist", "m", "bin", "v", "e", "pen0"]).with_columns(year=pl.col("m") // 12)
     b = b.join(g.select("artist", "fam"), on="artist", how="left").with_columns(pl.col("fam").fill_null("Untagged"))
+    # ratings: artist picks, or song picks with songs by one artist found the same month counted as one
+    rate = b if a_.unit == "artist" else b.group_by("user", "artist", "m", "fam").agg(e=pl.col("e").mean()).with_columns(year=pl.col("m") // 12)
     con = duckdb.connect(); con.execute("SET memory_limit='5GB'; SET threads=6")
     fs = con.execute(f"SELECT artist, min(month) AS fm FROM read_parquet('{X}/user_artist_month/{half}/*.parquet') GROUP BY artist").pl()
     b = b.join(fs, on="artist", how="left").with_columns(pq=pl.col("pen0").rank("average").over("m") / pl.len().over("m"),
@@ -54,8 +61,8 @@ def main():
     for fam in MAIN:
         parts = []
         for c in cuts(half):
-            pg = b.filter((pl.col("year") <= c) & (pl.col("fam") == fam)).group_by("user").agg(sg=pl.col("e").sum() / (pl.len() + 20), ng=pl.len())
-            po = b.filter((pl.col("year") <= c) & (pl.col("fam") != fam)).group_by("user").agg(so=pl.col("e").sum() / (pl.len() + 20), no=pl.len())
+            pg = rate.filter((pl.col("year") <= c) & (pl.col("fam") == fam)).group_by("user").agg(sg=pl.col("e").sum() / (pl.len() + 20), ng=pl.len())
+            po = rate.filter((pl.col("year") <= c) & (pl.col("fam") != fam)).group_by("user").agg(so=pl.col("e").sum() / (pl.len() + 20), no=pl.len())
             ppl = pg.join(po, on="user").filter((pl.col("ng") >= 15) & (pl.col("no") >= 20))
             ppl = ppl.with_columns(qg=pl.col("sg").rank("average") / pl.len(), qo=pl.col("so").rank("average") / pl.len())
             parts.append(tagged.filter(pl.col("year").is_between(c + 2, c + 3) & (pl.col("fam") == fam)).join(ppl.select("user", "qg", "qo"), on="user")
@@ -80,7 +87,7 @@ def main():
                "lo": pct(avg, 2.5), "hi": pct(avg, 97.5), "hi99": pct(avg, 99.5)}
     summary["share_general"] = summary["avg_other"] / summary["avg_this"]
     print("  summary:", summary)
-    (ROOT / "analysis" / "out" / f"genre4_{half}.json").write_text(json.dumps({"families": rows, "summary": summary}, indent=1))
+    (ROOT / "analysis" / "out" / f"genre4_{half}{'_song' if a_.unit == 'song' else ''}.json").write_text(json.dumps({"families": rows, "summary": summary}, indent=1))
 
 
 if __name__ == "__main__":
