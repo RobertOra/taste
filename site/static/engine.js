@@ -526,7 +526,7 @@ export async function scoreHistory(files, meta, pack, onProgress = () => {}) {
       + (recentA.length ? ' Some of your finds are too recent to judge yet; come back in a few months.' : '') });
     return out;
   }
-  if (!R[out.headline].solid) out.checks.push({ id: 'picks', ok: true, warn: true, text: 'You have enough finds for a rough score; more history would narrow the range.' });
+  if (!R[out.headline].solid) out.checks.push({ id: 'picks', ok: true, warn: true, text: `You have enough finds for a rough score; more history would narrow the range (${R[out.headline].picks} ${out.headline.startsWith('song') ? 'independent song finds' : 'artists'}; ${meta.min_picks} is the minimum, 250 or more is a solid score).` });
   out.report = buildReport({ meta, plays, aPicks, sPicks, judgedA, mA, R, recentA, lastJ, notPicked, wMin, wMax, pack });
   out.ok = true;
   return out;
