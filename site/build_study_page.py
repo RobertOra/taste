@@ -1,6 +1,7 @@
 """The full write-up ("Is good taste real?") as a normal static page: site/static/study.html + study/*.json.
 Takes analysis/writeup/index.html unchanged and supplies what the claude.ai dashboard runtime provided: design tokens (CSS
 variables, light and dark), d3, and a small `dash` stand-in that loads the same JSON datasets from study/."""
+import hashlib
 import json
 import re
 import shutil
@@ -66,7 +67,7 @@ window.dash = (() => {
     }
     cbs.forEach((cb) => { try { cb(); } catch (e) { console.error(e); } });
   };
-  Promise.all(ids.map((id) => fetch(`study/${id}.json`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
+  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=%VER%`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
     .then((data) => { store[id] = { status: 'ok', data }; }, () => { store[id] = { status: 'error' }; })))
     .then(() => { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run(); });
   let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(run, 150); });
@@ -76,6 +77,6 @@ window.dash = (() => {
 </head>
 <body>
 <nav class="site-top"><a class="brand" href="./">Taste Test</a><a href="./">Score your own taste →</a></nav>
-""".replace("%IDS%", json.dumps(ids))
+""".replace("%IDS%", json.dumps(ids)).replace("%VER%", hashlib.sha1(b"".join((OUT / "study" / f"{i}.json").read_bytes() for i in ids)).hexdigest()[:10])
 (OUT / "study.html").write_text(head + page + "\n</body>\n</html>\n")
 print("study.html written;", len(ids), "datasets:", ", ".join(ids))

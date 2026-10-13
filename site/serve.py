@@ -46,6 +46,10 @@ class RangeHandler(SimpleHTTPRequestHandler):
     def log_message(self, *a):
         pass
 
+    def end_headers(self):
+        self.send_header("Cache-Control", "no-cache")   # always revalidate: no stale page/data mix while testing
+        super().end_headers()
+
 
 if __name__ == "__main__":
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8777

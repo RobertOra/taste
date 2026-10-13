@@ -50,7 +50,7 @@ window.dash = (() => {
     }
     cbs.forEach((cb) => { try { cb(); } catch (e) { console.error(e); } });
   };
-  Promise.all(ids.map((id) => fetch(`study/${id}.json`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
+  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=4b5fa2a6c6`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
     .then((data) => { store[id] = { status: 'ok', data }; }, () => { store[id] = { status: 'error' }; })))
     .then(() => { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run(); });
   let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(run, 150); });
@@ -992,6 +992,9 @@ window.dash = (() => {
     });
   }
 
+  // one chart failing (e.g. data from an older build) must not stop the others
+  function safeDraw(fn) { try { fn(); } catch (e) { console.error(fn.name, e); } }
+
   let ldSel = 'songs';
   function drawLadder() {
     const el = document.getElementById('ld-chart');
@@ -1008,6 +1011,7 @@ window.dash = (() => {
     legend('ld-legend', [[`Their ${word}`, colT, 'line'], [simWord, colS, 'line']]);
     const rows = dash.data('ladder').data.filter((r) => !truthy(r.detail) && (r.unit || 'artists') === ldSel)
       .map((r) => ({ ...r, mid: +r.mid, t: +r.rate * 1000, sim: +r.similar_rate * 1000, odds: +r.odds }));
+    if (!rows.length) { el.innerHTML = '<p class="wu-fail">This chart\'s data didn\'t load. Reload the page.</p>'; return; }
     const fs = css('--cds-font-size-caption') || '12px';
     const width = el.clientWidth, height = 280, m = { t: 28, r: 16, b: 40, l: 36 };
     const svg = d3.select(el).append('svg').attr('width', '100%').attr('viewBox', `0 0 ${width} ${height}`).attr('height', height);
@@ -1961,27 +1965,27 @@ window.dash = (() => {
 
   dash.onData(() => {
     fillMarks();
-    drawRepeat();
-    drawDecade();
-    drawCareers();
-    drawCareerTen();
-    drawToday();
-    drawYearGrowth();
-    drawYearTakeoff();
-    drawYearFan();
-    drawObsession();
-    drawObsTaste();
-    drawHabits();
-    drawGenre();
-    drawGenreGeneral();
-    drawFanRel();
-    drawStayBad();
-    drawSceneSplit();
-    drawLadder();
-    drawThresholds();
-    drawGrowthBand();
-    drawFanValue();
-    drawCrowd();
+    safeDraw(drawRepeat);
+    safeDraw(drawDecade);
+    safeDraw(drawCareers);
+    safeDraw(drawCareerTen);
+    safeDraw(drawToday);
+    safeDraw(drawYearGrowth);
+    safeDraw(drawYearTakeoff);
+    safeDraw(drawYearFan);
+    safeDraw(drawObsession);
+    safeDraw(drawObsTaste);
+    safeDraw(drawHabits);
+    safeDraw(drawGenre);
+    safeDraw(drawGenreGeneral);
+    safeDraw(drawFanRel);
+    safeDraw(drawStayBad);
+    safeDraw(drawSceneSplit);
+    safeDraw(drawLadder);
+    safeDraw(drawThresholds);
+    safeDraw(drawGrowthBand);
+    safeDraw(drawFanValue);
+    safeDraw(drawCrowd);
     const hl = (r, f) => (r[f] === null || r[f] === undefined ? '–' : r.unit === 'times as often' ? fmt.times(+r[f])
       : r.unit === 'points' ? `${d3.format('.1f')(+r[f] * 100)} points` : r.unit === 'log' ? d3.format('+.2f')(+r[f]) : fmt.spct1(+r[f]));
     (function fillHeadlines() {
