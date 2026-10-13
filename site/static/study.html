@@ -50,7 +50,7 @@ window.dash = (() => {
     }
     cbs.forEach((cb) => { try { cb(); } catch (e) { console.error(e); } });
   };
-  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=eb17d2bc08`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
+  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=c4ba5fe76b`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
     .then((data) => { store[id] = { status: 'ok', data }; }, () => { store[id] = { status: 'error' }; })))
     .then(() => { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run(); });
   let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(run, 150); });
@@ -497,8 +497,22 @@ window.dash = (() => {
       <div class="wu-chart dash-skeleton" id="hb-chart" data-source="toppickers"></div>
     </div>
     <p>What the best pickers have is two kinds of judgment at once. They're early to scenes that are about to take off, and within those
-      scenes they pick the artists that take off.</p>
-    <div class="wu-eq">
+      scenes they pick the artists, and the songs, that take off.</p>
+    <div class="wu-chips" id="eq-unit" role="group" aria-label="Songs or artists"></div>
+    <div class="wu-eq" id="eq-songs">
+      <div class="wu-card wu-take"><span class="wu-tt">Right scenes</span>
+        <span class="wu-big dash-skeleton" data-source="toppickers" data-field="value" data-where="key=songs:scene_quality" data-fmt="times">—</span>
+        <span class="wu-cap">Their songs' scenes took off this much more often than songs of the same size elsewhere.</span></div>
+      <span class="wu-op" aria-hidden="true">×</span>
+      <div class="wu-card wu-take"><span class="wu-tt">Right songs</span>
+        <span class="wu-big dash-skeleton" data-source="toppickers" data-field="value" data-where="key=songs:within_scene" data-fmt="times">—</span>
+        <span class="wu-cap">Within those scenes, their songs took off this much more often than others the same size.</span></div>
+      <span class="wu-op" aria-hidden="true">=</span>
+      <div class="wu-card wu-take"><span class="wu-tt">Overall</span>
+        <span class="wu-big dash-skeleton" data-source="toppickers" data-field="value" data-where="key=songs:total" data-fmt="times">—</span>
+        <span class="wu-cap">as often as similar songs, for the top 1% of song pickers.</span></div>
+    </div>
+    <div class="wu-eq" id="eq-artists" hidden>
       <div class="wu-card wu-take"><span class="wu-tt">Right scenes</span>
         <span class="wu-big dash-skeleton" data-source="toppickers" data-field="value" data-where="key=scene_quality" data-fmt="times">—</span>
         <span class="wu-cap">Their scenes took off this much more often than artists of the same size elsewhere.</span></div>
@@ -513,12 +527,16 @@ window.dash = (() => {
     </div>
     <p>ListenBrainz shows the same two kinds of judgment: the top 1%'s scenes took off <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=P7b" data-fmt="times">—</span>
       as often as artists of the same size elsewhere, and their artists within those scenes <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=P7a" data-fmt="times">—</span>
-      as often as others there.</p>
+      as often as others there. For songs, written down in advance and checked once, the split held on both: on the hidden half
+      <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=S5" data-fmt="times">—</span> for scenes and <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=S4" data-fmt="times">—</span> for songs within them; on ListenBrainz
+      <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=S5" data-fmt="times">—</span> and <span class="wu-num" data-source="headlines" data-field="lb" data-where="key=S4" data-fmt="times">—</span>. On the hidden half, songs beat artists on both parts; on ListenBrainz, songs'
+      extra edge is all in picking the right songs within a scene.</p>
     <div class="wu-card" id="scenesplit">
       <h3>Right scenes and right artists, all the way up the ladder</h3>
-      <p class="wu-note">Hidden half. For each band of pickers: how much more often their scenes took off than artists of the same size elsewhere,
-        and how much more often their artists took off than others the same size in the same scene. Both rise together; multiplied, they give
-        each band's overall edge. Bars are 95% ranges.</p>
+      <p class="wu-note">Hidden half. For each band of pickers: how much more often their scenes took off than finds of the same size elsewhere,
+        and how much more often their finds took off than others the same size in the same scene. Both rise together; multiplied, they give
+        each band's overall edge. For songs, people are ranked on their songs and a song's scene is its artist's. Bars are 95% ranges.</p>
+      <div class="wu-chips" id="ss-unit" role="group" aria-label="Songs or artists"></div>
       <div class="wu-legend" id="ss-legend"></div>
       <div class="wu-chart dash-skeleton" id="ss-chart" data-source="scenesplit"></div>
     </div>
@@ -638,10 +656,11 @@ window.dash = (() => {
       analysed on it. We wrote down every prediction first, with the same bars, then ran each once. Eight of the nine main measures we could run
       there passed, and twenty-four of the thirty-two predictions held. The table shows every one. A few ListenBrainz charts came after that
       run (a decade later, careers, and one person's range); nothing was predicted for them in advance, so they're marked exploratory.</p>
-    <p><b>Later, songs.</b> The takeoff and getting-hooked numbers above were first for artists. After seeing the songs' versions on the first
-      half, we wrote down three more predictions before running them anywhere else: the top 1% of song pickers beat similar songs (S1), and beat
-      their own artist edge (S2); getting hooked pays off more for top song pickers (S3). All three held on the hidden half. On ListenBrainz, S1
-      and S3 held and S2 narrowly missed. They're the last three rows of the table.</p>
+    <p><b>Later, songs.</b> The takeoff, getting-hooked, and scene numbers above were first for artists. After seeing the songs' versions on the
+      first half, we wrote down five more predictions before running them anywhere else: the top 1% of song pickers beat similar songs (S1) and
+      their own artist edge (S2); getting hooked pays off more for top song pickers (S3); and their edge splits into right songs within a scene
+      (S4) and right scenes (S5). All five held on the hidden half. On ListenBrainz, four held and S2 narrowly missed. They're the last five rows
+      of the table.</p>
     <div class="wu-card">
       <h3>Checks of these findings on the hidden half and on ListenBrainz</h3>
       <div class="wu-tablewrap">
@@ -1033,13 +1052,14 @@ window.dash = (() => {
   function safeDraw(fn) { try { fn(); } catch (e) { console.error(fn.name, e); } }
 
   // one Songs / Artists setting per section, shared by its charts; each chart shows the switch
-  const unitSel = { ladder: 'songs', eras: 'songs', obsession: 'songs', habits: 'songs', careers: 'songs', genre: 'songs' };
+  const unitSel = { ladder: 'songs', eras: 'songs', obsession: 'songs', habits: 'songs', careers: 'songs', genre: 'songs', scenes: 'songs' };
   const unitCharts = { ladder: [['ld-chart', () => drawLadder], ['th-chart', () => drawThresholds], ['gb-chart', () => drawGrowthBand]],
     eras: [['yg-chart', () => drawYearGrowth], ['yt-chart', () => drawYearTakeoff]],
     obsession: [['ob-chart', () => drawObsession], ['ot-chart', () => drawObsTaste]],
     habits: [['hb-chart', () => drawHabits]],
     careers: [['cv-chart', () => drawCareers], ['ct-chart', () => drawCareerTen]],
-    genre: [['gn-chart', () => drawGenre], ['gg-chart', () => drawGenreGeneral]] };
+    genre: [['gn-chart', () => drawGenre], ['gg-chart', () => drawGenreGeneral]],
+    scenes: [['ss-chart', () => drawSceneSplit]] };
   const unitOf = (r) => r.unit || 'artists';
   function unitChips(id, group = 'ladder') {
     document.getElementById(id).replaceChildren(...[['songs', 'Songs'], ['artists', 'Artists']].map(([k, l]) => {
@@ -1678,10 +1698,16 @@ window.dash = (() => {
 
   function drawSceneSplit() {
     const el = document.getElementById('ss-chart');
-    if (!ready(el, ['scenesplit'])) return;
-    const series = [['scenes', 'Right scenes', dash.colors[0]], ['artists', 'Right artists within them', dash.colors[1]]];
+    // the equation cards above follow the same setting
+    document.getElementById('eq-songs').hidden = unitSel.scenes !== 'songs'; document.getElementById('eq-artists').hidden = unitSel.scenes === 'songs';
+    unitChips('eq-unit', 'scenes');
+    if (!ready(el, ['scenesplit'])) { document.getElementById('ss-unit').replaceChildren(); return; }
+    unitChips('ss-unit', 'scenes');
+    const within = unitSel.scenes === 'songs' ? 'Right songs within them' : 'Right artists within them';
+    const series = [['scenes', 'Right scenes', dash.colors[0]], ['artists', within, dash.colors[1]]];
     legend('ss-legend', series.map(([, l, c]) => [l, c, 'line']));
-    const rows = dash.data('scenesplit').data.map((r) => ({ ...r, mid: +r.mid }));
+    const rows = dash.data('scenesplit').data.filter((r) => unitOf(r) === unitSel.scenes).map((r) => ({ ...r, mid: +r.mid }));
+    if (!rows.length) { el.innerHTML = '<p class="wu-fail">This chart\'s data didn\'t load. Reload the page.</p>'; return; }
     const f = frame(el, 260, { t: 28, r: 16, b: 40, l: 36 });
     const { svg, fs, width, m } = f;
     const x = d3.scaleLinear([0, 100], [m.l, width - m.r]);
@@ -1697,7 +1723,7 @@ window.dash = (() => {
       errorDots(svg, pts, (d) => x(d.mid), y, c, false);
     });
     bandHover(f, rows, x, (d) => [`Pickers ranked ${d.band}`, [['Right scenes', fmt.times(+d.scenes), dash.colors[0]],
-      ['Right artists within them', fmt.times(+d.artists), dash.colors[1]], ['Overall', fmt.times(+d.total)], ['People', fmt.int(+d.people)]]]);
+      [within, fmt.times(+d.artists), dash.colors[1]], ['Overall', fmt.times(+d.total)], ['People', fmt.int(+d.people)]]]);
   }
 
   function drawFanRel() {

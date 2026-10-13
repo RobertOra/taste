@@ -73,5 +73,9 @@ Top 1%: scene quality 2.45 [99% low 1.74] x within scene 3.81 [99% low 2.71] = 9
 
 Run once each: `scene_split_songs.py --half {sealed,lb}`.
 
-## Round 3 results
-(to be added after the runs)
+## Round 3 results (2026-10-13, run once each)
+| | Scene quality [99% low] | S5 (> 1) | Within scene [99% low] | S4 (> 1) | Overall |
+|---|---|---|---|---|---|
+| Explore (exploratory) | 2.45 [1.74] | - | 3.81 [2.71] | - | 9.34 |
+| **Sealed** | **4.27** [2.41] | **held** | **3.10** [2.57] | **held** | 13.24 |
+| **ListenBrainz** | **1.51** [1.27] | **held** | **2.91** [1.60] | **held** | 4.39 |

@@ -79,5 +79,29 @@
   "value": 0.046708776110610084,
   "lo": null,
   "hi": null
+ },
+ {
+  "key": "songs:scene_quality",
+  "unit": "songs",
+  "label": "Their songs' scenes vs size alone",
+  "value": 4.271458927194009,
+  "lo": 2.694434029069155,
+  "hi": 6.166299038083748
+ },
+ {
+  "key": "songs:within_scene",
+  "unit": "songs",
+  "label": "Their songs vs the same scene",
+  "value": 3.100590877681746,
+  "lo": 2.6875503164626293,
+  "hi": 3.759897838041816
+ },
+ {
+  "key": "songs:total",
+  "unit": "songs",
+  "label": "Top 1%: tenfold takeoffs vs similar songs",
+  "value": 13.24404658405,
+  "lo": 8.650332009712365,
+  "hi": 18.304405182584134
  }
 ]

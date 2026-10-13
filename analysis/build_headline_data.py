@@ -338,6 +338,13 @@ def song_predictions():
                      "first_half": get(lj["explore"])[0], "rate": None, "rate_compared": None, "confirmed": lo99 > bar,
                      "lb": lv, "lb_lo": llo, "lb_hi": lhi, "lb_held": llo99 > bar})
     t = {h: json.loads((OUT / f"obs_taste_{h}_song.json").read_text())["test"] for h in ("explore", "sealed", "lb")}
+    ss = {h: json.loads((OUT / f"scene_split_songs_{h}.json").read_text())["bands"][-1] for h in ("explore", "sealed", "lb")}
+    for key, claim, f in (("S4", "Top 1%'s songs vs the same size and scene: tenfold takeoffs", "artists"),
+                          ("S5", "Top 1%'s songs' scenes vs size alone: tenfold takeoffs", "scenes")):
+        rows.append({"key": key, "claim": claim, "unit": "times as often", "hidden": ss["sealed"][f], "lo": ss["sealed"][f"{f}_lo"],
+                     "hi": ss["sealed"][f"{f}_hi"], "lo99": ss["sealed"][f"{f}_lo99"], "first_half": ss["explore"][f], "rate": None, "rate_compared": None,
+                     "confirmed": ss["sealed"][f"{f}_lo99"] > 1, "lb": ss["lb"][f], "lb_lo": ss["lb"][f"{f}_lo"], "lb_hi": ss["lb"][f"{f}_hi"],
+                     "lb_held": ss["lb"][f"{f}_lo99"] > 1})
     rows.append({"key": "S3", "claim": "Getting hooked pays off more for top-fifth than bottom-fifth song pickers (difference)", "unit": "points",
                  "hidden": t["sealed"]["diff"], "lo": t["sealed"]["lo"], "hi": t["sealed"]["hi"], "lo99": t["sealed"]["lo99"],
                  "first_half": t["explore"]["diff"], "rate": None, "rate_compared": None, "confirmed": t["sealed"]["lo99"] > 0,
@@ -382,4 +389,12 @@ if __name__ == "__main__":
              {"key": "songs:by_record", "unit": "songs", "label": "Top 1% chosen by song track record", "value": tp["top1_by_record_odds_10x"], "lo": None, "hi": None},
              {"key": "songs:r2_traits", "unit": "songs", "label": "Share of later song results explained by habits", "value": tp["variance_explained"]["traits"], "lo": None, "hi": None},
              {"key": "songs:r2_record", "unit": "songs", "label": "Share explained by song track record", "value": tp["variance_explained"]["track_record"], "lo": None, "hi": None}]
+    t1 = json.loads((OUT / "scene_split_songs_sealed.json").read_text())["bands"][-1]   # scene_split_songs.py, SONG_PREREG.md round 3
+    rows += [{"key": "songs:scene_quality", "unit": "songs", "label": "Their songs' scenes vs size alone", "value": t1["scenes"], "lo": t1["scenes_lo"], "hi": t1["scenes_hi"]},
+             {"key": "songs:within_scene", "unit": "songs", "label": "Their songs vs the same scene", "value": t1["artists"], "lo": t1["artists_lo"], "hi": t1["artists_hi"]},
+             {"key": "songs:total", "unit": "songs", "label": "Top 1%: tenfold takeoffs vs similar songs", "value": t1["total"], "lo": t1["total_lo"], "hi": t1["total_hi"]}]
     (W / "toppickers.json").write_text(json.dumps(rows, indent=1))
+    # songs for "Right scenes and right artists, all the way up the ladder": rows keyed "songs:<band>" added to scenesplit.json
+    rows = [r for r in json.loads((W / "scenesplit.json").read_text()) if r.get("unit") != "songs"]
+    rows += [{**r, "key": "songs:" + r["key"], "unit": "songs"} for r in json.loads((OUT / "scene_split_songs_sealed.json").read_text())["bands"]]
+    (W / "scenesplit.json").write_text(json.dumps(rows, indent=1))
