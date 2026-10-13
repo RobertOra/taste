@@ -225,7 +225,7 @@ window.dash = (() => {
       <li><a href="#ladder"><b>The best pickers are far better.</b></a> The top 1%'s songs grew tenfold <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=S1" data-fmt="times">—</span> as often as similar songs, and their new artists <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P4a" data-fmt="times">—</span> as often as similar artists. The bottom half did no better than chance.</li>
       <li><a href="#careers"><b>Good pickers' typical finds are early; their big hits last.</b></a> Six years on, the top 1%'s new artists were still
         <span class="wu-num dash-skeleton" data-source="careerten" data-field="times_similar" data-where="key=top1:6" data-fmt="times">—</span> as likely as similar artists to be ten
-        times bigger. Bad pickers' finds keep sinking year after year.</li>
+        times bigger, and their songs <span class="wu-num" data-source="careerten" data-field="times_similar" data-where="key=songs:top1:6" data-fmt="times">—</span>. Bad pickers' finds keep sinking year after year.</li>
       <li><a href="#fanvalue"><b>Good pickers matter most early.</b></a> One good new fan went with <span class="wu-num" data-source="fanvalue" data-field="effect" data-where="key=small:good" data-fmt="spct0">—</span>
         growth for a small artist, against <span class="wu-num" data-source="fanvalue" data-field="effect" data-where="key=small:ordinary" data-fmt="spct1">—</span> for an ordinary fan. Several good pickers add up;
         poor pickers count against an artist.</li>
@@ -234,20 +234,18 @@ window.dash = (() => {
         <span class="wu-num" data-source="yeargrowth" data-field="gap_growth" data-where="key=recent" data-fmt="pts0">—</span> in 2021–2025, though the best pickers'
         edge at the rarest breakouts is smaller than it was in the early 2010s.</li>
       <li><a href="#whygood"><b>It's judgment, not habits.</b></a> Choosing the top 1% by listening habits finds pickers at
-        <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_traits" data-fmt="times">—</span>; by track record, <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_record" data-fmt="times">—</span>.</li>
-      <li><a href="#scenesplit"><b>Good taste is right scenes and right artists.</b></a> For the top 1%, their scenes took off
-        <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=scene_quality" data-fmt="times">—</span> as often, and their artists within those scenes <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=within_scene" data-fmt="times">—</span>.</li>
+        <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_traits" data-fmt="times">—</span>; by track record, <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=by_record" data-fmt="times">—</span> (for songs, <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=songs:by_traits" data-fmt="times">—</span> against <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=songs:by_record" data-fmt="times">—</span>).</li>
+      <li><a href="#scenesplit"><b>Good taste is right scenes, and the right artists and songs within them.</b></a> For the top 1%, their scenes took off <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=scene_quality" data-fmt="times">—</span> as often, and their artists within those scenes <span class="wu-num" data-source="toppickers" data-field="value" data-where="key=within_scene" data-fmt="times">—</span>. For songs, the scenes <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=S5" data-fmt="times">—</span> and, above all, the right song by an artist (<span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=S6" data-fmt="times">—</span> as often as that artist's other songs).</li>
       <li><a href="#genre"><b>A good ear carries across genres, and matters least in established ones.</b></a> Rated only on their other genres,
         people picked a genre about <span class="wu-num dash-skeleton" data-source="genregeneral" data-field="share_general" data-where="key=summary" data-fmt="pct">—</span> as well as when rated on the genre itself. The gap between
         good and poor pickers was smallest in rock, folk, and jazz, blues, and classical, where most of what people get into is long established.</li>
       <li><a href="#obsession"><b>A good picker's obsessions are their best calls.</b></a> People's most-replayed finds beat their
-        least-replayed ones, and good pickers' edge lives almost entirely in what they got hooked on.</li>
-      <li><a href="#every-size"><b>It's a steady edge, not a nose for hits.</b></a> Good taste raises the odds by about the same multiple whether the
-        takeoff is double or a hundredfold, and judging people on hits alone doesn't work.</li>
+        least-replayed ones, and good pickers' edge lives almost entirely in what they got hooked on: the top 1%'s most-replayed songs grew <span class="wu-num" data-source="obstaste" data-field="growth" data-where="key=songs:top1:8" data-fmt="pct0">—</span> more than similar songs.</li>
+      <li><a href="#every-size"><b>For artists, a steady edge; for songs, a nose for the biggest hits.</b></a> For artists, good taste raises the odds by about the same multiple whether the takeoff is double or a hundredfold. For songs, the edge grows with the size of the takeoff: the top 1% beat similar songs <span class="wu-num" data-source="thresholds" data-field="times_similar" data-where="key=songs:2x:99–100" data-fmt="times">—</span> at doubling and <span class="wu-num" data-source="thresholds" data-field="times_similar" data-where="key=songs:100x:99–100" data-fmt="times">—</span> at a hundredfold. Judging people on hits alone still doesn't work.</li>
       <li><a href="#findings"><b>It shows most in songs, less in artists, and least in scenes,</b></a> and "others stick with your picks" is
         among its clearest forms.</li>
       <li><a href="#badtaste"><b>Bad taste is real too.</b></a> The worst pickers' finds flop more often and take off no more often
-        than average, and bad pickers stay bad about as reliably as good ones stay good over a few years, and longer over a decade.</li>
+        than average, and bad pickers stay bad about as reliably as good ones stay good over a few years, and longer over a decade. One poor picker among an artist's new fans does no harm; several together count against it.</li>
     </ol>
   </section>
 
