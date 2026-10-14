@@ -202,7 +202,7 @@ half their listeners 1.13-1.18x as often as similar ones (rest of best fifth ~1.
 more boom-or-bust.
 Why the best fifth's songs do better over the years (analysis/eras_why.py): not the same people improving. People rated in both
 2010-13 and 2021-25 (4,512): best fifth +3.1% -> 0.0%, worst -10.6% -> -25.6%; everyone else: best +0.8% -> +10.6%, worst -10.8%
--> -13.1%. The rise comes from people not rated in the early period (mostly newer users). Outcome spread grew only modestly
+-> -13.1%. (Correction below: the panel's drop is aging, not a sign that the rise is only newcomers.) Outcome spread grew only modestly
 (sd 0.58 -> 0.73), not enough to explain it. Artists: same people best +1.8% -> +0.7%, worst -2.9% -> -7.5%.
 
 ### How early can you tell an artist will break out? (2026-10-14, exploratory; analysis/early_signal.py)
@@ -220,3 +220,12 @@ listener; 4.9M songs, breakout = top 1% of cohort, 41-68 listeners in year 3): f
 month 0: 43% breakouts, 42% of all breakouts caught (AUC 0.89); 1 month 52% / 51%; 6 months 62% / 61%; 12 months 67% / 67%.
 Likely because a new song's first-month audience mostly reflects its artist's existing fans (songs by already-popular artists),
 not because song breakouts are easier to spot. Not run: songs by brand-new artists only. Good pickers add nothing here either.
+
+### Best fifth by tenure (2026-10-14, exploratory; analysis/eras_tenure.py, eras_tenure_window.py)
+Corrects the panel reading above: the yearly rise in the best fifth's song growth happens for newer users (2-4 years on LB:
++2.8% in 2012 -> +15.1% in 2025) and longer-time users (5+ years: -0.4% -> +9.0%) alike, so it is not who joined. The panel's
+best fifth fell because the same people aged a decade (taste fades). At any year, newer users' best fifth beat longer-time users'
+on songs by ~4-9 points, also when everyone is rated on only Y-4..Y-2 (so not stale ratings). Long-time users' worst fifth got much
+worse on songs (-13.6% -> -20.9%; newer users' worst fifth stayed ~-8 to -11%). Artists: no steady tenure difference in the best
+fifth; newer users' best fifth a little ahead since 2021. Why the best fifth's songs do better over time: unexplained (not
+measurement, not newcomers, not noise: steady with tight yearly ranges; outcome spread grew only ~25%).
