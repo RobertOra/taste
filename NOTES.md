@@ -291,3 +291,12 @@ discovery over a listening life, hidden gems (All / New artists). Gems over time
    Gems chart redesigned (2026-10-14): five rows (ordinary, loved, + good picker, + 2+ good pickers, top 1%), four bands (none, some,
    3-10x, 10x+), title "The more loved, the better an artist's odds of spreading". 10x: all loved 1.3% vs 0.4%, 2+ good pickers 3.5%;
    new top 1% 10%, ordinary new 3%.
+5b. Are hidden gems good? Overhyped? (trends_gems_quality.py; same artists; gems = loved (top 10% kept rate) and never spread).
+   Fans (rated, first 2 years): gems 25% good / 26% poor pickers, same as ordinary artists (25/24); loved-and-spread 33/17.
+   Of rated people who tried them in year 1, the share who got into them: gems good pickers 27%, poor 27% (ordinary 11% / 10%;
+   loved-and-spread 31% / 28%). Fans still listening 24-35 months later (among those still listening to music): gems 35%,
+   ordinary that never spread 25%, ordinary 31%, loved-and-spread 64% (growth may itself keep fans).
+   So gems are not bad music loved by bad taste: broadly liked, about equally by good and poor pickers, and their love lasts longer
+   than comparable artists'. What sets loved-and-spread apart is more good pickers among the fans (fits the fan-value results).
+   Overhyped: of 6,535 artists that tripled, 19% were in the bottom 30% by kept rate (kept ~1% of people who tried them vs ~9%);
+   21% were loved (top 10%). Splitting gems by whether a good picker got into them is circular (not used).
