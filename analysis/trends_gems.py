@@ -6,7 +6,7 @@ Artists whose first LB listener came 2015-2022 (F; the tried/kept table starts i
   good pickers: committed fans with a good track record in the first 24 months (pickers/rate_A_lb);
   listeners in year 1 and year 3 (distinct; user_artist_month).
 Loved = top 10% of kept rate within the birth year. Loved by good pickers = loved and >= 1 good-picker fan.
-Outcomes: never spread = year-3 listeners <= year-1 listeners; grew 3x = year-3 >= 3 x year-1.
+Outcomes: never spread = year-3 listeners <= year-1 listeners; grew 3x = year-3 >= 3 x year-1; 10x = year-3 >= 10 x year-1.
 Ordinary artists are reweighted to the loved artists' mix of birth year and year-1 size (log2 bins), so they started out alike.
 Also new artists only (a MusicBrainz release in the 12 months before F). Writes analysis/out/trends_gems.json.
 """
@@ -37,7 +37,7 @@ new = con.execute(f"""SELECT DISTINCT b.artist FROM read_parquet('{ROOT}/data/si
                       WHERE a.rm BETWEEN b.F - 12 AND b.F""").pl().with_columns(new=pl.lit(1))
 D = (tk.join(L, on="artist").join(G, on="artist", how="left").join(new, on="artist", how="left").join(con.execute("SELECT artist, F // 12 AS year FROM birth").pl(), on="artist")
      .fill_null(0).with_columns(rate=pl.col("K") / pl.col("T"), size=(pl.col("L1") + 1).log(2).floor().cast(pl.Int16),
-                                never=(pl.col("L3") <= pl.col("L1")), grew=(pl.col("L3") >= 3 * pl.col("L1"))))
+                                never=(pl.col("L3") <= pl.col("L1")), grew=(pl.col("L3") >= 3 * pl.col("L1")), ten=(pl.col("L3") >= 10 * pl.col("L1"))))
 D = D.with_columns(loved=pl.col("rate") >= pl.col("rate").quantile(0.9).over("year"),
                    loved1=pl.col("rate") >= pl.col("rate").quantile(0.99).over("year"),
                    dec=(pl.col("rate").rank("average").over("year") / pl.len().over("year") * 10).ceil().clip(1, 10).cast(pl.Int8))
@@ -48,8 +48,9 @@ def compare(d, flag):
     """loved-type rates vs ordinary artists reweighted to the same year x size mix."""
     lv, od = d.filter(flag), d.filter(~pl.col("loved"))
     w = lv.group_by("year", "size").len().rename({"len": "w"})
-    o = od.group_by("year", "size").agg(never=pl.col("never").mean(), grew=pl.col("grew").mean()).join(w, on=["year", "size"])
-    return {"n": lv.height, "never": float(lv["never"].mean()), "grew": float(lv["grew"].mean()),
+    o = od.group_by("year", "size").agg(never=pl.col("never").mean(), grew=pl.col("grew").mean(), ten=pl.col("ten").mean()).join(w, on=["year", "size"])
+    return {"n": lv.height, "never": float(lv["never"].mean()), "grew": float(lv["grew"].mean()), "ten": float(lv["ten"].mean()),
+            "ten_ord": float((o["ten"] * o["w"]).sum() / o["w"].sum()),
             "never_ord": float((o["never"] * o["w"]).sum() / o["w"].sum()), "grew_ord": float((o["grew"] * o["w"]).sum() / o["w"].sum()),
             "kept_rate": float(lv["rate"].mean()), "kept_rate_ord": float(od["rate"].mean())}
 
@@ -62,7 +63,7 @@ for pop, pf in (("all artists", pl.lit(True)), ("new artists", pl.col("new") == 
                       ("top 1% loved, good picker", pl.col("loved1") & (pl.col("G") >= 1))):
         r = compare(d, flag); out.append({"pop": pop, "group": lab, "year": None, **r})
         print(f"{lab:22s} ({r['n']:,}; kept {r['kept_rate']:.0%} vs {r['kept_rate_ord']:.0%}): never spread {r['never']:.0%} (ordinary, same start: {r['never_ord']:.0%}) | "
-              f"grew 3x {r['grew']:.0%} ({r['grew_ord']:.0%})")
+              f"grew 3x {r['grew']:.0%} ({r['grew_ord']:.0%}) | 10x {r['ten']:.1%} ({r['ten_ord']:.1%})")
     print("by how loved (tenth of the year's artists by kept rate; ordinary = the bottom 90% reweighted to the same start):")
     for q in range(1, 11):
         r = compare(d, pl.col("dec") == q); out.append({"pop": pop, "group": f"decile {q}", "year": None, **r})

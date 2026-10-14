@@ -50,7 +50,7 @@ window.dash = (() => {
     }
     cbs.forEach((cb) => { try { cb(); } catch (e) { console.error(e); } });
   };
-  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=e6c1181588`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
+  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=acbd914c97`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
     .then((data) => { store[id] = { status: 'ok', data }; }, () => { store[id] = { status: 'error' }; })))
     .then(() => { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run(); });
   let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(run, 150); });
@@ -726,22 +726,28 @@ window.dash = (() => {
       in 2010–2012 (<span class="wu-num" data-source="trends" data-field="late_found" data-where="key=disc:cohort:1" data-fmt="f0">—</span> against <span class="wu-num" data-source="trends" data-field="early_found" data-where="key=disc:cohort:1" data-fmt="f0">—</span> the year after they started) but slowed down
       at the same pace. This is years of listening, not age.</p>
     <div class="wu-card">
-      <h3>Most loved music never spreads, but love doubles the odds</h3>
+      <h3>The more loved, the better an artist's odds of spreading</h3>
       <p class="wu-note">ListenBrainz artists that first appeared 2015–2022, with at least 10 people who tried them in their first year.
-        Loved: the top 10% of their year for how many of the people who tried them kept listening. Good picker: at least one fan with
-        a good track record. What happened by their third year: no more listeners than in their first year, some growth, or three times
-        as many. Ordinary artists are matched to the loved ones on first year and starting size.</p>
+        Loved: the top 10% of their year for how many of the people who tried them kept listening; top 1% loved: the top 1%. Good picker: a fan
+        with a good track record. Each bar shows how many listeners they had in their third year compared with their first. Ordinary
+        artists are matched to the loved ones on first year and starting size.</p>
       <div class="wu-chips" id="gm-chips" role="group" aria-label="All artists or new artists"></div>
       <div class="wu-legend" id="gm-legend"></div>
       <div class="wu-chart dash-skeleton" id="gm-chart" data-source="trends"></div>
     </div>
-    <p>Of the loved artists, <span class="wu-num" data-source="trends" data-field="never" data-where="key=gems:all:loved" data-fmt="pct0">—</span> never spread beyond their first year's listeners, against
-      <span class="wu-num" data-source="trends" data-field="never" data-where="key=gems:all:ordinary" data-fmt="pct0">—</span> of ordinary ones that started out the same size; <span class="wu-num" data-source="trends" data-field="grew3" data-where="key=gems:all:loved" data-fmt="pct0">—</span> tripled,
-      against <span class="wu-num" data-source="trends" data-field="grew3" data-where="key=gems:all:ordinary" data-fmt="pct0">—</span>. When a good picker was among their fans, <span class="wu-num" data-source="trends" data-field="grew3" data-where="key=gems:all:loved_good" data-fmt="pct0">—</span> tripled.
-      Genuinely new artists (a release in the year before they appeared) spread more often, and for them love matters more than it used to:
-      loved new artists that never spread stayed around a quarter (<span class="wu-num" data-source="trends" data-field="never" data-where="key=gems:new:2015" data-fmt="pct0">—</span> in 2015, <span class="wu-num" data-source="trends" data-field="never" data-where="key=gems:new:2022" data-fmt="pct0">—</span>
-      in 2022), while ordinary ones rose from <span class="wu-num" data-source="trends" data-field="never_ord" data-where="key=gems:new:2015" data-fmt="pct0">—</span> to <span class="wu-num" data-source="trends" data-field="never_ord" data-where="key=gems:new:2022" data-fmt="pct0">—</span>. We can only
-      see music someone on ListenBrainz found; music nobody played is invisible.</p>
+    <p>Most artists keep about one in ten of the people who try them; loved ones keep about three in ten, and the top 1% nearly half.
+      Being loved helps, and the more love, the better the odds. Of the loved artists, <span class="wu-num" data-source="trends" data-field="never" data-where="key=gems:all:loved" data-fmt="pct0">—</span> never grew
+      beyond their first year's listeners, against <span class="wu-num" data-source="trends" data-field="never" data-where="key=gems:all:ordinary" data-fmt="pct0">—</span> of ordinary ones that started out the same size, and
+      <span class="wu-num" data-source="trends" data-field="tripled" data-where="key=gems:all:loved" data-fmt="pct0">—</span> at least tripled, against <span class="wu-num" data-source="trends" data-field="tripled" data-where="key=gems:all:ordinary" data-fmt="pct0">—</span>. With two or more good pickers among
+      their fans, <span class="wu-num" data-source="trends" data-field="tripled" data-where="key=gems:all:loved_good2" data-fmt="pct0">—</span> tripled and <span class="wu-num" data-source="trends" data-field="grew10" data-where="key=gems:all:loved_good2" data-fmt="pct1">—</span> grew tenfold, about nine times as
+      often as ordinary artists (<span class="wu-num" data-source="trends" data-field="grew10" data-where="key=gems:all:ordinary" data-fmt="pct1">—</span>). Still, about half of even these never spread: much music that the people
+      who hear it love is never found by anyone else.</p>
+    <p>Genuinely new artists (a release in the year before they appeared) spread far more often. Among them, <span class="wu-num" data-source="trends" data-field="tripled" data-where="key=gems:new:top1" data-fmt="pct0">—</span> of
+      the top 1% loved tripled and <span class="wu-num" data-source="trends" data-field="grew10" data-where="key=gems:new:top1" data-fmt="pct0">—</span> grew tenfold, against <span class="wu-num" data-source="trends" data-field="tripled" data-where="key=gems:new:ordinary" data-fmt="pct0">—</span> and
+      <span class="wu-num" data-source="trends" data-field="grew10" data-where="key=gems:new:ordinary" data-fmt="pct0">—</span> of ordinary new artists. For them, love also matters more than it used to: loved new artists that
+      never spread stayed around a quarter (<span class="wu-num" data-source="trends" data-field="never" data-where="key=gems:new:2015" data-fmt="pct0">—</span> in 2015, <span class="wu-num" data-source="trends" data-field="never" data-where="key=gems:new:2022" data-fmt="pct0">—</span> in 2022), while ordinary
+      ones rose from <span class="wu-num" data-source="trends" data-field="never_ord" data-where="key=gems:new:2015" data-fmt="pct0">—</span> to <span class="wu-num" data-source="trends" data-field="never_ord" data-where="key=gems:new:2022" data-fmt="pct0">—</span>. We can only see music someone on ListenBrainz
+      found; music nobody played is invisible.</p>
   </section>
 
   <section class="wu-section" id="sure">
@@ -2282,9 +2288,12 @@ window.dash = (() => {
     const el = document.getElementById('gm-chart');
     const chips = document.getElementById('gm-chips');
     if (!ready(el, ['trends'])) { chips.replaceChildren(); return; }
-    const segs = [['never', 'No more listeners', css('--cds-chart-muted')], ['some', 'Some growth', d3.color(dash.colors[0]).brighter(1.2).formatHex()], ['grew3', 'Three times as many or more', dash.colors[0]]];
+    const c0 = d3.color(dash.colors[0]);
+    const segs = [['never', 'No more listeners', css('--cds-chart-muted')], ['some', 'Some growth', c0.brighter(1.4).formatHex()],
+      ['grew3', 'Three to ten times as many', c0.formatHex()], ['grew10', 'Ten times as many or more', c0.darker(1.1).formatHex()]];
     legend('gm-legend', segs.map(([, l, c]) => [l, c, 'dot']));
-    const groups = [['ordinary', 'Ordinary, same start'], ['loved', 'Loved'], ['loved_good', 'Loved, with a good picker']];
+    const groups = [['ordinary', 'Ordinary, same start'], ['loved', 'Loved'], ['loved_good', 'Loved, with a good picker'],
+      ['loved_good2', 'Loved, with 2+ good pickers'], ['top1', 'Top 1% loved']];
     function paint() {
       el.replaceChildren();
       const rows = groups.map(([g, l]) => ({ l, ...(trendRows(`gems:${gmSel}:${g}`)[0] || {}) })).filter((r) => r.never !== undefined);
@@ -2305,7 +2314,7 @@ window.dash = (() => {
           svg.append('rect').attr('x', x(x0)).attr('y', yy + 4).attr('width', w).attr('height', 26).attr('rx', 3).attr('fill', c)
             .on('mousemove', (ev) => tip.show(ev, r.l, [[l, fmt.pct0(v), c]])).on('mouseleave', () => tip.hide());
           if (w > 34) svg.append('text').attr('x', x(x0) + w / 2).attr('y', yy + 21).attr('text-anchor', 'middle').style('font-size', fs).style('pointer-events', 'none')
-            .attr('fill', k === 'grew3' ? '#fff' : css('--color-fg')).text(fmt.pct0(v));
+            .attr('fill', k === 'grew3' || k === 'grew10' ? '#fff' : css('--color-fg')).text(fmt.pct0(v));
           x0 += v;
         });
       });

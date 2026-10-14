@@ -288,3 +288,6 @@ discovery over a listening life, hidden gems (All / New artists). Gems over time
    Gems additions (2026-10-14): loved + 2+ good pickers: all 49% never spread / 18% tripled; new 18% / 41%. Top 1% loved (kept ~45%):
    all 53% / 15%; new 15% / 44%; top 1% + good picker: all 45% / 22%; new 12% / 50%. By tenth of kept rate (not size-matched),
    tripling rises steadily from the middle up (all 4% -> 9%; new 18% -> 33%). Dose-response: more love, better odds.
+   Gems chart redesigned (2026-10-14): five rows (ordinary, loved, + good picker, + 2+ good pickers, top 1%), four bands (none, some,
+   3-10x, 10x+), title "The more loved, the better an artist's odds of spreading". 10x: all loved 1.3% vs 0.4%, 2+ good pickers 3.5%;
+   new top 1% 10%, ordinary new 3%.

@@ -55,15 +55,16 @@ for r in d["same_people"]:
     rows.append({"key": f"disc:{r['t']}", "t": r["t"], "people": r["people"], "found": r["found"], "share": r["share"], "plays": r["plays"]})
 for r in d["cohorts"]:
     rows.append({"key": f"disc:cohort:{r['t']}", **r})
+GROUPS = {"loved": "loved", "loved by good pickers": "loved_good", "loved by 2+ good pickers": "loved_good2", "top 1% loved": "top1"}
+seg = lambda never, grew, ten: {"never": never, "some": 1 - never - grew, "grew3": grew - ten, "grew10": ten, "tripled": grew}
 for r in L("gems"):
     pop = "new" if r["pop"] == "new artists" else "all"
-    if r["year"] is None:
-        g = "loved_good" if r["group"] == "loved by good pickers" else "loved"
-        rows.append({"key": f"gems:{pop}:{g}", "pop": pop, "group": g, "n": r["n"], "never": r["never"], "grew3": r["grew"], "some": 1 - r["never"] - r["grew"]})
-        if g == "loved":
-            rows.append({"key": f"gems:{pop}:ordinary", "pop": pop, "group": "ordinary", "never": r["never_ord"], "grew3": r["grew_ord"],
-                         "some": 1 - r["never_ord"] - r["grew_ord"]})
-    else:
+    if r["year"] is None and r["group"] in GROUPS:
+        g = GROUPS[r["group"]]
+        rows.append({"key": f"gems:{pop}:{g}", "pop": pop, "group": g, "n": r["n"], **seg(r["never"], r["grew"], r["ten"])})
+        if g == "loved":   # ordinary artists matched to the loved ones' first year and starting size
+            rows.append({"key": f"gems:{pop}:ordinary", "pop": pop, "group": "ordinary", **seg(r["never_ord"], r["grew_ord"], r["ten_ord"])})
+    elif r["year"] is not None:
         rows.append({"key": f"gems:{pop}:{r['year']}", "pop": pop, "year": r["year"], "never": r["never"], "never_ord": r["never_ord"]})
 (ROOT / "analysis" / "writeup" / "trends.json").write_text(json.dumps(rows, indent=1))
 print(len(rows), "rows")
