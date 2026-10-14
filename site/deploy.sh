@@ -1,5 +1,5 @@
 #!/bin/bash
-# Publish site/static to RobertOra/taste-test (private repo; GitHub Pages needs GitHub Pro for private repos).
+# Publish site/static to RobertOra/taste-test (public since 2026-10-14; GitHub Pages).
 # Uses a separate git history in data/_deploy.git so the website repo never mixes with the research repo.
 set -eo pipefail
 cd "$(dirname "$0")/.."

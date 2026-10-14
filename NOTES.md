@@ -326,3 +326,6 @@ faded 1.09 -> 1.02) but per-person correlation with the later score ~0. Habit ch
 score alone 0.003). Not exploring less, listening less, ignoring new music, or genre loyalty: judgment itself drifts.
 - 2026-10-14: deleted data/derived/song_month (8.0 GB; rebuild: analysis/build_song_month.py, ~20-30 min) and
   data/_site_static_data_v1 (0.8 GB; old site pack, also in the taste-test repo). Robert approved.
+- 2026-10-14: site live at https://robertora.github.io/taste-test/ (repo RobertOra/taste-test made public with Robert's OK; it holds
+  only the published site files). Research repo pushed by Robert to RobertOra/taste (private). Live check: a test history scores the same as locally;
+  the study renders with no errors on desktop and phone. Updates: bash site/deploy.sh "message".
