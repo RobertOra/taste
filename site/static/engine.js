@@ -222,7 +222,7 @@ export async function readHistory(files) {   // files: [{name, bytes} or {name, 
 // Settle each guessed YouTube watch on its first reading that passes (ytCands), preferring one whose artist you play elsewhere. An artist is confirmed if it's in the history some
 // surer way (Spotify, a Topic channel), or (from 'av'/'sv' readings in 4+ separate weeks) ListenBrainz knows it and one of its
 // three most-played songs. Watches with no passing reading are taken as not music.
-export async function resolveYouTube(plays, pack) {
+export async function resolveYouTube(plays, pack, onProgress = () => {}) {   // onProgress(0..1) over its three lookups
   const sure = new Set(plays.filter((p) => p.src !== 'yt?').map((p) => p.an)), by = new Map(), guessed = plays.filter((p) => p.src === 'yt?');
   for (const p of guessed) for (const [rule, a, s] of p.cands) {
     const an = a.toLowerCase(); if (!rule.endsWith('v') || sure.has(an)) continue;
@@ -231,10 +231,10 @@ export async function resolveYouTube(plays, pack) {
   }
   await pack.init();
   const cand = [...by.entries()].filter(([, g]) => g.weeks.size >= RULES.minWeeks), known = new Set(sure);
-  await pack.load(cand.map(([an]) => pack.place(nameHash(an), an)));
+  await pack.load(cand.map(([an]) => pack.place(nameHash(an), an)), (x) => onProgress(x * 0.6));
   const tops = cand.filter(([an]) => pack.artist(nameHash(an), an)).map(([an, g]) => [an, [...g.songs.entries()]
     .sort((x, y) => y[1].size - x[1].size || cmpName(x[0], y[0])).slice(0, 3).map(([tn]) => nameHash(skey(pack.meta, an, tn)))]);
-  await pack.load(tops.flatMap(([an, hs]) => hs.map((h) => pack.place(h, an))));
+  await pack.load(tops.flatMap(([an, hs]) => hs.map((h) => pack.place(h, an))), (x) => onProgress(0.6 + x * 0.2));
   for (const [an, hs] of tops) if (hs.some((h) => pack.song(h, an))) known.add(an);
   // song checks, only for 's' readings that could still be picked: a passing 'a' reading of an artist you play elsewhere always wins,
   // and any passing 'a' reading wins over later ones. Skipped for an artist that could have fewer than 4 weeks in all (it can't be a find).
@@ -252,7 +252,7 @@ export async function resolveYouTube(plays, pack) {
       need.push(pack.place(nameHash(an), an), pack.place(nameHash(skey(pack.meta, an, s.toLowerCase())), an));
     }
   }
-  await pack.load(need);
+  await pack.load(need, (x) => onProgress(0.8 + x * 0.2));
   const passes = (rule, an, tn) => known.has(an) && !EXCLUDE.has(an) && (rule[0] === 'a' || (span.get(an).size >= RULES.minWeeks && pack.artist(nameHash(an), an) !== null && pack.song(nameHash(skey(pack.meta, an, tn)), an) !== null));
   const out = [];
   for (const p of plays) {
@@ -340,8 +340,9 @@ export class Pack {
   constructor(meta, fetchIndex, fetchRange, fetchBloom) { Object.assign(this, { meta, fetchIndex, fetchRange, fetchBloom, shards: new Map(), bytes: 0, requests: 0, slots: new Map() }); }
   async init() {
     if (this.loc) return;
-    if (this.meta.slots && this.fetchBloom) this.bloom = new Uint8Array(await this.fetchBloom());
-    const b = new Uint8Array(await this.fetchIndex()), dv = new DataView(b.buffer, b.byteOffset, b.byteLength);
+    const [ix, bl] = await Promise.all([this.fetchIndex(), this.meta.slots && this.fetchBloom ? this.fetchBloom() : null]);   // both at once
+    if (bl) this.bloom = new Uint8Array(bl);
+    const b = new Uint8Array(ix), dv = new DataView(b.buffer, b.byteOffset, b.byteLength);
     const S = dv.getUint32(4, true), F = dv.getUint16(8, true); let p = 10;
     this.compressed = dv.getUint32(0, true) === 0x54535432;
     const fileSizes = []; for (let i = 0; i < F; i++) { fileSizes.push(dv.getUint32(p, true)); p += 4; }
@@ -527,7 +528,9 @@ export async function scoreHistory(files, meta, pack, onProgress = () => {}) {
   out.kind = kind; out.youtube = youtube;
   if (!read.plays.length) { out.checks.push({ id: 'format', ok: false, text: "We couldn't find Spotify or YouTube listening history in those files." }); return out; }
   if (kind === 'standard' && !youtube) { out.checks.push({ id: 'format', ok: false, text: "This is Spotify's one-year export (Account data). Each find needs a year of follow-up, so we need your Extended streaming history: in Spotify, Account → Privacy → request Extended streaming history (it can take a few weeks)." }); return out; }
-  const plays = youtube ? await resolveYouTube(read.plays, pack) : read.plays;
+  // with YouTube, matching its watches takes the first half of the progress bar and the lookups the second
+  const plays = youtube ? await resolveYouTube(read.plays, pack, (x) => onProgress(x * 0.5)) : read.plays;
+  const prog = youtube ? (x) => onProgress(0.5 + x * 0.5) : onProgress;
   if (!plays.length) { out.checks.push({ id: 'format', ok: false, text: "We couldn't find any music in that YouTube history. We recognise songs from YouTube Music and \"Artist - Topic\" channels, and videos titled \"Artist - Song\"." }); return out; }
   let wMin = Infinity, wMax = -Infinity, tsMin = Infinity, tsMax = -Infinity;
   for (const p of plays) { if (p.week < wMin) wMin = p.week; if (p.week > wMax) wMax = p.week; if (p.ts < tsMin) tsMin = p.ts; if (p.ts > tsMax) tsMax = p.ts; }
@@ -549,7 +552,7 @@ export async function scoreHistory(files, meta, pack, onProgress = () => {}) {
   for (const p of [...judgedA, ...recentA]) p.ah = nameHash(p.an);
   for (const p of judgedS) { p.sh = nameHash(p.key); p.ah = nameHash(p.an); }
   await pack.init();
-  await pack.load([...judgedA, ...recentA, ...judgedS].flatMap((p) => [pack.place(p.ah, p.an), ...(p.sh !== undefined ? [pack.place(p.sh, p.an)] : [])]), onProgress);
+  await pack.load([...judgedA, ...recentA, ...judgedS].flatMap((p) => [pack.place(p.ah, p.an), ...(p.sh !== undefined ? [pack.place(p.sh, p.an)] : [])]), prog);
   out.history.bytes = pack.bytes; out.history.requests = pack.requests;
   const dedup = (ps) => { const seen = new Map(); for (const p of ps.sort((a, b) => a.m - b.m || cmpName(a.key, b.key))) if (!seen.has(p.item.id)) seen.set(p.item.id, p); return [...seen.values()]; };
   for (const p of judgedA) { p.art = pack.artist(p.ah, p.an); p.item = p.art; p.w = p.plays26; }

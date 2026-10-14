@@ -47,7 +47,8 @@ class RangeHandler(SimpleHTTPRequestHandler):
         pass
 
     def end_headers(self):
-        self.send_header("Cache-Control", "no-cache")   # always revalidate: no stale page/data mix while testing
+        # always revalidate while testing; GH_CACHE=1 sends what GitHub Pages sends instead (to test the browser cache)
+        self.send_header("Cache-Control", "max-age=600" if os.environ.get("GH_CACHE") else "no-cache")
         super().end_headers()
 
 

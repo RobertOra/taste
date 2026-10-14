@@ -339,3 +339,6 @@ identical except timing; mirror vs reference 100% exact picks). Largest shard 86
 pack kept in data/_site_static_data_hashed (outside the published folder) until the new one is confirmed live.
 Live (2026-10-14, one run): 13.6 s for all three views, 1,487 requests, 19.8 MB + the 4.6 MB filter, scores 71 / 67 / 85. Testing rule:
 never run repeated scorings against the live site; test locally (site/serve.py) and do at most one live run per deploy.
+Step 1 was ~1 minute in Robert's browser: Chrome's HTTP cache lets one request at a time write a given file, so ~1,500 cached range
+requests to the same 16 files queued (reproduced locally with GH_CACHE=1 serve.py: 45 s vs 19 s). Fix: fetch ranges with cache 'no-store'.
+Also: progress bar covers the YouTube matching (was stuck at 0% ~11 s), index and artist filter download at the same time.
