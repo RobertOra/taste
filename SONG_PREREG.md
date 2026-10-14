@@ -111,5 +111,9 @@ Reported without a bar: the full curves, medium and big songs, the yearly series
 
 Run once each: `song_pickers.py --half {sealed,lb}`, then `fan_value.py --half {h} --unit song` and `song_fans.py --half {h}`.
 
-## Round 5 results
-(to be added after the runs)
+## Round 5 results (2026-10-14, run once each)
+| | S7 small song, good vs ordinary [99% low] | S8 niche, 2 good vs none [99% low] | S9 poor-picker slope, niche [99% high] |
+|---|---|---|---|
+| Explore (exploratory) | +6.26% | +2.8% [1.6] | -4.17% |
+| **Sealed** | **+5.64%** [4.02] held | **+3.22%** [2.13] held | **-3.87%** [-3.61] held |
+| **ListenBrainz** | **+5.49%** [4.87] held | **+1.47%** [0.93] held | **-7.33%** [-7.11] held |
