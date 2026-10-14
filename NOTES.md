@@ -215,3 +215,8 @@ you catch about half. Who the fans are (committed fans, good pickers) adds almos
 these top breakouts, although good-picker fans go with more growth on average (fan value). All LB-born artists (incl. older
 artists new to LB) are much easier (AUC 0.74 at month 0, 0.92 at 6 months, top 0.1% bar) because many arrive already big.
 Top 0.1% among new artists: only 40 breakouts, not used.
+Songs (analysis/early_signal_songs.py; study LB song ids; new song = its artist had a release in the 2 months up to its first
+listener; 4.9M songs, breakout = top 1% of cohort, 41-68 listeners in year 3): far more predictable early. Flagged 1% after
+month 0: 43% breakouts, 42% of all breakouts caught (AUC 0.89); 1 month 52% / 51%; 6 months 62% / 61%; 12 months 67% / 67%.
+Likely because a new song's first-month audience mostly reflects its artist's existing fans (songs by already-popular artists),
+not because song breakouts are easier to spot. Not run: songs by brand-new artists only. Good pickers add nothing here either.
