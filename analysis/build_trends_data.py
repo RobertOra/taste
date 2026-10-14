@@ -28,8 +28,8 @@ top30 = lambda v: (29 * v + 1) / 30   # fans' overlap of their other 29 artists 
 ni = L("niches"); nb = ni[0]
 for r in ni:
     if "year" in r:
-        rows.append({"key": f"niches:{r['year']}", "year": r["year"], **{k: r[k] for k in ("within", "within_lo", "within_hi", "across", "across_lo", "across_hi")},
-                     **{f"idx_{k}": r[k] / nb[k.split("_")[0]] for k in ("within", "within_lo", "within_hi", "across", "across_lo", "across_hi")},
+        rows.append({"key": f"niches:{r['year']}", "year": r["year"], **{k: r[k] for k in ("within", "within_lo", "within_hi", "across", "across_lo", "across_hi", "all", "all_lo", "all_hi")},
+                     **{f"idx_{k}": r[k] / nb[k.split("_")[0]] for k in ("within", "within_lo", "within_hi", "across", "across_lo", "across_hi", "all", "all_lo", "all_hi")},
                      **({k: top30(fans[r["year"]][k]) for k in ("fans", "fans_lo", "fans_hi")} if r["year"] in fans else {}),
                      **({f"idx_{k}": top30(fans[r["year"]][k]) / top30(fans[2010]["fans"]) for k in ("fans", "fans_lo", "fans_hi")} if r["year"] in fans else {})})
     else:

@@ -652,7 +652,7 @@
       <div class="wu-chart dash-skeleton" id="nc-chart" data-source="trends"></div>
     </div>
     <p>Two people in the same niche shared <span class="wu-num" data-source="trends" data-field="within" data-where="key=niches:2010" data-fmt="pct1">—</span> of their artists in 2010 and <span class="wu-num" data-source="trends" data-field="within" data-where="key=niches:2025" data-fmt="pct1">—</span>
-      in 2025; two people in different niches, <span class="wu-num" data-source="trends" data-field="across" data-where="key=niches:2010" data-fmt="pct1">—</span> and <span class="wu-num" data-source="trends" data-field="across" data-where="key=niches:2025" data-fmt="pct1">—</span>. So listening didn't
+      in 2025; two random people, <span class="wu-num" data-source="trends" data-field="all" data-where="key=niches:2010" data-fmt="pct1">—</span> and <span class="wu-num" data-source="trends" data-field="all" data-where="key=niches:2025" data-fmt="pct1">—</span>. So listening didn't
       split into tight tribes, and it didn't merge into one mainstream either: people grew more individual. The same people, followed from
       2014 to 2024, went the same way (<span class="wu-num" data-source="trends" data-field="within" data-where="key=niches:panel:2014" data-fmt="pct1">—</span> to <span class="wu-num" data-source="trends" data-field="within" data-where="key=niches:panel:2024" data-fmt="pct1">—</span> within their niche). The closest ties held,
       though: two fans of the same artist shared <span class="wu-num" data-source="trends" data-field="fans" data-where="key=niches:2010" data-fmt="pct1">—</span> of their artists in 2010 and <span class="wu-num" data-source="trends" data-field="fans" data-where="key=niches:2025" data-fmt="pct1">—</span> in 2025.
@@ -2215,10 +2215,10 @@
     if (!ready(el, ['trends'])) return;
     const rows = trendRows('niches:').filter((r) => !String(r.key).includes('panel')).map((r) => ({ ...r, year: +r.year })).sort((a, b) => a.year - b.year);
     if (!rows.length) return noData(el);
-    const ser = [['idx_fans', 'Two fans of the same artist', dash.colors[2]], ['idx_within', 'Two people in the same niche', dash.colors[0]], ['idx_across', 'Two people in different niches', dash.colors[1]]];
+    const ser = [['idx_fans', 'Two fans of the same artist', dash.colors[2]], ['idx_within', 'Two people in the same niche', dash.colors[0]], ['idx_all', 'Two random people', dash.colors[1]]];
     legend('nc-legend', ser.map(([, l, c]) => [l, c, 'line']));
     trendLines(el, rows, ser, { y0: 0, ref: 1, tick: (v) => d3.format('.0f')(v * 100), ylabel: 'Artists in common, compared with 2010 (100)',
-      tip: (d) => [`${d.year}`, [['Fans of the same artist', fmt.pct1(+d.fans), ser[0][2]], ['Same niche', fmt.pct1(+d.within), ser[1][2]], ['Different niches', fmt.pct1(+d.across), ser[2][2]]]] });
+      tip: (d) => [`${d.year}`, [['Fans of the same artist', fmt.pct1(+d.fans), ser[0][2]], ['Same niche', fmt.pct1(+d.within), ser[1][2]], ['Two random people', fmt.pct1(+d.all), ser[2][2]]]] });
   }
 
   function drawDiscovery() {
