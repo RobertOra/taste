@@ -38,7 +38,9 @@ new = con.execute(f"""SELECT DISTINCT b.artist FROM read_parquet('{ROOT}/data/si
 D = (tk.join(L, on="artist").join(G, on="artist", how="left").join(new, on="artist", how="left").join(con.execute("SELECT artist, F // 12 AS year FROM birth").pl(), on="artist")
      .fill_null(0).with_columns(rate=pl.col("K") / pl.col("T"), size=(pl.col("L1") + 1).log(2).floor().cast(pl.Int16),
                                 never=(pl.col("L3") <= pl.col("L1")), grew=(pl.col("L3") >= 3 * pl.col("L1"))))
-D = D.with_columns(loved=pl.col("rate") >= pl.col("rate").quantile(0.9).over("year"))
+D = D.with_columns(loved=pl.col("rate") >= pl.col("rate").quantile(0.9).over("year"),
+                   loved1=pl.col("rate") >= pl.col("rate").quantile(0.99).over("year"),
+                   dec=(pl.col("rate").rank("average").over("year") / pl.len().over("year") * 10).ceil().clip(1, 10).cast(pl.Int8))
 out = []
 
 
@@ -55,10 +57,16 @@ def compare(d, flag):
 for pop, pf in (("all artists", pl.lit(True)), ("new artists", pl.col("new") == 1)):
     d = D.filter(pf)
     print(f"\n== {pop}: {d.height:,} artists with >= 10 people who tried them in year 1")
-    for lab, flag in (("loved", pl.col("loved")), ("loved by good pickers", pl.col("loved") & (pl.col("G") >= 1))):
+    for lab, flag in (("loved", pl.col("loved")), ("loved by good pickers", pl.col("loved") & (pl.col("G") >= 1)),
+                      ("loved by 2+ good pickers", pl.col("loved") & (pl.col("G") >= 2)), ("top 1% loved", pl.col("loved1")),
+                      ("top 1% loved, good picker", pl.col("loved1") & (pl.col("G") >= 1))):
         r = compare(d, flag); out.append({"pop": pop, "group": lab, "year": None, **r})
         print(f"{lab:22s} ({r['n']:,}; kept {r['kept_rate']:.0%} vs {r['kept_rate_ord']:.0%}): never spread {r['never']:.0%} (ordinary, same start: {r['never_ord']:.0%}) | "
               f"grew 3x {r['grew']:.0%} ({r['grew_ord']:.0%})")
+    print("by how loved (tenth of the year's artists by kept rate; ordinary = the bottom 90% reweighted to the same start):")
+    for q in range(1, 11):
+        r = compare(d, pl.col("dec") == q); out.append({"pop": pop, "group": f"decile {q}", "year": None, **r})
+        print(f"  tenth {q:>2} ({r['n']:,}; kept {r['kept_rate']:.0%}): never spread {r['never']:.0%} | grew 3x {r['grew']:.0%}")
     print("by birth year (loved): year | artists | never spread (ordinary) | grew 3x (ordinary)")
     for y in range(2015, 2023):
         r = compare(d.filter(pl.col("year") == y), pl.col("loved")); out.append({"pop": pop, "group": "loved", "year": y, **r})
