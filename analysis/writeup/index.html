@@ -278,7 +278,7 @@
       long-time listeners both rose), and it isn't noise. Our best guess is the shift from albums to single songs. Listeners now play
       about half as many of a new artist's songs in a month as in 2010, so a song more often takes off on its own, through playlists, autoplay, and
       short-video apps, rather than riding along with an album. That rewards spotting the right song early. It isn't that songs burn out
-      faster: the same listeners drop a song at about the same pace as a decade ago. Better song data may play a part too: as more people bring their full listening history to
+      faster: the same listeners drop a song only a little faster than a decade ago. Better song data may play a part too: as more people bring their full listening history to
       ListenBrainz, outcomes are measured with less noise, so real differences show up larger. These are guesses; the data can't tell
       them apart.</p>
     <p>The best pickers' edge at the rarest breakouts narrowed through the 2010s, though. Around 2011, the top 1%'s new artists took off tenfold
@@ -632,18 +632,6 @@
     <h2>Music over time</h2>
     <p>The same listening data also shows how listening itself has changed since 2010. These are exploratory looks at ListenBrainz,
       separate from the taste question. Its crowd changed a lot over those years, so where it matters we follow the same people.</p>
-    <div class="wu-card">
-      <h3>Songs don't burn out faster for the same listeners</h3>
-      <p class="wu-note">ListenBrainz songs with at least 20 listeners at their peak, by the year they peaked. Two measures a year after
-        the peak, each compared with songs that peaked in 2010 (100 = the 2010 level): the song's share of everyone listening, and, of the
-        people who played it at its peak and were still listening to music, the share still playing it.</p>
-      <div class="wu-legend" id="fd-legend"></div>
-      <div class="wu-chart dash-skeleton" id="fd-chart" data-source="trends"></div>
-    </div>
-    <p>Across the whole audience, songs seem to fade much faster: a year after its peak, a song that peaked in 2010 still had
-      <span class="wu-num" data-source="trends" data-field="whole" data-where="key=fade:2010" data-fmt="pct0">—</span> of its peak share of listeners, against <span class="wu-num" data-source="trends" data-field="whole" data-where="key=fade:2022" data-fmt="pct0">—</span> for one that peaked in 2022.
-      But among the same people, the drop is small: <span class="wu-num" data-source="trends" data-field="same" data-where="key=fade:2010" data-fmt="pct1">—</span> still played it a year on in 2010,
-      <span class="wu-num" data-source="trends" data-field="same" data-where="key=fade:2022" data-fmt="pct1">—</span> in 2022. Most of the faster fade is ListenBrainz's crowd changing, not people dropping songs faster.</p>
     <div class="wu-card">
       <h3>Listening shifted from albums to single songs</h3>
       <p class="wu-note">ListenBrainz. In a month when someone played a new artist, how many of that artist's songs they played, by the
@@ -2209,17 +2197,6 @@
   }
   const noData = (el) => { el.innerHTML = '<p class="wu-fail">This chart\'s data didn\'t load. Reload the page.</p>'; };
 
-  function drawFade() {
-    const el = document.getElementById('fd-chart');
-    if (!ready(el, ['trends'])) return;
-    const rows = trendRows('fade:').map((r) => ({ ...r, year: +r.year })).sort((a, b) => a.year - b.year);
-    if (!rows.length) return noData(el);
-    const ser = [['idx_same', 'Same people: still playing it a year later', dash.colors[0]], ['idx_whole', 'Whole audience: share kept a year after the peak', dash.colors[1]]];
-    legend('fd-legend', ser.map(([, l, c]) => [l, c, 'line']));
-    trendLines(el, rows, ser, { y0: 0, ref: 1, tick: (v) => d3.format('.0f')(v * 100), ylabel: 'Compared with songs that peaked in 2010 (100)',
-      tip: (d) => [`Songs that peaked in ${d.year}`, [['Same people still playing', fmt.pct1(+d.same), ser[0][2]], ['Share of whole audience kept', fmt.pct0(+d.whole), ser[1][2]], ['Songs', fmt.int(+d.songs)]]] });
-  }
-
   function drawSingles() {
     const el = document.getElementById('sg-chart');
     if (!ready(el, ['trends'])) return;
@@ -2297,7 +2274,6 @@
 
   dash.onData(() => {
     fillMarks();
-    safeDraw(drawFade);
     safeDraw(drawSingles);
     safeDraw(drawNiches);
     safeDraw(drawDiscovery);
