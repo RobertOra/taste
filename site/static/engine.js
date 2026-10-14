@@ -72,6 +72,8 @@ export function normName(s) {
   return out || base;
 }
 export const songKey = (artist, track) => `${normName(artist)}\t${normName(track)}`;
+// a song's key for a pack: "artist\ttrack" as given, or the normalized name if the pack is keyed that way (meta.song_keys)
+const skey = (meta, an, tn) => (meta && meta.song_keys === 'norm' ? songKey(an, tn) : `${an}\t${tn}`);
 
 // ---------- reading Spotify exports (JSON, or a .zip of them)
 async function inflateRaw(bytes) {
@@ -231,7 +233,7 @@ export async function resolveYouTube(plays, pack) {
   const cand = [...by.entries()].filter(([, g]) => g.weeks.size >= RULES.minWeeks), known = new Set(sure);
   await pack.load(cand.map(([an]) => pack.shardOf(nameHash(an))));
   const tops = cand.filter(([an]) => pack.artist(nameHash(an))).map(([an, g]) => [an, [...g.songs.entries()]
-    .sort((x, y) => y[1].size - x[1].size || cmpName(x[0], y[0])).slice(0, 3).map(([tn]) => nameHash(`${an}\t${tn}`))]);
+    .sort((x, y) => y[1].size - x[1].size || cmpName(x[0], y[0])).slice(0, 3).map(([tn]) => nameHash(skey(pack.meta, an, tn)))]);
   await pack.load(tops.flatMap(([, hs]) => hs.map((h) => pack.shardOf(h))));
   for (const [an, hs] of tops) if (hs.some((h) => pack.song(h))) known.add(an);
   // song checks, only for 's' readings that could still be picked: a passing 'a' reading of an artist you play elsewhere always wins,
@@ -247,11 +249,11 @@ export async function resolveYouTube(plays, pack) {
       if (certain(rule, an)) { earlierA = true; if (sure.has(an)) earlierSureA = true; continue; }
       if (rule[0] === 'a' || !known.has(an) || EXCLUDE.has(an) || span.get(an).size < RULES.minWeeks) continue;
       if (sure.has(an) ? earlierSureA : (earlierA || sureA)) continue;
-      need.push(nameHash(an), nameHash(`${an}\t${s.toLowerCase()}`));
+      need.push(nameHash(an), nameHash(skey(pack.meta, an, s.toLowerCase())));
     }
   }
   await pack.load(need.map((h) => pack.shardOf(h)));
-  const passes = (rule, an, tn) => known.has(an) && !EXCLUDE.has(an) && (rule[0] === 'a' || (span.get(an).size >= RULES.minWeeks && pack.artist(nameHash(an)) !== null && pack.song(nameHash(`${an}\t${tn}`)) !== null));
+  const passes = (rule, an, tn) => known.has(an) && !EXCLUDE.has(an) && (rule[0] === 'a' || (span.get(an).size >= RULES.minWeeks && pack.artist(nameHash(an)) !== null && pack.song(nameHash(skey(pack.meta, an, tn))) !== null));
   const out = [];
   for (const p of plays) {
     if (p.src !== 'yt?') { out.push(p); continue; }
@@ -264,8 +266,9 @@ export async function resolveYouTube(plays, pack) {
 
 // ---------- picks: artists by name, songs by "artist\ttrack" (as Spotify gives them)
 // warm-up: no find counts in the 26 weeks after the start of the listening, or after a return from a gap of 26+ weeks
-export function segmentStarts(plays) {
+export function segmentStarts(plays, single = false) {   // single: one warm-up per history (as the study; packs with meta.warmup 'single')
   const ws = [...new Set(plays.map((p) => p.week))].sort((a, b) => a - b), out = [];
+  if (single) return ws.slice(0, 1);
   for (let i = 0; i < ws.length; i++) if (i === 0 || ws[i] - ws[i - 1] >= RULES.onboardWeeks) out.push(ws[i]);
   return out;
 }
@@ -387,15 +390,15 @@ export class Pack {
 
 // ---------- features, outcomes, excess
 function sums(rows, m) {
-  let a0 = 0, a1 = 0, ap = 0, tl = 0, kl = 0, tp = 0, kp = 0;
+  let a0 = 0, a1 = 0, ap = 0, tl = 0, kl = 0, tp = 0, kp = 0, t0 = 0, t1 = 0, tq = 0;
   const { month, a, t, k } = rows;
   for (let i = 0; i < month.length; i++) {
     const x = month[i];
     if (x > m + 12) break;
-    if (x <= m) { tp += t[i]; kp += k[i]; if (x >= m - 5) a0 += a[i]; else if (x >= m - 11 && x <= m - 6) ap += a[i]; }
-    else { tl += t[i]; kl += k[i]; if (x >= m + 7) a1 += a[i]; }
+    if (x <= m) { tp += t[i]; kp += k[i]; if (x >= m - 5) { a0 += a[i]; t0 += t[i]; } else if (x >= m - 11 && x <= m - 6) { ap += a[i]; tq += t[i]; } }
+    else { tl += t[i]; kl += k[i]; if (x >= m + 7) { a1 += a[i]; t1 += t[i]; } }
   }
-  return { a0, a1, ap, tl, kl, tp, kp };
+  return { a0, a1, ap, tl, kl, tp, kp, t0, t1, tq };
 }
 export function features(unit, item, art, m) {
   const f = sums(item.rows, m);
@@ -453,7 +456,11 @@ const cmpName = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 export function scoreMeasure(meta, key, picks) {
   const M = meta.measures[key], unit = M.unit;
   const scored = [];
-  for (const p of picks) { const f = features(unit, p.item, p.art, p.m); const x = excess(M, f, p.m); if (x) scored.push({ ...p, f, ...x }); }
+  for (const p of picks) {
+    let f = features(unit, p.item, p.art, p.m);
+    if (M.settled) f = { ...f, a0: f.t0, a1: f.t1, ap: f.tq };   // prescience among settled listeners (rebuild item 2)
+    const x = excess(M, f, p.m); if (x) scored.push({ ...p, f, ...x });
+  }
   let units = scored;
   if (unit === 'song') {
     const g = new Map();
@@ -518,9 +525,9 @@ export async function scoreHistory(files, meta, pack, onProgress = () => {}) {
 
   const lastJ = meta.last_month - 12;
   const notPicked = { warmup: [], tried: [] };
-  const starts = segmentStarts(plays);
+  const starts = segmentStarts(plays, meta.warmup === 'single');
   const aPicks = findPicks(plays, (p) => p.an, notPicked, starts);
-  const sPicks = findPicks(plays, (p) => `${p.an}\t${p.tn}`, null, starts).filter((p) => p.key.slice(p.key.indexOf('\t') + 1));
+  const sPicks = findPicks(plays, (p) => skey(meta, p.an, p.tn), null, starts).filter((p) => p.key.slice(p.key.indexOf('\t') + 1));
   const judgedA = aPicks.filter((p) => p.m >= meta.y0 && p.m <= lastJ), judgedS = sPicks.filter((p) => p.m >= meta.y0 && p.m <= lastJ);
   const recentA = aPicks.filter((p) => p.m > lastJ).sort((a, b) => b.plays26 - a.plays26).slice(0, 15);
   for (const p of [...judgedA, ...recentA]) p.ah = nameHash(p.an);

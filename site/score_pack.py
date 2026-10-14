@@ -16,10 +16,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "site"))
 import score as S  # noqa: E402  (name_hash, true_range, read_history, EXCLUDE_ARTISTS)
+from normalize import song_key  # noqa: E402
 
 import os
 DATA = Path(os.environ.get("SITE_OUT", ROOT / "site" / "static" / "data"))   # SITE_OUT: test another pack (e.g. site/static/data_v2)
 META = json.loads((DATA / "meta.json").read_text())
+
+
+def skey(an, tn):
+    """A song's key: "artist\ttrack" as given, or the normalized name if the pack is keyed that way (meta song_keys)."""
+    return song_key(an, tn) if META.get("song_keys") == "norm" else an + "\t" + tn
 
 
 def month_of_week(w):
@@ -113,8 +119,11 @@ def decode(b):
     return an, ar, sn, sr
 
 
-def segment_starts(weeks):
-    ws = sorted(set(weeks)); return [w for i, w in enumerate(ws) if i == 0 or w - ws[i - 1] >= 26]
+def segment_starts(weeks, single=False):
+    ws = sorted(set(weeks))
+    if single:   # one warm-up per history (as the study)
+        return ws[:1]
+    return [w for i, w in enumerate(ws) if i == 0 or w - ws[i - 1] >= 26]
 
 
 def in_warmup(starts, fw):
@@ -141,27 +150,27 @@ def find_picks(plays, key_of, starts=None):
 
 
 def feats(unit, item, art, m):
-    a0 = a1 = ap = tl = kl = tp = kp = 0
+    a0 = a1 = ap = tl = kl = tp = kp = t0 = t1 = tq = 0
     for mo, a, t, k in item["rows"]:
         if mo > m + 12:
             break
         if mo <= m:
             tp += t; kp += k
             if mo >= m - 5:
-                a0 += a
+                a0 += a; t0 += t
             elif m - 11 <= mo <= m - 6:
-                ap += a
+                ap += a; tq += t
         else:
             tl += t; kl += k
             if mo >= m + 7:
-                a1 += a
+                a1 += a; t1 += t
     d = m - item["fm"]
     if unit == "artist":
         age = 9 if item["fm"] <= 2005 * 12 else 0 if d < 3 else 1 if d < 6 else 2 if d < 12 else 3 if d < 24 else 4
     else:
         age = 9 if item["fm"] <= 2005 * 12 else d if d <= 2 else 3 if d < 6 else 4 if d < 12 else 5 if d < 24 else 6
     relc = 2 * int(any(m < r <= m + 3 for r in art["rel"])) + int(any(m - 3 <= r <= m for r in art["rel"])) if art["anyrel"] else 4
-    return dict(a0=a0, a1=a1, ap=ap, tl=tl, kl=kl, tp=tp, kp=kp, age=age, scene=art["scene"].get(m // 12, -1), relc=relc, country=art["country"])
+    return dict(a0=a0, a1=a1, ap=ap, tl=tl, kl=kl, tp=tp, kp=kp, t0=t0, t1=t1, tq=tq, age=age, scene=art["scene"].get(m // 12, -1), relc=relc, country=art["country"])
 
 
 _LK = {}
@@ -172,6 +181,8 @@ def excess(M, key, f, m):
         _LK[key] = ({(r[0], r[1]): r for r in M["baseline"]}, {n: {"|".join(str(v) for v in r[:-1]): r[-1] for r in rows_} for n, rows_ in M["effects"].items()},
                     {r[0]: r[1:] for r in M.get("xb_cuts", [])})
     base, eff, cuts = _LK[key]
+    if M.get("settled"):   # prescience among settled listeners (rebuild item 2)
+        f = {**f, "a0": f["t0"], "a1": f["t1"], "ap": f["tq"]}
     b = min(14, max(0, math.floor(math.log(f["a0"] + 1) / math.log(2))))
     mo = min(3, max(-3, math.floor((math.log((f["a0"] + 1) / (f["ap"] + 1)) / math.log(2)) / 0.5)))
     br = base.get((m, b))
@@ -198,7 +209,7 @@ def score_measure(key, picks, exclude_self=False):
         if exclude_self:
             fmo = month_of_week(p["first_week"])
             if p["m"] - 5 <= fmo <= p["m"]:
-                f["a0"] = max(f["a0"] - 1, 0)
+                f["a0"] = max(f["a0"] - 1, 0); f["t0"] = max(f["t0"] - 1, 0)
             if fmo >= META["m0"]:
                 f["tp"] = max(f["tp"] - 1, 0); f["kp"] = max(f["kp"] - 1, 0)
         x = excess(M, key, f, p["m"])
@@ -226,9 +237,9 @@ def score(plays, exclude_self=False, pack=None):
     pack = pack or Pack(); lj = META["last_month"] - 12
     if any(p.get("src") == "yt?" for p in plays):
         plays = resolve_youtube(plays, pack)
-    starts = segment_starts(p["week"] for p in plays)
+    starts = segment_starts((p["week"] for p in plays), META.get("warmup") == "single")
     ap = [p for p in find_picks(plays, lambda p: p["an"], starts) if META["y0"] <= p["m"] <= lj]
-    sp = [p for p in find_picks(plays, lambda p: p["an"] + "\t" + p["tn"], starts) if p["key"].split("\t", 1)[1] and META["y0"] <= p["m"] <= lj]
+    sp = [p for p in find_picks(plays, lambda p: skey(p["an"], p["tn"]), starts) if p["key"].split("\t", 1)[1] and META["y0"] <= p["m"] <= lj]
     for p in ap:
         p["ah"] = p["ah"] if p["ah"] is not None else S.name_hash(p["an"]); p["art"] = pack.artist(p["ah"]); p["item"] = p["art"]
     for p in sp:
@@ -390,14 +401,14 @@ def resolve_youtube(plays, pack):
         if len(g["weeks"]) < 4 or not pack.artist(S.name_hash(an)):
             continue
         top = sorted(g["songs"].items(), key=lambda kv: (-len(kv[1]), kv[0]))[:3]
-        if any(pack.song(S.name_hash(an + "\t" + tn)) for tn, _ in top):
+        if any(pack.song(S.name_hash(skey(an, tn))) for tn, _ in top):
             known.add(an)
     span = {}   # weeks an artist could have at most; below 4 it can't be a find, so its song readings aren't checked
     for p in plays:
         for an in ([a.lower() for _, a, _ in p["cands"]] if p.get("src") == "yt?" else [p["an"]]):
             span.setdefault(an, set()).add(p["week"])
     def passes(rule, an, tn):
-        return an in known and an not in S.EXCLUDE_ARTISTS and (rule[0] == "a" or (len(span[an]) >= 4 and pack.artist(S.name_hash(an)) is not None and pack.song(S.name_hash(an + "\t" + tn)) is not None))
+        return an in known and an not in S.EXCLUDE_ARTISTS and (rule[0] == "a" or (len(span[an]) >= 4 and pack.artist(S.name_hash(an)) is not None and pack.song(S.name_hash(skey(an, tn))) is not None))
     out = []
     for p in plays:
         if p.get("src") != "yt?":

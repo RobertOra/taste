@@ -9,6 +9,13 @@ ROOT = Path(__file__).resolve().parent.parent
 import os
 REF, OUT = Path(os.environ.get("SITE_REF", ROOT / "data" / "site")), Path(os.environ.get("SITE_OUT", ROOT / "site" / "static" / "data"))
 meta = json.loads((REF / "pack_meta.json").read_text())
+# prescience among settled listeners (rebuild item 2): SETTLED=1 ships it as the site's prescience (song_A / artist_A);
+# otherwise the all-listener version stays. Either way the other variant isn't shipped.
+for unit in ("song", "artist"):
+    if f"{unit}_As" in meta["measures"]:
+        alt = meta["measures"].pop(f"{unit}_As")
+        if os.environ.get("SETTLED") == "1":
+            meta["measures"][f"{unit}_A"] = alt
 meta["family_share"] = {}
 for unit in ("artist", "song"):
     f = pl.read_parquet(REF / f"_pack_picks_{unit}.parquet", columns=["fam"])
