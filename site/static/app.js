@@ -153,7 +153,7 @@ function render(r, scroll = true) {
     <div class="fact"><b>${n(F.plays)} plays</b><span>over ${F.years} years${F.ytPlays && F.ytPlays < F.plays ? ` (${n(F.ytPlays)} on YouTube)` : ''}</span></div>
     <div class="fact"><b>${n(F.findsS)} songs</b><span>you really got into (played in 4+ separate weeks, the 4th within 6 months of first hearing)${M.song_A.items ? `; ${n(M.song_A.items.length)} matched and scored` : ''}</span></div>
     <div class="fact"><b>${n(F.findsA)} artists</b><span>you really got into (about ${F.perYear} a year; same rule, any of their songs)${M.artist_A.picks ? `; ${n(M.artist_A.picks)} matched and scored` : ''}</span></div>
-    ${Rp.tookOff ? `<div class="fact"><b style="line-height:1.25">${Rp.tookOff.yours} took off <span style="font-size:15px;color:var(--ink-3)">vs ${Rp.tookOff.expected} typical</span></b><span>of your scored artists (3× the new listeners a year later)</span></div>` : ''}
+    ${Rp.tookOff ? `<div class="fact"><b style="line-height:1.25">${Rp.tookOff.yours} took off <span style="font-size:15px;color:var(--ink-3)">vs ${Rp.tookOff.expected} typical</span></b><span>of your scored ${hm.what} (3× the new listeners a year later)</span></div>` : ''}
   </div>`;
 
   const pts = (x) => `${x >= 0 ? '+' : '−'}${Math.abs(100 * x).toFixed(1)} points`;

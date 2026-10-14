@@ -555,13 +555,13 @@ export async function scoreHistory(files, meta, pack, onProgress = () => {}) {
     return out;
   }
   if (!R[out.headline].solid) out.checks.push({ id: 'picks', ok: true, warn: true, text: `You have enough finds for a rough score; more history would narrow the range (${R[out.headline].picks} ${out.headline.startsWith('song') ? 'independent song finds' : 'artists'}; ${meta.min_picks} is the minimum, 250 or more is a solid score).` });
-  out.report = buildReport({ meta, plays, aPicks, sPicks, judgedA, mA, R, recentA, lastJ, notPicked, wMin, wMax, pack });
+  out.report = buildReport({ meta, plays, aPicks, sPicks, judgedA, mA, R, recentA, lastJ, notPicked, wMin, wMax, pack, headline: out.headline });
   out.ok = true;
   return out;
 }
 
 // ---------- personal report (descriptive; the scores above don't depend on it)
-function buildReport({ meta, plays, aPicks, sPicks, judgedA, mA, R, recentA, lastJ, notPicked, wMin, wMax }) {
+function buildReport({ meta, plays, aPicks, sPicks, judgedA, mA, R, recentA, lastJ, notPicked, wMin, wMax, headline }) {
   const Rp = {}, A = R.artist_A, S = R.song_A;
   const years = (wMax - wMin) / 52.18;
   Rp.facts = { plays: plays.length, ytPlays: plays.filter((p) => p.src !== 'spotify').length, artists: new Set(plays.map((p) => p.an)).size, songs: new Set(plays.map((p) => `${p.an}\t${p.tn}`)).size,
@@ -576,7 +576,9 @@ function buildReport({ meta, plays, aPicks, sPicks, judgedA, mA, R, recentA, las
     if (tot >= 5) ahead.push({ name: p.name, m: p.m, share: after / tot, fans: tot });
   }
   Rp.ahead = { share: mean(ahead.map((a) => a.share)), artists: ahead.length, best: ahead.filter((a) => a.fans >= 30).sort((a, b) => b.share - a.share || b.fans - a.fans).slice(0, 3) };
-  Rp.tookOff = win.length ? { yours: win.filter((p) => p.up3).length, expected: Math.round(win.reduce((t, p) => t + (p.up3Rate || 0), 0)) } : null;
+  // same unit as the headline (songs: each scored song counted, against the typical rate for similar songs)
+  const sw = headline === 'artist_A' ? win : (S.win || []).flatMap((u) => u.songs);
+  Rp.tookOff = sw.length ? { yours: sw.filter((p) => p.up3).length, expected: Math.round(sw.reduce((t, p) => t + (p.up3Rate || 0), 0)) } : null;
   Rp.edge = win.length ? { scenes: Math.expm1(mean(win.map((p) => p.sceneEff))), within: Math.expm1(mean(win.map((p) => p.excess))) } : null;
   const byY = new Map(); for (const p of A.all || []) { const y = Math.floor(p.m / 12); if (!byY.has(y)) byY.set(y, []); byY.get(y).push(p.excess); }
   const wlo = A.window ? A.window[0] : Infinity;

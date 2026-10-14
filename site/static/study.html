@@ -80,6 +80,8 @@ window.dash = (() => {
 .wu-take .wu-tt { font-weight: var(--cds-font-weight-medium); font-size: var(--cds-font-size-body); }
 .wu-take .wu-big { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; line-height: 1.1; }
 .wu-take .wu-cap { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); line-height: 1.5; }
+.wu-take .wu-go { text-decoration: underline; text-decoration-color: var(--color-border-line); text-underline-offset: 3px; margin-top: 2px; }
+.wu-words { margin-top: var(--cds-gap-md); }
 .wu-note { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); line-height: 1.5; margin: var(--cds-gap-xs) 0 var(--cds-gap-sm); }
 .wu-chart { position: relative; min-height: 140px; }
 .wu-chart svg { display: block; overflow: visible; }
@@ -151,25 +153,34 @@ window.dash = (() => {
         <span class="wu-big dash-skeleton" data-source="repeat" data-field="later_top_fifth" data-where="key=99–100" data-fmt="pct">—</span>
         <span class="wu-cap">of the top 1% at picking songs were still in the top fifth two to three years later; only
           <span class="wu-num" data-source="repeat" data-field="later_bottom_fifth" data-where="key=99–100" data-fmt="pct">—</span> fell to the bottom fifth. By chance, each would be 20%.</span>
-      </div>
-      <div class="wu-card wu-take">
-        <span class="wu-tt">Good pickers' finds take off twice as often</span>
-        <span class="wu-big dash-skeleton" data-source="headlines" data-field="hidden" data-where="key=P1a" data-fmt="times">—</span>
-        <span class="wu-cap">New artists found by the best fifth of pickers grew tenfold within a year
-          <span class="wu-num" data-source="headlines" data-field="rate" data-where="key=P1a" data-fmt="pct2">—</span> of the time, against <span class="wu-num" data-source="headlines" data-field="rate_compared" data-where="key=P1a" data-fmt="pct2">—</span>
-          for the worst fifth.</span>
+        <a class="wu-cap wu-go" href="#findings">See the chart →</a>
       </div>
       <div class="wu-card wu-take">
         <span class="wu-tt">The best are far better</span>
         <span class="wu-big dash-skeleton" data-source="headlines" data-field="hidden" data-where="key=S1" data-fmt="times">—</span>
         <span class="wu-cap">as likely as similar songs to grow tenfold, for songs found by the top 1% of pickers (for their new artists,
           <span class="wu-num" data-source="headlines" data-field="hidden" data-where="key=P4a" data-fmt="times">—</span>). The bottom half of pickers do no better than chance.</span>
+        <a class="wu-cap wu-go" href="#ladder">See the chart →</a>
       </div>
       <div class="wu-card wu-take">
         <span class="wu-tt">Good pickers matter most early</span>
         <span class="wu-big dash-skeleton" data-source="fanvalue" data-field="effect" data-where="key=small:good" data-fmt="spct0">—</span>
         <span class="wu-cap">more growth next year for a small artist from one new fan with a proven good track record, against
           <span class="wu-num" data-source="fanvalue" data-field="effect" data-where="key=small:ordinary" data-fmt="spct1">—</span> for an ordinary new fan.</span>
+        <a class="wu-cap wu-go" href="#fanvalue">See the chart →</a>
+      </div>
+    </div>
+    <div class="wu-takeaways wu-words">
+      <div class="wu-card wu-take">
+        <span class="wu-tt">It's judgment, not habits</span>
+        <span class="wu-cap">How much someone listens, how many new things they try, and how obscure their picks are explain little.
+          Choosing people by their track record finds far better pickers than choosing them by their habits.</span>
+        <a class="wu-cap wu-go" href="#whygood">See the chart →</a>
+      </div>
+      <div class="wu-card wu-take">
+        <span class="wu-tt">Taste still works in the algorithm era</span>
+        <span class="wu-cap">The gap between good and bad pickers' finds is wider now than in the early 2010s, for songs and artists alike.</span>
+        <a class="wu-cap wu-go" href="#eras">See the chart →</a>
       </div>
     </div>
     <p class="wu-note">Big takeoffs are rare for everyone, so taste shifts the odds rather than guaranteeing hits. Every number here held
@@ -721,8 +732,8 @@ window.dash = (() => {
   <section class="wu-section" id="limits">
     <h2>What this can't tell us</h2>
     <ul>
-      <li><b>Takeoffs are rare.</b> "Twice as likely" means <span class="wu-num" data-source="headlines" data-field="rate" data-where="key=P1a" data-fmt="pct2">—</span> of new artists growing tenfold
-        instead of <span class="wu-num" data-source="headlines" data-field="rate_compared" data-where="key=P1a" data-fmt="pct2">—</span>. Taste tilts the odds; it doesn't guarantee hits.</li>
+      <li><b>Takeoffs are rare.</b> "13 times as often" means <span class="wu-num" data-source="ladder" data-field="rate" data-where="key=songs:99–100" data-fmt="pct2">—</span> of the top 1%'s songs growing tenfold
+        instead of <span class="wu-num" data-source="ladder" data-field="similar_rate" data-where="key=songs:99–100" data-fmt="pct2">—</span> for similar songs. Taste tilts the odds; it doesn't guarantee hits.</li>
       <li><b>The takeoff and good-picker numbers include rising scenes.</b> Being early to a scene that grows is part of what good pickers do. Compared only
         within the same scene, the effects are roughly half as big but still hold (one more good picker adds
         <span class="wu-num dash-skeleton" data-source="headlines" data-field="hidden" data-where="key=P3b" data-fmt="spct1">—</span> growth
