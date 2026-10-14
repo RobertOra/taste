@@ -142,7 +142,7 @@ window.dash = (() => {
       <span class="wu-num" data-source="facts" data-field="last_year" data-row="0" data-fmt="text">—</span>, checked again on
       <span class="wu-num" data-source="facts" data-field="lb_listeners" data-row="0" data-fmt="int">—</span> ListenBrainz listeners through 2026. Half of the
       Last.fm listeners were kept hidden until the method was locked in. The main findings held on that hidden half and most held again on ListenBrainz;
-      the few later charts that weren't tested that way are marked exploratory.</p>
+      later charts that weren't tested that way are marked exploratory.</p>
   </header>
 
   <section id="takeaways" aria-label="Key findings">
@@ -786,8 +786,9 @@ window.dash = (() => {
       several), in thirteen rounds. Then we checked each once. Of thirty-two predictions, twenty-nine held.</p>
     <p><b>Then we checked everything again on a second platform.</b> ListenBrainz is a separate site with different listeners, and nothing had been
       analysed on it. We wrote down every prediction first, with the same bars, then ran each once. Eight of the nine main measures we could run
-      there passed, and twenty-four of the thirty-two predictions held. The table shows every one. A few ListenBrainz charts came after that
-      run (a decade later, careers, and one person's range); nothing was predicted for them in advance, so they're marked exploratory.</p>
+      there passed, and twenty-four of the thirty-two predictions held. The table shows every one. Several ListenBrainz charts came after that
+      run (among them a decade later, careers, how early the best pickers arrive, one person's range, and Music over time); nothing was
+      predicted for them in advance, so they're marked exploratory.</p>
     <p><b>Later, songs.</b> The takeoff, getting-hooked, and scene numbers above were first for artists. After seeing the songs' versions on the
       first half, we wrote down nine more predictions before running them anywhere else: the top 1% of song pickers beat similar songs (S1) and
       their own artist edge (S2); getting hooked pays off more for top song pickers (S3); their edge splits into right songs within a scene (S4)
@@ -854,8 +855,8 @@ window.dash = (() => {
 
   <section class="wu-section" id="next">
     <h2>What's next</h2>
-    <p>Deciding whether to build a site that scores someone's own listening history, with an honest range rather than a single number.
-      ListenBrainz suggests the method still works on today's listening.</p>
+    <p>Try it on your own listening: the Taste Test scores a Spotify or YouTube history the same way as this study, against ListenBrainz
+      listeners, with an honest range rather than a single number. ListenBrainz suggests the method still works on today's listening.</p>
   </section>
 
   <details id="appendix">
@@ -1876,13 +1877,15 @@ window.dash = (() => {
     if (!rows.length) { el.innerHTML = '<p class="wu-fail">This chart\'s data didn\'t load. Reload the page.</p>'; return; }
     const f = frame(el, 270, { t: 28, r: 8, b: 30, l: 44 });
     const { svg, fs, width, height, m } = f;
+    const narrow = width < 520;   // phones: shorter labels so they don't run into each other
+    if (narrow) stages.forEach((st) => { st[1] = { small: 'Small (≤20)', medium: 'Medium', big: 'Big (100+)' }[st[0]]; });
     const x0 = d3.scaleBand(stages.map((d) => d[0]), [m.l, width - m.r]).paddingInner(0.3).paddingOuter(0.1);
     const x1 = d3.scaleBand(fans.map((d) => d[0]), [0, x0.bandwidth()]).padding(0.15);
     const y = d3.scaleLinear([d3.min(rows, (r) => r.lo) * 1.3, d3.max(rows, (r) => r.hi) * 1.12], [height - m.b, m.t]).nice();
     gridY(f, y, d3.format('+.0%'), 5);
     svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', css('--cds-chart-axis'));
     axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`).call(d3.axisBottom(x0).tickFormat((k) => stages.find((q) => q[0] === k)[1]).tickSize(0)), fs);
-    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text('Growth over the next year, compared with an ordinary new fan');
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text(narrow ? 'Growth vs an ordinary new fan' : 'Growth over the next year, compared with an ordinary new fan');
     const tip = tooltip(el);
     rows.forEach((r) => {
       const fn = fans.find((q) => q[0] === r.fan); const bx = x0(r.stage) + x1(r.fan), bw = x1.bandwidth();
@@ -2326,7 +2329,8 @@ window.dash = (() => {
       const x = d3.scaleLinear([0, Math.max(...rows.map((r) => +r[k])) * 1.1], [m.l, width - m.r]).nice();
       axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 4})`).call(d3.axisBottom(x).ticks(4).tickFormat(d3.format('.0%')).tickSize(0)), fs);
       svg.append('text').attr('x', (m.l + width - m.r) / 2).attr('y', height - 4).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted')).style('font-size', fs)
-        .text(ahSel === 'before' ? 'Share of their finds of these artists made before the breakout' : 'Share made a year or more before the breakout');
+        .text(width < 520 ? (ahSel === 'before' ? 'Share made before the breakout' : 'Share made a year or more before')
+          : (ahSel === 'before' ? 'Share of their finds of these artists made before the breakout' : 'Share made a year or more before the breakout'));
       const tip = tooltip(el);
       rows.forEach((r, i) => {
         const yy = m.t + i * 40, c = r.g === 'everyone' ? css('--cds-chart-muted') : dash.colors[0];
