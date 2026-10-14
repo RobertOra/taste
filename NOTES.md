@@ -195,9 +195,15 @@ eras_yearly rates people for year Y on all picks up to Y-2, so later years rate 
 picks per person, 2010 -> 2025). Rated instead on a fixed window (Y-4..Y-2; 125-183 picks), the best-minus-worst gap follows the
 same path: songs +9.7% (2010), +20.6% (2015), +27.3% (2020), +31.6% (2025) vs +10.1 / +19.9 / +25.2 / +29.5 on all history;
 artists +5.3 / +6.7 / +8.2 / +8.9 vs +5.4 / +5.8 / +8.5 / +9.2. Not a measurement artifact. Who uses ListenBrainz still changed.
-Added to the charts: top 10% on the year-by-year growth chart (analysis/eras_top10.py; 315-1,340 people a year), top 1% on the
-career growth chart (lb_careers*.py; 278 artist / 351 song pickers; wide ranges: artists +3.3% after a year, -4.3% after six,
-range -11.1 to +2.6). Rerunning the career scripts moves earlier 95% ranges slightly (group order varies), so the earlier rows were kept.
+Tried and removed (Robert, 2026-10-14): top 10% on the year-by-year growth chart (close to the best fifth) and top 1% on the
+career growth chart. Top 1% vs the rest of the best fifth (analysis/careers_top1_check.py): no difference beyond noise at any
+year (artists 6 years: -4.6%, range -12.0 to +2.4; songs -3.6%, -11.0 to +4.5). Hint for artists only: the top 1%'s finds lost
+half their listeners 1.13-1.18x as often as similar ones (rest of best fifth ~1.0x) while hitting tenfold far more often: a bit
+more boom-or-bust.
+Why the best fifth's songs do better over the years (analysis/eras_why.py): not the same people improving. People rated in both
+2010-13 and 2021-25 (4,512): best fifth +3.1% -> 0.0%, worst -10.6% -> -25.6%; everyone else: best +0.8% -> +10.6%, worst -10.8%
+-> -13.1%. The rise comes from people not rated in the early period (mostly newer users). Outcome spread grew only modestly
+(sd 0.58 -> 0.73), not enough to explain it. Artists: same people best +1.8% -> +0.7%, worst -2.9% -> -7.5%.
 
 ### How early can you tell an artist will break out? (2026-10-14, exploratory; analysis/early_signal.py)
 LB artists whose first listener came 2012-2020. Breakout = top 1% of the birth-year cohort by listeners in year 3. Logistic
