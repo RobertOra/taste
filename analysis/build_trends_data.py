@@ -71,5 +71,11 @@ gq = L("gems_quality")
 for r in gq["groups"]:   # are hidden gems good (trends_gems_quality.py)
     rows.append({"key": f"gemsq:{r['group']}", **{k: v for k, v in r.items() if k != "group"}})
 rows.append({"key": "gemsq:tripled", **gq["tripled"]})
+ah = L("ahead")   # how far ahead the best pickers are (trends_ahead.py)
+for r in ah["groups"]:
+    slug = {"top 1%": "top1", "rest of the top fifth": "topfifth", "middle": "middle", "bottom fifth": "bottom", "everyone": "everyone"}[r["group"]]
+    rows.append({"key": f"ahead:{slug}", **r})   # keys without "%" (the page URL-decodes them)
+for i, r in enumerate(ah["examples"]):
+    rows.append({"key": f"ahead:ex:{i}", **r})
 (ROOT / "analysis" / "writeup" / "trends.json").write_text(json.dumps(rows, indent=1))
 print(len(rows), "rows")

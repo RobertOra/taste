@@ -366,6 +366,17 @@
 
   <section class="wu-section" id="careers">
     <h2>Good pickers' typical finds are early; their big hits last</h2>
+    <p>Take the artists that broke out on ListenBrainz, growing at least tenfold within a few years. Most of their fans only arrived after the
+      breakout: the typical fan got in <span class="wu-num" data-source="trends" data-field="median_lead" data-where="key=ahead:everyone" data-fmt="moAfter">—</span>. The top 1% of pickers got there about a year sooner (<span class="wu-num" data-source="trends" data-field="median_lead" data-where="key=ahead:top1" data-fmt="moAfter">—</span>), and twice as often
+      before the breakout: <span class="wu-num" data-source="trends" data-field="before" data-where="key=ahead:top1" data-fmt="pct0">—</span> of them, against <span class="wu-num" data-source="trends" data-field="before" data-where="key=ahead:everyone" data-fmt="pct0">—</span> of everyone.</p>
+    <div class="wu-card">
+      <h3>The best pickers get to breakout artists about a year before everyone else</h3>
+      <p class="wu-note">ListenBrainz; exploratory. <span class="wu-num" data-source="trends" data-field="fans" data-where="key=ahead:everyone" data-fmt="int">—</span> times someone got into one of the artists that first appeared 2012–2021 and
+        grew at least tenfold, to a peak of at least 50 monthly listeners; the breakout is the first month with half the peak. People are
+        ranked as pickers on their finds up to two years before.</p>
+      <div class="wu-chips" id="ah-chips" role="group" aria-label="How early"></div>
+      <div class="wu-chart dash-skeleton" id="ah-chart" data-source="trends"></div>
+    </div>
     <p>Following each new artist for six years: a good picker's typical find pulls ahead of similar artists for the first few years, then the others
       catch up. But their biggest finds are much more likely to become lasting breakouts. Bad pickers' finds fall further behind every year.</p>
     <p>Songs follow the same pattern, with the bad pickers' slide steeper: the worst fifth's songs stood at <span class="wu-num" data-source="careers" data-field="growth" data-where="key=songs:worst:1" data-fmt="spct0">—</span> against similar songs
@@ -923,6 +934,7 @@
     pct: d3.format('.0%'), f0: d3.format(',.0f'), f1: d3.format('.1f'), f2: d3.format('.2f'), f3: d3.format('.3f'), int: d3.format(','),
     compact: (v) => Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 0 }).format(v),
     text: (v) => String(v),
+    moAfter: (v) => (v < 0 ? `${d3.format('.0f')(-v)} months after it` : `${d3.format('.0f')(v)} months before it`),
     times: (v) => `${d3.format('.1f')(v)}×`, pct0: d3.format('.0%'), pct1: d3.format('.1%'), pct2: d3.format('.2%'),
     spct1: d3.format('+.1%'), spct0: d3.format('+.0%'), k0: (v) => d3.format('.0f')(v * 1000), k1: (v) => d3.format('.1f')(v * 1000),
     times1: (v) => `${d3.format('.1f')(v)}×`,
@@ -2232,6 +2244,41 @@
         ['Plays that year (median)', fmt.int(Math.round(+d.plays))]]] });
   }
 
+  let ahSel = 'before';
+  function drawAhead() {
+    const el = document.getElementById('ah-chart');
+    const chips = document.getElementById('ah-chips');
+    if (!ready(el, ['trends'])) { chips.replaceChildren(); return; }
+    const groups = [['top1', 'Top 1% of pickers'], ['topfifth', 'Rest of the top fifth'], ['middle', 'Middle'], ['bottom', 'Bottom fifth'], ['everyone', 'Everyone']];
+    const rows = groups.map(([g, l]) => ({ l, g, ...(trendRows(`ahead:${g}`)[0] || {}) })).filter((r) => r.before !== undefined);
+    if (!rows.length) return noData(el);
+    function paint() {
+      el.replaceChildren();
+      const k = ahSel === 'before' ? 'before' : 'year_before';
+      const lab = Math.min(170, el.clientWidth * 0.36);
+      const f = frame(el, rows.length * 40 + 30, { t: 6, r: 44, b: 24, l: lab });
+      const { svg, fs, width, height, m } = f;
+      const x = d3.scaleLinear([0, Math.max(...rows.map((r) => +r[k])) * 1.1], [m.l, width - m.r]).nice();
+      axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 4})`).call(d3.axisBottom(x).ticks(4).tickFormat(d3.format('.0%')).tickSize(0)), fs);
+      const tip = tooltip(el);
+      rows.forEach((r, i) => {
+        const yy = m.t + i * 40, c = r.g === 'everyone' ? css('--cds-chart-muted') : dash.colors[0];
+        svg.append('text').attr('x', m.l - 8).attr('y', yy + 19).attr('text-anchor', 'end').attr('fill', css('--color-fg')).style('font-size', fs).text(r.l);
+        svg.append('rect').attr('x', m.l).attr('y', yy + 6).attr('width', Math.max(0, x(+r[k]) - m.l)).attr('height', 22).attr('rx', 4).attr('fill', c)
+          .on('mousemove', (ev) => tip.show(ev, r.l, [['Got in before the breakout', fmt.pct0(+r.before), c], ['A year or more before', fmt.pct0(+r.year_before)],
+            ['Typically got in', fmt.moAfter(+r.median_lead)], ['Times they got into one', fmt.int(+r.fans)]])).on('mouseleave', () => tip.hide());
+        svg.append('text').attr('x', x(+r[k]) + 6).attr('y', yy + 21).attr('fill', css('--color-fg')).style('font-size', fs).text(fmt.pct0(+r[k]));
+      });
+      chips.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.m === ahSel)));
+    }
+    chips.replaceChildren(...[['before', 'Got in before the breakout'], ['year', 'A year or more before']].map(([kk, l]) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'wu-chip'; b.dataset.m = kk; b.textContent = l;
+      b.addEventListener('click', () => { ahSel = kk; paint(); });
+      return b;
+    }));
+    paint();
+  }
+
   let gmSel = 'all';
   function drawGems() {
     const el = document.getElementById('gm-chart');
@@ -2279,6 +2326,7 @@
 
   dash.onData(() => {
     fillMarks();
+    safeDraw(drawAhead);
     safeDraw(drawSingles);
     safeDraw(drawDiscovery);
     safeDraw(drawGems);

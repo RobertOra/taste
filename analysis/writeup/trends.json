@@ -1862,5 +1862,320 @@
   "tripled": 6535,
   "overhyped_share": 0.18775822494261668,
   "loved_share": 0.20994644223412395
+ },
+ {
+  "key": "ahead:top1",
+  "group": "top 1%",
+  "fans": 11456,
+  "median_lead": -6.0,
+  "before": 0.25837988826815644,
+  "year_before": 0.10370111731843576
+ },
+ {
+  "key": "ahead:topfifth",
+  "group": "rest of the top fifth",
+  "fans": 154725,
+  "median_lead": -12.0,
+  "before": 0.18645984811762806,
+  "year_before": 0.07315559864275327
+ },
+ {
+  "key": "ahead:middle",
+  "group": "middle",
+  "fans": 383603,
+  "median_lead": -15.0,
+  "before": 0.1439013772050792,
+  "year_before": 0.05630300075859678
+ },
+ {
+  "key": "ahead:bottom",
+  "group": "bottom fifth",
+  "fans": 143353,
+  "median_lead": -15.0,
+  "before": 0.12947060752129358,
+  "year_before": 0.04784692332912461
+ },
+ {
+  "key": "ahead:everyone",
+  "group": "everyone",
+  "fans": 1066532,
+  "median_lead": -17.0,
+  "before": 0.14363094590692074,
+  "year_before": 0.05484598680583424
+ },
+ {
+  "key": "ahead:ex:0",
+  "name": "Dominic Fike",
+  "first": 24231,
+  "B": 24279,
+  "ahead": 48,
+  "n_top": 15,
+  "Lp": 1468,
+  "first_label": "Apr 2019",
+  "B_label": "Apr 2023"
+ },
+ {
+  "key": "ahead:ex:1",
+  "name": "The Chainsmokers",
+  "first": 24170,
+  "B": 24195,
+  "ahead": 25,
+  "n_top": 9,
+  "Lp": 1392,
+  "first_label": "Mar 2014",
+  "B_label": "Apr 2016"
+ },
+ {
+  "key": "ahead:ex:2",
+  "name": "Addison Rae",
+  "first": 24284,
+  "B": 24303,
+  "ahead": 19,
+  "n_top": 4,
+  "Lp": 1385,
+  "first_label": "Sep 2023",
+  "B_label": "Apr 2025"
+ },
+ {
+  "key": "ahead:ex:3",
+  "name": "XXXTENTACION",
+  "first": 24204,
+  "B": 24218,
+  "ahead": 14,
+  "n_top": 15,
+  "Lp": 1228,
+  "first_label": "Jan 2017",
+  "B_label": "Mar 2018"
+ },
+ {
+  "key": "ahead:ex:4",
+  "name": "Halsey",
+  "first": 24183,
+  "B": 24207,
+  "ahead": 24,
+  "n_top": 12,
+  "Lp": 1171,
+  "first_label": "Apr 2015",
+  "B_label": "Apr 2017"
+ },
+ {
+  "key": "ahead:ex:5",
+  "name": "Run the Jewels",
+  "first": 24161,
+  "B": 24178,
+  "ahead": 17,
+  "n_top": 14,
+  "Lp": 1069,
+  "first_label": "Jun 2013",
+  "B_label": "Nov 2014"
+ },
+ {
+  "key": "ahead:ex:6",
+  "name": "Cardi B",
+  "first": 24200,
+  "B": 24219,
+  "ahead": 19,
+  "n_top": 11,
+  "Lp": 1057,
+  "first_label": "Sep 2016",
+  "B_label": "Apr 2018"
+ },
+ {
+  "key": "ahead:ex:7",
+  "name": "Roddy Ricch",
+  "first": 24227,
+  "B": 24240,
+  "ahead": 13,
+  "n_top": 15,
+  "Lp": 945,
+  "first_label": "Dec 2018",
+  "B_label": "Jan 2020"
+ },
+ {
+  "key": "ahead:ex:8",
+  "name": "Shawn Mendes",
+  "first": 24175,
+  "B": 24192,
+  "ahead": 17,
+  "n_top": 9,
+  "Lp": 928,
+  "first_label": "Aug 2014",
+  "B_label": "Jan 2016"
+ },
+ {
+  "key": "ahead:ex:9",
+  "name": "Martin Garrix",
+  "first": 24167,
+  "B": 24199,
+  "ahead": 32,
+  "n_top": 15,
+  "Lp": 926,
+  "first_label": "Dec 2013",
+  "B_label": "Aug 2016"
+ },
+ {
+  "key": "ahead:ex:10",
+  "name": "SAINt JHN",
+  "first": 24200,
+  "B": 24242,
+  "ahead": 42,
+  "n_top": 12,
+  "Lp": 926,
+  "first_label": "Sep 2016",
+  "B_label": "Mar 2020"
+ },
+ {
+  "key": "ahead:ex:11",
+  "name": "black midi",
+  "first": 24221,
+  "B": 24256,
+  "ahead": 35,
+  "n_top": 7,
+  "Lp": 926,
+  "first_label": "Jun 2018",
+  "B_label": "May 2021"
+ },
+ {
+  "key": "ahead:ex:12",
+  "name": "Joji",
+  "first": 24200,
+  "B": 24224,
+  "ahead": 24,
+  "n_top": 20,
+  "Lp": 925,
+  "first_label": "Sep 2016",
+  "B_label": "Sep 2018"
+ },
+ {
+  "key": "ahead:ex:13",
+  "name": "Anderson .Paak",
+  "first": 24193,
+  "B": 24220,
+  "ahead": 27,
+  "n_top": 18,
+  "Lp": 896,
+  "first_label": "Feb 2016",
+  "B_label": "May 2018"
+ },
+ {
+  "key": "ahead:ex:14",
+  "name": "Gigi Perez",
+  "first": 24258,
+  "B": 24296,
+  "ahead": 38,
+  "n_top": 10,
+  "Lp": 886,
+  "first_label": "Jul 2021",
+  "B_label": "Sep 2024"
+ },
+ {
+  "key": "ahead:ex:15",
+  "name": "BLACKPINK",
+  "first": 24199,
+  "B": 24231,
+  "ahead": 32,
+  "n_top": 14,
+  "Lp": 884,
+  "first_label": "Aug 2016",
+  "B_label": "Apr 2019"
+ },
+ {
+  "key": "ahead:ex:16",
+  "name": "Tove Lo",
+  "first": 24161,
+  "B": 24175,
+  "ahead": 14,
+  "n_top": 17,
+  "Lp": 879,
+  "first_label": "Jun 2013",
+  "B_label": "Aug 2014"
+ },
+ {
+  "key": "ahead:ex:17",
+  "name": "Migos",
+  "first": 24170,
+  "B": 24204,
+  "ahead": 34,
+  "n_top": 9,
+  "Lp": 877,
+  "first_label": "Mar 2014",
+  "B_label": "Jan 2017"
+ },
+ {
+  "key": "ahead:ex:18",
+  "name": "Lewis Capaldi",
+  "first": 24214,
+  "B": 24232,
+  "ahead": 18,
+  "n_top": 10,
+  "Lp": 833,
+  "first_label": "Nov 2017",
+  "B_label": "May 2019"
+ },
+ {
+  "key": "ahead:ex:19",
+  "name": "Hanumankind",
+  "first": 24268,
+  "B": 24295,
+  "ahead": 27,
+  "n_top": 4,
+  "Lp": 821,
+  "first_label": "May 2022",
+  "B_label": "Aug 2024"
+ },
+ {
+  "key": "ahead:ex:20",
+  "name": "Bizarrap",
+  "first": 24239,
+  "B": 24276,
+  "ahead": 37,
+  "n_top": 3,
+  "Lp": 807,
+  "first_label": "Dec 2019",
+  "B_label": "Jan 2023"
+ },
+ {
+  "key": "ahead:ex:21",
+  "name": "JVKE",
+  "first": 24248,
+  "B": 24272,
+  "ahead": 24,
+  "n_top": 10,
+  "Lp": 801,
+  "first_label": "Sep 2020",
+  "B_label": "Sep 2022"
+ },
+ {
+  "key": "ahead:ex:22",
+  "name": "bbno$",
+  "first": 24225,
+  "B": 24256,
+  "ahead": 31,
+  "n_top": 8,
+  "Lp": 799,
+  "first_label": "Oct 2018",
+  "B_label": "May 2021"
+ },
+ {
+  "key": "ahead:ex:23",
+  "name": "JPEGMAFIA",
+  "first": 24200,
+  "B": 24227,
+  "ahead": 27,
+  "n_top": 18,
+  "Lp": 792,
+  "first_label": "Sep 2016",
+  "B_label": "Dec 2018"
+ },
+ {
+  "key": "ahead:ex:24",
+  "name": "slowthai",
+  "first": 24227,
+  "B": 24248,
+  "ahead": 21,
+  "n_top": 10,
+  "Lp": 791,
+  "first_label": "Dec 2018",
+  "B_label": "Sep 2020"
  }
 ]
