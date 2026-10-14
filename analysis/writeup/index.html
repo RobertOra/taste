@@ -373,7 +373,8 @@
       <h3>The best pickers get to breakout artists about a year before everyone else</h3>
       <p class="wu-note">ListenBrainz; exploratory. <span class="wu-num" data-source="trends" data-field="fans" data-where="key=ahead:everyone" data-fmt="int">—</span> times someone got into one of the artists that first appeared 2012–2021 and
         grew at least tenfold, to a peak of at least 50 monthly listeners; the breakout is the first month with half the peak. People are
-        ranked as pickers on their finds up to two years before.</p>
+        ranked as pickers on their finds up to two years before. Each bar: of the times people in that group got into one of these
+        artists, how often it was before the breakout (or a year or more before).</p>
       <div class="wu-chips" id="ah-chips" role="group" aria-label="How early"></div>
       <div class="wu-chart dash-skeleton" id="ah-chart" data-source="trends"></div>
     </div>
@@ -2256,10 +2257,12 @@
       el.replaceChildren();
       const k = ahSel === 'before' ? 'before' : 'year_before';
       const lab = Math.min(170, el.clientWidth * 0.36);
-      const f = frame(el, rows.length * 40 + 30, { t: 6, r: 44, b: 24, l: lab });
+      const f = frame(el, rows.length * 40 + 48, { t: 6, r: 44, b: 42, l: lab });
       const { svg, fs, width, height, m } = f;
       const x = d3.scaleLinear([0, Math.max(...rows.map((r) => +r[k])) * 1.1], [m.l, width - m.r]).nice();
       axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 4})`).call(d3.axisBottom(x).ticks(4).tickFormat(d3.format('.0%')).tickSize(0)), fs);
+      svg.append('text').attr('x', (m.l + width - m.r) / 2).attr('y', height - 4).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted')).style('font-size', fs)
+        .text(ahSel === 'before' ? 'Share of their finds of these artists made before the breakout' : 'Share made a year or more before the breakout');
       const tip = tooltip(el);
       rows.forEach((r, i) => {
         const yy = m.t + i * 40, c = r.g === 'everyone' ? css('--cds-chart-muted') : dash.colors[0];
