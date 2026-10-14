@@ -283,3 +283,5 @@ discovery over a listening life, hidden gems (All / New artists). Gems over time
    Write-up: niche chart replaced by "People drifted apart in artists, much less in kinds of music" (weighted similarity, Artists /
    Scenes / Genres switch, fans / same niche / random, 2010 = 100; no niche line in the scenes view, as niches are scenes), plus a
    sentence that tastes don't change faster year to year (no chart; Robert agreed).
+   Similarity chart removed (Robert, 2026-10-14): the artist-level drop is mostly the bigger catalog; replaced by one paragraph
+   ("Are we all in our own bubbles now? Not really": genres 92% of 2010, fans flat, tastes not changing faster).
