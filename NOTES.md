@@ -324,3 +324,5 @@ for both: finds a year 36 -> 37 vs 29 -> 31; brand-new share 14% -> 15% both; pl
 earlier mix 0.78 both; their early genres' growth 1.01x both. Stayed-good shifted to smaller artists (mainstream ratio 1.00 -> 0.65 vs
 faded 1.09 -> 1.02) but per-person correlation with the later score ~0. Habit changes explain R2 0.003 of the later score (early
 score alone 0.003). Not exploring less, listening less, ignoring new music, or genre loyalty: judgment itself drifts.
+- 2026-10-14: deleted data/derived/song_month (8.0 GB; rebuild: analysis/build_song_month.py, ~20-30 min) and
+  data/_site_static_data_v1 (0.8 GB; old site pack, also in the taste-test repo). Robert approved.
