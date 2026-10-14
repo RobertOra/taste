@@ -300,3 +300,5 @@ discovery over a listening life, hidden gems (All / New artists). Gems over time
    than comparable artists'. What sets loved-and-spread apart is more good pickers among the fans (fits the fan-value results).
    Overhyped: of 6,535 artists that tripled, 19% were in the bottom 30% by kept rate (kept ~1% of people who tried them vs ~9%);
    21% were loved (top 10%). Splitting gems by whether a good picker got into them is circular (not used).
+   New-artist share: hidden gems 5%, loved-and-spread 51%, ordinary 7%, overhyped 30% (new = MB release in the year before; many
+   artists lack dates). Write-up: paragraph "What makes a hidden gem?" under the gems chart (no new chart; Robert).

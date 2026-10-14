@@ -1765,5 +1765,102 @@
   "year": 2022,
   "never": 0.2881844380403458,
   "never_ord": 0.5070075205765997
+ },
+ {
+  "key": "gemsq:hidden gems",
+  "artists": 9485,
+  "kept_rate": 0.28831855912095344,
+  "good_share": 0.24810714773814405,
+  "poor_share": 0.25841191745250786,
+  "good_kept": 0.26985637501101417,
+  "poor_kept": 0.27105012582466165,
+  "good_tried": 56745,
+  "lasting": 0.35087159592659706,
+  "lasting_fans": 78362,
+  "new_share": 0.0536636794939378
+ },
+ {
+  "key": "gemsq:loved and spread",
+  "artists": 1372,
+  "kept_rate": 0.3155223372160378,
+  "good_share": 0.3293946769254927,
+  "poor_share": 0.17217555154274947,
+  "good_kept": 0.31297709923664124,
+  "poor_kept": 0.28135179153094464,
+  "good_tried": 9432,
+  "lasting": 0.6356457295589844,
+  "lasting_fans": 8231,
+  "new_share": 0.5131195335276968
+ },
+ {
+  "key": "gemsq:ordinary",
+  "artists": 134775,
+  "kept_rate": 0.08574504350598873,
+  "good_share": 0.24790386090513936,
+  "poor_share": 0.2424157504474559,
+  "good_kept": 0.1064611155267707,
+  "poor_kept": 0.0986384076196075,
+  "good_tried": 762438,
+  "lasting": 0.31221436474719777,
+  "lasting_fans": 374166,
+  "new_share": 0.0710740122426266
+ },
+ {
+  "key": "gemsq:overhyped",
+  "artists": 1227,
+  "kept_rate": 0.008851328317380783,
+  "good_share": 0.2807684188304834,
+  "poor_share": 0.20097107874181971,
+  "good_kept": 0.014864864864864866,
+  "poor_kept": 0.017113519680547633,
+  "good_tried": 4440,
+  "lasting": 0.5058365758754864,
+  "lasting_fans": 257,
+  "new_share": 0.30399348003259985
+ },
+ {
+  "key": "gemsq:gems, a good picker got into them",
+  "artists": 4569,
+  "kept_rate": 0.28875306240658405,
+  "good_share": 0.28899913955659706,
+  "poor_share": 0.24548267213444885,
+  "good_kept": 0.298046486388713,
+  "poor_kept": 0.2633576019161904,
+  "good_tried": 44228,
+  "lasting": 0.3608308813226846,
+  "lasting_fans": 57096,
+  "new_share": null
+ },
+ {
+  "key": "gemsq:gems, no good picker",
+  "artists": 4916,
+  "kept_rate": 0.28791472561565523,
+  "good_share": 0.12767563487356445,
+  "poor_share": 0.29648999838248774,
+  "good_kept": 0.17024846209155547,
+  "poor_kept": 0.29053769900871135,
+  "good_tried": 12517,
+  "lasting": 0.32413241794413616,
+  "lasting_fans": 21266,
+  "new_share": null
+ },
+ {
+  "key": "gemsq:ordinary, never spread",
+  "artists": 109348,
+  "kept_rate": 0.07536745994119572,
+  "good_share": 0.2292439986128415,
+  "poor_share": 0.265261954609091,
+  "good_kept": 0.09383613296761234,
+  "poor_kept": 0.09296905947895859,
+  "good_tried": 599364,
+  "lasting": 0.24941948207551504,
+  "lasting_fans": 282937,
+  "new_share": null
+ },
+ {
+  "key": "gemsq:tripled",
+  "tripled": 6535,
+  "overhyped_share": 0.18775822494261668,
+  "loved_share": 0.20994644223412395
  }
 ]

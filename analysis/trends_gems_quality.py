@@ -55,7 +55,13 @@ A = A.with_columns(sub=pl.when((pl.col("group") == "hidden gems") & (pl.col("G")
                    .otherwise(pl.lit(None)))
 con.register("A", A.select("artist", "F", "group", "sub").to_arrow())
 print(A.group_by("group").len().sort("group"), flush=True)
+new = con.execute(f"""SELECT DISTINCT b.artist FROM read_parquet('{ROOT}/data/site/artist_release.parquet') a JOIN birth b USING (artist)
+                      WHERE a.rm BETWEEN b.F - 12 AND b.F""").pl().with_columns(new=pl.lit(1))
+A = A.join(new, on="artist", how="left").with_columns(pl.col("new").fill_null(0))
+NEWSHARE = {g: float(A.filter(pl.col("group") == g)["new"].mean()) for g in ("hidden gems", "loved and spread", "ordinary", "overhyped")}
+print("share that are new artists (a MusicBrainz release in the year before they appeared):", {k: f"{v:.0%}" for k, v in NEWSHARE.items()}, flush=True)
 tri = A.filter(pl.col("L3") >= 3 * pl.col("L1"))
+TRI = {"tripled": tri.height, "overhyped_share": float((tri["q"] <= 0.3).mean()), "loved_share": float((tri["q"] > 0.9).mean())}
 print(f"tripled: {tri.height:,} artists; overhyped (bottom 30% by kept rate) {(tri['q'] <= 0.3).mean():.0%} of them; loved (top 10%) {(tri['q'] > 0.9).mean():.0%}", flush=True)
 # people's taste by year (rated on picks up to Y-2)
 b = con.execute(f"SELECT user, m // 12 AS year, e FROM {bets}").pl()
@@ -94,9 +100,9 @@ for col, g in [("group", g) for g in ("hidden gems", "loved and spread", "ordina
     row = {"group": g, "artists": A.filter(pl.col(col) == g).height, "kept_rate": float(A.filter(pl.col(col) == g)["rate"].mean()),
            "good_share": float(w.filter(pl.col("taste") == "good")["n"].sum() / tot), "poor_share": float(w.filter(pl.col("taste") == "poor")["n"].sum() / tot),
            "good_kept": kr("good"), "poor_kept": kr("poor"), "good_tried": int(t.filter(pl.col("taste") == "good")["tried"].sum()),
-           "lasting": float(l["still"].sum() / max(l["fans"].sum(), 1)), "lasting_fans": int(l["fans"].sum())}
+           "lasting": float(l["still"].sum() / max(l["fans"].sum(), 1)), "lasting_fans": int(l["fans"].sum()), "new_share": NEWSHARE.get(g)}
     out.append(row)
     print(f"{g:35s} | {row['artists']:>7,} | {row['kept_rate']:.0%} | {row['good_share']:.0%} / {row['poor_share']:.0%} | {row['good_kept']:.0%} ({row['good_tried']:,} tried) | "
           f"{row['poor_kept']:.0%} | {row['lasting']:.0%} ({row['lasting_fans']:,} fans)", flush=True)
-(ROOT / "analysis" / "out" / "trends_gems_quality.json").write_text(json.dumps(out, indent=1))
+(ROOT / "analysis" / "out" / "trends_gems_quality.json").write_text(json.dumps({"groups": out, "tripled": TRI}, indent=1))
 shutil.rmtree(TMP, ignore_errors=True)

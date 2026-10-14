@@ -8,6 +8,7 @@
   sim:<year>       weighted similarity (trends_similarity.py) of random / same-niche / same-favorite pairs at artist, scene, genre level
   change:<year>    similarity with oneself the year before (weighted, artists); change:panel:<year> same people
   disc:<t>         same people, year of listening 1-9: new artists got into, discovery share, plays; disc:cohort:<t> early vs late starters
+  gemsq:<group>    fans, good pickers' uptake, lasting love, new-artist share for hidden gems etc.; gemsq:tripled overhyped share
   gems:<pop>:<group>  outcomes for loved / loved by good pickers / ordinary (same start), all and new artists; gems:<pop>:<year> over time
 """
 import json
@@ -66,5 +67,9 @@ for r in L("gems"):
             rows.append({"key": f"gems:{pop}:ordinary", "pop": pop, "group": "ordinary", **seg(r["never_ord"], r["grew_ord"], r["ten_ord"])})
     elif r["year"] is not None:
         rows.append({"key": f"gems:{pop}:{r['year']}", "pop": pop, "year": r["year"], "never": r["never"], "never_ord": r["never_ord"]})
+gq = L("gems_quality")
+for r in gq["groups"]:   # are hidden gems good (trends_gems_quality.py)
+    rows.append({"key": f"gemsq:{r['group']}", **{k: v for k, v in r.items() if k != "group"}})
+rows.append({"key": "gemsq:tripled", **gq["tripled"]})
 (ROOT / "analysis" / "writeup" / "trends.json").write_text(json.dumps(rows, indent=1))
 print(len(rows), "rows")
