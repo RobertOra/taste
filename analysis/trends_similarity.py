@@ -8,7 +8,7 @@ Each person-year is a vector over items; similarity between two vectors (1 = ide
   genres:  the same over genre families (artists with MusicBrainz tags only; Other left out)
 Pairs (average cosine within a group = (|sum of unit vectors|^2 - k) / (k (k - 1))):
   random: all pairs of people; niche: pairs with the same main scene (pooled over pairs); fans: pairs with the same most-played
-  artist (each fan counted once). Ranges: the pool split into 5 random parts (random, niche) or a bootstrap over artists (fans).
+  artist (each fan counted once; their vectors leave the shared favorite out). Ranges: the pool split into 5 random parts (random, niche) or a bootstrap over artists (fans).
 Changing faster: each person's similarity with themselves the year before (both years in the pool; scenes use year Y's scene map
 for both years), by year; at the same stage of listening (2-4 and 5-9 years since their first listen); and the same people
 (in the pool in 2013-14, 2018-19, and 2023-24).
@@ -89,6 +89,8 @@ for y in YEARS:
     sc = d.join(scene.filter(pl.col("year") == y).select("artist", "scene"), on="artist").group_by("user", "scene").agg(p=pl.col("plays").sum())
     main = sc.sort(["user", "p", "scene"], descending=[False, True, False]).group_by("user", maintain_order=True).first().select("user", g="scene")
     fav = d.sort(["user", "plays", "artist"], descending=[False, True, False]).group_by("user", maintain_order=True).first().select("user", g="artist")
+    # fans: vectors without the shared favorite, so their likeness isn't just how much they play it
+    VF = vectors(d.join(fav.rename({"g": "artist"}), on=["user", "artist"], how="anti"), y)
     row = {"year": y, "people": len(users), "genre_cover": float(d.join(gen, on="artist")["plays"].sum() / d["plays"].sum())}
     for m in MEAS:
         v = V[m]
@@ -96,7 +98,7 @@ for y in YEARS:
         row[f"random_{m}"], row[f"random_{m}_lo"], row[f"random_{m}_hi"] = float(np.mean(r5)), float(min(r5)), float(max(r5))
         n5 = [pooled(group_cos(v, main.join(part.filter(pl.col("g") == i).select("user"), on="user"))) for i in range(5)]
         row[f"niche_{m}"], row[f"niche_{m}_lo"], row[f"niche_{m}_hi"] = float(np.mean(n5)), float(min(n5)), float(max(n5))
-        fc = group_cos(v, fav); g = ((fc["S"] - fc["k"]) / (fc["k"] * (fc["k"] - 1))).to_numpy(); k = fc["k"].to_numpy().astype(float)
+        fc = group_cos(VF[m], fav); g = ((fc["S"] - fc["k"]) / (fc["k"] * (fc["k"] - 1))).to_numpy(); k = fc["k"].to_numpy().astype(float)
         bs = [float((g[i] * k[i]).sum() / k[i].sum()) for i in (rng.integers(0, len(g), len(g)) for _ in range(200))]
         row[f"fans_{m}"], row[f"fans_{m}_lo"], row[f"fans_{m}_hi"] = float((g * k).sum() / k.sum()), float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))
     pairs.append(row)

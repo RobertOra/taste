@@ -279,3 +279,7 @@ discovery over a listening life, hidden gems (All / New artists). Gems over time
    Changing faster? Similarity with oneself the year before (weighted artists): .52 (2011) -> .48 (2016) -> .54 (2025); at 2-4 years
    of listening .52 -> .49 -> .57; same 3,979 people .504 -> .511 -> .509. Scenes ~.85 -> .87, genres ~.94 flat. Tastes are not
    changing faster; if anything a bit steadier since 2016.
+   Fans recomputed with their shared favorite left out (2026-10-14): artists .097 -> .097 (flat), scenes .385 -> .436, genres .727 -> .707.
+   Write-up: niche chart replaced by "People drifted apart in artists, much less in kinds of music" (weighted similarity, Artists /
+   Scenes / Genres switch, fans / same niche / random, 2010 = 100; no niche line in the scenes view, as niches are scenes), plus a
+   sentence that tastes don't change faster year to year (no chart; Robert agreed).
