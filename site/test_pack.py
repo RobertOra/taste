@@ -21,7 +21,7 @@ con = duckdb.connect(); con.execute("SET memory_limit='4GB'; SET threads=6")
 con.register("u", pl.DataFrame({"user": users}).to_arrow())
 W0, W1 = 1104537600 // 604800, 1790812800 // 604800
 if NORM:   # songs keyed by normalized name: all spellings of a song are one song, as in the reference
-    w = con.execute(f"""SELECT w.user, w.week, m.rec AS rec_name_h, any_value(w.artist_name_h) AS artist_name_h, sum(w.plays)::BIGINT AS n
+    w = con.execute(f"""SELECT w.user, w.week, m.rec AS rec_name_h, min(w.artist_name_h) AS artist_name_h, sum(w.plays)::BIGINT AS n
                         FROM read_parquet('{ROOT}/data/lb/user_rec_week/*.parquet') w JOIN read_parquet('{REF}/rec_map.parquet') m USING (rec_name_h)
                         SEMI JOIN u USING (user) WHERE w.week BETWEEN {W0} AND {W1} GROUP BY w.user, w.week, m.rec""").pl()
 else:
@@ -36,6 +36,12 @@ for uid in users:
     aplays = [{"week": wk, "ts": wk * 604800.0, "an": str(h), "name": str(h), "tn": "", "ah": h, "n": n} for wk, h, n in ga.select("week", "artist_name_h", "n").iter_rows()]
     splays = [{"week": wk, "ts": wk * 604800.0, "an": str(ah), "name": str(ah), "tn": str(sh), "ah": ah, "sh": sh, "n": n} for wk, sh, ah, n in g.select("week", "rec_name_h", "artist_name_h", "n").iter_rows()]
     start = min(p["week"] for p in aplays)
+    if NORM:   # a normalized song's artist: the smallest artist key among its spellings, as the reference (deterministic)
+        amin = {}
+        for p in splays:
+            amin[p["sh"]] = min(amin.get(p["sh"], p["ah"]), p["ah"])
+        for p in splays:
+            p["ah"] = amin[p["sh"]]; p["an"] = p["name"] = str(p["ah"])
     for p in splays:
         p["key_override"] = True
     lj = SP.META["last_month"] - 12

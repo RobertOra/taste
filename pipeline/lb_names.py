@@ -6,7 +6,7 @@ Per listen: the lowercased, trimmed artist name and track name, exactly as lb_in
 Outputs (data/lb/names/):
     month/YYYY-MM.parquet    rec_name_h, artist, track, listens        (per month, deduplicated within the month)
     progress.json            months done, bytes read, MD5 when finished
-Then, after all months: names.parquet = one row per rec_name_h (the most-listened spelling of the text, which is unique
+Then, after all months: names/part-*.parquet = one row per rec_name_h (the most-listened spelling of the text, which is unique
 anyway since the hash is of the text), written by --finish.
 Disk guard: stops cleanly (exit 3) if free space < 25 GB or the project would exceed 178 GB (Robert's cap: 180 GB).
 Months already in progress.json are skipped (their bytes are still read: a tar stream can't seek).
@@ -59,11 +59,16 @@ def project_bytes():
 
 
 def finish():
-    con = duckdb.connect(); con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{ROOT}/data/_tmp/lbnames'; SET preserve_insertion_order=false")
-    con.execute(f"""COPY (SELECT rec_name_h, arg_max(artist, listens) AS artist, arg_max(track, listens) AS track, sum(listens)::BIGINT AS listens
-                         FROM read_parquet('{OUT}/month/*.parquet') GROUP BY rec_name_h)
-                   TO '{OUT}/names.parquet' (FORMAT parquet, COMPRESSION zstd)""")
-    print(con.execute(f"SELECT count(*), sum(listens) FROM read_parquet('{OUT}/names.parquet')").fetchone())
+    """names/part-<b>.parquet, 16 slices by hash (one pass at 5 GB would run out of memory): one row per rec_name_h. The text is the
+    same in every month (the key is a hash of it), so any copy will do; listens summed."""
+    (OUT / "names").mkdir(exist_ok=True)
+    con = duckdb.connect(); con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{ROOT}/data/_tmp/lbnames'; SET preserve_insertion_order=false; SET max_temp_directory_size='20GB'")
+    for b in range(16):
+        con.execute(f"""COPY (SELECT rec_name_h, any_value(artist) AS artist, any_value(track) AS track, sum(listens)::BIGINT AS listens
+                             FROM read_parquet('{OUT}/month/*.parquet') WHERE (rec_name_h & 15) = {b} GROUP BY rec_name_h)
+                       TO '{OUT}/names/part-{b:02d}.parquet' (FORMAT parquet, COMPRESSION zstd)""")
+        print("slice", b, flush=True)
+    print(con.execute(f"SELECT count(*), sum(listens) FROM read_parquet('{OUT}/names/part-*.parquet')").fetchone(), flush=True)
     shutil.rmtree(ROOT / "data" / "_tmp" / "lbnames", ignore_errors=True)
 
 

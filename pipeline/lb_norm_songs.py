@@ -1,6 +1,6 @@
 """ListenBrainz songs keyed by normalized name (2026-10-14; NOTES.md planned rebuild item 1), for the site's reference.
 
-1. --map: every ListenBrainz song name (data/lb/names/names.parquet, from lb_names.py) -> a song id = name_hash(song_key(artist,
+1. --map: every ListenBrainz song name (data/lb/names/names/part-*.parquet, from lb_names.py) -> a song id = name_hash(song_key(artist,
    track)) (site/normalize.py), so all spellings of one song share an id and a visitor's normalized name finds it.
    Writes data/site_v2/rec_map.parquet (rec_name_h, rec), the same columns the site builders read.
 2. --songs: data/mlhd/user_recording/lb_norm/ (user, recording, first_week, span_weeks, plays), as lb_convert_songs.py's
@@ -35,16 +35,26 @@ def batch(args):
 
 
 def build_map():
+    """One name slice at a time (all 82M names at once would need ~10 GB of memory)."""
     V2.mkdir(exist_ok=True)
-    names = pl.read_parquet(LB / "names" / "names.parquet", columns=["rec_name_h", "artist", "track"])
-    print(f"{names.height:,} names", flush=True)
-    step = 1_000_000
-    jobs = [(names["artist"][i:i + step].to_list(), names["track"][i:i + step].to_list()) for i in range(0, names.height, step)]
+    parts = sorted((LB / "names" / "names").glob("part-*.parquet"))
+    out_parts, total = [], 0
     with Pool(6) as pool:
-        out = [x for part in pool.imap(batch, jobs) for x in part]
-    m = pl.DataFrame({"rec_name_h": names["rec_name_h"], "rec": pl.Series(out, dtype=pl.Int64)})
-    m.write_parquet(V2 / "rec_map.parquet", compression="zstd")
-    print(f"rec_map: {m.height:,} names -> {m['rec'].n_unique():,} songs", flush=True)
+        for k, f in enumerate(parts):
+            names = pl.read_parquet(f, columns=["rec_name_h", "artist", "track"])
+            step = 200_000
+            jobs = [(names["artist"][i:i + step].to_list(), names["track"][i:i + step].to_list()) for i in range(0, names.height, step)]
+            ids = [x for part in pool.imap(batch, jobs) for x in part]
+            fp = V2 / f"_rec_map_{k:02d}.parquet"
+            pl.DataFrame({"rec_name_h": names["rec_name_h"], "rec": pl.Series(ids, dtype=pl.Int64)}).write_parquet(fp)
+            out_parts.append(fp); total += names.height
+            print(f"slice {k}: {names.height:,} names", flush=True)
+            del names, jobs, ids
+    con = duckdb.connect(); con.execute("SET memory_limit='5GB'; SET threads=6")
+    con.execute(f"COPY (SELECT * FROM read_parquet('{V2}/_rec_map_*.parquet')) TO '{V2}/rec_map.parquet' (FORMAT parquet, COMPRESSION zstd)")
+    for fp in out_parts:
+        fp.unlink()
+    print("rec_map:", con.execute(f"SELECT count(*), count(DISTINCT rec) FROM read_parquet('{V2}/rec_map.parquet')").fetchone(), flush=True)
 
 
 def build_songs():

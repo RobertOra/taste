@@ -43,6 +43,7 @@ W0, W1 = 1104537600 // 604800, 1790812800 // 604800
 tmp = ROOT / "data" / "_tmp" / "pack_ref"; tmp.mkdir(parents=True, exist_ok=True)
 con = duckdb.connect()
 con.execute(f"SET memory_limit='5GB'; SET threads=6; SET temp_directory='{tmp}'; SET preserve_insertion_order=false; SET max_temp_directory_size='15GB'")
+NORM = os.environ.get("SONG_KEYS") == "norm"   # songs keyed by normalized name (data/site_v2, lb_norm_songs.py)
 CHUNKS = 16   # users processed in batches (user % CHUNKS) so temporary space stays small
 
 # shipped items and their tables
@@ -65,13 +66,17 @@ def picks(unit, c):
     if unit == "artist":
         src = f"SELECT user, artist_name_h AS nh, artist_name_h AS ah, week, sum(plays) AS n FROM read_parquet('{LB}/user_artist_week/*.parquet') WHERE {uf} GROUP BY ALL"
     else:
-        src = f"SELECT user, rec_name_h AS nh, any_value(artist_name_h) AS ah, week, sum(plays) AS n FROM read_parquet('{LB}/user_rec_week/*.parquet') WHERE {uf} GROUP BY user, rec_name_h, week"
+        if NORM:   # normalized song ids: all spellings of a song count toward the same 4 weeks, as for a visitor
+            src = (f"SELECT w.user, s.rec AS nh, min(w.artist_name_h) AS ah, w.week, sum(w.plays) AS n FROM read_parquet('{LB}/user_rec_week/*.parquet') w "
+                   f"JOIN smap s USING (rec_name_h) WHERE {uf} GROUP BY w.user, s.rec, w.week")
+        else:
+            src = f"SELECT user, rec_name_h AS nh, any_value(artist_name_h) AS ah, week, sum(plays) AS n FROM read_parquet('{LB}/user_rec_week/*.parquet') WHERE {uf} GROUP BY user, rec_name_h, week"
     con.execute(f"CREATE OR REPLACE TABLE w_{unit} AS {src}")
     con.execute(f"""CREATE OR REPLACE TABLE p0_{unit} AS
         WITH aw AS (SELECT DISTINCT user, week FROM read_parquet('{LB}/user_artist_week/*.parquet') WHERE {uf}),
              seg AS (SELECT user, min(week) AS start FROM aw GROUP BY user),   -- one warm-up: the first 26 weeks of the history (as the study)
              r AS (SELECT w.*, row_number() OVER (PARTITION BY user, nh ORDER BY week) AS rn, min(week) OVER (PARTITION BY user, nh) AS fw FROM w_{unit} w),
-             a AS (SELECT user, nh, any_value(ah) AS ah, min(week) AS first_week, min(week) FILTER (WHERE rn = 4) AS w4, sum(n) FILTER (WHERE week < fw + 26) AS w
+             a AS (SELECT user, nh, {'min' if NORM else 'any_value'}(ah) AS ah, min(week) AS first_week, min(week) FILTER (WHERE rn = 4) AS w4, sum(n) FILTER (WHERE week < fw + 26) AS w
                    FROM r GROUP BY user, nh)
         SELECT a.user, a.nh, a.ah, a.first_week, a.w, ({MONTH.format(w='a.w4')})::INT AS m FROM a ASOF JOIN seg ON a.user = seg.user AND a.first_week >= seg.start
         WHERE a.w4 IS NOT NULL AND a.w4 - a.first_week < 26 AND a.first_week >= seg.start + 26""")
@@ -83,7 +88,8 @@ def picks(unit, c):
             QUALIFY row_number() OVER (PARTITION BY p.user, n.artist ORDER BY p.m, p.nh::VARCHAR) = 1""")
     else:
         con.execute(f"""CREATE OR REPLACE TABLE pk_{unit} AS SELECT p.user, s.rec AS key, n.artist, p.m, p.w, ({MONTH.format(w='p.first_week')})::INT AS fm
-            FROM p0_{unit} p JOIN smap s ON s.rec_name_h = p.nh JOIN stot t ON t.key = s.rec JOIN amap n ON n.artist_name_h = p.ah
+            FROM p0_{unit} p JOIN (SELECT DISTINCT {'rec AS rec_name_h' if NORM else 'rec_name_h'}, rec FROM smap) s ON s.rec_name_h = p.nh
+            JOIN stot t ON t.key = s.rec JOIN amap n ON n.artist_name_h = p.ah
             WHERE p.m BETWEEN {Y0} AND {LAST - 12} AND t.tot - (({MONTH.format(w='p.first_week')}) >= {M0})::INT >= 3
             QUALIFY row_number() OVER (PARTITION BY p.user, s.rec ORDER BY p.m, p.nh::VARCHAR) = 1""")
     con.execute(f"DROP TABLE p0_{unit}")
@@ -149,7 +155,8 @@ def reliability(d):
     return float(rr / (nh - (nh - 1) * rr))
 
 
-meta = {"last_month": LAST, "y0": Y0, "m0": M0, "shrink": SHRINK, "min_picks": MIN_PICKS, "families": FAMS, "measures": {}}
+meta = {"last_month": LAST, "y0": Y0, "m0": M0, "shrink": SHRINK, "min_picks": MIN_PICKS, "families": FAMS, "measures": {},
+        "warmup": "single", "song_keys": "norm" if NORM else "name"}   # read by engine.js / score_pack.py
 frozen = {"artist": {"A": "lb_A_artist_main", "D": "lb_D_artist_main"}, "song": {"A": "lb_A_song_main", "D": "lb_D_song_main"}}
 for unit in ("artist", "song"):
     parts = []
