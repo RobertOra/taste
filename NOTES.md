@@ -313,3 +313,7 @@ discovery over a listening life, hidden gems (All / New artists). Gems over time
    keeper; size-matched). New artists: liked by many 32% never spread / 22% tripled / 2.8% tenfold; loved by a few 46% / 16% / 1.7%;
    both 27% / 28% / 3.7%; neither 49% / 12% / 0.6%. All artists: many 80/3, few 80/4, both 65/9, neither 87/2. For new artists it is
    better to be liked by many than loved by a few; divisive is only a little better than forgettable.
+9. How far ahead (trends_ahead.py; 6,101 LB breakout artists 2012-21: peak >= 50 monthly listeners and >= 10x their first half-year;
+   breakout = first month at half the peak). Median months before the breakout: top 1% -6, rest of top fifth -12, middle -15, bottom
+   -15, everyone -17; got in before it 26% / 19% / 14% / 13% / 14%; a year or more before 10% / 7% / 6% / 5% / 5%.
+   Examples (top-1% picker >= a year early): Dominic Fike (48 months), Halsey, Cardi B, BLACKPINK, Joji, Martin Garrix, black midi...
