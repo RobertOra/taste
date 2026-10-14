@@ -1,0 +1,80 @@
+[
+ {
+  "year": 2010,
+  "listener_months": 729043,
+  "songs_per": 3.3889084731627626,
+  "single_share": 0.5742843700577333
+ },
+ {
+  "year": 2011,
+  "listener_months": 683291,
+  "songs_per": 3.3833608228412198,
+  "single_share": 0.5860167922598132
+ },
+ {
+  "year": 2012,
+  "listener_months": 748300,
+  "songs_per": 3.0041881598289457,
+  "single_share": 0.6296044367232393
+ },
+ {
+  "year": 2013,
+  "listener_months": 878048,
+  "songs_per": 2.63302917380371,
+  "single_share": 0.6812019388461679
+ },
+ {
+  "year": 2014,
+  "listener_months": 1019256,
+  "songs_per": 2.2711418917327935,
+  "single_share": 0.7384042870485923
+ },
+ {
+  "year": 2015,
+  "listener_months": 1520300,
+  "songs_per": 2.03958100374926,
+  "single_share": 0.7646661843057291
+ },
+ {
+  "year": 2016,
+  "listener_months": 1920210,
+  "songs_per": 1.8923560443909782,
+  "single_share": 0.7738783778857521
+ },
+ {
+  "year": 2017,
+  "listener_months": 2317309,
+  "songs_per": 1.786978775812807,
+  "single_share": 0.7930293284149847
+ },
+ {
+  "year": 2018,
+  "listener_months": 2507597,
+  "songs_per": 1.7075343446335276,
+  "single_share": 0.8144342970580999
+ },
+ {
+  "year": 2019,
+  "listener_months": 2876801,
+  "songs_per": 1.6395148639061234,
+  "single_share": 0.8284240029115674
+ },
+ {
+  "year": 2020,
+  "listener_months": 3648526,
+  "songs_per": 1.6567627584399838,
+  "single_share": 0.8259368303802687
+ },
+ {
+  "year": 2021,
+  "listener_months": 3595154,
+  "songs_per": 1.6300289222659168,
+  "single_share": 0.8313838572700919
+ },
+ {
+  "year": 2022,
+  "listener_months": 3288666,
+  "songs_per": 1.6899384127181052,
+  "single_share": 0.8181770359166909
+ }
+]

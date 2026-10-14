@@ -1,0 +1,782 @@
+[
+ {
+  "pop": "all artists",
+  "band": "all sizes",
+  "year": 2010,
+  "artists": 5281,
+  "top_median": 0.10407239819004525,
+  "onehit80": 0.008142397273243705,
+  "onehit50": 0.022912327210755538,
+  "mattered": 1.3164173451997727
+ },
+ {
+  "pop": "all artists",
+  "band": "all sizes",
+  "year": 2011,
+  "artists": 5039,
+  "top_median": 0.1092436974789916,
+  "onehit80": 0.011708672355626117,
+  "onehit50": 0.02837864655685652,
+  "mattered": 1.4139710259972216
+ },
+ {
+  "pop": "all artists",
+  "band": "all sizes",
+  "year": 2012,
+  "artists": 5044,
+  "top_median": 0.11412404092071611,
+  "onehit80": 0.019230769230769232,
+  "onehit50": 0.043219666931007136,
+  "mattered": 1.5160586835844567
+ },
+ {
+  "pop": "all artists",
+  "band": "all sizes",
+  "year": 2013,
+  "artists": 5120,
+  "top_median": 0.1270887337986042,
+  "onehit80": 0.0318359375,
+  "onehit50": 0.069921875,
+  "mattered": 1.718359375
+ },
+ {
+  "pop": "all artists",
+  "band": "all sizes",
+  "year": 2014,
+  "artists": 5220,
+  "top_median": 0.15085560990733404,
+  "onehit80": 0.06800766283524905,
+  "onehit50": 0.1342911877394636,
+  "mattered": 1.6944444444444444
+ },
+ {
+  "pop": "all artists",
+  "band": "all sizes",
+  "year": 2015,
+  "artists": 6345,
+  "top_median": 0.19090909090909092,
+  "onehit80": 0.12608353033884948,
+  "onehit50": 0.20567375886524822,
+  "mattered": 1.7746256895193064
+ },
+ {
+  "pop": "all artists",
+  "band": "all sizes",
+  "year": 2016,
+  "artists": 7531,
+  "top_median": 0.23103057757644394,
+  "onehit80": 0.15535785420262913,
+  "onehit50": 0.26344442969061216,
+  "mattered": 1.8636303279776922
+ },
+ {
+  "pop": "all artists",
+  "band": "all sizes",
+  "year": 2017,
+  "artists": 9189,
+  "top_median": 0.27906976744186046,
+  "onehit80": 0.2055718794210469,
+  "onehit50": 0.3286538252258135,
+  "mattered": 1.819349221895745
+ },
+ {
+  "pop": "all artists",
+  "band": "all sizes",
+  "year": 2018,
+  "artists": 10204,
+  "top_median": 0.3111532785157074,
+  "onehit80": 0.24568796550372404,
+  "onehit50": 0.36671893375147,
+  "mattered": 1.754704037632301
+ },
+ {
+  "pop": "all artists",
+  "band": "all sizes",
+  "year": 2019,
+  "artists": 12195,
+  "top_median": 0.3525641025641026,
+  "onehit80": 0.26740467404674045,
+  "onehit50": 0.406970069700697,
+  "mattered": 1.7706437064370644
+ },
+ {
+  "pop": "all artists",
+  "band": "all sizes",
+  "year": 2020,
+  "artists": 15293,
+  "top_median": 0.3770491803278688,
+  "onehit80": 0.2792127116981626,
+  "onehit50": 0.4222847054207807,
+  "mattered": 1.7653174655070947
+ },
+ {
+  "pop": "all artists",
+  "band": "all sizes",
+  "year": 2021,
+  "artists": 15966,
+  "top_median": 0.4146903450601326,
+  "onehit80": 0.3094074909182012,
+  "onehit50": 0.4518977827884254,
+  "mattered": 1.7357509708129775
+ },
+ {
+  "pop": "all artists",
+  "band": "all sizes",
+  "year": 2022,
+  "artists": 14740,
+  "top_median": 0.33714424925826353,
+  "onehit80": 0.2692672998643148,
+  "onehit50": 0.39721845318860244,
+  "mattered": 1.733989145183175
+ },
+ {
+  "pop": "all artists",
+  "band": "100-499",
+  "year": 2010,
+  "artists": 4394,
+  "top_median": 0.10526315789473684,
+  "onehit80": 0.009330905780609923,
+  "onehit50": 0.02594446973145198,
+  "mattered": 1.3807464724624487
+ },
+ {
+  "pop": "all artists",
+  "band": "100-499",
+  "year": 2011,
+  "artists": 4239,
+  "top_median": 0.1111111111111111,
+  "onehit80": 0.013918376975701816,
+  "onehit50": 0.03184713375796178,
+  "mattered": 1.4843123378155225
+ },
+ {
+  "pop": "all artists",
+  "band": "100-499",
+  "year": 2012,
+  "artists": 4245,
+  "top_median": 0.11633663366336634,
+  "onehit80": 0.022143698468786808,
+  "onehit50": 0.04876325088339223,
+  "mattered": 1.5877502944640753
+ },
+ {
+  "pop": "all artists",
+  "band": "100-499",
+  "year": 2013,
+  "artists": 4296,
+  "top_median": 0.1282051282051282,
+  "onehit80": 0.03677839851024209,
+  "onehit50": 0.07797951582867783,
+  "mattered": 1.789338919925512
+ },
+ {
+  "pop": "all artists",
+  "band": "100-499",
+  "year": 2014,
+  "artists": 4309,
+  "top_median": 0.15315315315315314,
+  "onehit80": 0.0786725458343003,
+  "onehit50": 0.1499187746576932,
+  "mattered": 1.7546994662334647
+ },
+ {
+  "pop": "all artists",
+  "band": "100-499",
+  "year": 2015,
+  "artists": 5228,
+  "top_median": 0.19801980198019803,
+  "onehit80": 0.14058913542463658,
+  "onehit50": 0.22819433817903595,
+  "mattered": 1.7905508798775822
+ },
+ {
+  "pop": "all artists",
+  "band": "100-499",
+  "year": 2016,
+  "artists": 6162,
+  "top_median": 0.2454266592303402,
+  "onehit80": 0.1736449204803635,
+  "onehit50": 0.28708211619604024,
+  "mattered": 1.8752028562155145
+ },
+ {
+  "pop": "all artists",
+  "band": "100-499",
+  "year": 2017,
+  "artists": 7607,
+  "top_median": 0.30063291139240506,
+  "onehit80": 0.22913106349415013,
+  "onehit50": 0.3575654002892073,
+  "mattered": 1.7950571841724727
+ },
+ {
+  "pop": "all artists",
+  "band": "100-499",
+  "year": 2018,
+  "artists": 8529,
+  "top_median": 0.3445378151260504,
+  "onehit80": 0.27025442607574157,
+  "onehit50": 0.39899167546019465,
+  "mattered": 1.74909133544378
+ },
+ {
+  "pop": "all artists",
+  "band": "100-499",
+  "year": 2019,
+  "artists": 10201,
+  "top_median": 0.38571428571428573,
+  "onehit80": 0.2948730516616018,
+  "onehit50": 0.4362317419860798,
+  "mattered": 1.745319086364082
+ },
+ {
+  "pop": "all artists",
+  "band": "100-499",
+  "year": 2020,
+  "artists": 12783,
+  "top_median": 0.4233576642335766,
+  "onehit80": 0.30759602597199404,
+  "onehit50": 0.4556051005241336,
+  "mattered": 1.7396542282719236
+ },
+ {
+  "pop": "all artists",
+  "band": "100-499",
+  "year": 2021,
+  "artists": 13569,
+  "top_median": 0.46808510638297873,
+  "onehit80": 0.33937652000884366,
+  "onehit50": 0.48323384184538287,
+  "mattered": 1.727172230820252
+ },
+ {
+  "pop": "all artists",
+  "band": "100-499",
+  "year": 2022,
+  "artists": 12471,
+  "top_median": 0.375,
+  "onehit80": 0.29620720070563705,
+  "onehit50": 0.4278726645818298,
+  "mattered": 1.7204714938657686
+ },
+ {
+  "pop": "all artists",
+  "band": "500+",
+  "year": 2010,
+  "artists": 887,
+  "top_median": 0.09739130434782609,
+  "onehit80": 0.002254791431792559,
+  "onehit50": 0.007891770011273957,
+  "mattered": 0.9977452085682075
+ },
+ {
+  "pop": "all artists",
+  "band": "500+",
+  "year": 2011,
+  "artists": 800,
+  "top_median": 0.09734275330069722,
+  "onehit80": 0.0,
+  "onehit50": 0.01,
+  "mattered": 1.04125
+ },
+ {
+  "pop": "all artists",
+  "band": "500+",
+  "year": 2012,
+  "artists": 799,
+  "top_median": 0.10510510510510511,
+  "onehit80": 0.0037546933667083854,
+  "onehit50": 0.01376720901126408,
+  "mattered": 1.135168961201502
+ },
+ {
+  "pop": "all artists",
+  "band": "500+",
+  "year": 2013,
+  "artists": 824,
+  "top_median": 0.12082589902452502,
+  "onehit80": 0.006067961165048544,
+  "onehit50": 0.027912621359223302,
+  "mattered": 1.3483009708737863
+ },
+ {
+  "pop": "all artists",
+  "band": "500+",
+  "year": 2014,
+  "artists": 911,
+  "top_median": 0.1362179487179487,
+  "onehit80": 0.01756311745334797,
+  "onehit50": 0.06037321624588365,
+  "mattered": 1.4094401756311745
+ },
+ {
+  "pop": "all artists",
+  "band": "500+",
+  "year": 2015,
+  "artists": 1117,
+  "top_median": 0.17224409448818898,
+  "onehit80": 0.05819158460161146,
+  "onehit50": 0.10026857654431513,
+  "mattered": 1.7000895255147717
+ },
+ {
+  "pop": "all artists",
+  "band": "500+",
+  "year": 2016,
+  "artists": 1369,
+  "top_median": 0.19125549584758184,
+  "onehit80": 0.07304601899196493,
+  "onehit50": 0.1570489408327246,
+  "mattered": 1.8115412710007304
+ },
+ {
+  "pop": "all artists",
+  "band": "500+",
+  "year": 2017,
+  "artists": 1582,
+  "top_median": 0.21970673227116527,
+  "onehit80": 0.0922882427307206,
+  "onehit50": 0.18963337547408343,
+  "mattered": 1.936156763590392
+ },
+ {
+  "pop": "all artists",
+  "band": "500+",
+  "year": 2018,
+  "artists": 1675,
+  "top_median": 0.22526041666666666,
+  "onehit80": 0.12059701492537313,
+  "onehit50": 0.20238805970149254,
+  "mattered": 1.7832835820895523
+ },
+ {
+  "pop": "all artists",
+  "band": "500+",
+  "year": 2019,
+  "artists": 1994,
+  "top_median": 0.2559632357317951,
+  "onehit80": 0.12688064192577733,
+  "onehit50": 0.25727181544633904,
+  "mattered": 1.9002006018054163
+ },
+ {
+  "pop": "all artists",
+  "band": "500+",
+  "year": 2020,
+  "artists": 2510,
+  "top_median": 0.2598583770004249,
+  "onehit80": 0.1346613545816733,
+  "onehit50": 0.25258964143426293,
+  "mattered": 1.89601593625498
+ },
+ {
+  "pop": "all artists",
+  "band": "500+",
+  "year": 2021,
+  "artists": 2397,
+  "top_median": 0.2571884984025559,
+  "onehit80": 0.13975803087192323,
+  "onehit50": 0.27450980392156865,
+  "mattered": 1.7843137254901962
+ },
+ {
+  "pop": "all artists",
+  "band": "500+",
+  "year": 2022,
+  "artists": 2269,
+  "top_median": 0.23786407766990292,
+  "onehit80": 0.12119876597620097,
+  "onehit50": 0.22873512560599382,
+  "mattered": 1.8082855883649185
+ },
+ {
+  "pop": "new artists",
+  "band": "all sizes",
+  "year": 2010,
+  "artists": 1259,
+  "top_median": 0.1064327485380117,
+  "onehit80": 0.003971405877680699,
+  "onehit50": 0.014297061159650517,
+  "mattered": 1.2533756949960286
+ },
+ {
+  "pop": "new artists",
+  "band": "all sizes",
+  "year": 2011,
+  "artists": 1276,
+  "top_median": 0.11167987527608159,
+  "onehit80": 0.0,
+  "onehit50": 0.014106583072100314,
+  "mattered": 1.3557993730407523
+ },
+ {
+  "pop": "new artists",
+  "band": "all sizes",
+  "year": 2012,
+  "artists": 1395,
+  "top_median": 0.11122844068989793,
+  "onehit80": 0.002150537634408602,
+  "onehit50": 0.01935483870967742,
+  "mattered": 1.3684587813620073
+ },
+ {
+  "pop": "new artists",
+  "band": "all sizes",
+  "year": 2013,
+  "artists": 1324,
+  "top_median": 0.12144725202876813,
+  "onehit80": 0.0075528700906344415,
+  "onehit50": 0.03172205438066465,
+  "mattered": 1.5740181268882176
+ },
+ {
+  "pop": "new artists",
+  "band": "all sizes",
+  "year": 2014,
+  "artists": 1472,
+  "top_median": 0.13695788097538794,
+  "onehit80": 0.01154891304347826,
+  "onehit50": 0.049592391304347824,
+  "mattered": 1.6141304347826086
+ },
+ {
+  "pop": "new artists",
+  "band": "all sizes",
+  "year": 2015,
+  "artists": 1568,
+  "top_median": 0.15568105783381175,
+  "onehit80": 0.007653061224489796,
+  "onehit50": 0.06887755102040816,
+  "mattered": 1.75
+ },
+ {
+  "pop": "new artists",
+  "band": "all sizes",
+  "year": 2016,
+  "artists": 1761,
+  "top_median": 0.16721078779276083,
+  "onehit80": 0.011357183418512209,
+  "onehit50": 0.0760931289040318,
+  "mattered": 1.8517887563884157
+ },
+ {
+  "pop": "new artists",
+  "band": "all sizes",
+  "year": 2017,
+  "artists": 1912,
+  "top_median": 0.1804865150713908,
+  "onehit80": 0.019351464435146442,
+  "onehit50": 0.09100418410041841,
+  "mattered": 1.9053347280334727
+ },
+ {
+  "pop": "new artists",
+  "band": "all sizes",
+  "year": 2018,
+  "artists": 2000,
+  "top_median": 0.18956539047075974,
+  "onehit80": 0.0265,
+  "onehit50": 0.1135,
+  "mattered": 1.8885
+ },
+ {
+  "pop": "new artists",
+  "band": "all sizes",
+  "year": 2019,
+  "artists": 1932,
+  "top_median": 0.20317287534268666,
+  "onehit80": 0.032091097308488616,
+  "onehit50": 0.12525879917184266,
+  "mattered": 1.9979296066252588
+ },
+ {
+  "pop": "new artists",
+  "band": "all sizes",
+  "year": 2020,
+  "artists": 2181,
+  "top_median": 0.20385674931129477,
+  "onehit80": 0.03759743237047226,
+  "onehit50": 0.1228794131132508,
+  "mattered": 2.0119211370930765
+ },
+ {
+  "pop": "new artists",
+  "band": "all sizes",
+  "year": 2021,
+  "artists": 2024,
+  "top_median": 0.19614048150905933,
+  "onehit80": 0.052865612648221344,
+  "onehit50": 0.15069169960474307,
+  "mattered": 1.8774703557312253
+ },
+ {
+  "pop": "new artists",
+  "band": "all sizes",
+  "year": 2022,
+  "artists": 1838,
+  "top_median": 0.18540008546552,
+  "onehit80": 0.03536452665941241,
+  "onehit50": 0.12785636561479868,
+  "mattered": 1.8650707290533188
+ },
+ {
+  "pop": "new artists",
+  "band": "100-499",
+  "year": 2010,
+  "artists": 873,
+  "top_median": 0.11363636363636363,
+  "onehit80": 0.0057273768613974796,
+  "onehit50": 0.018327605956471937,
+  "mattered": 1.4421534936998854
+ },
+ {
+  "pop": "new artists",
+  "band": "100-499",
+  "year": 2011,
+  "artists": 919,
+  "top_median": 0.12056737588652482,
+  "onehit80": 0.0,
+  "onehit50": 0.017410228509249184,
+  "mattered": 1.5625680087051144
+ },
+ {
+  "pop": "new artists",
+  "band": "100-499",
+  "year": 2012,
+  "artists": 1004,
+  "top_median": 0.1175735294117647,
+  "onehit80": 0.00298804780876494,
+  "onehit50": 0.0249003984063745,
+  "mattered": 1.502988047808765
+ },
+ {
+  "pop": "new artists",
+  "band": "100-499",
+  "year": 2013,
+  "artists": 956,
+  "top_median": 0.12354657687991022,
+  "onehit80": 0.008368200836820083,
+  "onehit50": 0.03138075313807531,
+  "mattered": 1.7123430962343096
+ },
+ {
+  "pop": "new artists",
+  "band": "100-499",
+  "year": 2014,
+  "artists": 1056,
+  "top_median": 0.14285714285714285,
+  "onehit80": 0.014204545454545454,
+  "onehit50": 0.05776515151515151,
+  "mattered": 1.7481060606060606
+ },
+ {
+  "pop": "new artists",
+  "band": "100-499",
+  "year": 2015,
+  "artists": 1084,
+  "top_median": 0.16370403789758628,
+  "onehit80": 0.008302583025830259,
+  "onehit50": 0.08302583025830258,
+  "mattered": 1.8643911439114391
+ },
+ {
+  "pop": "new artists",
+  "band": "100-499",
+  "year": 2016,
+  "artists": 1162,
+  "top_median": 0.17556055421283112,
+  "onehit80": 0.01549053356282272,
+  "onehit50": 0.09466437177280551,
+  "mattered": 1.9371772805507745
+ },
+ {
+  "pop": "new artists",
+  "band": "100-499",
+  "year": 2017,
+  "artists": 1284,
+  "top_median": 0.18622420601813228,
+  "onehit80": 0.02570093457943925,
+  "onehit50": 0.1191588785046729,
+  "mattered": 1.9314641744548287
+ },
+ {
+  "pop": "new artists",
+  "band": "100-499",
+  "year": 2018,
+  "artists": 1336,
+  "top_median": 0.19298245614035087,
+  "onehit80": 0.03218562874251497,
+  "onehit50": 0.13697604790419163,
+  "mattered": 1.9550898203592815
+ },
+ {
+  "pop": "new artists",
+  "band": "100-499",
+  "year": 2019,
+  "artists": 1291,
+  "top_median": 0.21247113163972287,
+  "onehit80": 0.042602633617350893,
+  "onehit50": 0.15801704105344694,
+  "mattered": 2.013168086754454
+ },
+ {
+  "pop": "new artists",
+  "band": "100-499",
+  "year": 2020,
+  "artists": 1356,
+  "top_median": 0.2057249660752234,
+  "onehit80": 0.05014749262536873,
+  "onehit50": 0.14233038348082597,
+  "mattered": 2.087758112094395
+ },
+ {
+  "pop": "new artists",
+  "band": "100-499",
+  "year": 2021,
+  "artists": 1263,
+  "top_median": 0.1962025316455696,
+  "onehit80": 0.06571654790182106,
+  "onehit50": 0.171021377672209,
+  "mattered": 1.9279493269992083
+ },
+ {
+  "pop": "new artists",
+  "band": "100-499",
+  "year": 2022,
+  "artists": 1098,
+  "top_median": 0.17567567567567569,
+  "onehit80": 0.042805100182149364,
+  "onehit50": 0.13752276867030966,
+  "mattered": 1.8624772313296905
+ },
+ {
+  "pop": "new artists",
+  "band": "500+",
+  "year": 2010,
+  "artists": 386,
+  "top_median": 0.09269629629629629,
+  "onehit80": 0.0,
+  "onehit50": 0.0051813471502590676,
+  "mattered": 0.8264248704663213
+ },
+ {
+  "pop": "new artists",
+  "band": "500+",
+  "year": 2011,
+  "artists": 357,
+  "top_median": 0.0880503144654088,
+  "onehit80": 0.0,
+  "onehit50": 0.0056022408963585435,
+  "mattered": 0.8235294117647058
+ },
+ {
+  "pop": "new artists",
+  "band": "500+",
+  "year": 2012,
+  "artists": 391,
+  "top_median": 0.10061728395061728,
+  "onehit80": 0.0,
+  "onehit50": 0.005115089514066497,
+  "mattered": 1.0230179028132993
+ },
+ {
+  "pop": "new artists",
+  "band": "500+",
+  "year": 2013,
+  "artists": 368,
+  "top_median": 0.10982115245850943,
+  "onehit80": 0.005434782608695652,
+  "onehit50": 0.03260869565217391,
+  "mattered": 1.2146739130434783
+ },
+ {
+  "pop": "new artists",
+  "band": "500+",
+  "year": 2014,
+  "artists": 416,
+  "top_median": 0.12421563349759135,
+  "onehit80": 0.004807692307692308,
+  "onehit50": 0.028846153846153848,
+  "mattered": 1.2740384615384615
+ },
+ {
+  "pop": "new artists",
+  "band": "500+",
+  "year": 2015,
+  "artists": 484,
+  "top_median": 0.1463288886793898,
+  "onehit80": 0.006198347107438017,
+  "onehit50": 0.0371900826446281,
+  "mattered": 1.493801652892562
+ },
+ {
+  "pop": "new artists",
+  "band": "500+",
+  "year": 2016,
+  "artists": 599,
+  "top_median": 0.15762081784386617,
+  "onehit80": 0.00333889816360601,
+  "onehit50": 0.04006677796327212,
+  "mattered": 1.686143572621035
+ },
+ {
+  "pop": "new artists",
+  "band": "500+",
+  "year": 2017,
+  "artists": 628,
+  "top_median": 0.1660889893545084,
+  "onehit80": 0.006369426751592357,
+  "onehit50": 0.03343949044585987,
+  "mattered": 1.8519108280254777
+ },
+ {
+  "pop": "new artists",
+  "band": "500+",
+  "year": 2018,
+  "artists": 664,
+  "top_median": 0.18035307281585056,
+  "onehit80": 0.015060240963855422,
+  "onehit50": 0.06626506024096386,
+  "mattered": 1.7545180722891567
+ },
+ {
+  "pop": "new artists",
+  "band": "500+",
+  "year": 2019,
+  "artists": 641,
+  "top_median": 0.1931179775280899,
+  "onehit80": 0.0109204368174727,
+  "onehit50": 0.059282371294851796,
+  "mattered": 1.967238689547582
+ },
+ {
+  "pop": "new artists",
+  "band": "500+",
+  "year": 2020,
+  "artists": 825,
+  "top_median": 0.2028368794326241,
+  "onehit80": 0.01696969696969697,
+  "onehit50": 0.09090909090909091,
+  "mattered": 1.8872727272727272
+ },
+ {
+  "pop": "new artists",
+  "band": "500+",
+  "year": 2021,
+  "artists": 761,
+  "top_median": 0.19577735124760076,
+  "onehit80": 0.03153745072273324,
+  "onehit50": 0.11695137976346912,
+  "mattered": 1.7936925098554533
+ },
+ {
+  "pop": "new artists",
+  "band": "500+",
+  "year": 2022,
+  "artists": 740,
+  "top_median": 0.1989608938547486,
+  "onehit80": 0.024324324324324326,
+  "onehit50": 0.11351351351351352,
+  "mattered": 1.8689189189189188
+ }
+]

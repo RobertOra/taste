@@ -229,3 +229,24 @@ on songs by ~4-9 points, also when everyone is rated on only Y-4..Y-2 (so not st
 worse on songs (-13.6% -> -20.9%; newer users' worst fifth stayed ~-8 to -11%). Artists: no steady tenure difference in the best
 fifth; newer users' best fifth a little ahead since 2021. Why the best fifth's songs do better over time: unexplained (not
 measurement, not newcomers, not noise: steady with tight yearly ranges; outcome spread grew only ~25%).
+
+## Music trends (2026-10-14, exploratory; ListenBrainz; outside the taste question)
+Shared table: data/derived/song_month/ (analysis/build_song_month.py; each song's listeners and plays per month, 7.9 GB; plus
+user_month_lb). Keep while trends 5/6 are open; delete in the disk trim.
+1. Do songs fade faster? (trends_fade.py; 275k songs peaking 2010-2022 with >= 20 listeners). Whole audience: a song's share of
+   active listeners a year after its peak fell from 22% of the peak (2010) to 12% (2021-22). Same people (of those who played it at
+   the peak and were still listening, how many still played it): a year on ~7% (2010) -> ~6% (2022), flat since ~2013; 3 months on
+   17% -> 12-13%, flat since ~2016. So most of the faster fade is LB's changing crowd, not people dropping songs faster. Peak years
+   2023-24 left out (only late-peaking songs).
+2. One-hit wonders (trends_onehit.py, trends_onehit_check.py). New artists' biggest song's share of their first three years:
+   median 11% (2010) -> 20% (2019-22); artists with >= 50% on one song 1% -> 13-15%. Per listener (spelling-proof): songs by the
+   artist played per listener-month 3.4 -> 1.65; months with just one of their songs 57% -> 83%. A real shift from albums to single
+   songs (in LB's crowd, which also changed).
+3. Niche or homogeneous? (trends_homog.py; 5 samples of 2,000 people a year; top 100 songs / top 30 artists each). More niche:
+   artist overlap between two random people 1.69% (2010) -> ~1.0% (2020s); song overlap ~0.17% -> ~0.12% (2024 bump 0.15%);
+   concentration in the most common items down too. Same people (4,942, 2014/2019/2024): artists 1.45% -> 1.15% -> 1.06%, songs
+   0.21% -> 0.14% -> 0.14%. New finds' overlap small and roughly flat (0.03-0.05% -> 0.02-0.04%). Part may be ever more music released.
+4. Do people stop discovering? (trends_discovery.py). Same 2,918 people (started 2008-14, listening every year 1-9): new artists got
+   into per year 74 (year 1) -> 45 (year 9), discovery share of plays 40% -> 22%, plays flat (~8,700). Steepest in years 1-3, then a
+   slow steady decline; it never stops. Later starters (2016-18) get into more artists (86 vs 61 in year 1) but decline the same
+   way, so it's a listening-life pattern, not the era. Tenure, not age.
