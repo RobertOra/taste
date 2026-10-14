@@ -1,6 +1,7 @@
 [
  {
   "key": "small:good",
+  "unit": "artists",
   "stage": "small",
   "fan": "good",
   "effect": 0.2015404113081308,
@@ -10,6 +11,7 @@
  },
  {
   "key": "small:ordinary",
+  "unit": "artists",
   "stage": "small",
   "fan": "ordinary",
   "effect": 0.0646307844693111,
@@ -19,6 +21,7 @@
  },
  {
   "key": "small:poor",
+  "unit": "artists",
   "stage": "small",
   "fan": "poor",
   "effect": 0.025756561480146736,
@@ -28,6 +31,7 @@
  },
  {
   "key": "medium:good",
+  "unit": "artists",
   "stage": "medium",
   "fan": "good",
   "effect": 0.10350349207720486,
@@ -37,6 +41,7 @@
  },
  {
   "key": "medium:ordinary",
+  "unit": "artists",
   "stage": "medium",
   "fan": "ordinary",
   "effect": 0.019933913525475317,
@@ -46,6 +51,7 @@
  },
  {
   "key": "medium:poor",
+  "unit": "artists",
   "stage": "medium",
   "fan": "poor",
   "effect": -0.01675418348995184,
@@ -55,6 +61,7 @@
  },
  {
   "key": "big:good",
+  "unit": "artists",
   "stage": "big",
   "fan": "good",
   "effect": 0.01647044460945522,
@@ -64,6 +71,7 @@
  },
  {
   "key": "big:ordinary",
+  "unit": "artists",
   "stage": "big",
   "fan": "ordinary",
   "effect": 0.00024686860861051905,
@@ -73,11 +81,102 @@
  },
  {
   "key": "big:poor",
+  "unit": "artists",
   "stage": "big",
   "fan": "poor",
   "effect": -0.01349564201669909,
   "lo": -0.014503174155384142,
   "hi": -0.012492841747961286,
   "artist_months": 538112
+ },
+ {
+  "key": "songs:small:good",
+  "unit": "songs",
+  "stage": "small",
+  "fan": "good",
+  "effect": 0.07054693127113058,
+  "lo": 0.05972833406336951,
+  "hi": 0.0824026690691296,
+  "artist_months": 1275812
+ },
+ {
+  "key": "songs:small:ordinary",
+  "unit": "songs",
+  "stage": "small",
+  "fan": "ordinary",
+  "effect": 0.011799124895309423,
+  "lo": 0.007260030192005754,
+  "hi": 0.016540993818939257,
+  "artist_months": 1275812
+ },
+ {
+  "key": "songs:small:poor",
+  "unit": "songs",
+  "stage": "small",
+  "fan": "poor",
+  "effect": -0.025767282104913705,
+  "lo": -0.030819888507304983,
+  "hi": -0.021221223091403348,
+  "artist_months": 1275812
+ },
+ {
+  "key": "songs:medium:good",
+  "unit": "songs",
+  "stage": "medium",
+  "fan": "good",
+  "effect": 0.02434240988221702,
+  "lo": 0.01895046957453961,
+  "hi": 0.029869494807628908,
+  "artist_months": 490775
+ },
+ {
+  "key": "songs:medium:ordinary",
+  "unit": "songs",
+  "stage": "medium",
+  "fan": "ordinary",
+  "effect": -0.017307104857537677,
+  "lo": -0.019118440761511455,
+  "hi": -0.015602423919096244,
+  "artist_months": 490775
+ },
+ {
+  "key": "songs:medium:poor",
+  "unit": "songs",
+  "stage": "medium",
+  "fan": "poor",
+  "effect": -0.055141291333994445,
+  "lo": -0.05744988236765122,
+  "hi": -0.05308275754232653,
+  "artist_months": 490775
+ },
+ {
+  "key": "songs:big:good",
+  "unit": "songs",
+  "stage": "big",
+  "fan": "good",
+  "effect": 0.015652178126724967,
+  "lo": 0.01240803281970282,
+  "hi": 0.018655378466704984,
+  "artist_months": 136467
+ },
+ {
+  "key": "songs:big:ordinary",
+  "unit": "songs",
+  "stage": "big",
+  "fan": "ordinary",
+  "effect": -0.007668901241424593,
+  "lo": -0.008839496842573973,
+  "hi": -0.006566492230367077,
+  "artist_months": 136467
+ },
+ {
+  "key": "songs:big:poor",
+  "unit": "songs",
+  "stage": "big",
+  "fan": "poor",
+  "effect": -0.02756586563477097,
+  "lo": -0.02944094347827436,
+  "hi": -0.02548247236334311,
+  "artist_months": 136467
  }
 ]

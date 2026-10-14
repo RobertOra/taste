@@ -224,6 +224,17 @@ def recency():
 
 
 def fanrel():
+    out = []
+    for unit, f in (("artists", "fan_value_sealed.json"), ("songs", "fan_value_sealed_song.json")):
+        pre = "songs:" if unit == "songs" else ""
+        for r in json.loads((OUT / f).read_text())["rows"]:
+            if r["stage_type"] == "size" and r["fan"] in ("good_minus_ordinary", "poor_minus_ordinary"):
+                out.append({"key": f"{pre}{r['stage']}:{r['fan'].split('_')[0]}", "unit": unit, "stage": r["stage"], "fan": r["fan"].split("_")[0],
+                            "effect": float(np.expm1(r["effect"])), "lo": float(np.expm1(r["lo"])), "hi": float(np.expm1(r["hi"]))})
+    return out
+
+
+def _fanrel_old():
     rows = json.loads((OUT / "fan_value_sealed.json").read_text())["rows"]
     out = []
     for r in rows:
@@ -355,6 +366,24 @@ def song_predictions():
             rows.append({"key": f"threeway:{h}:{part}", "claim": None, "unit": "times as often", "hidden": tw[h][part]["est"], "lo": tw[h][part]["lo"],
                          "hi": tw[h][part]["hi"], "lo99": None, "first_half": None, "rate": None, "rate_compared": None, "confirmed": None,
                          "lb": None, "lb_lo": None, "lb_hi": None, "lb_held": None, "hidden_from_table": True})
+    fv = {h: json.loads((OUT / f"fan_value_{h}_song.json").read_text()) for h in ("explore", "sealed", "lb")}
+    sf = {h: json.loads((OUT / f"song_fans_{h}.json").read_text()) for h in ("explore", "sealed", "lb")}
+    g7 = {h: next(r for r in fv[h]["rows"] if r["key"] == "size:small:good_minus_ordinary") for h in fv}
+    rows.append({"key": "S7", "claim": "Small song: a good new fan vs an ordinary one, extra growth", "unit": "more growth",
+                 "hidden": g7["sealed"]["effect"], "lo": g7["sealed"]["lo"], "hi": g7["sealed"]["hi"], "lo99": g7["sealed"]["lo99"],
+                 "first_half": g7["explore"]["effect"], "rate": None, "rate_compared": None, "confirmed": g7["sealed"]["lo99"] > 0,
+                 "lb": g7["lb"]["effect"], "lb_lo": g7["lb"]["lo"], "lb_hi": g7["lb"]["hi"], "lb_held": g7["lb"]["lo99"] > 0})
+    g8 = {h: sf[h]["good_summary"] for h in sf}
+    rows.append({"key": "S8", "claim": "Niche song found by 2 good pickers vs none: extra growth", "unit": "more growth",
+                 "hidden": g8["sealed"]["niche_2_vs_0"], "lo": g8["sealed"]["niche_2_vs_0_lo"], "hi": g8["sealed"]["niche_2_vs_0_hi"],
+                 "lo99": g8["sealed"]["niche_2_vs_0_lo99"], "first_half": g8["explore"]["niche_2_vs_0"], "rate": None, "rate_compared": None,
+                 "confirmed": g8["sealed"]["niche_2_vs_0_lo99"] > 0, "lb": g8["lb"]["niche_2_vs_0"], "lb_lo": g8["lb"]["niche_2_vs_0_lo"],
+                 "lb_hi": g8["lb"]["niche_2_vs_0_hi"], "lb_held": g8["lb"]["niche_2_vs_0_lo99"] > 0})
+    g9 = {h: next(r for r in sf[h]["poor_curve"] if r["key"] == "niche:slope") for h in sf}
+    rows.append({"key": "S9", "claim": "Each additional poor picker among a niche song's new fans: growth", "unit": "more growth",
+                 "hidden": g9["sealed"]["per_picker"], "lo": g9["sealed"]["lo"], "hi": g9["sealed"]["hi"], "lo99": None,
+                 "first_half": g9["explore"]["per_picker"], "rate": None, "rate_compared": None, "confirmed": g9["sealed"]["hi99"] < 0,
+                 "lb": g9["lb"]["per_picker"], "lb_lo": g9["lb"]["lo"], "lb_hi": g9["lb"]["hi"], "lb_held": g9["lb"]["hi99"] < 0})
     rows.append({"key": "S3", "claim": "Getting hooked pays off more for top-fifth than bottom-fifth song pickers (difference)", "unit": "points",
                  "hidden": t["sealed"]["diff"], "lo": t["sealed"]["lo"], "hi": t["sealed"]["hi"], "lo99": t["sealed"]["lo99"],
                  "first_half": t["explore"]["diff"], "rate": None, "rate_compared": None, "confirmed": t["sealed"]["lo99"] > 0,
@@ -363,16 +392,21 @@ def song_predictions():
 
 
 def fanvalue():
-    fv = json.loads((OUT / "fan_value_sealed.json").read_text())
-    return [{"key": f"{r['stage']}:{r['fan']}", "stage": r["stage"], "fan": r["fan"], "effect": r["effect"], "lo": r["lo"], "hi": r["hi"],
-             "artist_months": r["artist_months"]} for r in fv["rows"]
-            if r["stage_type"] == "size" and r["fan"] in ("good", "ordinary", "poor")]
+    out = []
+    for unit, f in (("artists", "fan_value_sealed.json"), ("songs", "fan_value_sealed_song.json")):   # songs: fan_value.py --unit song
+        pre = "songs:" if unit == "songs" else ""
+        out += [{"key": f"{pre}{r['stage']}:{r['fan']}", "unit": unit, "stage": r["stage"], "fan": r["fan"], "effect": r["effect"], "lo": r["lo"],
+                 "hi": r["hi"], "artist_months": r["artist_months"]} for r in json.loads((OUT / f).read_text())["rows"]
+                if r["stage_type"] == "size" and r["fan"] in ("good", "ordinary", "poor")]
+    return out
 
 
 def crowd():
     rows = [{"key": f"{r['crowd']}:{r['label']}", "kind": "point", **r} for r in json.loads((OUT / "ladder_sealed.json").read_text())["crowd_curve"]]
     means = json.loads((OUT / "crowd_means_sealed.json").read_text())  # analysis/charts_data.py --crowd-means
-    return rows + [{"kind": "mean", **m} for m in means]
+    songs = [{"key": f"songs:{r['crowd']}:{r['label']}", "kind": "point", "unit": "songs", **{k: v for k, v in r.items() if k != "key"}}
+             for r in json.loads((OUT / "song_fans_sealed.json").read_text())["good_curve"]]   # song_fans.py
+    return rows + [{"kind": "mean", **m} for m in means] + songs
 
 
 def headlines_with_lb():
@@ -408,3 +442,7 @@ if __name__ == "__main__":
     rows = [r for r in json.loads((W / "scenesplit.json").read_text()) if r.get("unit") != "songs"]
     rows += [{**r, "key": "songs:" + r["key"], "unit": "songs"} for r in json.loads((OUT / "scene_split_songs_sealed.json").read_text())["bands"]]
     (W / "scenesplit.json").write_text(json.dumps(rows, indent=1))
+    # songs for the poor-picker crowd chart (song_fans.py): rows keyed "songs:..." added to poorcrowd.json
+    rows = [r for r in json.loads((W / "poorcrowd.json").read_text()) if r.get("unit") != "songs"]
+    rows += [{**r, "key": "songs:" + r["key"], "unit": "songs"} for r in json.loads((OUT / "song_fans_sealed.json").read_text())["poor_curve"]]
+    (W / "poorcrowd.json").write_text(json.dumps(rows, indent=1))
