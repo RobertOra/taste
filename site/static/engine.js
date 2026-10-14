@@ -55,6 +55,24 @@ export function nameHash(s) {   // signed 64-bit BigInt of blake2b-8 digest read
   return BigInt.asIntN(64, x);
 }
 
+// ---------- normalized song names (site/normalize.py mirrors this exactly; site/test_normalize.mjs checks it)
+const NDROP = 'feat|ft|featuring|with|remaster|remastered|remasterd|version|edit|explicit|clean|radio|mono|stereo|deluxe|bonus|single|album|official|lyric|lyrics|audio|video|visualizer|visualiser|hd|4k|mv|m/v';
+const NKEEP = 'remix|mix|live|acoustic|slowed|sped|reverb|instrumental|demo|cover|karaoke|orchestral|piano|unplugged|session';
+const NBRACKET = /\s*[([]([^)\]]*)[)\]]/g, NDASH = /\s+-\s+([^-]*)$/, NFEAT = /\s+(?:feat\.?|ft\.?|featuring)\s.*$/;
+const NWDROP = new RegExp(`(?<![a-z0-9])(?:${NDROP})(?![a-z0-9])`), NWKEEP = new RegExp(`(?<![a-z0-9])(?:${NKEEP})`), NLN = /[\p{L}\p{N}]/u;
+const labelDrop = (t) => NWDROP.test(t) && !NWKEEP.test(t);
+export function normName(s) {
+  let t = (s || '').normalize('NFKC').toLowerCase().trim();
+  const base = t;
+  t = t.replace(NBRACKET, (m, g) => (labelDrop(g) ? '' : m));
+  const m = t.match(NDASH);
+  if (m && labelDrop(m[1])) t = t.slice(0, m.index);
+  t = t.replace(NFEAT, '');
+  let out = ''; for (const c of t) if (NLN.test(c)) out += c;
+  return out || base;
+}
+export const songKey = (artist, track) => `${normName(artist)}\t${normName(track)}`;
+
 // ---------- reading Spotify exports (JSON, or a .zip of them)
 async function inflateRaw(bytes) {
   const ds = new DecompressionStream('deflate-raw');
