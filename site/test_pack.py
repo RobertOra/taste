@@ -11,13 +11,22 @@ sys.path.insert(0, str(ROOT / "site"))
 import score_pack as SP  # noqa: E402
 
 N = int(sys.argv[1]) if len(sys.argv) > 1 else 200
-refs = {k: pl.read_parquet(ROOT / "data" / "site" / f"_pack_ref_{k}.parquet") for k in ("song_A", "song_D", "artist_A", "artist_D")}
+import os
+REF = Path(os.environ.get("SITE_REF", ROOT / "data" / "site"))   # with SITE_OUT for the matching pack (score_pack.py)
+NORM, SINGLE = SP.META.get("song_keys") == "norm", SP.META.get("warmup") == "single"
+SETTLED = os.environ.get("SETTLED") == "1"   # the shipped song_A/artist_A is the settled variant: compare with the As reference
+refs = {k: pl.read_parquet(REF / f"_pack_ref_{k.replace('_A', '_As') if SETTLED and k.endswith('_A') else k}.parquet") for k in ("song_A", "song_D", "artist_A", "artist_D")}
 users = refs["song_A"].filter(pl.col("n") >= 110).sample(N, seed=13)["user"].to_list()
 con = duckdb.connect(); con.execute("SET memory_limit='4GB'; SET threads=6")
 con.register("u", pl.DataFrame({"user": users}).to_arrow())
 W0, W1 = 1104537600 // 604800, 1790812800 // 604800
-w = con.execute(f"""SELECT user, week, rec_name_h, artist_name_h, sum(plays)::BIGINT AS n FROM read_parquet('{ROOT}/data/lb/user_rec_week/*.parquet')
-                    SEMI JOIN u USING (user) WHERE week BETWEEN {W0} AND {W1} GROUP BY ALL""").pl()
+if NORM:   # songs keyed by normalized name: all spellings of a song are one song, as in the reference
+    w = con.execute(f"""SELECT w.user, w.week, m.rec AS rec_name_h, any_value(w.artist_name_h) AS artist_name_h, sum(w.plays)::BIGINT AS n
+                        FROM read_parquet('{ROOT}/data/lb/user_rec_week/*.parquet') w JOIN read_parquet('{REF}/rec_map.parquet') m USING (rec_name_h)
+                        SEMI JOIN u USING (user) WHERE w.week BETWEEN {W0} AND {W1} GROUP BY w.user, w.week, m.rec""").pl()
+else:
+    w = con.execute(f"""SELECT user, week, rec_name_h, artist_name_h, sum(plays)::BIGINT AS n FROM read_parquet('{ROOT}/data/lb/user_rec_week/*.parquet')
+                        SEMI JOIN u USING (user) WHERE week BETWEEN {W0} AND {W1} GROUP BY ALL""").pl()
 wa = con.execute(f"""SELECT user, week, artist_name_h, sum(plays)::BIGINT AS n FROM read_parquet('{ROOT}/data/lb/user_artist_week/*.parquet')
                      SEMI JOIN u USING (user) WHERE week BETWEEN {W0} AND {W1} GROUP BY ALL""").pl()
 pack = SP.Pack(); rows = []
@@ -31,7 +40,7 @@ for uid in users:
         p["key_override"] = True
     lj = SP.META["last_month"] - 12
     r = {}
-    starts = SP.segment_starts(p["week"] for p in aplays)   # warm-up segments from the person's whole listening (artist table)
+    starts = SP.segment_starts((p["week"] for p in aplays), SINGLE)   # warm-up from the person's whole listening (artist table)
     ap = [p for p in SP.find_picks(aplays, lambda p: p["an"], starts) if SP.META["y0"] <= p["m"] <= lj]
     # songs: same start as the person's whole listening (artist table), keyed by the song name hash
     sp_all = SP.find_picks(splays, lambda p: str(p["sh"]), starts)
