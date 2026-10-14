@@ -647,7 +647,7 @@
       <p class="wu-note">ListenBrainz. Each year, five random samples of 2,000 people and each person's 30 most-played artists. Overlap is
         the share of one person's 30 artists that another person also has. A person's niche is the scene most of their listening went to
         that year. Fans of the same artist: two people whose most-played artist that year is the same (that artist counts as one of the
-        30; everyone with enough listening that year). Shaded bands show the range.</p>
+        30; everyone with enough listening that year). Each line is compared with its own 2010 level (100); hover for the actual shares. Shaded bands show the range.</p>
       <div class="wu-legend" id="nc-legend"></div>
       <div class="wu-chart dash-skeleton" id="nc-chart" data-source="trends"></div>
     </div>
@@ -2215,9 +2215,9 @@
     if (!ready(el, ['trends'])) return;
     const rows = trendRows('niches:').filter((r) => !String(r.key).includes('panel')).map((r) => ({ ...r, year: +r.year })).sort((a, b) => a.year - b.year);
     if (!rows.length) return noData(el);
-    const ser = [['fans', 'Two fans of the same artist', dash.colors[2]], ['within', 'Two people in the same niche', dash.colors[0]], ['across', 'Two people in different niches', dash.colors[1]]];
+    const ser = [['idx_fans', 'Two fans of the same artist', dash.colors[2]], ['idx_within', 'Two people in the same niche', dash.colors[0]], ['idx_across', 'Two people in different niches', dash.colors[1]]];
     legend('nc-legend', ser.map(([, l, c]) => [l, c, 'line']));
-    trendLines(el, rows, ser, { y0: 0, tick: d3.format('.0%'), ylabel: 'Share of their top 30 artists they have in common',
+    trendLines(el, rows, ser, { y0: 0, ref: 1, tick: (v) => d3.format('.0f')(v * 100), ylabel: 'Artists in common, compared with 2010 (100)',
       tip: (d) => [`${d.year}`, [['Fans of the same artist', fmt.pct1(+d.fans), ser[0][2]], ['Same niche', fmt.pct1(+d.within), ser[1][2]], ['Different niches', fmt.pct1(+d.across), ser[2][2]]]] });
   }
 
