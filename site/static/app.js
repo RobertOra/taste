@@ -150,10 +150,10 @@ function render(r, scroll = true) {
 
   const F = Rp.facts;
   const facts = `<div class="facts" style="margin:16px 0">
-    <div class="fact"><b>${n(F.plays)}</b><span>plays over ${F.years} years${F.ytPlays && F.ytPlays < F.plays ? ` (${n(F.ytPlays)} on YouTube)` : ''}</span></div>
-    <div class="fact"><b>${n(F.findsS)}${M.song_A.items ? ` <span style="font-size:15px;color:var(--ink-3)">(${n(M.song_A.items.length)} matched and scored)</span>` : ''}</b><span>songs you really got into (played in 4+ separate weeks, the 4th within 6 months of first hearing)</span></div>
-    <div class="fact"><b>${n(F.findsA)}${M.artist_A.picks ? ` <span style="font-size:15px;color:var(--ink-3)">(${n(M.artist_A.picks)} matched and scored)</span>` : ''}</b><span>artists you really got into (about ${F.perYear} a year; same rule, any of their songs)</span></div>
-    ${Rp.tookOff ? `<div class="fact"><b>${Rp.tookOff.yours} <span style="font-size:15px;color:var(--ink-3)">vs ${Rp.tookOff.expected} typical</span></b><span>of your scored artists took off (3× the new listeners a year later)</span></div>` : ''}
+    <div class="fact"><b>${n(F.plays)} plays</b><span>over ${F.years} years${F.ytPlays && F.ytPlays < F.plays ? ` (${n(F.ytPlays)} on YouTube)` : ''}</span></div>
+    <div class="fact"><b>${n(F.findsS)} songs</b><span>you really got into (played in 4+ separate weeks, the 4th within 6 months of first hearing)${M.song_A.items ? `; ${n(M.song_A.items.length)} matched and scored` : ''}</span></div>
+    <div class="fact"><b>${n(F.findsA)} artists</b><span>you really got into (about ${F.perYear} a year; same rule, any of their songs)${M.artist_A.picks ? `; ${n(M.artist_A.picks)} matched and scored` : ''}</span></div>
+    ${Rp.tookOff ? `<div class="fact"><b style="line-height:1.25">${Rp.tookOff.yours} took off <span style="font-size:15px;color:var(--ink-3)">vs ${Rp.tookOff.expected} typical</span></b><span>of your scored artists (3× the new listeners a year later)</span></div>` : ''}
   </div>`;
 
   const pts = (x) => `${x >= 0 ? '+' : '−'}${Math.abs(100 * x).toFixed(1)} points`;
