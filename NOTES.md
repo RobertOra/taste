@@ -198,3 +198,14 @@ artists +5.3 / +6.7 / +8.2 / +8.9 vs +5.4 / +5.8 / +8.5 / +9.2. Not a measuremen
 Added to the charts: top 10% on the year-by-year growth chart (analysis/eras_top10.py; 315-1,340 people a year), top 1% on the
 career growth chart (lb_careers*.py; 278 artist / 351 song pickers; wide ranges: artists +3.3% after a year, -4.3% after six,
 range -11.1 to +2.6). Rerunning the career scripts moves earlier 95% ranges slightly (group order varies), so the earlier rows were kept.
+
+### How early can you tell an artist will break out? (2026-10-14, exploratory; analysis/early_signal.py)
+LB artists whose first listener came 2012-2020. Breakout = top 1% of the birth-year cohort by listeners in year 3. Logistic
+model on half the artists, scored on the other half; "flag the 1% rated most promising". Genuinely new artists (MusicBrainz
+release in the 12 months before their first LB listener; 35,639 artists, 362 breakouts, 360-640 year-3 listeners needed):
+after 1 month, the flagged 1% held 13% breakouts (base 0.9%), 14% of all breakouts caught (AUC 0.69); 3 months 16% / 17%
+(0.78); 6 months 25% / 27% (0.84); 12 months 43% / 46% (0.93); 24 months 66% / 71% (0.99). Mostly wait-and-see: a year in,
+you catch about half. Who the fans are (committed fans, good pickers) adds almost nothing beyond listener counts and speed for
+these top breakouts, although good-picker fans go with more growth on average (fan value). All LB-born artists (incl. older
+artists new to LB) are much easier (AUC 0.74 at month 0, 0.92 at 6 months, top 0.1% bar) because many arrive already big.
+Top 0.1% among new artists: only 40 breakouts, not used.
