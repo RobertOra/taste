@@ -269,3 +269,13 @@ discovery over a listening life, hidden gems (All / New artists). Gems over time
    supply most pairs); each artist once falls 7.5% -> 5.7%. On the chart as share of all 30 (shared favorite counted): 9.4% -> 9.4%.
    Write-up: niche chart now in real percentages with this third line; title "People grew apart, except fans of the same artist".
    Song-fading chart removed (Robert, 2026-10-14); the eras sentence says songs fade only a little faster for the same listeners.
+3d. Four similarity measures (trends_similarity.py; everyone with enough listening each year; cosine of play shares over artists /
+   200 yearly scenes / genre families (tagged artists, 74% -> 61% of plays); top30 = the earlier overlap). Random pairs 2010 -> 2025:
+   top30 .017 -> .010, artists .028 -> .015 (-45%), scenes .17 -> ~.145 (-15%, noisy: scenes rebuilt yearly), genres .51 -> .47 (-8%).
+   So people drifted apart mostly in exact artists, much less in kinds of music: mostly more choice within similar broad tastes.
+   Same niche: top30 .062 -> .039, artists .095 -> .064, genres .75 -> .69 (scenes .61 -> .66, partly by construction).
+   Fans of the same artist: top30 flat .094, genres flat .77 -> .76, but artists .32 -> .38 and scenes .49 -> .54 (weighted vectors
+   include the shared favorite; fans may have concentrated more on it).
+   Changing faster? Similarity with oneself the year before (weighted artists): .52 (2011) -> .48 (2016) -> .54 (2025); at 2-4 years
+   of listening .52 -> .49 -> .57; same 3,979 people .504 -> .511 -> .509. Scenes ~.85 -> .87, genres ~.94 flat. Tastes are not
+   changing faster; if anything a bit steadier since 2016.
