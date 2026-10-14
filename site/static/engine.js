@@ -231,11 +231,11 @@ export async function resolveYouTube(plays, pack) {
   }
   await pack.init();
   const cand = [...by.entries()].filter(([, g]) => g.weeks.size >= RULES.minWeeks), known = new Set(sure);
-  await pack.load(cand.map(([an]) => pack.shardOf(nameHash(an))));
-  const tops = cand.filter(([an]) => pack.artist(nameHash(an))).map(([an, g]) => [an, [...g.songs.entries()]
+  await pack.load(cand.map(([an]) => pack.place(nameHash(an), an)));
+  const tops = cand.filter(([an]) => pack.artist(nameHash(an), an)).map(([an, g]) => [an, [...g.songs.entries()]
     .sort((x, y) => y[1].size - x[1].size || cmpName(x[0], y[0])).slice(0, 3).map(([tn]) => nameHash(skey(pack.meta, an, tn)))]);
-  await pack.load(tops.flatMap(([, hs]) => hs.map((h) => pack.shardOf(h))));
-  for (const [an, hs] of tops) if (hs.some((h) => pack.song(h))) known.add(an);
+  await pack.load(tops.flatMap(([an, hs]) => hs.map((h) => pack.place(h, an))));
+  for (const [an, hs] of tops) if (hs.some((h) => pack.song(h, an))) known.add(an);
   // song checks, only for 's' readings that could still be picked: a passing 'a' reading of an artist you play elsewhere always wins,
   // and any passing 'a' reading wins over later ones. Skipped for an artist that could have fewer than 4 weeks in all (it can't be a find).
   const span = new Map(), addW = (an, w) => { let x = span.get(an); if (!x) span.set(an, x = new Set()); x.add(w); };
@@ -249,11 +249,11 @@ export async function resolveYouTube(plays, pack) {
       if (certain(rule, an)) { earlierA = true; if (sure.has(an)) earlierSureA = true; continue; }
       if (rule[0] === 'a' || !known.has(an) || EXCLUDE.has(an) || span.get(an).size < RULES.minWeeks) continue;
       if (sure.has(an) ? earlierSureA : (earlierA || sureA)) continue;
-      need.push(nameHash(an), nameHash(skey(pack.meta, an, s.toLowerCase())));
+      need.push(pack.place(nameHash(an), an), pack.place(nameHash(skey(pack.meta, an, s.toLowerCase())), an));
     }
   }
-  await pack.load(need.map((h) => pack.shardOf(h)));
-  const passes = (rule, an, tn) => known.has(an) && !EXCLUDE.has(an) && (rule[0] === 'a' || (span.get(an).size >= RULES.minWeeks && pack.artist(nameHash(an)) !== null && pack.song(nameHash(skey(pack.meta, an, tn))) !== null));
+  await pack.load(need);
+  const passes = (rule, an, tn) => known.has(an) && !EXCLUDE.has(an) && (rule[0] === 'a' || (span.get(an).size >= RULES.minWeeks && pack.artist(nameHash(an), an) !== null && pack.song(nameHash(skey(pack.meta, an, tn)), an) !== null));
   const out = [];
   for (const p of plays) {
     if (p.src !== 'yt?') { out.push(p); continue; }
@@ -337,9 +337,10 @@ export function decodeShard(buf, meta) {
 }
 // Pack: index + range reader. fetchRange(fileNo, start, endInclusive) -> Uint8Array; fetchIndex() -> ArrayBuffer
 export class Pack {
-  constructor(meta, fetchIndex, fetchRange) { Object.assign(this, { meta, fetchIndex, fetchRange, shards: new Map(), bytes: 0, requests: 0 }); }
+  constructor(meta, fetchIndex, fetchRange, fetchBloom) { Object.assign(this, { meta, fetchIndex, fetchRange, fetchBloom, shards: new Map(), bytes: 0, requests: 0, slots: new Map() }); }
   async init() {
     if (this.loc) return;
+    if (this.meta.slots && this.fetchBloom) this.bloom = new Uint8Array(await this.fetchBloom());
     const b = new Uint8Array(await this.fetchIndex()), dv = new DataView(b.buffer, b.byteOffset, b.byteLength);
     const S = dv.getUint32(4, true), F = dv.getUint16(8, true); let p = 10;
     this.compressed = dv.getUint32(0, true) === 0x54535432;
@@ -353,8 +354,23 @@ export class Pack {
     }
   }
   shardOf(h) { return Number(BigInt.asUintN(64, h) & BigInt(this.S - 1)); }
+  // Packs with meta.slots file everything about an artist together: an artist name and all songs by that artist sit in the shard of
+  // the artist's slot, nameHash(normName(artist)). The Bloom filter (slots.bloom) says which slots hold anything (no false negatives),
+  // so artists the reference doesn't know cost no request. Older packs file each name by its own hash.
+  slot(an) { let s = this.slots.get(an); if (s === undefined) this.slots.set(an, s = nameHash(normName(an))); return s; }
+  maybe(s) {
+    if (!this.bloom) return true;
+    const { m, k } = this.meta.slots, u = BigInt.asUintN(64, s), h1 = u & 0xFFFFFFFFn, h2 = (u >> 32n) | 1n, M = BigInt(m);
+    for (let i = 0n; i < BigInt(k); i++) { const pos = (h1 + i * h2) % M; if (!(this.bloom[Number(pos >> 3n)] & (1 << Number(pos & 7n)))) return false; }
+    return true;
+  }
+  place(h, an) {   // the shard that would hold name hash h (by artist an), or null if the reference has nothing for that artist
+    if (!this.meta.slots) return this.shardOf(h);
+    const s = this.slot(an); return this.maybe(s) ? this.shardOf(s) : null;
+  }
   async load(ids, onProgress = () => {}) {
     await this.init();
+    ids = ids.filter((s) => s !== null);
     const need = [...new Set(ids)].filter((s) => !this.shards.has(s) && this.loc[s][2] > 0);
     for (const s of ids) if (!this.shards.has(s) && this.loc[s][2] === 0) this.shards.set(s, decodeShard(new Uint8Array(8), this.meta));
     const byFile = new Map();
@@ -384,8 +400,8 @@ export class Pack {
     };
     await Promise.all(Array.from({ length: Math.min(16, ranges.length) }, worker));
   }
-  artist(h) { const s = this.shards.get(this.shardOf(h)); const i = s && s.artistNames.get(h); return i === undefined ? null : s.artists[i]; }
-  song(h) { const s = this.shards.get(this.shardOf(h)); const i = s && s.songNames.get(h); return i === undefined ? null : s.songs[i]; }
+  artist(h, an) { const id = this.place(h, an), s = id === null ? null : this.shards.get(id); const i = s && s.artistNames.get(h); return i === undefined || i === null ? null : s.artists[i]; }
+  song(h, an) { const id = this.place(h, an), s = id === null ? null : this.shards.get(id); const i = s && s.songNames.get(h); return i === undefined || i === null ? null : s.songs[i]; }
 }
 
 // ---------- features, outcomes, excess
@@ -533,12 +549,12 @@ export async function scoreHistory(files, meta, pack, onProgress = () => {}) {
   for (const p of [...judgedA, ...recentA]) p.ah = nameHash(p.an);
   for (const p of judgedS) { p.sh = nameHash(p.key); p.ah = nameHash(p.an); }
   await pack.init();
-  await pack.load([...judgedA, ...recentA, ...judgedS].flatMap((p) => [pack.shardOf(p.ah), ...(p.sh !== undefined ? [pack.shardOf(p.sh)] : [])]), onProgress);
+  await pack.load([...judgedA, ...recentA, ...judgedS].flatMap((p) => [pack.place(p.ah, p.an), ...(p.sh !== undefined ? [pack.place(p.sh, p.an)] : [])]), onProgress);
   out.history.bytes = pack.bytes; out.history.requests = pack.requests;
   const dedup = (ps) => { const seen = new Map(); for (const p of ps.sort((a, b) => a.m - b.m || cmpName(a.key, b.key))) if (!seen.has(p.item.id)) seen.set(p.item.id, p); return [...seen.values()]; };
-  for (const p of judgedA) { p.art = pack.artist(p.ah); p.item = p.art; p.w = p.plays26; }
-  for (const p of recentA) p.art = pack.artist(p.ah);
-  for (const p of judgedS) { p.art = pack.artist(p.ah); p.item = p.art ? pack.song(p.sh) : null; p.w = p.plays26; }
+  for (const p of judgedA) { p.art = pack.artist(p.ah, p.an); p.item = p.art; p.w = p.plays26; }
+  for (const p of recentA) p.art = pack.artist(p.ah, p.an);
+  for (const p of judgedS) { p.art = pack.artist(p.ah, p.an); p.item = p.art ? pack.song(p.sh, p.an) : null; p.w = p.plays26; }
   const mA = dedup(judgedA.filter((p) => p.item)), mS = dedup(judgedS.filter((p) => p.item));
   const shareA = judgedA.length ? judgedA.filter((p) => p.item).length / judgedA.length : 0;
   const shareS = judgedS.length ? judgedS.filter((p) => p.item).length / judgedS.length : 0;

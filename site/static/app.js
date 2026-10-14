@@ -1,12 +1,13 @@
 // Taste Test page: reads Spotify and/or YouTube (Google Takeout) files, scores them with engine.js in the browser (reference data read by byte range), renders the report.
-import { scoreHistory, monthLabel, Pack, WANT } from './engine.js?v=a32d4a9d38';
+import { scoreHistory, monthLabel, Pack, WANT } from './engine.js?v=e3d3853e75';
 
 const $ = (s) => document.querySelector(s);
 let META = null;
-const metaReady = fetch('data/meta.json?v=a32d4a9d38').then((r) => r.json()).then((m) => (META = m));
-const fetchIndex = () => fetch('data/index.bin?v=a32d4a9d38').then((r) => r.arrayBuffer());
+const metaReady = fetch('data/meta.json?v=e3d3853e75').then((r) => r.json()).then((m) => (META = m));
+const fetchIndex = () => fetch('data/index.bin?v=e3d3853e75').then((r) => r.arrayBuffer());
+const fetchBloom = () => fetch('data/slots.bloom?v=e3d3853e75').then((r) => r.arrayBuffer());   // packs filed by artist (meta.slots)
 async function fetchRange(file, start, end) {
-  const r = await fetch(`data/p/${String(file).padStart(2, '0')}.bin?v=a32d4a9d38`, { headers: { Range: `bytes=${start}-${end}` } });
+  const r = await fetch(`data/p/${String(file).padStart(2, '0')}.bin?v=e3d3853e75`, { headers: { Range: `bytes=${start}-${end}` } });
   const b = new Uint8Array(await r.arrayBuffer());
   return r.status === 206 ? b : b.subarray(start, end + 1);   // a server without range support sends the whole file
 }
@@ -63,7 +64,7 @@ async function run(sources = SRC) {
     $('#report').hidden = true;
     status('Reading your files…');
     await metaReady;
-    const pack = new Pack(META, fetchIndex, fetchRange);
+    const pack = new Pack(META, fetchIndex, fetchRange, fetchBloom);
     VIEWS = [];
     for (const [i, [key, label, fs]] of combos.entries()) {
       const msg = `Looking up the music you got into${combos.length > 1 ? ` (${label}, ${i + 1} of ${combos.length})` : ''}…`;

@@ -329,3 +329,11 @@ score alone 0.003). Not exploring less, listening less, ignoring new music, or g
 - 2026-10-14: site live at https://robertora.github.io/taste-test/ (repo RobertOra/taste-test made public with Robert's OK; it holds
   only the published site files). Research repo pushed by Robert to RobertOra/taste (private). Live check: a test history scores the same as locally;
   the study renders with no errors on desktop and phone. Updates: bash site/deploy.sh "message".
+
+## Site requests (2026-10-14)
+GitHub Pages rate-limited the live site after my test runs (~4,600-5,200 range requests per scoring; ~20k in 30 min). Cause: every
+name filed by its own hash, so ~7,500 lookups hit ~5,000 shards. Fix (exact, results identical): file everything about an artist in
+the shard of slot = name_hash(norm_name(artist)) (site/build_pack_slots.py; SHARD_BY=artist in build_pack_files/meta), plus a 4.6 MB
+Bloom filter of slots so unknown artists cost no request. A test history: 5,246 -> 1,487 requests, same scores (JS old vs new output
+identical except timing; mirror vs reference 100% exact picks). Largest shard 864 kB (one artist with ~23,700 songs). Hashed-layout
+pack kept in data/_site_static_data_hashed (outside the published folder) until the new one is confirmed live.

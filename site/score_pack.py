@@ -16,7 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "site"))
 import score as S  # noqa: E402  (name_hash, true_range, read_history, EXCLUDE_ARTISTS)
-from normalize import song_key  # noqa: E402
+from normalize import norm_name, song_key  # noqa: E402
 
 import os
 DATA = Path(os.environ.get("SITE_OUT", ROOT / "site" / "static" / "data"))   # SITE_OUT: test another pack (e.g. site/static/data_v2)
@@ -46,9 +46,31 @@ class Pack:
                 f += 1; off = 0
             self.loc.append((f, off, ln)); off += ln
         self.files, self.cache = {}, {}
+        self.slots = {}
+        self.slot_of_hash = None   # tests that only have hashes: {name hash: artist slot} (test_pack.py)
+        self.bloom = (DATA / "slots.bloom").read_bytes() if META.get("slots") else None
 
     def shard_of(self, h):
         return h & (self.S - 1)
+
+    # packs with META["slots"]: everything about an artist is filed in the shard of its slot (as engine.js)
+    def slot(self, an):
+        if an not in self.slots:
+            self.slots[an] = S.name_hash(norm_name(an))
+        return self.slots[an]
+
+    def maybe(self, s):
+        if self.bloom is None:
+            return True
+        m, k = META["slots"]["m"], META["slots"]["k"]
+        u = s & 0xFFFFFFFFFFFFFFFF; h1, h2 = u & 0xFFFFFFFF, (u >> 32) | 1
+        return all(self.bloom[((h1 + i * h2) % m) >> 3] & (1 << (((h1 + i * h2) % m) & 7)) for i in range(k))
+
+    def place(self, h, an=None):
+        if not META.get("slots"):
+            return self.shard_of(h)
+        s = self.slot(an) if an is not None else self.slot_of_hash.get(h)
+        return None if s is None or not self.maybe(s) else self.shard_of(s)
 
     def shard(self, s):
         if s in self.cache:
@@ -62,12 +84,18 @@ class Pack:
         self.cache[s] = decode(zlib.decompress(raw, -15) if self.compressed else raw)
         return self.cache[s]
 
-    def artist(self, h):
-        an, ar, _, _ = self.shard(self.shard_of(h)); i = an.get(h)
+    def artist(self, h, an=None):
+        sid = self.place(h, an)
+        if sid is None:
+            return None
+        names, ar, _, _ = self.shard(sid); i = names.get(h)
         return None if i is None else ar[i]
 
-    def song(self, h):
-        _, _, sn, sr = self.shard(self.shard_of(h)); i = sn.get(h)
+    def song(self, h, an=None):
+        sid = self.place(h, an)
+        if sid is None:
+            return None
+        _, _, sn, sr = self.shard(sid); i = sn.get(h)
         return None if i is None else sr[i]
 
 
@@ -241,10 +269,10 @@ def score(plays, exclude_self=False, pack=None):
     ap = [p for p in find_picks(plays, lambda p: p["an"], starts) if META["y0"] <= p["m"] <= lj]
     sp = [p for p in find_picks(plays, lambda p: skey(p["an"], p["tn"]), starts) if p["key"].split("\t", 1)[1] and META["y0"] <= p["m"] <= lj]
     for p in ap:
-        p["ah"] = p["ah"] if p["ah"] is not None else S.name_hash(p["an"]); p["art"] = pack.artist(p["ah"]); p["item"] = p["art"]
+        p["ah"] = p["ah"] if p["ah"] is not None else S.name_hash(p["an"]); p["art"] = pack.artist(p["ah"], p["an"]); p["item"] = p["art"]
     for p in sp:
         p["ah"] = p["ah"] if p["ah"] is not None else S.name_hash(p["an"]); p["sh"] = p["sh"] if p["sh"] is not None else S.name_hash(p["key"])
-        p["art"] = pack.artist(p["ah"]); p["item"] = pack.song(p["sh"]) if p["art"] else None
+        p["art"] = pack.artist(p["ah"], p["an"]); p["item"] = pack.song(p["sh"], p["an"]) if p["art"] else None
     def dedup(ps):
         seen = {}
         for p in sorted([p for p in ps if p["item"]], key=lambda p: (p["m"], p["key"])):
@@ -398,17 +426,17 @@ def resolve_youtube(plays, pack):
                 g = by.setdefault(an, {"weeks": set(), "songs": {}}); g["weeks"].add(p["week"]); g["songs"].setdefault(s.lower(), set()).add(p["week"])
     known = set(sure)
     for an, g in by.items():
-        if len(g["weeks"]) < 4 or not pack.artist(S.name_hash(an)):
+        if len(g["weeks"]) < 4 or not pack.artist(S.name_hash(an), an):
             continue
         top = sorted(g["songs"].items(), key=lambda kv: (-len(kv[1]), kv[0]))[:3]
-        if any(pack.song(S.name_hash(skey(an, tn))) for tn, _ in top):
+        if any(pack.song(S.name_hash(skey(an, tn)), an) for tn, _ in top):
             known.add(an)
     span = {}   # weeks an artist could have at most; below 4 it can't be a find, so its song readings aren't checked
     for p in plays:
         for an in ([a.lower() for _, a, _ in p["cands"]] if p.get("src") == "yt?" else [p["an"]]):
             span.setdefault(an, set()).add(p["week"])
     def passes(rule, an, tn):
-        return an in known and an not in S.EXCLUDE_ARTISTS and (rule[0] == "a" or (len(span[an]) >= 4 and pack.artist(S.name_hash(an)) is not None and pack.song(S.name_hash(skey(an, tn))) is not None))
+        return an in known and an not in S.EXCLUDE_ARTISTS and (rule[0] == "a" or (len(span[an]) >= 4 and pack.artist(S.name_hash(an), an) is not None and pack.song(S.name_hash(skey(an, tn)), an) is not None))
     out = []
     for p in plays:
         if p.get("src") != "yt?":

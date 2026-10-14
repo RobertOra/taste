@@ -14,7 +14,8 @@ const fetchRange = async (f, start, end) => {
 };
 const files = process.argv.slice(2).map((p) => ({ name: basename(p), bytes: new Uint8Array(readFileSync(p)) }));
 const t0 = Date.now();
-const pack = new Pack(meta, fetchIndex, fetchRange);
+const fetchBloom = async () => readFileSync(join(here, DATA, 'slots.bloom'));
+const pack = new Pack(meta, fetchIndex, fetchRange, fetchBloom);
 const r = await scoreHistory(files, meta, pack);
 const M = Object.fromEntries(Object.entries(r.measures || {}).map(([k, m]) => [k, { picks: m.picks, score: m.score, percentile: m.percentile, range: m.range }]));
 console.log(JSON.stringify({ ok: r.ok, checks: r.checks.map((c) => c.id + (c.warn ? '(warn)' : '')), headline: r.headline, measures: M,

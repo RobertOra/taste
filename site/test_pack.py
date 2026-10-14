@@ -30,6 +30,12 @@ else:
 wa = con.execute(f"""SELECT user, week, artist_name_h, sum(plays)::BIGINT AS n FROM read_parquet('{ROOT}/data/lb/user_artist_week/*.parquet')
                      SEMI JOIN u USING (user) WHERE week BETWEEN {W0} AND {W1} GROUP BY ALL""").pl()
 pack = SP.Pack(); rows = []
+if SP.META.get("slots"):   # pack filed by artist: these plays only have name hashes, so look up each hash's slot (build_pack_slots.py)
+    hs = pl.concat([w.select(h="rec_name_h"), w.select(h="artist_name_h"), wa.select(h="artist_name_h")]).unique()
+    con.register("hs", hs.to_arrow())
+    sm = con.execute(f"""SELECT artist_name_h AS h, slot FROM read_parquet('{REF}/slot_artist.parquet') SEMI JOIN hs ON hs.h = artist_name_h
+                         UNION ALL SELECT rec AS h, slot FROM read_parquet('{REF}/slot_song.parquet') SEMI JOIN hs ON hs.h = rec""").pl()
+    pack.slot_of_hash = dict(zip(sm["h"].to_list(), sm["slot"].to_list()))
 for uid in users:
     g, ga = w.filter(pl.col("user") == uid), wa.filter(pl.col("user") == uid)
     # artist plays from the artist table, song plays from the song table (as the reference build does)

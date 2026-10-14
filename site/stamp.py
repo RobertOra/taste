@@ -17,7 +17,8 @@ ver = h.hexdigest()[:10]
 
 edits = {"index.html": [(rf'href="style\.css{V}"', f'href="style.css?v={ver}"'), (rf'src="app\.js{V}"', f'src="app.js?v={ver}"')],
          "app.js": [(rf"from '\./engine\.js{V}'", f"from './engine.js?v={ver}'"), (rf"'data/meta\.json{V}'", f"'data/meta.json?v={ver}'"),
-                    (rf"'data/index\.bin{V}'", f"'data/index.bin?v={ver}'"), (rf"\.bin{V}`", f".bin?v={ver}`")]}
+                    (rf"'data/index\.bin{V}'", f"'data/index.bin?v={ver}'"), (rf"'data/slots\.bloom{V}'", f"'data/slots.bloom?v={ver}'"),
+                    (rf"\.bin{V}`", f".bin?v={ver}`")]}
 for f, subs in edits.items():
     t = (S / f).read_text()
     for pat, rep in subs:

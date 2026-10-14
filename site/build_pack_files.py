@@ -137,7 +137,11 @@ for a, c, fm in info.iter_rows():
     arec[a] = bytes(b)
 del AROW, SC, RL
 anames = con.execute(f"SELECT artist_name_h AS h, artist FROM read_parquet('{REF}/artist_map.parquet') WHERE artist IN (SELECT DISTINCT artist FROM read_parquet('{REF}/pack_artist_rows.parquet'))").pl()
-anames = anames.with_columns(shard=(pl.col("h") & (S - 1)).cast(pl.Int64))
+BY_ARTIST = os.environ.get("SHARD_BY") == "artist"   # file everything about an artist together (build_pack_slots.py)
+if BY_ARTIST:
+    anames = anames.join(pl.read_parquet(REF / "slot_artist.parquet").rename({"artist_name_h": "h"}), on="h").with_columns(shard=(pl.col("slot") & (S - 1)).cast(pl.Int64)).drop("slot")
+else:
+    anames = anames.with_columns(shard=(pl.col("h") & (S - 1)).cast(pl.Int64))
 print(f"artists: {len(arec):,} records, {anames.height:,} names; {sum(map(len, arec.values())) / 1e6:.0f} MB", flush=True)
 
 # ---- songs: names first, then rows in chunks of shards
@@ -146,7 +150,10 @@ if os.environ.get("SONG_KEYS") == "norm":   # normalized ids are the hash of the
 else:
     snames = con.execute(f"""SELECT m.rec_name_h AS h, m.rec FROM read_parquet('{REF}/rec_map.parquet') m
                              SEMI JOIN read_parquet('{REF}/pack_song_first.parquet') f ON f.rec = m.rec""").pl()
-snames = snames.with_columns(shard=(pl.col("h") & (S - 1)).cast(pl.Int64))
+if BY_ARTIST:
+    snames = snames.join(pl.read_parquet(REF / "slot_song.parquet"), on="rec").with_columns(shard=(pl.col("slot") & (S - 1)).cast(pl.Int64)).drop("slot")
+else:
+    snames = snames.with_columns(shard=(pl.col("h") & (S - 1)).cast(pl.Int64))
 sf = pl.read_parquet(REF / "pack_song_first.parquet").sort("rec")
 sids, sfm = sf["rec"].to_numpy(), sf["first_month"].to_numpy().astype(np.int64)   # global song id = position in sids
 del sf
@@ -195,4 +202,6 @@ if cur:
     (sd / f"{fileno:02d}.bin").write_bytes(bytes(cur)); files.append(len(cur))
 idx = bytearray(struct.pack("<IIH", 0x54535431, S, len(files))) + b"".join(struct.pack("<I", f) for f in files) + b"".join(struct.pack("<I", int(x)) for x in lengths)
 (OUT / "index.bin").write_bytes(bytes(idx))
+if BY_ARTIST:
+    shutil.copy2(REF / "slots.bloom", OUT / "slots.bloom")
 print(f"done: {len(files)} files, {sum(files) / 1e6:.0f} MB; largest shard {lengths.max() / 1e3:.1f} kB, mean {lengths.mean() / 1e3:.2f} kB; index {len(idx) / 1e3:.0f} kB", flush=True)
