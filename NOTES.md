@@ -309,3 +309,7 @@ discovery over a listening life, hidden gems (All / New artists). Gems over time
 7. Old vs new music (trends_catalog.py): by MusicBrainz first release, artists under 3 years old fell 12.5% (2010) -> 5.3% (2025) of
    plays, but dated coverage fell 89% -> 80% of plays, and by first appearance on LB, artists new in the last 3 years were a flat
    8-9% of plays 2012-2025 (undated among them 4.2% -> 6.7%). No solid evidence new music is losing ground; not charted.
+8. Loved by a few or liked by many? (trends_divisive.py; artists with >= 3 keepers; split at medians of kept rate and plays per
+   keeper; size-matched). New artists: liked by many 32% never spread / 22% tripled / 2.8% tenfold; loved by a few 46% / 16% / 1.7%;
+   both 27% / 28% / 3.7%; neither 49% / 12% / 0.6%. All artists: many 80/3, few 80/4, both 65/9, neither 87/2. For new artists it is
+   better to be liked by many than loved by a few; divisive is only a little better than forgettable.
