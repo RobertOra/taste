@@ -302,3 +302,10 @@ discovery over a listening life, hidden gems (All / New artists). Gems over time
    21% were loved (top 10%). Splitting gems by whether a good picker got into them is circular (not used).
    New-artist share: hidden gems 5%, loved-and-spread 51%, ordinary 7%, overhyped 30% (new = MB release in the year before; many
    artists lack dates). Write-up: paragraph "What makes a hidden gem?" under the gems chart (no new chart; Robert).
+
+6. Genres (trends_genres.py): share of new finds (tagged artists) 2010 -> 2025: pop 9.7% -> 18.1%, hip hop 6.8% -> 13.8% (2020) -> 10.4%,
+   electronic peak 25% (2015) -> 19.5%, rock 17.5% -> 12.8%, indie 20% -> 17.5%. Plays: pop 8.6% -> 23.9%, rock 22% -> 11.7%.
+   Same 2,510 people 2012-14 -> 2022-24: nearly unchanged (pop 11.2 -> 12.4, rock 14.0 -> 12.4). So the crowd changed, not people.
+7. Old vs new music (trends_catalog.py): by MusicBrainz first release, artists under 3 years old fell 12.5% (2010) -> 5.3% (2025) of
+   plays, but dated coverage fell 89% -> 80% of plays, and by first appearance on LB, artists new in the last 3 years were a flat
+   8-9% of plays 2012-2025 (undated among them 4.2% -> 6.7%). No solid evidence new music is losing ground; not charted.

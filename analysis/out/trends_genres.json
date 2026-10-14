@@ -1,0 +1,1781 @@
+{
+ "finds": [
+  {
+   "year": 2010,
+   "fam": "Electronic",
+   "len": 29550,
+   "share": 0.20694436663118382
+  },
+  {
+   "year": 2010,
+   "fam": "Folk & country",
+   "len": 6330,
+   "share": 0.0443302145778475
+  },
+  {
+   "year": 2010,
+   "fam": "Hip hop",
+   "len": 9658,
+   "share": 0.06763684240013446
+  },
+  {
+   "year": 2010,
+   "fam": "Indie & alternative",
+   "len": 28955,
+   "share": 0.20277746652473527
+  },
+  {
+   "year": 2010,
+   "fam": "Jazz, blues & classical",
+   "len": 9623,
+   "share": 0.0673917306291669
+  },
+  {
+   "year": 2010,
+   "fam": "Metal",
+   "len": 14829,
+   "share": 0.10385035576222758
+  },
+  {
+   "year": 2010,
+   "fam": "Pop",
+   "len": 13791,
+   "share": 0.09658104095467533
+  },
+  {
+   "year": 2010,
+   "fam": "R&B, soul & funk",
+   "len": 5058,
+   "share": 0.0354221525015407
+  },
+  {
+   "year": 2010,
+   "fam": "Rock & punk",
+   "len": 24998,
+   "share": 0.17506583001848844
+  },
+  {
+   "year": 2011,
+   "fam": "Electronic",
+   "len": 32382,
+   "share": 0.22644755244755244
+  },
+  {
+   "year": 2011,
+   "fam": "Folk & country",
+   "len": 6038,
+   "share": 0.042223776223776224
+  },
+  {
+   "year": 2011,
+   "fam": "Hip hop",
+   "len": 10294,
+   "share": 0.07198601398601398
+  },
+  {
+   "year": 2011,
+   "fam": "Indie & alternative",
+   "len": 27334,
+   "share": 0.19114685314685315
+  },
+  {
+   "year": 2011,
+   "fam": "Jazz, blues & classical",
+   "len": 10128,
+   "share": 0.07082517482517482
+  },
+  {
+   "year": 2011,
+   "fam": "Metal",
+   "len": 14188,
+   "share": 0.09921678321678322
+  },
+  {
+   "year": 2011,
+   "fam": "Pop",
+   "len": 14322,
+   "share": 0.10015384615384615
+  },
+  {
+   "year": 2011,
+   "fam": "R&B, soul & funk",
+   "len": 5338,
+   "share": 0.03732867132867133
+  },
+  {
+   "year": 2011,
+   "fam": "Rock & punk",
+   "len": 22976,
+   "share": 0.16067132867132866
+  },
+  {
+   "year": 2012,
+   "fam": "Electronic",
+   "len": 38683,
+   "share": 0.23845423611796035
+  },
+  {
+   "year": 2012,
+   "fam": "Folk & country",
+   "len": 6755,
+   "share": 0.041639954630634184
+  },
+  {
+   "year": 2012,
+   "fam": "Hip hop",
+   "len": 11900,
+   "share": 0.07335536048920012
+  },
+  {
+   "year": 2012,
+   "fam": "Indie & alternative",
+   "len": 30641,
+   "share": 0.18888080678567906
+  },
+  {
+   "year": 2012,
+   "fam": "Jazz, blues & classical",
+   "len": 10411,
+   "share": 0.06417669395403885
+  },
+  {
+   "year": 2012,
+   "fam": "Metal",
+   "len": 15253,
+   "share": 0.09402431206233357
+  },
+  {
+   "year": 2012,
+   "fam": "Pop",
+   "len": 16807,
+   "share": 0.10360365913798204
+  },
+  {
+   "year": 2012,
+   "fam": "R&B, soul & funk",
+   "len": 5978,
+   "share": 0.03685028109280994
+  },
+  {
+   "year": 2012,
+   "fam": "Rock & punk",
+   "len": 25796,
+   "share": 0.15901469572936186
+  },
+  {
+   "year": 2013,
+   "fam": "Electronic",
+   "len": 39274,
+   "share": 0.24681380558558105
+  },
+  {
+   "year": 2013,
+   "fam": "Folk & country",
+   "len": 6715,
+   "share": 0.042199793871446165
+  },
+  {
+   "year": 2013,
+   "fam": "Hip hop",
+   "len": 12586,
+   "share": 0.07909554812598979
+  },
+  {
+   "year": 2013,
+   "fam": "Indie & alternative",
+   "len": 30148,
+   "share": 0.18946230612604006
+  },
+  {
+   "year": 2013,
+   "fam": "Jazz, blues & classical",
+   "len": 10116,
+   "share": 0.06357306251728212
+  },
+  {
+   "year": 2013,
+   "fam": "Metal",
+   "len": 13768,
+   "share": 0.08652371735250497
+  },
+  {
+   "year": 2013,
+   "fam": "Pop",
+   "len": 16948,
+   "share": 0.10650813202282497
+  },
+  {
+   "year": 2013,
+   "fam": "R&B, soul & funk",
+   "len": 6366,
+   "share": 0.04000653578341419
+  },
+  {
+   "year": 2013,
+   "fam": "Rock & punk",
+   "len": 23203,
+   "share": 0.14581709861491668
+  },
+  {
+   "year": 2014,
+   "fam": "Electronic",
+   "len": 42825,
+   "share": 0.24064396493594067
+  },
+  {
+   "year": 2014,
+   "fam": "Folk & country",
+   "len": 7450,
+   "share": 0.041863340076421666
+  },
+  {
+   "year": 2014,
+   "fam": "Hip hop",
+   "len": 13872,
+   "share": 0.07795010114632502
+  },
+  {
+   "year": 2014,
+   "fam": "Indie & alternative",
+   "len": 32479,
+   "share": 0.18250730501236234
+  },
+  {
+   "year": 2014,
+   "fam": "Jazz, blues & classical",
+   "len": 9993,
+   "share": 0.056153068105192175
+  },
+  {
+   "year": 2014,
+   "fam": "Metal",
+   "len": 16295,
+   "share": 0.0915655203416498
+  },
+  {
+   "year": 2014,
+   "fam": "Pop",
+   "len": 21366,
+   "share": 0.12006068779501011
+  },
+  {
+   "year": 2014,
+   "fam": "R&B, soul & funk",
+   "len": 8471,
+   "share": 0.047600584400988986
+  },
+  {
+   "year": 2014,
+   "fam": "Rock & punk",
+   "len": 25209,
+   "share": 0.14165542818610924
+  },
+  {
+   "year": 2015,
+   "fam": "Electronic",
+   "len": 46770,
+   "share": 0.2518727549827938
+  },
+  {
+   "year": 2015,
+   "fam": "Folk & country",
+   "len": 7530,
+   "share": 0.040551675112688416
+  },
+  {
+   "year": 2015,
+   "fam": "Hip hop",
+   "len": 16232,
+   "share": 0.08741497880865318
+  },
+  {
+   "year": 2015,
+   "fam": "Indie & alternative",
+   "len": 32816,
+   "share": 0.17672560033173748
+  },
+  {
+   "year": 2015,
+   "fam": "Jazz, blues & classical",
+   "len": 10557,
+   "share": 0.056853125387071934
+  },
+  {
+   "year": 2015,
+   "fam": "Metal",
+   "len": 14564,
+   "share": 0.07843221730958753
+  },
+  {
+   "year": 2015,
+   "fam": "Pop",
+   "len": 22072,
+   "share": 0.11886541475262401
+  },
+  {
+   "year": 2015,
+   "fam": "R&B, soul & funk",
+   "len": 9147,
+   "share": 0.04925978383210637
+  },
+  {
+   "year": 2015,
+   "fam": "Rock & punk",
+   "len": 26001,
+   "share": 0.14002444948273726
+  },
+  {
+   "year": 2016,
+   "fam": "Electronic",
+   "len": 53182,
+   "share": 0.25039313728259743
+  },
+  {
+   "year": 2016,
+   "fam": "Folk & country",
+   "len": 8197,
+   "share": 0.03859336892755916
+  },
+  {
+   "year": 2016,
+   "fam": "Hip hop",
+   "len": 21038,
+   "share": 0.09905176229083684
+  },
+  {
+   "year": 2016,
+   "fam": "Indie & alternative",
+   "len": 37461,
+   "share": 0.17637503884290517
+  },
+  {
+   "year": 2016,
+   "fam": "Jazz, blues & classical",
+   "len": 11881,
+   "share": 0.055938491671139484
+  },
+  {
+   "year": 2016,
+   "fam": "Metal",
+   "len": 16825,
+   "share": 0.0792159853856512
+  },
+  {
+   "year": 2016,
+   "fam": "Pop",
+   "len": 25279,
+   "share": 0.11901936966204318
+  },
+  {
+   "year": 2016,
+   "fam": "R&B, soul & funk",
+   "len": 9394,
+   "share": 0.04422912134994397
+  },
+  {
+   "year": 2016,
+   "fam": "Rock & punk",
+   "len": 29137,
+   "share": 0.13718372458732356
+  },
+  {
+   "year": 2017,
+   "fam": "Electronic",
+   "len": 60530,
+   "share": 0.22851684901201288
+  },
+  {
+   "year": 2017,
+   "fam": "Folk & country",
+   "len": 9618,
+   "share": 0.0363105080752939
+  },
+  {
+   "year": 2017,
+   "fam": "Hip hop",
+   "len": 33021,
+   "share": 0.12466305751240175
+  },
+  {
+   "year": 2017,
+   "fam": "Indie & alternative",
+   "len": 44842,
+   "share": 0.16929047651407042
+  },
+  {
+   "year": 2017,
+   "fam": "Jazz, blues & classical",
+   "len": 14614,
+   "share": 0.055171736848861
+  },
+  {
+   "year": 2017,
+   "fam": "Metal",
+   "len": 21721,
+   "share": 0.08200255207979402
+  },
+  {
+   "year": 2017,
+   "fam": "Pop",
+   "len": 30849,
+   "share": 0.1164631798310191
+  },
+  {
+   "year": 2017,
+   "fam": "R&B, soul & funk",
+   "len": 12471,
+   "share": 0.047081341880535484
+  },
+  {
+   "year": 2017,
+   "fam": "Rock & punk",
+   "len": 37216,
+   "share": 0.14050029824601143
+  },
+  {
+   "year": 2018,
+   "fam": "Electronic",
+   "len": 67834,
+   "share": 0.21775446526021136
+  },
+  {
+   "year": 2018,
+   "fam": "Folk & country",
+   "len": 12498,
+   "share": 0.0401199296344329
+  },
+  {
+   "year": 2018,
+   "fam": "Hip hop",
+   "len": 42659,
+   "share": 0.1369399966614877
+  },
+  {
+   "year": 2018,
+   "fam": "Indie & alternative",
+   "len": 51109,
+   "share": 0.16406540916036416
+  },
+  {
+   "year": 2018,
+   "fam": "Jazz, blues & classical",
+   "len": 17228,
+   "share": 0.05530374041782766
+  },
+  {
+   "year": 2018,
+   "fam": "Metal",
+   "len": 24027,
+   "share": 0.0771292646284621
+  },
+  {
+   "year": 2018,
+   "fam": "Pop",
+   "len": 39694,
+   "share": 0.12742202647697068
+  },
+  {
+   "year": 2018,
+   "fam": "R&B, soul & funk",
+   "len": 14840,
+   "share": 0.04763800254240553
+  },
+  {
+   "year": 2018,
+   "fam": "Rock & punk",
+   "len": 41627,
+   "share": 0.13362716521783793
+  },
+  {
+   "year": 2019,
+   "fam": "Electronic",
+   "len": 70061,
+   "share": 0.2165350558637635
+  },
+  {
+   "year": 2019,
+   "fam": "Folk & country",
+   "len": 12716,
+   "share": 0.03930089165675078
+  },
+  {
+   "year": 2019,
+   "fam": "Hip hop",
+   "len": 43291,
+   "share": 0.13379796325199733
+  },
+  {
+   "year": 2019,
+   "fam": "Indie & alternative",
+   "len": 54060,
+   "share": 0.1670813308401972
+  },
+  {
+   "year": 2019,
+   "fam": "Jazz, blues & classical",
+   "len": 16430,
+   "share": 0.05077962015731483
+  },
+  {
+   "year": 2019,
+   "fam": "Metal",
+   "len": 26305,
+   "share": 0.08129993355071008
+  },
+  {
+   "year": 2019,
+   "fam": "Pop",
+   "len": 45403,
+   "share": 0.14032544698737465
+  },
+  {
+   "year": 2019,
+   "fam": "R&B, soul & funk",
+   "len": 13861,
+   "share": 0.04283970267806092
+  },
+  {
+   "year": 2019,
+   "fam": "Rock & punk",
+   "len": 41428,
+   "share": 0.12804005501383073
+  },
+  {
+   "year": 2020,
+   "fam": "Electronic",
+   "len": 73851,
+   "share": 0.2147599286954347
+  },
+  {
+   "year": 2020,
+   "fam": "Folk & country",
+   "len": 13724,
+   "share": 0.039909618846273524
+  },
+  {
+   "year": 2020,
+   "fam": "Hip hop",
+   "len": 47508,
+   "share": 0.13815404926761604
+  },
+  {
+   "year": 2020,
+   "fam": "Indie & alternative",
+   "len": 56520,
+   "share": 0.1643610942284596
+  },
+  {
+   "year": 2020,
+   "fam": "Jazz, blues & classical",
+   "len": 18572,
+   "share": 0.054007682979670055
+  },
+  {
+   "year": 2020,
+   "fam": "Metal",
+   "len": 26912,
+   "share": 0.07826054083291409
+  },
+  {
+   "year": 2020,
+   "fam": "Pop",
+   "len": 48359,
+   "share": 0.14062877133393625
+  },
+  {
+   "year": 2020,
+   "fam": "R&B, soul & funk",
+   "len": 15428,
+   "share": 0.0448648790119723
+  },
+  {
+   "year": 2020,
+   "fam": "Rock & punk",
+   "len": 43003,
+   "share": 0.1250534348037234
+  },
+  {
+   "year": 2021,
+   "fam": "Electronic",
+   "len": 79827,
+   "share": 0.2156821952155282
+  },
+  {
+   "year": 2021,
+   "fam": "Folk & country",
+   "len": 14526,
+   "share": 0.039247367027456403
+  },
+  {
+   "year": 2021,
+   "fam": "Hip hop",
+   "len": 44816,
+   "share": 0.12108701643277477
+  },
+  {
+   "year": 2021,
+   "fam": "Indie & alternative",
+   "len": 63302,
+   "share": 0.1710337895891536
+  },
+  {
+   "year": 2021,
+   "fam": "Jazz, blues & classical",
+   "len": 19912,
+   "share": 0.053799640110884756
+  },
+  {
+   "year": 2021,
+   "fam": "Metal",
+   "len": 26736,
+   "share": 0.07223720259163392
+  },
+  {
+   "year": 2021,
+   "fam": "Pop",
+   "len": 58378,
+   "share": 0.15772978055409956
+  },
+  {
+   "year": 2021,
+   "fam": "R&B, soul & funk",
+   "len": 16461,
+   "share": 0.04447548593136169
+  },
+  {
+   "year": 2021,
+   "fam": "Rock & punk",
+   "len": 46156,
+   "share": 0.12470752254710711
+  },
+  {
+   "year": 2022,
+   "fam": "Electronic",
+   "len": 83379,
+   "share": 0.20945182148401587
+  },
+  {
+   "year": 2022,
+   "fam": "Folk & country",
+   "len": 14028,
+   "share": 0.03523897086529911
+  },
+  {
+   "year": 2022,
+   "fam": "Hip hop",
+   "len": 46935,
+   "share": 0.11790284413763999
+  },
+  {
+   "year": 2022,
+   "fam": "Indie & alternative",
+   "len": 69123,
+   "share": 0.17364010430011906
+  },
+  {
+   "year": 2022,
+   "fam": "Jazz, blues & classical",
+   "len": 22065,
+   "share": 0.055428278595867186
+  },
+  {
+   "year": 2022,
+   "fam": "Metal",
+   "len": 32312,
+   "share": 0.0811692063444215
+  },
+  {
+   "year": 2022,
+   "fam": "Pop",
+   "len": 65416,
+   "share": 0.16432795253239282
+  },
+  {
+   "year": 2022,
+   "fam": "R&B, soul & funk",
+   "len": 15814,
+   "share": 0.03972548369431424
+  },
+  {
+   "year": 2022,
+   "fam": "Rock & punk",
+   "len": 49010,
+   "share": 0.12311533804593024
+  },
+  {
+   "year": 2023,
+   "fam": "Electronic",
+   "len": 87973,
+   "share": 0.2081087986071356
+  },
+  {
+   "year": 2023,
+   "fam": "Folk & country",
+   "len": 15016,
+   "share": 0.03552182737754479
+  },
+  {
+   "year": 2023,
+   "fam": "Hip hop",
+   "len": 47981,
+   "share": 0.11350378259203361
+  },
+  {
+   "year": 2023,
+   "fam": "Indie & alternative",
+   "len": 72793,
+   "share": 0.17219901307229743
+  },
+  {
+   "year": 2023,
+   "fam": "Jazz, blues & classical",
+   "len": 24139,
+   "share": 0.05710318267624892
+  },
+  {
+   "year": 2023,
+   "fam": "Metal",
+   "len": 35489,
+   "share": 0.08395272587917468
+  },
+  {
+   "year": 2023,
+   "fam": "Pop",
+   "len": 69271,
+   "share": 0.16386737508457014
+  },
+  {
+   "year": 2023,
+   "fam": "R&B, soul & funk",
+   "len": 17656,
+   "share": 0.04176700747056013
+  },
+  {
+   "year": 2023,
+   "fam": "Rock & punk",
+   "len": 52408,
+   "share": 0.1239762872404347
+  },
+  {
+   "year": 2024,
+   "fam": "Electronic",
+   "len": 81975,
+   "share": 0.200939802626741
+  },
+  {
+   "year": 2024,
+   "fam": "Folk & country",
+   "len": 15792,
+   "share": 0.038709867192210964
+  },
+  {
+   "year": 2024,
+   "fam": "Hip hop",
+   "len": 43379,
+   "share": 0.10633202437505822
+  },
+  {
+   "year": 2024,
+   "fam": "Indie & alternative",
+   "len": 72019,
+   "share": 0.17653532961726454
+  },
+  {
+   "year": 2024,
+   "fam": "Jazz, blues & classical",
+   "len": 20332,
+   "share": 0.04983846376342663
+  },
+  {
+   "year": 2024,
+   "fam": "Metal",
+   "len": 34641,
+   "share": 0.08491315282455547
+  },
+  {
+   "year": 2024,
+   "fam": "Pop",
+   "len": 71077,
+   "share": 0.17422626839037353
+  },
+  {
+   "year": 2024,
+   "fam": "R&B, soul & funk",
+   "len": 17649,
+   "share": 0.043261806362419664
+  },
+  {
+   "year": 2024,
+   "fam": "Rock & punk",
+   "len": 51094,
+   "share": 0.12524328484795003
+  },
+  {
+   "year": 2025,
+   "fam": "Electronic",
+   "len": 57593,
+   "share": 0.1946524895564358
+  },
+  {
+   "year": 2025,
+   "fam": "Folk & country",
+   "len": 10549,
+   "share": 0.03565344941799943
+  },
+  {
+   "year": 2025,
+   "fam": "Hip hop",
+   "len": 30687,
+   "share": 0.10371574578539658
+  },
+  {
+   "year": 2025,
+   "fam": "Indie & alternative",
+   "len": 51769,
+   "share": 0.17496856791358542
+  },
+  {
+   "year": 2025,
+   "fam": "Jazz, blues & classical",
+   "len": 14447,
+   "share": 0.04882788735821763
+  },
+  {
+   "year": 2025,
+   "fam": "Metal",
+   "len": 27028,
+   "share": 0.09134907866809068
+  },
+  {
+   "year": 2025,
+   "fam": "Pop",
+   "len": 53670,
+   "share": 0.18139355676026445
+  },
+  {
+   "year": 2025,
+   "fam": "R&B, soul & funk",
+   "len": 12287,
+   "share": 0.04152753180386378
+  },
+  {
+   "year": 2025,
+   "fam": "Rock & punk",
+   "len": 37846,
+   "share": 0.12791169273614622
+  }
+ ],
+ "plays": [
+  {
+   "year": 2010,
+   "fam": "Electronic",
+   "plays": 6719919,
+   "share": 0.1427957860710594
+  },
+  {
+   "year": 2010,
+   "fam": "Folk & country",
+   "plays": 1894244,
+   "share": 0.04025198235133308
+  },
+  {
+   "year": 2010,
+   "fam": "Hip hop",
+   "plays": 2520895,
+   "share": 0.05356808365213975
+  },
+  {
+   "year": 2010,
+   "fam": "Indie & alternative",
+   "plays": 10115894,
+   "share": 0.2149589951220414
+  },
+  {
+   "year": 2010,
+   "fam": "Jazz, blues & classical",
+   "plays": 2666323,
+   "share": 0.056658374707246516
+  },
+  {
+   "year": 2010,
+   "fam": "Metal",
+   "plays": 7848953,
+   "share": 0.16678733976850016
+  },
+  {
+   "year": 2010,
+   "fam": "Pop",
+   "plays": 4038850,
+   "share": 0.08582406433367698
+  },
+  {
+   "year": 2010,
+   "fam": "R&B, soul & funk",
+   "plays": 900961,
+   "share": 0.01914508704857421
+  },
+  {
+   "year": 2010,
+   "fam": "Rock & punk",
+   "plays": 10353606,
+   "share": 0.2200102869454285
+  },
+  {
+   "year": 2011,
+   "fam": "Electronic",
+   "plays": 7357192,
+   "share": 0.14999424666687924
+  },
+  {
+   "year": 2011,
+   "fam": "Folk & country",
+   "plays": 1897510,
+   "share": 0.03868535481918509
+  },
+  {
+   "year": 2011,
+   "fam": "Hip hop",
+   "plays": 2783186,
+   "share": 0.056742013448039
+  },
+  {
+   "year": 2011,
+   "fam": "Indie & alternative",
+   "plays": 10293838,
+   "share": 0.20986491532651247
+  },
+  {
+   "year": 2011,
+   "fam": "Jazz, blues & classical",
+   "plays": 2819265,
+   "share": 0.05747757158292176
+  },
+  {
+   "year": 2011,
+   "fam": "Metal",
+   "plays": 7830351,
+   "share": 0.15964074328660235
+  },
+  {
+   "year": 2011,
+   "fam": "Pop",
+   "plays": 4599126,
+   "share": 0.09376436549379949
+  },
+  {
+   "year": 2011,
+   "fam": "R&B, soul & funk",
+   "plays": 965516,
+   "share": 0.019684391146081084
+  },
+  {
+   "year": 2011,
+   "fam": "Rock & punk",
+   "plays": 10503844,
+   "share": 0.21414639822997952
+  },
+  {
+   "year": 2012,
+   "fam": "Electronic",
+   "plays": 8294397,
+   "share": 0.15695956510921433
+  },
+  {
+   "year": 2012,
+   "fam": "Folk & country",
+   "plays": 1987615,
+   "share": 0.037612762688420995
+  },
+  {
+   "year": 2012,
+   "fam": "Hip hop",
+   "plays": 3089610,
+   "share": 0.05846643727772853
+  },
+  {
+   "year": 2012,
+   "fam": "Indie & alternative",
+   "plays": 10805170,
+   "share": 0.2044723424898916
+  },
+  {
+   "year": 2012,
+   "fam": "Jazz, blues & classical",
+   "plays": 3066420,
+   "share": 0.058027599793233554
+  },
+  {
+   "year": 2012,
+   "fam": "Metal",
+   "plays": 8255079,
+   "share": 0.15621552835995287
+  },
+  {
+   "year": 2012,
+   "fam": "Pop",
+   "plays": 4971598,
+   "share": 0.09408036051057596
+  },
+  {
+   "year": 2012,
+   "fam": "R&B, soul & funk",
+   "plays": 1154540,
+   "share": 0.0218480133397512
+  },
+  {
+   "year": 2012,
+   "fam": "Rock & punk",
+   "plays": 11219735,
+   "share": 0.21231739043123096
+  },
+  {
+   "year": 2013,
+   "fam": "Electronic",
+   "plays": 9181144,
+   "share": 0.16820218446527238
+  },
+  {
+   "year": 2013,
+   "fam": "Folk & country",
+   "plays": 1962339,
+   "share": 0.035950825568294986
+  },
+  {
+   "year": 2013,
+   "fam": "Hip hop",
+   "plays": 3455130,
+   "share": 0.06329934631365074
+  },
+  {
+   "year": 2013,
+   "fam": "Indie & alternative",
+   "plays": 10996030,
+   "share": 0.20145161283230814
+  },
+  {
+   "year": 2013,
+   "fam": "Jazz, blues & classical",
+   "plays": 3082700,
+   "share": 0.05647628161055911
+  },
+  {
+   "year": 2013,
+   "fam": "Metal",
+   "plays": 8415087,
+   "share": 0.1541677176466588
+  },
+  {
+   "year": 2013,
+   "fam": "Pop",
+   "plays": 5251571,
+   "share": 0.09621085499524622
+  },
+  {
+   "year": 2013,
+   "fam": "R&B, soul & funk",
+   "plays": 1275901,
+   "share": 0.023375010277741585
+  },
+  {
+   "year": 2013,
+   "fam": "Rock & punk",
+   "plays": 10964074,
+   "share": 0.20086616629026804
+  },
+  {
+   "year": 2014,
+   "fam": "Electronic",
+   "plays": 9837710,
+   "share": 0.16938561434338645
+  },
+  {
+   "year": 2014,
+   "fam": "Folk & country",
+   "plays": 2024189,
+   "share": 0.03485247047454388
+  },
+  {
+   "year": 2014,
+   "fam": "Hip hop",
+   "plays": 3902917,
+   "share": 0.06720039458128434
+  },
+  {
+   "year": 2014,
+   "fam": "Indie & alternative",
+   "plays": 11462719,
+   "share": 0.19736500667946183
+  },
+  {
+   "year": 2014,
+   "fam": "Jazz, blues & classical",
+   "plays": 3284801,
+   "share": 0.0565576780958953
+  },
+  {
+   "year": 2014,
+   "fam": "Metal",
+   "plays": 8896986,
+   "share": 0.15318823582058308
+  },
+  {
+   "year": 2014,
+   "fam": "Pop",
+   "plays": 6092496,
+   "share": 0.10490054879078815
+  },
+  {
+   "year": 2014,
+   "fam": "R&B, soul & funk",
+   "plays": 1466081,
+   "share": 0.025242971266907274
+  },
+  {
+   "year": 2014,
+   "fam": "Rock & punk",
+   "plays": 11110882,
+   "share": 0.1913070799471497
+  },
+  {
+   "year": 2015,
+   "fam": "Electronic",
+   "plays": 10050822,
+   "share": 0.1699701597396047
+  },
+  {
+   "year": 2015,
+   "fam": "Folk & country",
+   "plays": 2051777,
+   "share": 0.03469774556151197
+  },
+  {
+   "year": 2015,
+   "fam": "Hip hop",
+   "plays": 4450601,
+   "share": 0.07526442741770219
+  },
+  {
+   "year": 2015,
+   "fam": "Indie & alternative",
+   "plays": 11179872,
+   "share": 0.18906360392297603
+  },
+  {
+   "year": 2015,
+   "fam": "Jazz, blues & classical",
+   "plays": 3311113,
+   "share": 0.05599446548012508
+  },
+  {
+   "year": 2015,
+   "fam": "Metal",
+   "plays": 8903650,
+   "share": 0.150570253136065
+  },
+  {
+   "year": 2015,
+   "fam": "Pop",
+   "plays": 6465824,
+   "share": 0.10934400570701279
+  },
+  {
+   "year": 2015,
+   "fam": "R&B, soul & funk",
+   "plays": 1565578,
+   "share": 0.0264755999802614
+  },
+  {
+   "year": 2015,
+   "fam": "Rock & punk",
+   "plays": 11153625,
+   "share": 0.18861973905474083
+  },
+  {
+   "year": 2016,
+   "fam": "Electronic",
+   "plays": 10612074,
+   "share": 0.17178608119943792
+  },
+  {
+   "year": 2016,
+   "fam": "Folk & country",
+   "plays": 2141290,
+   "share": 0.03466276411298531
+  },
+  {
+   "year": 2016,
+   "fam": "Hip hop",
+   "plays": 5144945,
+   "share": 0.08328531628564238
+  },
+  {
+   "year": 2016,
+   "fam": "Indie & alternative",
+   "plays": 11482848,
+   "share": 0.1858819924294538
+  },
+  {
+   "year": 2016,
+   "fam": "Jazz, blues & classical",
+   "plays": 3266870,
+   "share": 0.05288342270210402
+  },
+  {
+   "year": 2016,
+   "fam": "Metal",
+   "plays": 8791610,
+   "share": 0.14231678268864226
+  },
+  {
+   "year": 2016,
+   "fam": "Pop",
+   "plays": 6944543,
+   "share": 0.11241684026053608
+  },
+  {
+   "year": 2016,
+   "fam": "R&B, soul & funk",
+   "plays": 1842665,
+   "share": 0.029828683753370198
+  },
+  {
+   "year": 2016,
+   "fam": "Rock & punk",
+   "plays": 11548090,
+   "share": 0.18693811656782802
+  },
+  {
+   "year": 2017,
+   "fam": "Electronic",
+   "plays": 12748844,
+   "share": 0.17168714397695234
+  },
+  {
+   "year": 2017,
+   "fam": "Folk & country",
+   "plays": 2488145,
+   "share": 0.03350754851581321
+  },
+  {
+   "year": 2017,
+   "fam": "Hip hop",
+   "plays": 7422367,
+   "share": 0.09995612086701978
+  },
+  {
+   "year": 2017,
+   "fam": "Indie & alternative",
+   "plays": 13717143,
+   "share": 0.18472710978292967
+  },
+  {
+   "year": 2017,
+   "fam": "Jazz, blues & classical",
+   "plays": 3874590,
+   "share": 0.05217863605372062
+  },
+  {
+   "year": 2017,
+   "fam": "Metal",
+   "plays": 9843126,
+   "share": 0.13255619025107557
+  },
+  {
+   "year": 2017,
+   "fam": "Pop",
+   "plays": 8629652,
+   "share": 0.11621448230090468
+  },
+  {
+   "year": 2017,
+   "fam": "R&B, soul & funk",
+   "plays": 2299109,
+   "share": 0.030961823511347925
+  },
+  {
+   "year": 2017,
+   "fam": "Rock & punk",
+   "plays": 13233277,
+   "share": 0.17821094474023622
+  },
+  {
+   "year": 2018,
+   "fam": "Electronic",
+   "plays": 14314605,
+   "share": 0.16877645215010156
+  },
+  {
+   "year": 2018,
+   "fam": "Folk & country",
+   "plays": 2860411,
+   "share": 0.033725696257153034
+  },
+  {
+   "year": 2018,
+   "fam": "Hip hop",
+   "plays": 9915920,
+   "share": 0.11691372534584328
+  },
+  {
+   "year": 2018,
+   "fam": "Indie & alternative",
+   "plays": 15386888,
+   "share": 0.1814192124945796
+  },
+  {
+   "year": 2018,
+   "fam": "Jazz, blues & classical",
+   "plays": 4384343,
+   "share": 0.05169362735116566
+  },
+  {
+   "year": 2018,
+   "fam": "Metal",
+   "plays": 10362517,
+   "share": 0.1221793304534155
+  },
+  {
+   "year": 2018,
+   "fam": "Pop",
+   "plays": 10692474,
+   "share": 0.12606969081069333
+  },
+  {
+   "year": 2018,
+   "fam": "R&B, soul & funk",
+   "plays": 2713105,
+   "share": 0.03198888381556468
+  },
+  {
+   "year": 2018,
+   "fam": "Rock & punk",
+   "plays": 14183731,
+   "share": 0.16723338132148333
+  },
+  {
+   "year": 2019,
+   "fam": "Electronic",
+   "plays": 16048366,
+   "share": 0.16986010601344725
+  },
+  {
+   "year": 2019,
+   "fam": "Folk & country",
+   "plays": 3126716,
+   "share": 0.03309398048586016
+  },
+  {
+   "year": 2019,
+   "fam": "Hip hop",
+   "plays": 11001826,
+   "share": 0.11644620584435202
+  },
+  {
+   "year": 2019,
+   "fam": "Indie & alternative",
+   "plays": 16966232,
+   "share": 0.17957503998654697
+  },
+  {
+   "year": 2019,
+   "fam": "Jazz, blues & classical",
+   "plays": 4446815,
+   "share": 0.04706625380566391
+  },
+  {
+   "year": 2019,
+   "fam": "Metal",
+   "plays": 11684946,
+   "share": 0.1236765267143961
+  },
+  {
+   "year": 2019,
+   "fam": "Pop",
+   "plays": 13173175,
+   "share": 0.13942833195813784
+  },
+  {
+   "year": 2019,
+   "fam": "R&B, soul & funk",
+   "plays": 2820323,
+   "share": 0.029851036782944977
+  },
+  {
+   "year": 2019,
+   "fam": "Rock & punk",
+   "plays": 15211502,
+   "share": 0.16100251840865074
+  },
+  {
+   "year": 2020,
+   "fam": "Electronic",
+   "plays": 18357191,
+   "share": 0.17125962405260559
+  },
+  {
+   "year": 2020,
+   "fam": "Folk & country",
+   "plays": 3564619,
+   "share": 0.033255377134267156
+  },
+  {
+   "year": 2020,
+   "fam": "Hip hop",
+   "plays": 12949324,
+   "share": 0.12080804519468052
+  },
+  {
+   "year": 2020,
+   "fam": "Indie & alternative",
+   "plays": 18546740,
+   "share": 0.17302798232046623
+  },
+  {
+   "year": 2020,
+   "fam": "Jazz, blues & classical",
+   "plays": 5086580,
+   "share": 0.047454198113072006
+  },
+  {
+   "year": 2020,
+   "fam": "Metal",
+   "plays": 12458552,
+   "share": 0.11622948912825701
+  },
+  {
+   "year": 2020,
+   "fam": "Pop",
+   "plays": 16082034,
+   "share": 0.15003401647023343
+  },
+  {
+   "year": 2020,
+   "fam": "R&B, soul & funk",
+   "plays": 3402961,
+   "share": 0.03174722219350873
+  },
+  {
+   "year": 2020,
+   "fam": "Rock & punk",
+   "plays": 16741251,
+   "share": 0.15618404539290937
+  },
+  {
+   "year": 2021,
+   "fam": "Electronic",
+   "plays": 19833400,
+   "share": 0.1633121234141451
+  },
+  {
+   "year": 2021,
+   "fam": "Folk & country",
+   "plays": 3805841,
+   "share": 0.0313380446664018
+  },
+  {
+   "year": 2021,
+   "fam": "Hip hop",
+   "plays": 15360829,
+   "share": 0.12648409256060883
+  },
+  {
+   "year": 2021,
+   "fam": "Indie & alternative",
+   "plays": 20874048,
+   "share": 0.17188102408708486
+  },
+  {
+   "year": 2021,
+   "fam": "Jazz, blues & classical",
+   "plays": 5347155,
+   "share": 0.04402952783055669
+  },
+  {
+   "year": 2021,
+   "fam": "Metal",
+   "plays": 13060770,
+   "share": 0.10754495356942148
+  },
+  {
+   "year": 2021,
+   "fam": "Pop",
+   "plays": 21254062,
+   "share": 0.1750101342379971
+  },
+  {
+   "year": 2021,
+   "fam": "R&B, soul & funk",
+   "plays": 3824095,
+   "share": 0.03148835169902363
+  },
+  {
+   "year": 2021,
+   "fam": "Rock & punk",
+   "plays": 18084550,
+   "share": 0.14891174793476045
+  },
+  {
+   "year": 2022,
+   "fam": "Electronic",
+   "plays": 21587303,
+   "share": 0.16219923994865149
+  },
+  {
+   "year": 2022,
+   "fam": "Folk & country",
+   "plays": 3833231,
+   "share": 0.028801520724826498
+  },
+  {
+   "year": 2022,
+   "fam": "Hip hop",
+   "plays": 17415629,
+   "share": 0.1308547801004921
+  },
+  {
+   "year": 2022,
+   "fam": "Indie & alternative",
+   "plays": 23131610,
+   "share": 0.17380260798621422
+  },
+  {
+   "year": 2022,
+   "fam": "Jazz, blues & classical",
+   "plays": 5645015,
+   "share": 0.0424146148547939
+  },
+  {
+   "year": 2022,
+   "fam": "Metal",
+   "plays": 14498452,
+   "share": 0.10893616005816038
+  },
+  {
+   "year": 2022,
+   "fam": "Pop",
+   "plays": 23759936,
+   "share": 0.17852362383705841
+  },
+  {
+   "year": 2022,
+   "fam": "R&B, soul & funk",
+   "plays": 4197626,
+   "share": 0.03153945385343867
+  },
+  {
+   "year": 2022,
+   "fam": "Rock & punk",
+   "plays": 19022469,
+   "share": 0.14292799863636435
+  },
+  {
+   "year": 2023,
+   "fam": "Electronic",
+   "plays": 26227539,
+   "share": 0.16808440118065665
+  },
+  {
+   "year": 2023,
+   "fam": "Folk & country",
+   "plays": 4237392,
+   "share": 0.027156169585247976
+  },
+  {
+   "year": 2023,
+   "fam": "Hip hop",
+   "plays": 19804528,
+   "share": 0.12692125744415242
+  },
+  {
+   "year": 2023,
+   "fam": "Indie & alternative",
+   "plays": 26018140,
+   "share": 0.16674242603297587
+  },
+  {
+   "year": 2023,
+   "fam": "Jazz, blues & classical",
+   "plays": 6274287,
+   "share": 0.04021001639652804
+  },
+  {
+   "year": 2023,
+   "fam": "Metal",
+   "plays": 16540671,
+   "share": 0.10600418057375698
+  },
+  {
+   "year": 2023,
+   "fam": "Pop",
+   "plays": 30396277,
+   "share": 0.1948005879494209
+  },
+  {
+   "year": 2023,
+   "fam": "R&B, soul & funk",
+   "plays": 4749658,
+   "share": 0.030439128152394145
+  },
+  {
+   "year": 2023,
+   "fam": "Rock & punk",
+   "plays": 21789420,
+   "share": 0.139641832684867
+  },
+  {
+   "year": 2024,
+   "fam": "Electronic",
+   "plays": 32680250,
+   "share": 0.1823380553488289
+  },
+  {
+   "year": 2024,
+   "fam": "Folk & country",
+   "plays": 4527754,
+   "share": 0.02526240954270183
+  },
+  {
+   "year": 2024,
+   "fam": "Hip hop",
+   "plays": 25417956,
+   "share": 0.14181839698233942
+  },
+  {
+   "year": 2024,
+   "fam": "Indie & alternative",
+   "plays": 27645416,
+   "share": 0.1542464146617422
+  },
+  {
+   "year": 2024,
+   "fam": "Jazz, blues & classical",
+   "plays": 6335584,
+   "share": 0.03534911960768828
+  },
+  {
+   "year": 2024,
+   "fam": "Metal",
+   "plays": 18358680,
+   "share": 0.10243146885263847
+  },
+  {
+   "year": 2024,
+   "fam": "Pop",
+   "plays": 36571744,
+   "share": 0.20405047946925747
+  },
+  {
+   "year": 2024,
+   "fam": "R&B, soul & funk",
+   "plays": 4984054,
+   "share": 0.027808315851731616
+  },
+  {
+   "year": 2024,
+   "fam": "Rock & punk",
+   "plays": 22707467,
+   "share": 0.12669533968307176
+  },
+  {
+   "year": 2025,
+   "fam": "Electronic",
+   "plays": 43656442,
+   "share": 0.20044642496795925
+  },
+  {
+   "year": 2025,
+   "fam": "Folk & country",
+   "plays": 4883358,
+   "share": 0.02242170016829781
+  },
+  {
+   "year": 2025,
+   "fam": "Hip hop",
+   "plays": 27454573,
+   "share": 0.12605633337851627
+  },
+  {
+   "year": 2025,
+   "fam": "Indie & alternative",
+   "plays": 30469295,
+   "share": 0.13989828245838531
+  },
+  {
+   "year": 2025,
+   "fam": "Jazz, blues & classical",
+   "plays": 7193187,
+   "share": 0.0330271674058092
+  },
+  {
+   "year": 2025,
+   "fam": "Metal",
+   "plays": 21049541,
+   "share": 0.09664794122861597
+  },
+  {
+   "year": 2025,
+   "fam": "Pop",
+   "plays": 52084703,
+   "share": 0.23914437442858816
+  },
+  {
+   "year": 2025,
+   "fam": "R&B, soul & funk",
+   "plays": 5546845,
+   "share": 0.025468068380409926
+  },
+  {
+   "year": 2025,
+   "fam": "Rock & punk",
+   "plays": 25458118,
+   "share": 0.1168897075834181
+  }
+ ],
+ "same_people": [
+  {
+   "fam": "Metal",
+   "early": 0.08961554811019339,
+   "late": 0.09937008818765374
+  },
+  {
+   "fam": "Hip hop",
+   "early": 0.08046476124308091,
+   "late": 0.08843361929329893
+  },
+  {
+   "fam": "Electronic",
+   "early": 0.24942521905667364,
+   "late": 0.24146619473273742
+  },
+  {
+   "fam": "Indie & alternative",
+   "early": 0.18944231393323857,
+   "late": 0.16630871677965084
+  },
+  {
+   "fam": "Pop",
+   "early": 0.11171547543411388,
+   "late": 0.12354670346151539
+  },
+  {
+   "fam": "Rock & punk",
+   "early": 0.13973004721659757,
+   "late": 0.12352270682104505
+  },
+  {
+   "fam": "Folk & country",
+   "early": 0.04162191069526783,
+   "late": 0.04570760093586898
+  },
+  {
+   "fam": "R&B, soul & funk",
+   "early": 0.04263206249228674,
+   "late": 0.04258803767472554
+  },
+  {
+   "fam": "Jazz, blues & classical",
+   "early": 0.055352661818547484,
+   "late": 0.06905633211350411
+  }
+ ]
+}
