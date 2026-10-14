@@ -337,3 +337,5 @@ the shard of slot = name_hash(norm_name(artist)) (site/build_pack_slots.py; SHAR
 Bloom filter of slots so unknown artists cost no request. A test history: 5,246 -> 1,487 requests, same scores (JS old vs new output
 identical except timing; mirror vs reference 100% exact picks). Largest shard 864 kB (one artist with ~23,700 songs). Hashed-layout
 pack kept in data/_site_static_data_hashed (outside the published folder) until the new one is confirmed live.
+Live (2026-10-14, one run): 13.6 s for all three views, 1,487 requests, 19.8 MB + the 4.6 MB filter, scores 71 / 67 / 85. Testing rule:
+never run repeated scorings against the live site; test locally (site/serve.py) and do at most one live run per deploy.
