@@ -317,3 +317,10 @@ discovery over a listening life, hidden gems (All / New artists). Gems over time
    breakout = first month at half the peak). Median months before the breakout: top 1% -6, rest of top fifth -12, middle -15, bottom
    -15, everyone -17; got in before it 26% / 19% / 14% / 13% / 14%; a year or more before 10% / 7% / 6% / 5% / 5%.
    Examples (top-1% picker >= a year early): Dominic Fike (48 months), Halsey, Cardi B, BLACKPINK, Joji, Martin Garrix, black midi...
+
+## Why good taste fades (2026-10-14, exploratory; analysis/why_fade.py)
+Top fifth on 2011-15 finds (1,188 rated again on 2020-24): stayed top fifth 294, faded to the bottom half 565. Same habit changes
+for both: finds a year 36 -> 37 vs 29 -> 31; brand-new share 14% -> 15% both; plays up for both; genre mix similarity to their own
+earlier mix 0.78 both; their early genres' growth 1.01x both. Stayed-good shifted to smaller artists (mainstream ratio 1.00 -> 0.65 vs
+faded 1.09 -> 1.02) but per-person correlation with the later score ~0. Habit changes explain R2 0.003 of the later score (early
+score alone 0.003). Not exploring less, listening less, ignoring new music, or genre loyalty: judgment itself drifts.

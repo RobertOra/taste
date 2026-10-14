@@ -1,0 +1,62 @@
+{
+ "people": 1188,
+ "groups": [
+  {
+   "fate": "stayed good",
+   "people": 294,
+   "per_year_early": 35.599999999999994,
+   "per_year_late": 36.55,
+   "new_early": 0.1429651936619547,
+   "new_late": 0.15281030708259136,
+   "main_early": 0.9954159249674326,
+   "main_late": 0.64957608158258,
+   "plays_early": 7145.0,
+   "plays_late": 8593.8,
+   "ahead_early": 0.74892143919679,
+   "ahead_late": 0.698707245898866,
+   "genre_same": 0.783310619382571,
+   "early_genres_rise": 1.0100062307249784
+  },
+  {
+   "fate": "in between",
+   "people": 329,
+   "per_year_early": 29.0,
+   "per_year_late": 37.8,
+   "new_early": 0.13820714094918166,
+   "new_late": 0.15011513905166127,
+   "main_early": 1.1148013272799149,
+   "main_late": 0.7811330178685025,
+   "plays_early": 6474.25,
+   "plays_late": 8232.0,
+   "ahead_early": 0.7398757779052456,
+   "ahead_late": 0.6694645429818747,
+   "genre_same": 0.7570471947868714,
+   "early_genres_rise": 1.0121393373683834
+  },
+  {
+   "fate": "faded",
+   "people": 565,
+   "per_year_early": 28.8,
+   "per_year_late": 30.8,
+   "new_early": 0.13769728037191603,
+   "new_late": 0.14555495296655144,
+   "main_early": 1.0948381610368048,
+   "main_late": 1.020114004034414,
+   "plays_early": 7221.666666666667,
+   "plays_late": 8511.2,
+   "ahead_early": 0.736062221555621,
+   "ahead_late": 0.6301708530807679,
+   "genre_same": 0.7816963168531973,
+   "early_genres_rise": 1.0093962318311152
+  }
+ ],
+ "corr_d_per": 0.013760678748213302,
+ "corr_d_new": -0.005334690852958471,
+ "corr_d_main": -0.011133947922510047,
+ "corr_d_plays": -0.0013739373954122433,
+ "corr_d_ahead": 0.26500467063411676,
+ "corr_genre_same": -0.01785400097363306,
+ "corr_early_genres_rise": -0.013121229023029108,
+ "r2_early": 0.00276258688884623,
+ "r2_with_changes": 0.0032711484908003463
+}
