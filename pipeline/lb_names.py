@@ -30,6 +30,26 @@ import zstandard
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from lb_ingest import BASE, FILE, ResumingHTTP, name_hash  # noqa: E402  (same dump, same hashing)
 
+TOTAL = 252956952894   # the dump's size (checked against the server, 2026-10-14)
+
+
+class SafeHTTP(ResumingHTTP):
+    """ResumingHTTP, but an early end of the response (0 bytes before the full size) counts as a dropped connection:
+    reconnect from the current offset instead of ending the stream (that ended the first run at 69%, 2026-10-14 02:31)."""
+
+    def readinto(self, b):
+        for attempt in range(200):
+            n = super().readinto(b)
+            if n or self.offset >= TOTAL:
+                return n
+            print(f"[{time.strftime('%H:%M:%S')}] early end of data at {self.offset:,}; reconnecting ({attempt + 1})", flush=True)
+            time.sleep(min(60, 2 ** min(attempt, 6)))
+            try:
+                self._open()
+            except Exception as ex:
+                print(f"    reconnect failed: {ex!r}", flush=True)
+        raise IOError("too many early ends")
+
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "lb" / "names"
 
@@ -57,7 +77,7 @@ def main():
     (OUT / "month").mkdir(parents=True, exist_ok=True)
     prog_path = OUT / "progress.json"
     prog = json.loads(prog_path.read_text()) if prog_path.exists() else {"months": {}}
-    raw = ResumingHTTP(BASE + FILE)
+    raw = SafeHTTP(BASE + FILE)
     stream = zstandard.ZstdDecompressor(max_window_size=2 ** 31).stream_reader(io.BufferedReader(raw, 8 << 20))
     t0, done = time.time(), 0
     tf = tarfile.open(fileobj=stream, mode="r|")
