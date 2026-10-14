@@ -250,3 +250,14 @@ user_month_lb). Keep while trends 5/6 are open; delete in the disk trim.
    into per year 74 (year 1) -> 45 (year 9), discovery share of plays 40% -> 22%, plays flat (~8,700). Steepest in years 1-3, then a
    slow steady decline; it never stops. Later starters (2016-18) get into more artists (86 vs 61 in year 1) but decline the same
    way, so it's a listening-life pattern, not the era. Tenure, not age.
+3b. Tribes or eclectics? (trends_niches.py; yearly scenes, 5 x 2,000 people, top 30 artists). Overlap within a niche (same main
+   scene) 6.1% (2010) -> ~4% (2020s, noisy); across niches 1.5% -> ~0.85%; within/across ratio ~4 -> ~4.6. People grew apart both
+   inside and across niches, so no tighter tribes. Breadth per person 22.7 -> 16.8 effective scenes, share in main scene 24% -> 32%,
+   but the same 4,942 people stayed flat (21 -> 22 -> 21; 25% -> 26%), so that's the changing crowd. Caveat: 200 scenes a year while
+   LB's artists grew ~5x (0.6M -> 3.2M), which by itself lowers within-scene overlap; the same-people panel also fell (5.0% -> 3.2%).
+5. Hidden gems (trends_gems.py; artists first on LB 2015-22 with >= 10 people who tried them in year 1). Loved = top 10% of the year
+   for "kept playing" (29% kept vs 8%). Never spread = no more listeners in year 3 than year 1. Ordinary artists reweighted to the
+   same birth year and starting size. All artists: loved 65% never spread (ordinary 83%), grew 3x 9% (4%); loved by good pickers
+   57% / 13%. New artists (release in the year before): loved 24% never spread (43%), grew 3x 33% (20%); with good pickers 20% / 37%.
+   Over time (all artists) loved never spread 54% (2015) -> 72% (2022), ordinary 73% -> 89%; new artists' loved flat ~21-29% while
+   ordinary rose 38% -> 51%. Being loved roughly doubles the chance to grow, but most loved music still never spreads.
