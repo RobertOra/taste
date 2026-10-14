@@ -643,18 +643,20 @@
       to <span class="wu-num" data-source="trends" data-field="single_share" data-where="key=singles:2021" data-fmt="pct0">—</span>, and a new artist's biggest song went from <span class="wu-num" data-source="trends" data-field="top_share" data-where="key=singles:2010" data-fmt="pct0">—</span> of their
       listening to <span class="wu-num" data-source="trends" data-field="top_share" data-where="key=singles:2021" data-fmt="pct0">—</span>. More artists are now known for one song.</p>
     <div class="wu-card">
-      <h3>People grew apart, inside their niches and across them</h3>
+      <h3>People grew apart, except fans of the same artist</h3>
       <p class="wu-note">ListenBrainz. Each year, five random samples of 2,000 people and each person's 30 most-played artists. Overlap is
-        the share of one person's artists that another person also has. A person's niche is the scene most of their listening went to
-        that year. 100 = the 2010 level; shaded bands span the five samples.</p>
+        the share of one person's 30 artists that another person also has. A person's niche is the scene most of their listening went to
+        that year. Fans of the same artist: two people whose most-played artist that year is the same (that artist counts as one of the
+        30; everyone with enough listening that year). Shaded bands show the range.</p>
       <div class="wu-legend" id="nc-legend"></div>
       <div class="wu-chart dash-skeleton" id="nc-chart" data-source="trends"></div>
     </div>
     <p>Two people in the same niche shared <span class="wu-num" data-source="trends" data-field="within" data-where="key=niches:2010" data-fmt="pct1">—</span> of their artists in 2010 and <span class="wu-num" data-source="trends" data-field="within" data-where="key=niches:2025" data-fmt="pct1">—</span>
       in 2025; two people in different niches, <span class="wu-num" data-source="trends" data-field="across" data-where="key=niches:2010" data-fmt="pct1">—</span> and <span class="wu-num" data-source="trends" data-field="across" data-where="key=niches:2025" data-fmt="pct1">—</span>. So listening didn't
       split into tight tribes, and it didn't merge into one mainstream either: people grew more individual. The same people, followed from
-      2014 to 2024, went the same way (<span class="wu-num" data-source="trends" data-field="within" data-where="key=niches:panel:2014" data-fmt="pct1">—</span> to <span class="wu-num" data-source="trends" data-field="within" data-where="key=niches:panel:2024" data-fmt="pct1">—</span> within their niche).
-      Some of this may simply be how much more music there is: ListenBrainz knew about five times as many artists in 2025 as in 2010.</p>
+      2014 to 2024, went the same way (<span class="wu-num" data-source="trends" data-field="within" data-where="key=niches:panel:2014" data-fmt="pct1">—</span> to <span class="wu-num" data-source="trends" data-field="within" data-where="key=niches:panel:2024" data-fmt="pct1">—</span> within their niche). The closest ties held,
+      though: two fans of the same artist shared <span class="wu-num" data-source="trends" data-field="fans" data-where="key=niches:2010" data-fmt="pct1">—</span> of their artists in 2010 and <span class="wu-num" data-source="trends" data-field="fans" data-where="key=niches:2025" data-fmt="pct1">—</span> in 2025.
+      Some of the drifting apart may simply be how much more music there is: ListenBrainz knew about five times as many artists in 2025 as in 2010.</p>
     <div class="wu-card">
       <h3>People keep discovering, just less</h3>
       <p class="wu-note">ListenBrainz. The same <span class="wu-num" data-source="trends" data-field="people" data-where="key=disc:1" data-fmt="int">—</span> people, who started listening 2008–2014 and listened every year
@@ -2213,10 +2215,10 @@
     if (!ready(el, ['trends'])) return;
     const rows = trendRows('niches:').filter((r) => !String(r.key).includes('panel')).map((r) => ({ ...r, year: +r.year })).sort((a, b) => a.year - b.year);
     if (!rows.length) return noData(el);
-    const ser = [['idx_within', 'Two people in the same niche', dash.colors[0]], ['idx_across', 'Two people in different niches', dash.colors[1]]];
+    const ser = [['fans', 'Two fans of the same artist', dash.colors[2]], ['within', 'Two people in the same niche', dash.colors[0]], ['across', 'Two people in different niches', dash.colors[1]]];
     legend('nc-legend', ser.map(([, l, c]) => [l, c, 'line']));
-    trendLines(el, rows, ser, { y0: 0, ref: 1, tick: (v) => d3.format('.0f')(v * 100), ylabel: 'Overlap of their artists, compared with 2010 (100)',
-      tip: (d) => [`${d.year}`, [['Same niche', `${fmt.pct1(+d.within)} of artists shared`, ser[0][2]], ['Different niches', `${fmt.pct2(+d.across)} shared`, ser[1][2]]]] });
+    trendLines(el, rows, ser, { y0: 0, tick: d3.format('.0%'), ylabel: 'Share of their top 30 artists they have in common',
+      tip: (d) => [`${d.year}`, [['Fans of the same artist', fmt.pct1(+d.fans), ser[0][2]], ['Same niche', fmt.pct1(+d.within), ser[1][2]], ['Different niches', fmt.pct1(+d.across), ser[2][2]]]] });
   }
 
   function drawDiscovery() {

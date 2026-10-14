@@ -3,7 +3,8 @@
   fade:<year>      songs by peak year 2010-2022 (all songs, all sizes): share of the whole audience kept and share of the same
                    people still playing, a year after the peak; idx_* = compared with 2010 (1 = the 2010 level)
   singles:<year>   new artists by first year 2010-2022: songs played per listener-month, months with one song, biggest song's share
-  niches:<year>    overlap within / across niches 2010-2025 with the 5 samples' range; idx_* vs 2010; niches:panel:<year> same people
+  niches:<year>    overlap within / across niches 2010-2025 with the 5 samples' range; idx_* vs 2010; fans = two fans of the same
+                   artist (trends_fans.py, of their 30 incl. the shared favorite); niches:panel:<year> same people
   disc:<t>         same people, year of listening 1-9: new artists got into, discovery share, plays; disc:cohort:<t> early vs late starters
   gems:<pop>:<group>  outcomes for loved / loved by good pickers / ordinary (same start), all and new artists; gems:<pop>:<year> over time
 """
@@ -22,11 +23,14 @@ for r in fade:
 top = {r["year"]: r["top_median"] for r in L("onehit") if r["pop"] == "new artists" and r["band"] == "all sizes"}
 for r in L("onehit_check"):
     rows.append({"key": f"singles:{r['year']}", "year": r["year"], "songs_per": r["songs_per"], "single_share": r["single_share"], "top_share": top.get(r["year"])})
+fans = {r["year"]: r for r in L("fans")}
+top30 = lambda v: (29 * v + 1) / 30   # fans' overlap of their other 29 artists -> of all 30 (the shared favorite counted), as the niche lines
 ni = L("niches"); nb = ni[0]
 for r in ni:
     if "year" in r:
         rows.append({"key": f"niches:{r['year']}", "year": r["year"], **{k: r[k] for k in ("within", "within_lo", "within_hi", "across", "across_lo", "across_hi")},
-                     **{f"idx_{k}": r[k] / nb[k.split("_")[0]] for k in ("within", "within_lo", "within_hi", "across", "across_lo", "across_hi")}})
+                     **{f"idx_{k}": r[k] / nb[k.split("_")[0]] for k in ("within", "within_lo", "within_hi", "across", "across_lo", "across_hi")},
+                     **({k: top30(fans[r["year"]][k]) for k in ("fans", "fans_lo", "fans_hi")} if r["year"] in fans else {})})
     else:
         rows.append({"key": f"niches:panel:{r['panel_year']}", "year": r["panel_year"], "people": r["people"], "within": r["within"], "across": r["across"]})
 d = L("discovery")

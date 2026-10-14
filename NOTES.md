@@ -264,3 +264,8 @@ user_month_lb). Keep while trends 5/6 are open; delete in the disk trim.
 Write-up: section "Music over time" (#overtime, after Bad taste, before How sure we are), built 2026-10-14 from these results
 (analysis/build_trends_data.py -> analysis/writeup/trends.json): fading (indexed to 2010), albums to single songs, niches (indexed),
 discovery over a listening life, hidden gems (All / New artists). Gems over time folded into the text.
+3c. Two fans of the same artist (trends_fans.py; same most-played artist that year, overlap of their other 29 artists, each fan
+   counted once): ~6% flat 2010-2025 (6.3% -> 5.5% in 2021-22 -> 6.3%). Counting each pair once rises 5.2% -> 8.6% (giant fandoms
+   supply most pairs); each artist once falls 7.5% -> 5.7%. On the chart as share of all 30 (shared favorite counted): 9.4% -> 9.4%.
+   Write-up: niche chart now in real percentages with this third line; title "People grew apart, except fans of the same artist".
+   Song-fading chart removed (Robert, 2026-10-14); the eras sentence says songs fade only a little faster for the same listeners.
