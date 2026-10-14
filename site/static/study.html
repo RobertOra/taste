@@ -50,7 +50,7 @@ window.dash = (() => {
     }
     cbs.forEach((cb) => { try { cb(); } catch (e) { console.error(e); } });
   };
-  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=56861c108c`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
+  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=47248de04e`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
     .then((data) => { store[id] = { status: 'ok', data }; }, () => { store[id] = { status: 'error' }; })))
     .then(() => { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run(); });
   let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(run, 150); });
@@ -329,7 +329,7 @@ window.dash = (() => {
     <div class="wu-card">
       <h3>Growth of the best and worst pickers' finds, year by year</h3>
       <p class="wu-note">ListenBrainz. How much more (or less) the songs or new artists found each year grew over the next year than similar ones (same size,
-        same month), for the best and worst fifth of pickers. Shaded bands are 95% ranges. Before 2010 there are too few listeners to show.</p>
+        same month), for the top 10% and the best and worst fifth of pickers. Shaded bands are 95% ranges. Before 2010 there are too few listeners to show.</p>
       <div class="wu-chips" id="yg-unit" role="group" aria-label="Songs or artists"></div>
       <div class="wu-legend" id="yg-legend"></div>
       <div class="wu-chart dash-skeleton" id="yg-chart" data-source="yeargrowth"></div>
@@ -1409,7 +1409,7 @@ window.dash = (() => {
     if (!ready(el, ['yeargrowth'])) { document.getElementById('yg-unit').replaceChildren(); return; }
     unitChips('yg-unit', 'eras');
     const songs = unitSel.eras === 'songs', noun = songs ? 'songs' : 'artists', Found = songs ? 'Songs' : 'New artists';
-    const grp = [['best', 'Best fifth of pickers', dash.colors[0]], ['worst', 'Worst fifth of pickers', dash.colors[1]]];
+    const grp = [['top10', 'Top 10% of pickers', dash.colors[2]], ['best', 'Best fifth of pickers', dash.colors[0]], ['worst', 'Worst fifth of pickers', dash.colors[1]]];
     legend('yg-legend', grp.map(([, l, c]) => [l, c, 'line']));
     const rows = dash.data('yeargrowth').data.filter((r) => r.year !== undefined && r.year !== null && unitOf(r) === unitSel.eras).map((r) => ({ ...r, year: +r.year, mid: +r.year }))
       .sort((a, b) => a.year - b.year);
@@ -1418,14 +1418,14 @@ window.dash = (() => {
     const f = frame(el, 280, { t: 28, r: 16, b: 30, l: 44 });
     const { svg, fs, width, height, m } = f;
     const x = d3.scaleLinear(d3.extent(years), [m.l, width - m.r]);
-    const y = d3.scaleLinear([d3.min(rows, (r) => r.worst_lo) * 1.1, d3.max(rows, (r) => r.best_hi) * 1.3], [height - m.b, m.t]).nice();
+    const y = d3.scaleLinear([d3.min(rows, (r) => r.worst_lo) * 1.1, d3.max(rows, (r) => Math.max(r.best_hi, r.top10_hi ?? -Infinity)) * 1.15], [height - m.b, m.t]).nice();
     gridY(f, y, d3.format('+.0%'), 5);
     svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', css('--cds-chart-axis'));
     yearAxis(f, x, years);
     svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text(`Growth over the next year, compared with similar ${noun}`);
-    grp.forEach(([g, , c]) => bandLine(svg.append('g'), rows.map((r) => ({ year: r.year, v: +r[`${g}_growth`], lo: +r[`${g}_lo`], hi: +r[`${g}_hi`] })), x, y, c, true));
-    bandHover(f, rows, x, (d) => [`${Found} found in ${d.year}`, [['Best fifth', `${fmt.spct1(+d.best_growth)} (${fmt.spct1(+d.best_lo)} to ${fmt.spct1(+d.best_hi)})`, grp[0][2]],
-      ['Worst fifth', `${fmt.spct1(+d.worst_growth)} (${fmt.spct1(+d.worst_lo)} to ${fmt.spct1(+d.worst_hi)})`, grp[1][2]], ['Gap', fmt.pts0(+d.gap_growth)]]]);
+    grp.filter(([g]) => rows[0][`${g}_growth`] !== undefined).forEach(([g, , c]) => bandLine(svg.append('g'), rows.map((r) => ({ year: r.year, v: +r[`${g}_growth`], lo: +r[`${g}_lo`], hi: +r[`${g}_hi`] })), x, y, c, true));
+    bandHover(f, rows, x, (d) => [`${Found} found in ${d.year}`, [...(d.top10_growth !== undefined ? [['Top 10%', `${fmt.spct1(+d.top10_growth)} (${fmt.spct1(+d.top10_lo)} to ${fmt.spct1(+d.top10_hi)})`, grp[0][2]]] : []), ['Best fifth', `${fmt.spct1(+d.best_growth)} (${fmt.spct1(+d.best_lo)} to ${fmt.spct1(+d.best_hi)})`, grp[1][2]],
+      ['Worst fifth', `${fmt.spct1(+d.worst_growth)} (${fmt.spct1(+d.worst_lo)} to ${fmt.spct1(+d.worst_hi)})`, grp[2][2]], ['Gap', fmt.pts0(+d.gap_growth)]]]);
   }
 
   let ytSel = 1, ytHover = null;
@@ -1601,9 +1601,9 @@ window.dash = (() => {
     if (!ready(el, ['careers'])) { document.getElementById('cv-unit').replaceChildren(); return; }
     unitChips('cv-unit', 'careers');
     const songs = unitSel.careers === 'songs', noun = songs ? 'songs' : 'artists', one = songs ? 'song' : 'artist', finds = songs ? 'songs' : 'new artists';
-    const ser = [['best', `Best fifth's ${finds}`, dash.colors[0]], ['worst', `Worst fifth's ${finds}`, dash.colors[1]]];
+    const ser = [['top1', `Top 1%'s ${finds}`, dash.colors[2]], ['best', `Best fifth's ${finds}`, dash.colors[0]], ['worst', `Worst fifth's ${finds}`, dash.colors[1]]];
     legend('cv-legend', ser.map(([, l, c]) => [l, c, 'line']));
-    const all = dash.data('careers').data.filter((r) => unitOf(r) === unitSel.careers).map((r) => ({ ...r, year: +r.years, v: +r.growth, lo: +r.lo, hi: +r.hi }));
+    const all = dash.data('careers').data.filter((r) => unitOf(r) === unitSel.careers && ser.some(([g]) => g === r.group)).map((r) => ({ ...r, year: +r.years, v: +r.growth, lo: +r.lo, hi: +r.hi }));
     if (!all.length) { el.innerHTML = '<p class="wu-fail">This chart\'s data didn\'t load. Reload the page.</p>'; return; }
     const f = frame(el, 280, { t: 28, r: 16, b: 40, l: 44 });
     const { svg, fs, width, height, m } = f;
@@ -1617,7 +1617,7 @@ window.dash = (() => {
     svg.append('text').attr('x', (m.l + width - m.r) / 2).attr('y', height - 4).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted')).style('font-size', fs)
       .text(`Years after the ${one} was found`);
     svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text(`Listeners, compared with similar ${noun}`);
-    ser.forEach(([g, l, c]) => { const pts = rowsOf(g); bandLine(svg.append('g'), pts, x, y, c, true); endLabel(svg, x, y, pts, l, c, fs, g === 'best' ? -12 : 18); });
+    ser.forEach(([g, l, c]) => { const pts = rowsOf(g); bandLine(svg.append('g'), pts, x, y, c, true); });
     const byYear = [1, 2, 3, 4, 5, 6].map((k) => ({ year: k, mid: k, r: Object.fromEntries(all.filter((q) => q.year === k).map((q) => [q.group, q])) }));
     bandHover(f, byYear, x, (d) => [`${d.year} year${d.year > 1 ? 's' : ''} after the ${one} was found`,
       ser.filter(([g]) => d.r[g]).map(([g, l, c]) => [l, `${fmt.spct1(d.r[g].v)} (${fmt.spct1(d.r[g].lo)} to ${fmt.spct1(d.r[g].hi)})`, c])]);

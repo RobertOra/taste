@@ -1,7 +1,7 @@
 """Careers or one-hit wonders? (ListenBrainz, exploratory; after the frozen LB run.)
 
 Picks made 2012-2019 by people rated on picks up to two years before (frozen prescience score, shrunk, >= 20 picks; best
-= top fifth, worst = bottom fifth, also top 5%). For each pick, the artist's distinct listeners in each calendar year
+= top fifth, worst = bottom fifth, also top 5% and, for typical growth, top 1%). For each pick, the artist's distinct listeners in each calendar year
 (picker excluded), growth after k = 1..6 years: ln((L[Y+k] + 1) / (L[Y] + 1)), Y = the pick's year, compared with all
 picks in the same month and size bin ("similar artists"). Bootstrap over people (1,000 draws).
 Also: how often a pick's listeners k years on were >= 10x the pick year's, vs similar picks (best, top 5%, top 1%, worst).
@@ -64,10 +64,12 @@ for y in range(2012, 2020):
     parts.append(p.filter(pl.col("year") == y).join(past.select("user", "q"), on="user"))
 f = pl.concat(parts)
 rows = []
-for g, cond in (("best", pl.col("q") > .8), ("worst", pl.col("q") <= .2), ("top5", pl.col("q") > .95)):
+for g, cond in (("best", pl.col("q") > .8), ("worst", pl.col("q") <= .2), ("top5", pl.col("q") > .95), ("top1", pl.col("q") > .99)):
     x = f.filter(cond)
     per = x.group_by("user").agg([pl.col(f"x{k}").sum().alias(f"s{k}") for k in K] + [pl.len().alias("n")])
-    w = RNG.poisson(1.0, (B, per.height)).astype(float)
+    # top 1% added 2026-10-14 with its own draws. Note: group_by order varies between runs, so reruns move the 95% ranges slightly;
+    # the write-up keeps the earlier runs' rows and added only the top-1% rows from the 2026-10-14 run
+    w = (RNG if g != "top1" else np.random.default_rng(7172)).poisson(1.0, (B, per.height)).astype(float)
     n = per["n"].to_numpy().astype(float)
     for k in K:
         s = per[f"s{k}"].to_numpy()

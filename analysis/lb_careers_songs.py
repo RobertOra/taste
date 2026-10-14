@@ -70,10 +70,12 @@ for y in range(2012, 2020):
     parts.append(p.filter(pl.col("year") == y).join(past.select("user", "q"), on="user"))
 f = pl.concat(parts)
 rows = []
-for g, cond in (("best", pl.col("q") > .8), ("worst", pl.col("q") <= .2), ("top5", pl.col("q") > .95)):
+for g, cond in (("best", pl.col("q") > .8), ("worst", pl.col("q") <= .2), ("top5", pl.col("q") > .95), ("top1", pl.col("q") > .99)):
     x = f.filter(cond)
     per = x.group_by("user").agg([pl.col(f"x{k}").sum().alias(f"s{k}") for k in K] + [pl.len().alias("n")])
-    w = RNG.poisson(1.0, (B, per.height)).astype(float)
+    # top 1% added 2026-10-14 with its own draws. Note: group_by order varies between runs, so reruns move the 95% ranges slightly;
+    # the write-up keeps the earlier runs' rows and added only the top-1% rows from the 2026-10-14 run
+    w = (RNG if g != "top1" else np.random.default_rng(7173)).poisson(1.0, (B, per.height)).astype(float)
     n = per["n"].to_numpy().astype(float)
     for k in K:
         s = per[f"s{k}"].to_numpy()

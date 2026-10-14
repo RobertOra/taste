@@ -189,3 +189,12 @@ Song data is the 1-in-8 raw sample on MLHD+ (~34k people per half), everyone on 
   finds 22%), but separate people slightly less: best-minus-worst-fifth growth gap 8.8 -> 7.2 points; top-1% tenfold 1.91x ->
   2.16x (1.79x -> 1.42x without momentum). Conclusion: the first-listen clock costs coverage, not correctness. Not adopted.
   Also tried on Robert only: "4 weeks or 10 plays" adds ~5% finds (+27 artists, +16 songs); kept 4 weeks (site must match study).
+
+### Era gap: better pickers or better measurement? (2026-10-14, exploratory; analysis/eras_window_check.py)
+eras_yearly rates people for year Y on all picks up to Y-2, so later years rate on longer histories (artists: 138 -> 382 rating
+picks per person, 2010 -> 2025). Rated instead on a fixed window (Y-4..Y-2; 125-183 picks), the best-minus-worst gap follows the
+same path: songs +9.7% (2010), +20.6% (2015), +27.3% (2020), +31.6% (2025) vs +10.1 / +19.9 / +25.2 / +29.5 on all history;
+artists +5.3 / +6.7 / +8.2 / +8.9 vs +5.4 / +5.8 / +8.5 / +9.2. Not a measurement artifact. Who uses ListenBrainz still changed.
+Added to the charts: top 10% on the year-by-year growth chart (analysis/eras_top10.py; 315-1,340 people a year), top 1% on the
+career growth chart (lb_careers*.py; 278 artist / 351 song pickers; wide ranges: artists +3.3% after a year, -4.3% after six,
+range -11.1 to +2.6). Rerunning the career scripts moves earlier 95% ranges slightly (group order varies), so the earlier rows were kept.
