@@ -1,13 +1,13 @@
 // Taste Test page: reads Spotify and/or YouTube (Google Takeout) files, scores them with engine.js in the browser (reference data read by byte range), renders the report.
-import { scoreHistory, monthLabel, Pack, WANT } from './engine.js?v=79a74a7a84';
+import { scoreHistory, monthLabel, Pack, WANT } from './engine.js?v=49a39c1579';
 
 const $ = (s) => document.querySelector(s);
 let META = null;
-const metaReady = fetch('data/meta.json?v=79a74a7a84').then((r) => r.json()).then((m) => (META = m));
-const fetchIndex = () => fetch('data/index.bin?v=79a74a7a84').then((r) => r.arrayBuffer());
-const fetchBloom = () => fetch('data/slots.bloom?v=79a74a7a84').then((r) => r.arrayBuffer());   // packs filed by artist (meta.slots)
+const metaReady = fetch('data/meta.json?v=49a39c1579').then((r) => r.json()).then((m) => (META = m));
+const fetchIndex = () => fetch('data/index.bin?v=49a39c1579').then((r) => r.arrayBuffer());
+const fetchBloom = () => fetch('data/slots.bloom?v=49a39c1579').then((r) => r.arrayBuffer());   // packs filed by artist (meta.slots)
 async function fetchRange(file, start, end) {
-  const r = await fetch(`data/p/${String(file).padStart(2, '0')}.bin?v=79a74a7a84`, { headers: { Range: `bytes=${start}-${end}` }, cache: 'no-store' });   // no-store: Chrome lets one request at a time write a file to its cache, so cached ranges of the same file queue up (3x slower)
+  const r = await fetch(`data/p/${String(file).padStart(2, '0')}.bin?v=49a39c1579`, { headers: { Range: `bytes=${start}-${end}` }, cache: 'no-store' });   // no-store: Chrome lets one request at a time write a file to its cache, so cached ranges of the same file queue up (3x slower)
   const b = new Uint8Array(await r.arrayBuffer());
   return r.status === 206 ? b : b.subarray(start, end + 1);   // a server without range support sends the whole file
 }
@@ -40,7 +40,9 @@ function addFiles(k, fs) {
   const got = usable(fs);
   if (!got.length) return status(k === 'spotify' ? 'No Spotify files found there. Look for Streaming_History_Audio_….json, or the zip that contains them.'
     : 'No YouTube files found there. Look for the Google Takeout zip, MyActivity.html or watch-history.html.', { err: true });
-  $('#status').hidden = true; SRC[k].files = got; showSources();
+  // each pick adds to what's there (Google can split one export into several zips or folders); the same file twice counts once
+  const id = (f) => `${f.webkitRelativePath || f.name}|${f.size}|${f.lastModified}`, seen = new Set(SRC[k].files.map(id));
+  $('#status').hidden = true; SRC[k].files = [...SRC[k].files, ...got.filter((f) => !seen.has(id(f)) && seen.add(id(f)))]; showSources();
 }
 for (const el of document.querySelectorAll('.drop[data-src]')) {
   const k = el.dataset.src;
