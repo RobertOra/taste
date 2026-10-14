@@ -36,7 +36,7 @@ body { padding: 0 16px 64px; font-family: var(--font-anthropic-sans); -webkit-fo
 // stand-in for the dashboard runtime: datasets come from study/<id>.json
 window.dash = (() => {
   const store = {}, calcs = {}, cbs = [];
-  const ids = ["badtaste", "careers", "careerten", "crowd", "crowdsteps", "decade", "eras", "example", "facts", "fanrel", "fanvalue", "genre", "genregeneral", "growthband", "headlines", "justx", "ladder", "more", "obsession", "obstaste", "overlap", "poorcrowd", "repeat", "results", "revisions", "robustness", "scenesplit", "thresholds", "today", "toppickers", "yearfan", "yeargrowth", "yeartakeoff"];
+  const ids = ["badtaste", "careers", "careerten", "crowd", "crowdsteps", "decade", "eras", "example", "facts", "fanrel", "fanvalue", "genre", "genregeneral", "growthband", "headlines", "justx", "ladder", "more", "obsession", "obstaste", "overlap", "poorcrowd", "repeat", "results", "revisions", "robustness", "scenesplit", "thresholds", "today", "toppickers", "trends", "yearfan", "yeargrowth", "yeartakeoff"];
   const api = {
     colors: ['#2f5bd3', '#d9622b', '#1f8a5b', '#8e5bd3', '#c99a2e', '#2a9d9d', '#b4508a', '#6b7a8f'],
     data: (id) => store[id] || { status: 'loading' },
@@ -50,7 +50,7 @@ window.dash = (() => {
     }
     cbs.forEach((cb) => { try { cb(); } catch (e) { console.error(e); } });
   };
-  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=56861c108c`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
+  Promise.all(ids.map((id) => fetch(`study/${id}.json?v=2387d50183`).then((r) => r.ok ? r.json() : Promise.reject(new Error(id)))
     .then((data) => { store[id] = { status: 'ok', data }; }, () => { store[id] = { status: 'error' }; })))
     .then(() => { if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else run(); });
   let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(run, 150); });
@@ -690,6 +690,76 @@ window.dash = (() => {
     </div>
   </section>
 
+  <section class="wu-section" id="overtime">
+    <h2>Music over time</h2>
+    <p>The same listening data also shows how listening itself has changed since 2010. These are exploratory looks at ListenBrainz,
+      separate from the taste question. Its crowd changed a lot over those years, so where it matters we follow the same people.</p>
+    <div class="wu-card">
+      <h3>Songs don't burn out faster for the same listeners</h3>
+      <p class="wu-note">ListenBrainz songs with at least 20 listeners at their peak, by the year they peaked. Two measures a year after
+        the peak, each compared with songs that peaked in 2010 (100 = the 2010 level): the song's share of everyone listening, and, of the
+        people who played it at its peak and were still listening to music, the share still playing it.</p>
+      <div class="wu-legend" id="fd-legend"></div>
+      <div class="wu-chart dash-skeleton" id="fd-chart" data-source="trends"></div>
+    </div>
+    <p>Across the whole audience, songs seem to fade much faster: a year after its peak, a song that peaked in 2010 still had
+      <span class="wu-num" data-source="trends" data-field="whole" data-where="key=fade:2010" data-fmt="pct0">—</span> of its peak share of listeners, against <span class="wu-num" data-source="trends" data-field="whole" data-where="key=fade:2022" data-fmt="pct0">—</span> for one that peaked in 2022.
+      But among the same people, the drop is small: <span class="wu-num" data-source="trends" data-field="same" data-where="key=fade:2010" data-fmt="pct1">—</span> still played it a year on in 2010,
+      <span class="wu-num" data-source="trends" data-field="same" data-where="key=fade:2022" data-fmt="pct1">—</span> in 2022. Most of the faster fade is ListenBrainz's crowd changing, not people dropping songs faster.</p>
+    <div class="wu-card">
+      <h3>Listening shifted from albums to single songs</h3>
+      <p class="wu-note">ListenBrainz. In a month when someone played a new artist, how many of that artist's songs they played, by the
+        year the artist first appeared (their first three years).</p>
+      <div class="wu-chart dash-skeleton" id="sg-chart" data-source="trends"></div>
+    </div>
+    <p>In 2010, someone listening to a new artist played <span class="wu-num" data-source="trends" data-field="songs_per" data-where="key=singles:2010" data-fmt="f1">—</span> of their songs in a month; since 2019, about
+      <span class="wu-num" data-source="trends" data-field="songs_per" data-where="key=singles:2021" data-fmt="f1">—</span>. Months with just one of the artist's songs went from <span class="wu-num" data-source="trends" data-field="single_share" data-where="key=singles:2010" data-fmt="pct0">—</span>
+      to <span class="wu-num" data-source="trends" data-field="single_share" data-where="key=singles:2021" data-fmt="pct0">—</span>, and a new artist's biggest song went from <span class="wu-num" data-source="trends" data-field="top_share" data-where="key=singles:2010" data-fmt="pct0">—</span> of their
+      listening to <span class="wu-num" data-source="trends" data-field="top_share" data-where="key=singles:2021" data-fmt="pct0">—</span>. More artists are now known for one song.</p>
+    <div class="wu-card">
+      <h3>People grew apart, inside their niches and across them</h3>
+      <p class="wu-note">ListenBrainz. Each year, five random samples of 2,000 people and each person's 30 most-played artists. Overlap is
+        the share of one person's artists that another person also has. A person's niche is the scene most of their listening went to
+        that year. 100 = the 2010 level; shaded bands span the five samples.</p>
+      <div class="wu-legend" id="nc-legend"></div>
+      <div class="wu-chart dash-skeleton" id="nc-chart" data-source="trends"></div>
+    </div>
+    <p>Two people in the same niche shared <span class="wu-num" data-source="trends" data-field="within" data-where="key=niches:2010" data-fmt="pct1">—</span> of their artists in 2010 and <span class="wu-num" data-source="trends" data-field="within" data-where="key=niches:2025" data-fmt="pct1">—</span>
+      in 2025; two people in different niches, <span class="wu-num" data-source="trends" data-field="across" data-where="key=niches:2010" data-fmt="pct1">—</span> and <span class="wu-num" data-source="trends" data-field="across" data-where="key=niches:2025" data-fmt="pct1">—</span>. So listening didn't
+      split into tight tribes, and it didn't merge into one mainstream either: people grew more individual. The same people, followed from
+      2014 to 2024, went the same way (<span class="wu-num" data-source="trends" data-field="within" data-where="key=niches:panel:2014" data-fmt="pct1">—</span> to <span class="wu-num" data-source="trends" data-field="within" data-where="key=niches:panel:2024" data-fmt="pct1">—</span> within their niche).
+      Some of this may simply be how much more music there is: ListenBrainz knew about five times as many artists in 2025 as in 2010.</p>
+    <div class="wu-card">
+      <h3>People keep discovering, just less</h3>
+      <p class="wu-note">ListenBrainz. The same <span class="wu-num" data-source="trends" data-field="people" data-where="key=disc:1" data-fmt="int">—</span> people, who started listening 2008–2014 and listened every year
+        for nine years. New artists they got into (the study's rule) each year after they started. Their first year is left out:
+        everything is new then.</p>
+      <div class="wu-chart dash-skeleton" id="ds-chart" data-source="trends"></div>
+    </div>
+    <p>People got into <span class="wu-num" data-source="trends" data-field="found" data-where="key=disc:1" data-fmt="f0">—</span> new artists the year after they started listening and <span class="wu-num" data-source="trends" data-field="found" data-where="key=disc:9" data-fmt="f0">—</span> nine years in,
+      while listening just as much. Artists new to them went from <span class="wu-num" data-source="trends" data-field="share" data-where="key=disc:1" data-fmt="pct0">—</span> of their plays to <span class="wu-num" data-source="trends" data-field="share" data-where="key=disc:9" data-fmt="pct0">—</span>.
+      It's a pattern of the listening life, not of the era: people who started in 2016–2018 got into more artists than those who started
+      in 2010–2012 (<span class="wu-num" data-source="trends" data-field="late_found" data-where="key=disc:cohort:1" data-fmt="f0">—</span> against <span class="wu-num" data-source="trends" data-field="early_found" data-where="key=disc:cohort:1" data-fmt="f0">—</span> the year after they started) but slowed down
+      at the same pace. This is years of listening, not age.</p>
+    <div class="wu-card">
+      <h3>Most loved music never spreads, but love doubles the odds</h3>
+      <p class="wu-note">ListenBrainz artists that first appeared 2015–2022, with at least 10 people who tried them in their first year.
+        Loved: the top 10% of their year for how many of the people who tried them kept listening. Good picker: at least one fan with
+        a good track record. What happened by their third year: no more listeners than in their first year, some growth, or three times
+        as many. Ordinary artists are matched to the loved ones on first year and starting size.</p>
+      <div class="wu-chips" id="gm-chips" role="group" aria-label="All artists or new artists"></div>
+      <div class="wu-legend" id="gm-legend"></div>
+      <div class="wu-chart dash-skeleton" id="gm-chart" data-source="trends"></div>
+    </div>
+    <p>Of the loved artists, <span class="wu-num" data-source="trends" data-field="never" data-where="key=gems:all:loved" data-fmt="pct0">—</span> never spread beyond their first year's listeners, against
+      <span class="wu-num" data-source="trends" data-field="never" data-where="key=gems:all:ordinary" data-fmt="pct0">—</span> of ordinary ones that started out the same size; <span class="wu-num" data-source="trends" data-field="grew3" data-where="key=gems:all:loved" data-fmt="pct0">—</span> tripled,
+      against <span class="wu-num" data-source="trends" data-field="grew3" data-where="key=gems:all:ordinary" data-fmt="pct0">—</span>. When a good picker was among their fans, <span class="wu-num" data-source="trends" data-field="grew3" data-where="key=gems:all:loved_good" data-fmt="pct0">—</span> tripled.
+      Genuinely new artists (a release in the year before they appeared) spread more often, and for them love matters more than it used to:
+      loved new artists that never spread stayed around a quarter (<span class="wu-num" data-source="trends" data-field="never" data-where="key=gems:new:2015" data-fmt="pct0">—</span> in 2015, <span class="wu-num" data-source="trends" data-field="never" data-where="key=gems:new:2022" data-fmt="pct0">—</span>
+      in 2022), while ordinary ones rose from <span class="wu-num" data-source="trends" data-field="never_ord" data-where="key=gems:new:2015" data-fmt="pct0">—</span> to <span class="wu-num" data-source="trends" data-field="never_ord" data-where="key=gems:new:2022" data-fmt="pct0">—</span>. We can only
+      see music someone on ListenBrainz found; music nobody played is invisible.</p>
+  </section>
+
   <section class="wu-section" id="sure">
     <h2>How sure we are</h2>
     <p><b>We hid half the listeners.</b> All the exploring, adjusting, and fixing happened on one half. Before looking at the other half, we
@@ -911,7 +981,7 @@ window.dash = (() => {
   });
 
   const fmt = {
-    pct: d3.format('.0%'), f2: d3.format('.2f'), f3: d3.format('.3f'), int: d3.format(','),
+    pct: d3.format('.0%'), f0: d3.format(',.0f'), f1: d3.format('.1f'), f2: d3.format('.2f'), f3: d3.format('.3f'), int: d3.format(','),
     compact: (v) => Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 0 }).format(v),
     text: (v) => String(v),
     times: (v) => `${d3.format('.1f')(v)}×`, pct0: d3.format('.0%'), pct1: d3.format('.1%'), pct2: d3.format('.2%'),
@@ -2181,8 +2251,119 @@ window.dash = (() => {
     });
   }
 
+  // ---- Music over time (trends.json)
+  const trendRows = (prefix) => dash.data('trends').data.filter((r) => String(r.key).startsWith(prefix));
+  function trendLines(el, rows, ser, opts) {
+    const f = frame(el, 270, { t: 28, r: 16, b: opts.xlabel ? 40 : 30, l: 44 });
+    const { svg, fs, width, height, m } = f;
+    const xs = rows.map((r) => r.year);
+    const x = d3.scaleLinear(d3.extent(xs), [m.l, width - m.r]);
+    const vals = ser.flatMap(([k]) => rows.flatMap((r) => [r[k], r[`${k}_lo`] ?? r[k], r[`${k}_hi`] ?? r[k]]));
+    const y = d3.scaleLinear([opts.y0 ?? Math.min(...vals) * 0.9, Math.max(...vals) * 1.08], [height - m.b, m.t]).nice();
+    gridY(f, y, opts.tick, 5);
+    if (opts.ref !== undefined) svg.append('line').attr('x1', m.l).attr('x2', width - m.r).attr('y1', y(opts.ref)).attr('y2', y(opts.ref)).attr('stroke', css('--cds-chart-axis'));
+    if (opts.xticks) axisStyle(svg.append('g').attr('transform', `translate(0,${height - m.b + 8})`).call(d3.axisBottom(x).tickValues(xs).tickFormat(opts.xticks).tickSize(0)), fs);
+    else yearAxis(f, x, xs);
+    if (opts.xlabel) svg.append('text').attr('x', (m.l + width - m.r) / 2).attr('y', height - 4).attr('text-anchor', 'middle').attr('fill', css('--color-fg-muted')).style('font-size', fs).text(opts.xlabel);
+    svg.append('text').attr('x', 0).attr('y', 10).attr('fill', css('--color-fg-muted')).style('font-size', fs).text(opts.ylabel);
+    ser.forEach(([k, , c]) => bandLine(svg.append('g'), rows.map((r) => ({ year: r.year, v: r[k], lo: r[`${k}_lo`] ?? r[k], hi: r[`${k}_hi`] ?? r[k] })), x, y, c, true));
+    bandHover(f, rows.map((r) => ({ ...r, mid: r.year })), x, opts.tip);
+  }
+  const noData = (el) => { el.innerHTML = '<p class="wu-fail">This chart\'s data didn\'t load. Reload the page.</p>'; };
+
+  function drawFade() {
+    const el = document.getElementById('fd-chart');
+    if (!ready(el, ['trends'])) return;
+    const rows = trendRows('fade:').map((r) => ({ ...r, year: +r.year })).sort((a, b) => a.year - b.year);
+    if (!rows.length) return noData(el);
+    const ser = [['idx_same', 'Same people: still playing it a year later', dash.colors[0]], ['idx_whole', 'Whole audience: share kept a year after the peak', dash.colors[1]]];
+    legend('fd-legend', ser.map(([, l, c]) => [l, c, 'line']));
+    trendLines(el, rows, ser, { y0: 0, ref: 1, tick: (v) => d3.format('.0f')(v * 100), ylabel: 'Compared with songs that peaked in 2010 (100)',
+      tip: (d) => [`Songs that peaked in ${d.year}`, [['Same people still playing', fmt.pct1(+d.same), ser[0][2]], ['Share of whole audience kept', fmt.pct0(+d.whole), ser[1][2]], ['Songs', fmt.int(+d.songs)]]] });
+  }
+
+  function drawSingles() {
+    const el = document.getElementById('sg-chart');
+    if (!ready(el, ['trends'])) return;
+    const rows = trendRows('singles:').map((r) => ({ ...r, year: +r.year })).sort((a, b) => a.year - b.year);
+    if (!rows.length) return noData(el);
+    const ser = [['songs_per', 'Songs per month', dash.colors[0]]];
+    trendLines(el, rows, ser, { y0: 0, tick: d3.format('.0f'), ylabel: "Songs by a new artist played per listener per month",
+      tip: (d) => [`Artists who first appeared in ${d.year}`, [['Songs per listener per month', fmt.f1(+d.songs_per), ser[0][2]],
+        ['Months with just one of their songs', fmt.pct0(+d.single_share)], ["Biggest song's share", d.top_share === null ? '–' : fmt.pct0(+d.top_share)]]] });
+  }
+
+  function drawNiches() {
+    const el = document.getElementById('nc-chart');
+    if (!ready(el, ['trends'])) return;
+    const rows = trendRows('niches:').filter((r) => !String(r.key).includes('panel')).map((r) => ({ ...r, year: +r.year })).sort((a, b) => a.year - b.year);
+    if (!rows.length) return noData(el);
+    const ser = [['idx_within', 'Two people in the same niche', dash.colors[0]], ['idx_across', 'Two people in different niches', dash.colors[1]]];
+    legend('nc-legend', ser.map(([, l, c]) => [l, c, 'line']));
+    trendLines(el, rows, ser, { y0: 0, ref: 1, tick: (v) => d3.format('.0f')(v * 100), ylabel: 'Overlap of their artists, compared with 2010 (100)',
+      tip: (d) => [`${d.year}`, [['Same niche', `${fmt.pct1(+d.within)} of artists shared`, ser[0][2]], ['Different niches', `${fmt.pct2(+d.across)} shared`, ser[1][2]]]] });
+  }
+
+  function drawDiscovery() {
+    const el = document.getElementById('ds-chart');
+    if (!ready(el, ['trends'])) return;
+    const rows = trendRows('disc:').filter((r) => !String(r.key).includes('cohort')).map((r) => ({ ...r, year: +r.t })).sort((a, b) => a.year - b.year);
+    if (!rows.length) return noData(el);
+    const ser = [['found', 'New artists', dash.colors[0]]];
+    trendLines(el, rows, ser, { y0: 0, tick: d3.format('.0f'), ylabel: 'New artists they got into that year', xticks: d3.format('d'), xlabel: 'Years since they started listening',
+      tip: (d) => [`${d.year} year${d.year > 1 ? 's' : ''} after they started`, [['New artists they got into', fmt.f0(+d.found), ser[0][2]], ['Plays on artists new to them', fmt.pct0(+d.share)],
+        ['Plays that year (median)', fmt.int(Math.round(+d.plays))]]] });
+  }
+
+  let gmSel = 'all';
+  function drawGems() {
+    const el = document.getElementById('gm-chart');
+    const chips = document.getElementById('gm-chips');
+    if (!ready(el, ['trends'])) { chips.replaceChildren(); return; }
+    const segs = [['never', 'No more listeners', css('--cds-chart-muted')], ['some', 'Some growth', d3.color(dash.colors[0]).brighter(1.2).formatHex()], ['grew3', 'Three times as many or more', dash.colors[0]]];
+    legend('gm-legend', segs.map(([, l, c]) => [l, c, 'dot']));
+    const groups = [['ordinary', 'Ordinary, same start'], ['loved', 'Loved'], ['loved_good', 'Loved, with a good picker']];
+    function paint() {
+      el.replaceChildren();
+      const rows = groups.map(([g, l]) => ({ l, ...(trendRows(`gems:${gmSel}:${g}`)[0] || {}) })).filter((r) => r.never !== undefined);
+      if (!rows.length) return noData(el);
+      const lab = Math.min(170, el.clientWidth * 0.36);
+      const f = frame(el, rows.length * 46 + 20, { t: 6, r: 8, b: 14, l: lab });
+      const { svg, fs, width, m } = f;
+      const x = d3.scaleLinear([0, 1], [m.l, width - m.r]);
+      const tip = tooltip(el);
+      rows.forEach((r, i) => {
+        const yy = m.t + i * 46;
+        const t = svg.append('text').attr('x', m.l - 8).attr('y', yy + 19).attr('text-anchor', 'end').attr('fill', css('--color-fg')).style('font-size', fs);
+        const parts = width < 520 && r.l.includes(', ') ? r.l.split(', ') : [r.l];   // two lines on narrow screens
+        parts.forEach((w, j) => t.append('tspan').attr('x', m.l - 8).attr('dy', j === 0 ? (parts.length > 1 ? -7 : 0) : 14).text(w));
+        let x0 = 0;
+        segs.forEach(([k, l, c]) => {
+          const v = +r[k], gap = 2, w = Math.max(0, x(x0 + v) - x(x0) - gap);
+          svg.append('rect').attr('x', x(x0)).attr('y', yy + 4).attr('width', w).attr('height', 26).attr('rx', 3).attr('fill', c)
+            .on('mousemove', (ev) => tip.show(ev, r.l, [[l, fmt.pct0(v), c]])).on('mouseleave', () => tip.hide());
+          if (w > 34) svg.append('text').attr('x', x(x0) + w / 2).attr('y', yy + 21).attr('text-anchor', 'middle').style('font-size', fs).style('pointer-events', 'none')
+            .attr('fill', k === 'grew3' ? '#fff' : css('--color-fg')).text(fmt.pct0(v));
+          x0 += v;
+        });
+      });
+      chips.querySelectorAll('button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.m === gmSel)));
+    }
+    chips.replaceChildren(...[['all', 'All artists'], ['new', 'New artists']].map(([k, l]) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'wu-chip'; b.dataset.m = k; b.textContent = l;
+      b.addEventListener('click', () => { gmSel = k; paint(); });
+      return b;
+    }));
+    paint();
+  }
+
   dash.onData(() => {
     fillMarks();
+    safeDraw(drawFade);
+    safeDraw(drawSingles);
+    safeDraw(drawNiches);
+    safeDraw(drawDiscovery);
+    safeDraw(drawGems);
     safeDraw(drawRepeat);
     safeDraw(drawDecade);
     safeDraw(drawCareers);

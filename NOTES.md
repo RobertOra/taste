@@ -261,3 +261,6 @@ user_month_lb). Keep while trends 5/6 are open; delete in the disk trim.
    57% / 13%. New artists (release in the year before): loved 24% never spread (43%), grew 3x 33% (20%); with good pickers 20% / 37%.
    Over time (all artists) loved never spread 54% (2015) -> 72% (2022), ordinary 73% -> 89%; new artists' loved flat ~21-29% while
    ordinary rose 38% -> 51%. Being loved roughly doubles the chance to grow, but most loved music still never spreads.
+Write-up: section "Music over time" (#overtime, after Bad taste, before How sure we are), built 2026-10-14 from these results
+(analysis/build_trends_data.py -> analysis/writeup/trends.json): fading (indexed to 2010), albums to single songs, niches (indexed),
+discovery over a listening life, hidden gems (All / New artists). Gems over time folded into the text.
