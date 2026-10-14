@@ -16,7 +16,7 @@ listeners' songs took off about 13 times as often as similar songs.
 
 ## What's in this repository
 
-This repo holds only the published site; it's built from a separate research repository.
+This repo holds only the published site. The code that builds it, and the full study, are in https://github.com/RobertOra/taste.
 
 | Path | What it is |
 |---|---|

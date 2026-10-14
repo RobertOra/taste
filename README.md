@@ -4,6 +4,7 @@ Do some people consistently get into music before it takes off, or is it luck? T
 (MLHD+, 594,415 listeners, 2005–2013) with half the listeners held back until the method was frozen, and ListenBrainz (95,770
 listeners, 2005–2026) as an independent replication. It also produced a public site that scores your own Spotify or YouTube history
 the same way: https://robertora.github.io/taste-test/ (the study is at /study.html).
+The published site is a copy of `site/static/`, kept in its own repository: https://github.com/RobertOra/taste-test.
 
 ## Documents
 

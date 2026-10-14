@@ -10,5 +10,5 @@
   Test on the local server (`uv run python -I site/serve.py`, http://127.0.0.1:8777). Do at most one scoring run against the live
   site per deploy: repeated runs got the site rate-limited by GitHub.
 - Publishing: `bash site/deploy.sh "message"` pushes `site/static` to the public repo RobertOra/taste-test (GitHub Pages). This research
-  repo, RobertOra/taste, is private.
+  repo, RobertOra/taste, is public too: never commit anything personal.
 - Never commit, copy into the project, or publish anyone's own listening exports (Spotify or YouTube files); test with them in place.
