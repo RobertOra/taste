@@ -150,7 +150,7 @@ Reference data in data/site (~3 GB, from LB). Score = prescience vs similar pick
 corrections, simplified for outside visitors; agrees 0.71 with the frozen score (~0.95 disattenuated); reliability 0.65 / 0.81
 (artists) and 0.74 / 0.87 (songs) at 110 / 250 judged finds. Engine reproduces builder scores exactly. Not deployed yet.
 
-### Planned site reference rebuild (decided 2026-10-13, waiting on disk cleanup)
+### Site reference rebuild (decided 2026-10-13; done 2026-10-14, now the live local pack)
 1. Song identity by normalized name (case, spacing, punctuation; drop feat./remaster/edit/explicit/version/video labels; keep
    remix/live/acoustic/slowed separate). Needs song-name text: re-stream the LB dump (~253 GB, ~10 h) saving rec_name_h -> text.
    Fixes spelling splits (e.g. "Weird Fishes/ Arpeggi" -> "Weird Fishes / Arpeggi" in Dec 2024 faked +699%) and rare-variant 0 -> 0 finds.
@@ -160,6 +160,19 @@ corrections, simplified for outside visitors; agrees 0.71 with the frozen score 
    reference listeners. Expect histories with a few stray early plays to score differently (those plays no longer end the warm-up early).
 4. Store each song's own excess as well as the artist-month group's, to test empirically whether individual songs or groups
    make the better score (split-half stability and predicting later years' scores).
+Done 2026-10-14 (data/site_v2, site/static/data; old pack kept in data/_site_static_data_v1, outside the deployed folder):
+- LB dump 2692 re-streamed for names (pipeline/lb_names.py; one dropped connection at 69% recovered by reconnecting; MD5 matches
+  the published one). 82.2M spellings -> 70.7M normalized songs (pipeline/lb_norm_songs.py; site/normalize.py = engine.js normName).
+  A normalized song's artist is the smallest artist key among its spellings (deterministic).
+- Settled prescience shipped as song_A / artist_A (SETTLED=1 in build_pack_meta.py): reliability at 110 finds 0.71 vs 0.72 (songs),
+  0.58 vs 0.60 (artists); agreement with the study 0.884 vs 0.869 (songs), 0.733 vs 0.727 (artists). Kept for matching the study.
+- One warm-up per history (meta warmup "single"); reference people now 16,223 (artists) / 18,921 (songs); intro says "about 16,000".
+- Item 4, individual songs vs artist-month groups (site/songs_vs_groups.py, settled prescience): stability between artist halves
+  0.618 vs 0.732, predicting 2022+ from 2016-2020 0.391 vs 0.411. Groups win on both: kept.
+- Checks: every shard decodes (check_pack); mirror vs reference 40 people, 100% exact finds, Spearman 1.000 on all four measures;
+  engine.js = score_pack.py on a test history (Spotify, YouTube, and both); full page upload in headless Chrome, no errors.
+- A test history's scores moved by a few points (settled listeners, one warm-up); artists it played before a long gap
+  now count (the warm-up fix); slow burns and too-recent artists still don't, by design.
 
 ### Songs added to the write-up (2026-10-13; SONG_PREREG.md for the tested ones)
 Tested before running (hidden half / ListenBrainz): S1 top 1% songs tenfold 13.2x / 4.4x (held, held); S2 songs vs artists,
