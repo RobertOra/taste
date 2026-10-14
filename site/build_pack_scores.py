@@ -12,7 +12,8 @@ import polars as pl
 from scipy.stats import spearmanr
 
 ROOT = Path(__file__).resolve().parent.parent
-REF = ROOT / "data" / "site"
+import os
+REF = Path(os.environ.get("SITE_REF", ROOT / "data" / "site"))   # SITE_REF / SITE_OUT / LB_SONGS override the folders (the 2026-10-14 rebuild writes data/site_v2 and site/static/data_v2)
 meta = json.loads((REF / "pack_meta.json").read_text())
 SHRINK, MIN_PICKS, MIN_YEAR = meta["shrink"], meta["min_picks"], 20
 meta["window_years"] = 0          # 0 = all judged finds
@@ -27,7 +28,7 @@ for key, M in meta["measures"].items():
     h = h.pivot(on="half", index="user", values=["s", "n"]).drop_nulls().filter((pl.col("n_0") >= 20) & (pl.col("n_1") >= 20))
     rr = spearmanr(h["s_0"], h["s_1"]).statistic; nh = float(np.median(h["n_0"].to_numpy())); r1 = float(rr / (nh - (nh - 1) * rr))
     py = dd.group_by("user", "year").agg(s=pl.col("excess").sum() / (pl.len() + SHRINK), n=pl.len(), avg=pl.col("excess").mean()).filter(pl.col("n") >= MIN_YEAR)
-    ag = pl.read_parquet(ROOT / "analysis" / "out" / "cand" / frozen[key] / "agg.parquet", columns=["user", "year", "sw", "swe"])
+    ag = pl.read_parquet(ROOT / "analysis" / "out" / "cand" / frozen[key.replace("_As", "_A")] / "agg.parquet", columns=["user", "year", "sw", "swe"])
     span = dd.group_by("user").agg(y0=pl.col("year").min(), y1=pl.col("year").max())
     fz = ag.join(span, on="user").filter(pl.col("year").is_between(pl.col("y0"), pl.col("y1"))).group_by("user").agg(f=pl.col("swe").sum() / pl.col("sw").sum())
     j = refp.join(fz, on="user"); agree = float(spearmanr(j["s"], j["f"]).statistic)

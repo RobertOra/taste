@@ -2,8 +2,8 @@
 computed with exactly the site's procedure (mirrored by site/static/engine.js) on ListenBrainz users.
 
 Picks: found by name from weekly listening (artists: user_artist_week by artist name; songs: user_rec_week by "artist\ttrack"
-name): 4 separate weeks, the 4th within 26 weeks, not within 26 weeks of the start of the person's listening or of a return after a
-26+ week gap; dated at the 4th
+name): 4 separate weeks, the 4th within 26 weeks, not within the first 26 weeks of the person's listening (one warm-up, as the
+study; until 2026-10-14 also after any 26+ week gap); dated at the 4th
 week's month; judged picks from 2016 (m >= Y0) to last month - 12. Names matched to shipped items (artists: >= 2 new
 listeners since 2015; songs: >= 3) and the song's artist to a shipped artist; eligible if at least 2 (artists) / 3 (songs)
 *other* people first played it since 2015; one pick per item (earliest).
@@ -32,7 +32,9 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "analysis"))
 from genre import FAMILIES, family_expr  # noqa: E402
 
-REF, LB, X = ROOT / "data" / "site", ROOT / "data" / "lb", ROOT / "data" / "derived"
+# SITE_REF / SITE_OUT / LB_SONGS override the folders (the 2026-10-14 rebuild writes data/site_v2 and site/static/data_v2)
+import os
+REF, LB, X = Path(os.environ.get("SITE_REF", ROOT / "data" / "site")), ROOT / "data" / "lb", ROOT / "data" / "derived"
 LAST, Y0, M0 = 2026 * 12 + 8, 2016 * 12, 2015 * 12
 SHRINK, MIN_PICKS = 20, 110
 FACT = ["mo", ["year", "scene"], "age", "relc", "country"]
@@ -67,8 +69,7 @@ def picks(unit, c):
     con.execute(f"CREATE OR REPLACE TABLE w_{unit} AS {src}")
     con.execute(f"""CREATE OR REPLACE TABLE p0_{unit} AS
         WITH aw AS (SELECT DISTINCT user, week FROM read_parquet('{LB}/user_artist_week/*.parquet') WHERE {uf}),
-             seg AS (SELECT user, week AS start FROM (SELECT user, week, week - lag(week) OVER (PARTITION BY user ORDER BY week) AS gap FROM aw)
-                     WHERE gap IS NULL OR gap >= 26),   -- a fresh warm-up after any gap of 26+ weeks without listening
+             seg AS (SELECT user, min(week) AS start FROM aw GROUP BY user),   -- one warm-up: the first 26 weeks of the history (as the study)
              r AS (SELECT w.*, row_number() OVER (PARTITION BY user, nh ORDER BY week) AS rn, min(week) OVER (PARTITION BY user, nh) AS fw FROM w_{unit} w),
              a AS (SELECT user, nh, any_value(ah) AS ah, min(week) AS first_week, min(week) FILTER (WHERE rn = 4) AS w4, sum(n) FILTER (WHERE week < fw + 26) AS w
                    FROM r GROUP BY user, nh)
@@ -95,6 +96,9 @@ def features(unit):
           coalesce(sum(r.a) FILTER (WHERE r.month BETWEEN k.m - 5 AND k.m), 0)::BIGINT AS a0,
           coalesce(sum(r.a) FILTER (WHERE r.month BETWEEN k.m + 7 AND k.m + 12), 0)::BIGINT AS a1,
           coalesce(sum(r.a) FILTER (WHERE r.month BETWEEN k.m - 11 AND k.m - 6), 0)::BIGINT AS ap,
+          coalesce(sum(r.t) FILTER (WHERE r.month BETWEEN k.m - 5 AND k.m), 0)::BIGINT AS t0,
+          coalesce(sum(r.t) FILTER (WHERE r.month BETWEEN k.m + 7 AND k.m + 12), 0)::BIGINT AS t1,
+          coalesce(sum(r.t) FILTER (WHERE r.month BETWEEN k.m - 11 AND k.m - 6), 0)::BIGINT AS tq,
           coalesce(sum(r.t) FILTER (WHERE r.month BETWEEN k.m + 1 AND k.m + 12), 0)::BIGINT AS tl,
           coalesce(sum(r.k) FILTER (WHERE r.month BETWEEN k.m + 1 AND k.m + 12), 0)::BIGINT AS kl,
           coalesce(sum(r.t) FILTER (WHERE r.month <= k.m), 0)::BIGINT AS tp,
@@ -160,7 +164,7 @@ for unit in ("artist", "song"):
     # the picker isn't in a visitor's comparison: remove their own first listen (prescience: from A0; discernment: from the prior)
     own0 = pl.col("fm").is_between(pl.col("m") - 5, pl.col("m")).cast(pl.Int64)
     ownp = (pl.col("fm") >= M0).cast(pl.Int64)
-    df = df.with_columns(a0=(pl.col("a0") - own0).clip(0), tp=(pl.col("tp") - ownp).clip(0), kp=(pl.col("kp") - ownp).clip(0))
+    df = df.with_columns(a0=(pl.col("a0") - own0).clip(0), t0=(pl.col("t0") - own0).clip(0), tp=(pl.col("tp") - ownp).clip(0), kp=(pl.col("kp") - ownp).clip(0))
     df = df.with_columns(g=((pl.col("a1") + 1) / (pl.col("a0") + 1)).log(), bin=(pl.col("a0") + 1).log(2).floor().clip(0, 14).cast(pl.Int8),
                          mo=(((pl.col("a0") + 1) / (pl.col("ap") + 1)).log(2) / 0.5).floor().clip(-3, 3).cast(pl.Int8), year=(pl.col("m") // 12).cast(pl.Int16),
                          up3=(((pl.col("a1") + 1) / (pl.col("a0") + 1)).log() >= np.log(3)).cast(pl.Float64), item=pl.col("key"))
@@ -169,18 +173,25 @@ for unit in ("artist", "song"):
     cuts = df.group_by("m").agg([pl.col("cp").quantile(q, "linear").alias(f"q{i}") for i, q in enumerate((0.2, 0.4, 0.6, 0.8))]).sort("m")
     df = df.join(cuts, on="m").with_columns(xb=(pl.col("cp") > pl.col("q0")).cast(pl.Int8) + (pl.col("cp") > pl.col("q1")).cast(pl.Int8)
                                             + (pl.col("cp") > pl.col("q2")).cast(pl.Int8) + (pl.col("cp") > pl.col("q3")).cast(pl.Int8))
-    for meas, outcome, facts in (("A", "g", FACT), ("D", "d", FACT + ["xb"])):
-        base, eff, dd = backfit(df, outcome, facts)
-        if meas == "A":
-            base = base.join(df.group_by("m", "bin").agg(up3=pl.col("up3").mean()), on=["m", "bin"])
+    # As: prescience among settled listeners (new listeners already 26+ weeks into their own listening), so a wave of people
+    # joining ListenBrainz doesn't count as an artist taking off; size and momentum from the same counts (rebuild item 2)
+    dfs = df.with_columns(g=((pl.col("t1") + 1) / (pl.col("t0") + 1)).log(), bin=(pl.col("t0") + 1).log(2).floor().clip(0, 14).cast(pl.Int8),
+                          mo=(((pl.col("t0") + 1) / (pl.col("tq") + 1)).log(2) / 0.5).floor().clip(-3, 3).cast(pl.Int8),
+                          up3=(((pl.col("t1") + 1) / (pl.col("t0") + 1)).log() >= np.log(3)).cast(pl.Float64))
+    for meas, outcome, facts, src in (("A", "g", FACT, df), ("As", "g", FACT, dfs), ("D", "d", FACT + ["xb"], df)):
+        base, eff, dd = backfit(src, outcome, facts)
+        if meas in ("A", "As"):
+            base = base.join(src.group_by("m", "bin").agg(up3=pl.col("up3").mean()), on=["m", "bin"])
         dd = dd.with_columns(ex=pl.col("excess"))
+        if unit == "song":   # each song's own result too, for the songs-vs-groups test (rebuild item 4)
+            dd.select("user", "item", "artist", "m", "w", "excess").write_parquet(REF / f"_pack_ex_{unit}_{meas}_items.parquet")
         if unit == "song":   # one pick per artist and month, plays-weighted
             dd = dd.group_by("user", "artist", "m").agg(excess=(pl.col("ex") * pl.col("w")).sum() / pl.col("w").sum(), item=pl.col("item").min())
         key = f"{unit}_{meas}"
         dd.select("user", "item", "m", "excess").write_parquet(REF / f"_pack_ex_{key}.parquet")   # every reference find's result (site/build_pack_scores.py)
         meta["measures"][key] = {
-            "unit": unit, "measure": meas, "p0": p0,
-            "baseline": [[int(r["m"]), int(r["bin"]), round(float(r["mean"]), 6)] + ([round(float(r["up3"]), 6)] if meas == "A" else []) for r in base.iter_rows(named=True)],
+            "unit": unit, "measure": "A" if meas == "As" else meas, "settled": meas == "As", "p0": p0,
+            "baseline": [[int(r["m"]), int(r["bin"]), round(float(r["mean"]), 6)] + ([round(float(r["up3"]), 6)] if meas in ("A", "As") else []) for r in base.iter_rows(named=True)],
             "effects": {name: [[*(list(row[:-1])), round(float(row[-1]), 6)] for row in t.iter_rows()] for name, t in eff.items()},
             **({"xb_cuts": [[int(r[0]), *[round(float(v), 6) for v in r[1:]]] for r in cuts.iter_rows()]} if meas == "D" else {})}
         print(f"{key}: {dd.height:,} reference finds saved", flush=True)

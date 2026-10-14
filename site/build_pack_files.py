@@ -30,7 +30,9 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "analysis"))
 from genre import FAMILIES, family_expr  # noqa: E402
 
-REF, X, OUT = ROOT / "data" / "site", ROOT / "data" / "derived", ROOT / "site" / "static" / "data"
+# SITE_REF / SITE_OUT / LB_SONGS override the folders (the 2026-10-14 rebuild writes data/site_v2 and site/static/data_v2)
+import os
+REF, X, OUT = Path(os.environ.get("SITE_REF", ROOT / "data" / "site")), ROOT / "data" / "derived", Path(os.environ.get("SITE_OUT", ROOT / "site" / "static" / "data"))
 M0 = 2015 * 12
 SHARD_BITS = 18
 S = 1 << SHARD_BITS
@@ -139,8 +141,11 @@ anames = anames.with_columns(shard=(pl.col("h") & (S - 1)).cast(pl.Int64))
 print(f"artists: {len(arec):,} records, {anames.height:,} names; {sum(map(len, arec.values())) / 1e6:.0f} MB", flush=True)
 
 # ---- songs: names first, then rows in chunks of shards
-snames = con.execute(f"""SELECT m.rec_name_h AS h, m.rec FROM read_parquet('{REF}/rec_map.parquet') m
-                         SEMI JOIN read_parquet('{REF}/pack_song_first.parquet') f ON f.rec = m.rec""").pl()
+if os.environ.get("SONG_KEYS") == "norm":   # normalized ids are the hash of the normalized name: one key per song, the id itself
+    snames = con.execute(f"SELECT rec AS h, rec FROM read_parquet('{REF}/pack_song_first.parquet')").pl()
+else:
+    snames = con.execute(f"""SELECT m.rec_name_h AS h, m.rec FROM read_parquet('{REF}/rec_map.parquet') m
+                             SEMI JOIN read_parquet('{REF}/pack_song_first.parquet') f ON f.rec = m.rec""").pl()
 snames = snames.with_columns(shard=(pl.col("h") & (S - 1)).cast(pl.Int64))
 sf = pl.read_parquet(REF / "pack_song_first.parquet").sort("rec")
 sids, sfm = sf["rec"].to_numpy(), sf["first_month"].to_numpy().astype(np.int64)   # global song id = position in sids

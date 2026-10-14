@@ -5,7 +5,9 @@ from pathlib import Path
 import polars as pl
 
 ROOT = Path(__file__).resolve().parent.parent
-REF, OUT = ROOT / "data" / "site", ROOT / "site" / "static" / "data"
+# SITE_REF / SITE_OUT / LB_SONGS override the folders (the 2026-10-14 rebuild writes data/site_v2 and site/static/data_v2)
+import os
+REF, OUT = Path(os.environ.get("SITE_REF", ROOT / "data" / "site")), Path(os.environ.get("SITE_OUT", ROOT / "site" / "static" / "data"))
 meta = json.loads((REF / "pack_meta.json").read_text())
 meta["family_share"] = {}
 for unit in ("artist", "song"):

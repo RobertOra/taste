@@ -12,7 +12,10 @@ from pathlib import Path
 import duckdb
 
 ROOT = Path(__file__).resolve().parent.parent
-D, X, REF = ROOT / "data" / "mlhd", ROOT / "data" / "derived", ROOT / "data" / "site"
+# SITE_REF / SITE_OUT / LB_SONGS override the folders (the 2026-10-14 rebuild writes data/site_v2 and site/static/data_v2)
+import os
+D, X, REF = ROOT / "data" / "mlhd", ROOT / "data" / "derived", Path(os.environ.get("SITE_REF", ROOT / "data" / "site"))
+LB_SONGS = os.environ.get("LB_SONGS", "lb")   # user_recording/<LB_SONGS>: lb, or lb_norm (normalized song names)
 M0 = 2015 * 12
 MONTH = "(year(make_timestamp({w}::BIGINT * 604800000000 + 302400000000)) * 12 + month(make_timestamp({w}::BIGINT * 604800000000 + 302400000000)) - 1)"
 tmp = ROOT / "data" / "_tmp" / "pack_items"; tmp.mkdir(parents=True, exist_ok=True)
@@ -24,11 +27,14 @@ con.execute(f"""CREATE TABLE sr AS
     SELECT u.recording AS rec, ({MONTH.format(w='u.first_week')})::SMALLINT AS month, count(*)::INT AS a,
            count(*) FILTER (WHERE u.first_week >= f.start_week + 26)::INT AS t,
            count(*) FILTER (WHERE u.first_week >= f.start_week + 26 AND u.plays >= 4 AND u.span_weeks >= 3)::INT AS k
-    FROM read_parquet('{D}/user_recording/lb/*.parquet') u JOIN {uf} f USING (user)
+    FROM read_parquet('{D}/user_recording/{LB_SONGS}/*.parquet') u JOIN {uf} f USING (user)
     WHERE ({MONTH.format(w='u.first_week')}) >= {M0} GROUP BY ALL""")
 con.execute(f"""COPY (SELECT s.* FROM sr s SEMI JOIN (SELECT rec FROM sr GROUP BY rec HAVING sum(a) >= 3) e USING (rec) ORDER BY rec, month)
                 TO '{REF}/pack_song_rows.parquet' (FORMAT parquet, COMPRESSION zstd)""")
-con.execute(f"""COPY (SELECT rec, min(month)::SMALLINT AS first_month FROM read_parquet('{REF}/rec_adopt.parquet')
+# first month anyone played the song (any year): from rec_adopt for the original ids; for normalized ids, from the song table itself
+first_src = (f"SELECT rec, month FROM read_parquet('{REF}/rec_adopt.parquet')" if LB_SONGS == "lb" else
+             f"SELECT recording AS rec, ({MONTH.format(w='first_week')})::SMALLINT AS month FROM read_parquet('{D}/user_recording/{LB_SONGS}/*.parquet')")
+con.execute(f"""COPY (SELECT rec, min(month)::SMALLINT AS first_month FROM ({first_src})
                       SEMI JOIN (SELECT rec FROM sr GROUP BY rec HAVING sum(a) >= 3) e USING (rec) GROUP BY rec)
                 TO '{REF}/pack_song_first.parquet' (FORMAT parquet, COMPRESSION zstd)""")
 con.execute("DROP TABLE sr")

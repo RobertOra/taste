@@ -17,7 +17,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "site"))
 import score as S  # noqa: E402  (name_hash, true_range, read_history, EXCLUDE_ARTISTS)
 
-DATA = ROOT / "site" / "static" / "data"
+import os
+DATA = Path(os.environ.get("SITE_OUT", ROOT / "site" / "static" / "data"))   # SITE_OUT: test another pack (e.g. site/static/data_v2)
 META = json.loads((DATA / "meta.json").read_text())
 
 

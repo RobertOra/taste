@@ -5,7 +5,8 @@ import struct
 import zlib
 from pathlib import Path
 
-D = Path(__file__).resolve().parent / "static" / "data"
+import os
+D = Path(os.environ.get("SITE_OUT", Path(__file__).resolve().parent / "static" / "data"))   # SITE_REF / SITE_OUT / LB_SONGS override the folders (the 2026-10-14 rebuild writes data/site_v2 and site/static/data_v2)
 FILE_MAX = 45_000_000
 b = (D / "index.bin").read_bytes()
 magic, S, F = struct.unpack_from("<IIH", b, 0); p = 10
