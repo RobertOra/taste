@@ -1,13 +1,13 @@
 // Taste Test page: reads Spotify and/or YouTube (Google Takeout) files, scores them with engine.js in the browser (reference data read by byte range), renders the report.
-import { scoreHistory, monthLabel, Pack, WANT } from './engine.js?v=e4ba81ff0d';
+import { scoreHistory, monthLabel, Pack, WANT } from './engine.js?v=ddc80f6545';
 
 const $ = (s) => document.querySelector(s);
 let META = null;
-const metaReady = fetch('data/meta.json?v=e4ba81ff0d').then((r) => r.json()).then((m) => (META = m));
-const fetchIndex = () => fetch('data/index.bin?v=e4ba81ff0d').then((r) => r.arrayBuffer());
-const fetchBloom = () => fetch('data/slots.bloom?v=e4ba81ff0d').then((r) => r.arrayBuffer());   // packs filed by artist (meta.slots)
+const metaReady = fetch('data/meta.json?v=ddc80f6545').then((r) => r.json()).then((m) => (META = m));
+const fetchIndex = () => fetch('data/index.bin?v=ddc80f6545').then((r) => r.arrayBuffer());
+const fetchBloom = () => fetch('data/slots.bloom?v=ddc80f6545').then((r) => r.arrayBuffer());   // packs filed by artist (meta.slots)
 async function fetchRange(file, start, end) {
-  const r = await fetch(`data/p/${String(file).padStart(2, '0')}.bin?v=e4ba81ff0d`, { headers: { Range: `bytes=${start}-${end}` }, cache: 'no-store' });   // no-store: Chrome lets one request at a time write a file to its cache, so cached ranges of the same file queue up (3x slower)
+  const r = await fetch(`data/p/${String(file).padStart(2, '0')}.bin?v=ddc80f6545`, { headers: { Range: `bytes=${start}-${end}` }, cache: 'no-store' });   // no-store: Chrome lets one request at a time write a file to its cache, so cached ranges of the same file queue up (3x slower)
   const b = new Uint8Array(await r.arrayBuffer());
   return r.status === 206 ? b : b.subarray(start, end + 1);   // a server without range support sends the whole file
 }
