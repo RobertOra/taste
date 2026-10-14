@@ -97,3 +97,19 @@ Run once each: `three_way_songs.py --half {sealed,lb}`.
 | Explore (exploratory) | 2.74 | 1.28 [0.89] | 3.16 [1.84] | - | 11.05 |
 | **Sealed** | 4.26 | 1.07 [0.56] | **3.24** [1.84] | **held** | 14.83 |
 | **ListenBrainz** | 1.49 | 1.71 [1.47] | **2.20** [1.19] | **held** | 5.59 |
+
+# Round 5: new fans of a song (written 2026-10-14, before the sealed and ListenBrainz runs)
+Song new-fans table: analysis/song_pickers.py (pickers.py design: raters ranked on their song record, outcome group's fixed
+panel). Explore half (exploratory): a small song's good new fan vs an ordinary one +6.26% [5.08, 7.51] (fan_value.py --unit
+song); a niche song found by 2 good pickers vs none +2.8% [99% low 1.6] (ladder.crowd_curve on songs); each additional poor
+picker among a niche song's new fans -4.17% [-4.37, -3.98] (charts_data.poor_crowd on songs).
+
+- **S7 sealed / S7 lb.** Small song: one good new fan vs an ordinary one, extra growth: 99% lower bound > 0 (P6a's bar).
+- **S8 sealed / S8 lb.** Niche song found by 2 good pickers vs none: 99% lower bound > 0 (P5a's bar).
+- **S9 sealed / S9 lb.** Each additional poor picker among a niche song's new fans: 99% upper bound < 0.
+Reported without a bar: the full curves, medium and big songs, the yearly series (ListenBrainz).
+
+Run once each: `song_pickers.py --half {sealed,lb}`, then `fan_value.py --half {h} --unit song` and `song_fans.py --half {h}`.
+
+## Round 5 results
+(to be added after the runs)

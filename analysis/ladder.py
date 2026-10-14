@@ -143,8 +143,8 @@ def count_vs_share(half):
     return out
 
 
-def crowd_curve(half):
-    df = pl.read_parquet(X / "pickers" / f"rate_A_{half}.parquet")
+def crowd_curve(half, df=None):   # df: an alternative new-fans table with the same columns (song_pickers.py)
+    df = pl.read_parquet(X / "pickers" / f"rate_A_{half}.parquet") if df is None else df
     df = df.with_columns(g=((pl.col("l1") + 1) / (pl.col("l0") + 1)).log(), sz=(pl.col("l0") + 1).log(2).floor().cast(pl.Int16),
                          mo=(((pl.col("l0") + 1) / (pl.col("l_pre") + 1)).log() / 0.5).floor().clip(-3, 3).cast(pl.Int8),
                          ub=pl.col("n_unrated").clip(0, 4), others=pl.col("n_ord") + pl.col("n_poor"))

@@ -1,0 +1,448 @@
+{
+ "good_curve": [
+  {
+   "crowd": "niche",
+   "good": 0,
+   "label": "0",
+   "artist_months": 3881202,
+   "growth": -0.0010741287514344146,
+   "growth_lo": -0.0017525099523294128,
+   "growth_hi": -0.0003351832501173354
+  },
+  {
+   "crowd": "niche",
+   "good": 1,
+   "label": "1",
+   "artist_months": 312004,
+   "growth": 0.011606523783932524,
+   "growth_lo": 0.009508665675325035,
+   "growth_hi": 0.013819946729481053
+  },
+  {
+   "crowd": "niche",
+   "good": 2,
+   "label": "2",
+   "artist_months": 17335,
+   "growth": 0.02727152069220047,
+   "growth_lo": 0.019042489956072838,
+   "growth_hi": 0.03561114398739435
+  },
+  {
+   "crowd": "niche",
+   "good": 3,
+   "label": "3",
+   "artist_months": 1966,
+   "growth": 0.03396222704134251,
+   "growth_lo": 0.008431261739300169,
+   "growth_hi": 0.06160173124378909
+  },
+  {
+   "crowd": "niche",
+   "good": 4,
+   "label": "4",
+   "artist_months": 344,
+   "growth": 0.07975657311067798,
+   "growth_lo": 0.008077673266337253,
+   "growth_hi": 0.16051381763479236
+  },
+  {
+   "crowd": "niche",
+   "good": 5,
+   "label": "5+",
+   "artist_months": 88,
+   "growth": 0.1492950713114841,
+   "growth_lo": 0.005084859500557363,
+   "growth_hi": 0.3113315903983316
+  },
+  {
+   "crowd": "middle",
+   "good": 0,
+   "label": "0",
+   "artist_months": 33273,
+   "growth": 0.0023559242337347305,
+   "growth_lo": -0.0019844203078487463,
+   "growth_hi": 0.006981352227206323
+  },
+  {
+   "crowd": "middle",
+   "good": 1,
+   "label": "1",
+   "artist_months": 16110,
+   "growth": -0.00821945046360604,
+   "growth_lo": -0.015017222476352038,
+   "growth_hi": -0.0005954800988862642
+  },
+  {
+   "crowd": "middle",
+   "good": 2,
+   "label": "2",
+   "artist_months": 5363,
+   "growth": -0.0029263177390003096,
+   "growth_lo": -0.015549726022282231,
+   "growth_hi": 0.00975061146306278
+  },
+  {
+   "crowd": "middle",
+   "good": 3,
+   "label": "3",
+   "artist_months": 1569,
+   "growth": 0.012581367567550232,
+   "growth_lo": -0.012755286203119928,
+   "growth_hi": 0.039305798089235275
+  },
+  {
+   "crowd": "middle",
+   "good": 4,
+   "label": "4",
+   "artist_months": 484,
+   "growth": 0.042881220456304193,
+   "growth_lo": -0.005563014087678817,
+   "growth_hi": 0.09207852759981097
+  },
+  {
+   "crowd": "middle",
+   "good": 5,
+   "label": "5+",
+   "artist_months": 295,
+   "growth": 0.10871331533656947,
+   "growth_lo": 0.029858937648681944,
+   "growth_hi": 0.1983587857857942
+  },
+  {
+   "crowd": "crowded",
+   "good": 0,
+   "label": "0",
+   "artist_months": 2727,
+   "growth": -0.013578326095764433,
+   "growth_lo": -0.030244335926123977,
+   "growth_hi": 0.003181567090637585
+  },
+  {
+   "crowd": "crowded",
+   "good": 1,
+   "label": "1",
+   "artist_months": 3159,
+   "growth": -0.023619847053578013,
+   "growth_lo": -0.03845853087367322,
+   "growth_hi": -0.007530197553411707
+  },
+  {
+   "crowd": "crowded",
+   "good": 2,
+   "label": "2",
+   "artist_months": 2443,
+   "growth": 0.003368464586786181,
+   "growth_lo": -0.015375354051051806,
+   "growth_hi": 0.021825975381808894
+  },
+  {
+   "crowd": "crowded",
+   "good": 3,
+   "label": "3",
+   "artist_months": 1532,
+   "growth": 0.007595217121100968,
+   "growth_lo": -0.016185173863802263,
+   "growth_hi": 0.033374112698798385
+  },
+  {
+   "crowd": "crowded",
+   "good": 4,
+   "label": "4",
+   "artist_months": 872,
+   "growth": 0.046250480346930314,
+   "growth_lo": 0.013338683306687728,
+   "growth_hi": 0.08156416924951142
+  },
+  {
+   "crowd": "crowded",
+   "good": 5,
+   "label": "5",
+   "artist_months": 491,
+   "growth": 0.03386055033661192,
+   "growth_lo": -0.010423370014928785,
+   "growth_hi": 0.08178052317012294
+  },
+  {
+   "crowd": "crowded",
+   "good": 6,
+   "label": "6+",
+   "artist_months": 664,
+   "growth": 0.05763774829514474,
+   "growth_lo": 0.016581647180931032,
+   "growth_hi": 0.10622818225780167
+  }
+ ],
+ "good_summary": {
+  "slopes": {
+   "niche": {
+    "per_picker": 0.02369052987892113,
+    "lo": 0.021621186233571357,
+    "hi": 0.02592971838120652
+   },
+   "middle": {
+    "per_picker": 0.00046369252506041526,
+    "lo": -0.0036839815036786125,
+    "hi": 0.004653983540563395
+   },
+   "crowded": {
+    "per_picker": 0.01668440729761812,
+    "lo": 0.012118728461240244,
+    "hi": 0.021701825579445125
+   }
+  },
+  "niche_2_vs_0": 0.028376129059712336,
+  "niche_2_vs_0_lo": 0.020054539463979174,
+  "niche_2_vs_0_hi": 0.03607786534718872,
+  "niche_2_vs_0_lo99": 0.016358006133548326,
+  "slope_niche_minus_crowded": 0.0068675124255645655,
+  "slope_diff_lo": 0.0015731804203147,
+  "slope_diff_hi": 0.011964756356876551,
+  "slope_diff_lo99": 0.0001302108011987396
+ },
+ "poor_curve": [
+  {
+   "key": "niche:0",
+   "kind": "point",
+   "crowd": "niche",
+   "poor": 0,
+   "label": "0",
+   "artist_months": 3857031,
+   "growth": 0.0018126319807173026,
+   "growth_lo": 0.0011573812881219307,
+   "growth_hi": 0.0025227283687461618
+  },
+  {
+   "key": "niche:1",
+   "kind": "point",
+   "crowd": "niche",
+   "poor": 1,
+   "label": "1",
+   "artist_months": 347989,
+   "growth": -0.0138095105602046,
+   "growth_lo": -0.015488468962470553,
+   "growth_hi": -0.011984626565385388
+  },
+  {
+   "key": "niche:2",
+   "kind": "point",
+   "crowd": "niche",
+   "poor": 2,
+   "label": "2",
+   "artist_months": 19426,
+   "growth": -0.08392700482594778,
+   "growth_lo": -0.09011547235367738,
+   "growth_hi": -0.0784718556414467
+  },
+  {
+   "key": "niche:3",
+   "kind": "point",
+   "crowd": "niche",
+   "poor": 3,
+   "label": "3",
+   "artist_months": 2410,
+   "growth": -0.13283783316318912,
+   "growth_lo": -0.14782206679594062,
+   "growth_hi": -0.11866519974339954
+  },
+  {
+   "key": "niche:4",
+   "kind": "point",
+   "crowd": "niche",
+   "poor": 4,
+   "label": "4",
+   "artist_months": 385,
+   "growth": -0.18497851212468575,
+   "growth_lo": -0.2216836373681278,
+   "growth_hi": -0.14980581858339798
+  },
+  {
+   "key": "niche:5",
+   "kind": "point",
+   "crowd": "niche",
+   "poor": 5,
+   "label": "5+",
+   "artist_months": 105,
+   "growth": -0.18040645923103232,
+   "growth_lo": -0.2525142594080582,
+   "growth_hi": -0.09336185354024944
+  },
+  {
+   "key": "niche:slope",
+   "kind": "slope",
+   "crowd": "niche",
+   "per_picker": -0.04172634341526541,
+   "lo": -0.043678603960905636,
+   "hi": -0.03982316172232616
+  },
+  {
+   "key": "middle:0",
+   "kind": "point",
+   "crowd": "middle",
+   "poor": 0,
+   "label": "0",
+   "artist_months": 31649,
+   "growth": 0.037174919602007084,
+   "growth_lo": 0.03225157379793859,
+   "growth_hi": 0.042418788668301746
+  },
+  {
+   "key": "middle:1",
+   "kind": "point",
+   "crowd": "middle",
+   "poor": 1,
+   "label": "1",
+   "artist_months": 16249,
+   "growth": -0.026513740642288373,
+   "growth_lo": -0.03357843195159903,
+   "growth_hi": -0.01909189891118262
+  },
+  {
+   "key": "middle:2",
+   "kind": "point",
+   "crowd": "middle",
+   "poor": 2,
+   "label": "2",
+   "artist_months": 5873,
+   "growth": -0.06433530444200253,
+   "growth_lo": -0.07505973653465503,
+   "growth_hi": -0.053711748964270466
+  },
+  {
+   "key": "middle:3",
+   "kind": "point",
+   "crowd": "middle",
+   "poor": 3,
+   "label": "3",
+   "artist_months": 1916,
+   "growth": -0.10392607300835786,
+   "growth_lo": -0.12150052199667727,
+   "growth_hi": -0.08645751835343377
+  },
+  {
+   "key": "middle:4",
+   "kind": "point",
+   "crowd": "middle",
+   "poor": 4,
+   "label": "4",
+   "artist_months": 623,
+   "growth": -0.11780235492645963,
+   "growth_lo": -0.14800422417020645,
+   "growth_hi": -0.08571271797768502
+  },
+  {
+   "key": "middle:5",
+   "kind": "point",
+   "crowd": "middle",
+   "poor": 5,
+   "label": "5+",
+   "artist_months": 289,
+   "growth": -0.12833545105345978,
+   "growth_lo": -0.17235730572583288,
+   "growth_hi": -0.0868621726122227
+  },
+  {
+   "key": "middle:slope",
+   "kind": "slope",
+   "crowd": "middle",
+   "per_picker": -0.05241837918862062,
+   "lo": -0.055542073996908616,
+   "hi": -0.0488237751023989
+  },
+  {
+   "key": "crowded:0",
+   "kind": "point",
+   "crowd": "crowded",
+   "poor": 0,
+   "label": "0",
+   "artist_months": 2316,
+   "growth": 0.08569097032490448,
+   "growth_lo": 0.06307792947614581,
+   "growth_hi": 0.10817820683384088
+  },
+  {
+   "key": "crowded:1",
+   "kind": "point",
+   "crowd": "crowded",
+   "poor": 1,
+   "label": "1",
+   "artist_months": 2954,
+   "growth": 0.009967809546620713,
+   "growth_lo": -0.006607729493255665,
+   "growth_hi": 0.02706334842777022
+  },
+  {
+   "key": "crowded:2",
+   "kind": "point",
+   "crowd": "crowded",
+   "poor": 2,
+   "label": "2",
+   "artist_months": 2377,
+   "growth": -0.009188115927906148,
+   "growth_lo": -0.02950176867318675,
+   "growth_hi": 0.008234307623261584
+  },
+  {
+   "key": "crowded:3",
+   "kind": "point",
+   "crowd": "crowded",
+   "poor": 3,
+   "label": "3",
+   "artist_months": 1615,
+   "growth": -0.05109407408745473,
+   "growth_lo": -0.0717847351942501,
+   "growth_hi": -0.031010921539023035
+  },
+  {
+   "key": "crowded:4",
+   "kind": "point",
+   "crowd": "crowded",
+   "poor": 4,
+   "label": "4",
+   "artist_months": 979,
+   "growth": -0.04602759358165371,
+   "growth_lo": -0.07188076838535823,
+   "growth_hi": -0.017612176231445516
+  },
+  {
+   "key": "crowded:5",
+   "kind": "point",
+   "crowd": "crowded",
+   "poor": 5,
+   "label": "5",
+   "artist_months": 590,
+   "growth": -0.03480449005803776,
+   "growth_lo": -0.0714008627939918,
+   "growth_hi": 0.003723703984027426
+  },
+  {
+   "key": "crowded:6",
+   "kind": "point",
+   "crowd": "crowded",
+   "poor": 6,
+   "label": "6",
+   "artist_months": 349,
+   "growth": -0.05472437118556206,
+   "growth_lo": -0.10293321747236402,
+   "growth_hi": -0.0016024984069380498
+  },
+  {
+   "key": "crowded:7",
+   "kind": "point",
+   "crowd": "crowded",
+   "poor": 7,
+   "label": "7+",
+   "artist_months": 373,
+   "growth": -0.06832898022878602,
+   "growth_lo": -0.1098026445461599,
+   "growth_hi": -0.02487598965767703
+  },
+  {
+   "key": "crowded:slope",
+   "kind": "slope",
+   "crowd": "crowded",
+   "per_picker": -0.034553321593089145,
+   "lo": -0.03868473717251143,
+   "hi": -0.030075380345557866
+  }
+ ]
+}

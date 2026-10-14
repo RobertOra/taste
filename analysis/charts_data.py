@@ -211,13 +211,13 @@ def crowd_log():
     return rows
 
 
-def poor_crowd():
+def poor_crowd(df=None):   # df: an alternative new-fans table with the same columns (song_pickers.py)
     """Hidden half, descriptive (2026-10-13): the crowd curve with poor pickers. Growth by the number of poor pickers among an
     artist's new fans, against artist-months of the same month, size, momentum and unrated new fans with exactly the same
     numbers of good and ordinary new fans (ladder.py crowd_curve with the roles swapped). Niche / middle / crowded = 0-2 / 3-5 /
     6+ other rated new fans (good + ordinary). Each count shown while it has >= 300 artist-months; the rest pooled. Plus a
     per-poor-picker slope within cells. Bootstrap over artists (1,000 draws)."""
-    df = pl.read_parquet(X / "pickers" / "rate_A_sealed.parquet")
+    df = pl.read_parquet(X / "pickers" / "rate_A_sealed.parquet") if df is None else df
     df = df.with_columns(g=((pl.col("l1") + 1) / (pl.col("l0") + 1)).log(), sz=(pl.col("l0") + 1).log(2).floor().cast(pl.Int16),
                          mo=(((pl.col("l0") + 1) / (pl.col("l_pre") + 1)).log() / 0.5).floor().clip(-3, 3).cast(pl.Int8),
                          ub=pl.col("n_unrated").clip(0, 4), others=pl.col("n_ord") + pl.col("n_good"))
@@ -254,7 +254,8 @@ def poor_crowd():
         xg, yg = d["Pd"].to_numpy(), d["yd"].to_numpy()
         bb = [((w * xg) @ yg) / ((w * xg) @ xg) for w in (rng.poisson(1.0, len(ua))[inv].astype(float) for _ in range(500))]
         rows.append({"key": f"{grp}:slope", "kind": "slope", "crowd": grp, "per_picker": float(np.expm1((xg @ yg) / (xg @ xg))),
-                     "lo": float(np.expm1(np.percentile(bb, 2.5))), "hi": float(np.expm1(np.percentile(bb, 97.5)))})
+                     "lo": float(np.expm1(np.percentile(bb, 2.5))), "hi": float(np.expm1(np.percentile(bb, 97.5))),
+                     "hi99": float(np.expm1(np.percentile(bb, 99.5)))})
     return rows
 
 def crowd_means():
