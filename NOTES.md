@@ -342,3 +342,4 @@ never run repeated scorings against the live site; test locally (site/serve.py) 
 Step 1 was ~1 minute in Robert's browser: Chrome's HTTP cache lets one request at a time write a given file, so ~1,500 cached range
 requests to the same 16 files queued (reproduced locally with GH_CACHE=1 serve.py: 45 s vs 19 s). Fix: fetch ranges with cache 'no-store'.
 Also: progress bar covers the YouTube matching (was stuck at 0% ~11 s), index and artist filter download at the same time.
+Live after the fix (one run, browser cache on, this machine's network): step 1 done at 12.6 s, report at 14.5 s.
